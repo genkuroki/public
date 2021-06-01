@@ -1,3 +1,5 @@
 .ipynb_checkpoints
+.gitignore
 Manifest.toml
-Untitled*.ipynb
+Untitled*.*
+untitled*.*
