@@ -26,10 +26,23 @@ using Printf
 
 ```julia
 """
-1-dimensional discrete Laplacian
-with left Dirichlet and right Neumann boundary conditions
+`Laplacian(N)` is the 1D discrete Laplacian
+with left Dirichlet and right Neumann boundary conditions.
 
-Laplacian(N) × (-1) is equal to the Cartan matrix of B-type.
+The 1D Poisson equation
+\$u''(x) + f(x) = 0\$, 
+\$u(a) = \\alpha\$,
+\$u'(b) = \\beta\$
+is approximated by \$h^2(A u + b) = v\$,
+where
+\$x = \\mathrm{range}(a, b; \\mathrm{length}=N+1)\$,
+\$h = \\mathrm{step}(x)\$,
+\$A = \\mathrm{Laplacian}(N)\$, 
+\$b = \\mathrm{BC}(N, h, α, β)\$, 
+and
+\$v = f.(x[2{:}\\mathrm{end}])\$.
+
+__Remark.__ Laplacian(N) × (-1) is equal to the Cartan matrix of B-type (or C-type).
 """
 Laplacian(N) = Tridiagonal(
     [fill(1, N-2); 2],
@@ -38,13 +51,24 @@ Laplacian(N) = Tridiagonal(
 )
 
 BC(N, h, α, β) = [α; zeros(N-2); 2β*h]
+```
 
+```julia
+?Laplacian
+```
+
+```julia
 Laplacian(8)
 ```
 
 ```julia
-function solve(param)
-    a, b, N, α, β, f = param
+"""
+`solve_1d_poisson(param)` solves the discrete version of the 1D Poisson equation
+\$u''(x) + f(x) = 0\$, \$u(a) = \\alpha\$, \$u'(b) = \\beta\$,
+where `param = (a, b, α, β, f, N)`
+"""
+function solve_1d_poisson(param)
+    a, b, α, β, f, N = param
     x = range(a, b; length=N+1)
     h = step(x)
     A = Laplacian(N)
@@ -56,9 +80,13 @@ end
 ```
 
 ```julia
-function plot_sol(sol, u_exact; kwargs...)
+?solve_1d_poisson
+```
+
+```julia
+function plot_1d_poisson(sol, u_exact)
     x, u, param = sol
-    a, b, N, α, β, f = param
+    a, b, α, β, f, N = param
     xs = range(a, b; length=1001)
     
     P = plot(x, u; label="numerical")
@@ -81,55 +109,55 @@ end
 param1a = (
     a = -1.0,
     b = 1.0,
-    N = 3,
     α = 1.0,
     β = -1.0,
     f = x -> 1.0,
+    N = 3,
 )
 
 """Assume f is a constant function.""" 
 function u1_exact(param, x)
-    a, b, N, α, β, f = param
+    a, b, α, β, f, N = param
     c = f(0.0)
     (c/2)x^2 + (-c*b + β)x - (c/2)a^2 - (-c*b + β)a + α
 end
 
-sol1a = solve(param1a)
-plot_sol(sol1a, u1_exact)
+sol1a = solve_1d_poisson(param1a)
+plot_1d_poisson(sol1a, u1_exact)
 ```
 
 ```julia
 param1b = (
     a = -1.0,
     b = 1.0,
-    N = 3,
     α = 1.0,
     β = 0.9,
     f = x -> 1.0,
+    N = 3,
 )
 
-sol1b = solve(param1b)
-plot_sol(sol1b, u1_exact)
+sol1b = solve_1d_poisson(param1b)
+plot_1d_poisson(sol1b, u1_exact)
 ```
 
 ```julia
 param2 = (
     a = 0.0,
     b = 2π,
-    N = 10,
     α = -1.0,
     β = -1.5,
     f = sin,
+    N = 10,
 )
 
 """Assume a = 0,  b = 2π,  f = sin"""
 function u2_exact(param, x)
-    a, b, N, α, β, f = param
+    a, b, α, β, f, N = param
     α + (β + 1)x - sin(x)
 end
 
-sol2 = solve(param2)
-plot_sol(sol2, u2_exact)
+sol2 = solve_1d_poisson(param2)
+plot_1d_poisson(sol2, u2_exact)
 ```
 
 ```julia
