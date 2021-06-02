@@ -73,5 +73,62 @@ end
 ```
 
 ```julia
+# hard scope
+
+module O4
+
+let
+    n = 10
+    s = 0
+    for k in 1:n
+        s += k^3
+    end
+    @show s
+end
+
+end;
+```
+
+```julia
+# hard scope
+
+module O5
+
+let
+    n = 10
+    s = 0
+    for k in 1:n
+        s += k^3
+    end
+    s
+end
+
+print("outside of let block:\n")
+@show s
+
+end;
+```
+
+```julia
+# hard scope
+
+module O6
+
+s = let
+    n = 10
+    s = 0
+    for k in 1:n
+        s += k^3
+    end
+    s
+end
+
+print("\noutside of let block:\n")
+@show s
+
+end;
+```
+
+```julia
 
 ```
