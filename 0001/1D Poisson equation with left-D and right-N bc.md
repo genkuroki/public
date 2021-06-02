@@ -94,7 +94,7 @@ function plot_1d_poisson(sol, u_exact)
     
     P = plot(x, u; label="numerical")
     isnothing(u_exact) || plot!(xs, u_exact.(Ref(param), xs); label="exact", ls=:dash)
-    title_str = @sprintf("u(%.2f) = %.2f,  u'(%.2f) = %.2f,  N = %d", N , a, α, b, β) 
+    title_str = @sprintf("u(%.2f) = %.2f,  u'(%.2f) = %.2f,  N = %d", a, α, b, β, N) 
     title!(title_str; titlefontsize=10)
     
     fs = f.(xs)
