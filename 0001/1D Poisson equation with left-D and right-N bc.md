@@ -63,15 +63,15 @@ function plot_sol(sol, u_exact; kwargs...)
     
     P = plot(x, u; label="numerical")
     isnothing(u_exact) || plot!(xs, u_exact.(Ref(param), xs); label="exact", ls=:dash)
-    title!("N = $N"; titlefontsize=10)
+    title_str = @sprintf("u(%.2f) = %.2f,  u'(%.2f) = %.2f,  N = %d", N , a, α, b, β) 
+    title!(title_str; titlefontsize=10)
     
     fs = f.(xs)
     ylim = extrema(fs)
     ydiff = ylim[2] - ylim[1]
     ylim =  (ylim[1] - 0.1(ydiff + 1), ylim[2] + 0.1(ydiff + 1))
-    title_str = @sprintf("u(%.2f) = %.2f,  u'(%.2f) = %.2f", a, α, b, β) 
-    Q = plot(xs, fs; label="f(x)", ylim)
-    title!(title_str; titlefontsize=10)
+    Q = plot(xs, fs; label="y = f(x)", ylim)
+    title!("u''(x) = f(x)"; titlefontsize=10)
     
     plot(P, Q; size=(800, 300))
 end
