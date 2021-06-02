@@ -38,7 +38,7 @@ where
 \$x = \\mathrm{range}(a, b; \\mathrm{length}=N+1)\$,
 \$h = \\mathrm{step}(x)\$,
 \$A = \\mathrm{Laplacian}(N)\$, 
-\$b = \\mathrm{BC}(N, h, α, β)\$, 
+\$b = \\mathrm{BC}(N, h, \\alpha, \\beta)\$, 
 and
 \$v = f.(x[2{:}\\mathrm{end}])\$.
 
@@ -84,6 +84,9 @@ end
 ```
 
 ```julia
+"""
+`plot_1d_poisson(sol, u_exact)` plots the numerical solution `sol` and the exact solution function `u_exact`.
+"""
 function plot_1d_poisson(sol, u_exact)
     x, u, param = sol
     a, b, α, β, f, N = param
@@ -103,6 +106,10 @@ function plot_1d_poisson(sol, u_exact)
     
     plot(P, Q; size=(800, 300))
 end
+```
+
+```julia
+?plot_1d_poisson
 ```
 
 ```julia
