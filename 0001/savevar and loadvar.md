@@ -16,6 +16,11 @@ jupyter:
 ```julia
 savevar(fn, x) = write(fn, string(x))
 loadvar(fn) = read(fn, String) |> Meta.parse |> eval
+
+const dir_savevar = "tmp"
+fn_savevar(x::Symbol) = joinpath(dir_savevar, string(x) * ".txt")
+macro savevar(x) :(savevar($(fn_savevar(x)), $(esc(x)))) end
+macro loadvar(x) :(loadvar($(fn_savevar(x)))) end
 ```
 
 ```julia
@@ -23,7 +28,7 @@ A = randn(ComplexF64, 4, 3, 2)
 ```
 
 ```julia
-savevar("tmp/A.txt", A)
+@savevar A
 ```
 
 ```julia
@@ -31,7 +36,7 @@ read("tmp/A.txt", String)
 ```
 
 ```julia
-A_load = loadvar("tmp/A.txt")
+A_load = @loadvar A
 ```
 
 ```julia
@@ -43,7 +48,7 @@ B = ["Foo", "Bar", "Baz"]
 ```
 
 ```julia
-savevar("tmp/B.txt", B)
+@savevar B
 ```
 
 ```julia
@@ -51,7 +56,7 @@ read("tmp/B.txt", String)
 ```
 
 ```julia
-B_load = loadvar("tmp/B.txt")
+B_load = @loadvar B
 ```
 
 ```julia
@@ -63,7 +68,7 @@ D = Dict(:A => A, :B => B)
 ```
 
 ```julia
-savevar("tmp/D.txt", D)
+@savevar D
 ```
 
 ```julia
@@ -71,7 +76,7 @@ read("tmp/D.txt", String)
 ```
 
 ```julia
-D_load = loadvar("tmp/D.txt")
+D_load = @loadvar D
 ```
 
 ```julia
@@ -92,7 +97,7 @@ foo = O.Foo(A, B)
 ```
 
 ```julia
-savevar("tmp/foo.txt", foo)
+@savevar foo
 ```
 
 ```julia
@@ -100,7 +105,7 @@ read("tmp/foo.txt", String)
 ```
 
 ```julia
-foo_load = loadvar("tmp/foo.txt")
+foo_load = @loadvar foo
 ```
 
 ```julia
