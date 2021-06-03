@@ -14,6 +14,8 @@ jupyter:
 ---
 
 ```julia
+module My
+
 """
     savevar(fn, x)
 
@@ -29,18 +31,18 @@ loads the file `fn` (the filename string of the file) and `Meta.parse |> eval`.
 loadvar(fn) = read(fn, String) |> Meta.parse |> eval
 
 """
-    dir_savevar
+    dir_savevar[]
 
 is the default directory to which `@savevar` saves the values of variables.
 """
-const dir_savevar = "tmp"
+const dir_savevar = Ref(".")
 
 """
     fn_savevar(x::Symbol)
 
 is the filename string to which `@savevar` saves the value of a variable.
 """
-fn_savevar(x::Symbol) = joinpath(dir_savevar, string(x) * ".txt")
+fn_savevar(x::Symbol) = joinpath(dir_savevar[], string(x) * ".txt")
 
 """
     @savevar(args...)
@@ -72,6 +74,29 @@ macro loadvar(args...)
         :(($(A...),))
     end
 end
+
+end
+```
+
+```julia
+using .My: dir_savevar, @savevar, @loadvar
+dir_savevar[] = "tmp"
+```
+
+```julia
+?dir_savevar
+```
+
+```julia
+?@savevar
+```
+
+```julia
+?@loadvar
+```
+
+```julia
+using Random; Random.seed!(4649373)
 ```
 
 ```julia
