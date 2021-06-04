@@ -27,7 +27,7 @@ y = 2π
 
 ```julia
 macro my_show(args...)
-    A = [:(println($(string(x)), " = ", $(esc(x)))) for x in args]
+    A = [:(println($(string(x)), " = ", repr($(esc(x))))) for x in args]
     quote
         $(A...)
     end
