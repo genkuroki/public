@@ -59,5 +59,30 @@ x = "foo"
 ```
 
 ```julia
+a, b, c = 1, 2.0, "3"
+@show a b c;
+```
+
+```julia
+x = (a = 1, b = 2.0, c = "3")
+```
+
+```julia
+typeof(x)
+```
+
+```julia
+function myshow(x::NamedTuple{names}) where names
+    for name in names
+        println(string(name), " = ", repr(getproperty(x, name)))
+    end
+end
+```
+
+```julia
+myshow(x)
+```
+
+```julia
 
 ```
