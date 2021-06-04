@@ -245,6 +245,32 @@ A = [
 f_rev7(A)
 ```
 
+Juliaの配列のインデックスは任意始まりにできる。
+
+```julia
+using OffsetArrays
+a = OffsetArray([k^3 for k in -3:3], -3:3)
+```
+
+```julia
+@show collect(eachindex(a))
+
+for i in eachindex(a)
+    println("a[", i, "] = ", a[i])
+end
+```
+
+```julia
+@show pairs(a)
+for (i, v) in pairs(a)
+    println("a[", i, "] = ", v)
+end
+```
+
+```julia
+pairs(a)
+```
+
 ```julia
 
 ```
