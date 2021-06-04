@@ -272,5 +272,15 @@ pairs(a)
 ```
 
 ```julia
+A = OffsetArray(reshape(1:24, 4, 3, 2), -1:2, -1:1, 0:1)
+```
+
+```julia
+for k in axes(A, 3), j in axes(A, 2), i in axes(A, 1)
+    println("A[", i, ", ", j, ", ", k, "] = ", A[i, j, k])
+end
+```
+
+```julia
 
 ```
