@@ -65,7 +65,42 @@ end
 
 println(isContinuous(x -> x^2, :at, 0))
 # true: x^2 is continuous at x = 0
+
 println(isContinuous(floor, :at, 1))
-# false: floor func is not continuous at x = 0
+# false: floor func is not continuous at x = 1
+
+println(isContinuous(floor, :at, 1/2))
+# true: floor func is continuous at x = 1/2
+
+# %%
+macro for_any_positive(ε, P)
+    :(forAnySmall($(esc(ε)) -> $(esc(P))))
+end
+
+macro there_exists_some_positive(δ, P)
+    :(existsSmall($(esc(δ)) -> $(esc(P))))
+end
+
+macro for_any(x_in_ran, P)
+    x = x_in_ran.args[2]
+    ran = x_in_ran.args[3]
+    :(forAnyInRange($(esc(ran)), $(esc(x)) -> $(esc(P))))
+end
+
+macro p(x)
+    :(println($(esc(x))))
+end
+
+# %%
+a = 0
+@p @for_any_positive ε @there_exists_some_positive δ @for_any x ∈ (a - δ, a + δ) abs(x^2 - a^2) < ε
+
+# %%
+a = 1
+@p @for_any_positive ε @there_exists_some_positive δ @for_any x ∈ (a - δ, a + δ) abs(floor(x) - floor(a)) < ε
+
+# %%
+a = 0.5
+@p @for_any_positive ε @there_exists_some_positive δ @for_any x ∈ (a - δ, a + δ) abs(floor(x) - floor(a)) < ε
 
 # %%
