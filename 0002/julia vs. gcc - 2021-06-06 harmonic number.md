@@ -15,10 +15,6 @@ jupyter:
 
 ```julia
 versioninfo()
-```
-
-```julia
-versioninfo()
 println()
 
 function f(x, T=Float64)
