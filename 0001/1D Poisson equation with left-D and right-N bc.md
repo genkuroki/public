@@ -30,7 +30,7 @@ using Printf
 with left Dirichlet and right Neumann boundary conditions.
 
 The 1D Poisson equation
-\$u''(x) + f(x) = 0\$, 
+\$u''(x) = f(x)\$, 
 \$u(a) = \\alpha\$,
 \$u'(b) = \\beta\$
 is approximated by \$h^2(A u + b) = v\$,
@@ -64,7 +64,7 @@ Laplacian(8)
 ```julia
 """
 `solve_1d_poisson(param)` solves the discrete version of the 1D Poisson equation
-\$u''(x) + f(x) = 0\$, \$u(a) = \\alpha\$, \$u'(b) = \\beta\$,
+\$u''(x) = f(x)\$, \$u(a) = \\alpha\$, \$u'(b) = \\beta\$,
 where `param = (a, b, α, β, f, N)`
 """
 function solve_1d_poisson(param)
