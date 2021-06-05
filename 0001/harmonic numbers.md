@@ -60,7 +60,7 @@ result3 = [f(n, H_Float64) for n in 2:34]
 A = getproperty.(result1[eachindex(result3)], :n)
 B = getproperty.(result3, :n)
 @show A[1:end-1] == B[1:end-1]
-[(x = result1[k].x, n_result1 = A[k], n_result_2 = B[k]) for k in eachindex(A)]
+[(x = result1[k].x, n_BigFloat = A[k], n_Float64 = B[k]) for k in eachindex(A)]
 ```
 
 ```julia
