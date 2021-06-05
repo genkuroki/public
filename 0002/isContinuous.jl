@@ -104,3 +104,21 @@ a = 0.5
 @p @for_any_positive ε @there_exists_some_positive δ @for_any x ∈ (a - δ, a + δ) abs(floor(x) - floor(a)) < ε
 
 # %%
+a = 0
+@p @for_any_positive ε (
+    @there_exists_some_positive δ (
+        @for_any x ∈ (a - δ, a + δ) abs(x^2 - a^2) < ε))
+
+# %%
+a = 1
+@p @for_any_positive ε (
+    @there_exists_some_positive δ (
+        @for_any x ∈ (a - δ, a + δ) abs(floor(x) - floor(a)) < ε))
+
+# %%
+a = 0.5
+@p @for_any_positive ε (
+    @there_exists_some_positive δ (
+        @for_any x ∈ (a - δ, a + δ) abs(floor(x) - floor(a)) < ε))
+
+# %%
