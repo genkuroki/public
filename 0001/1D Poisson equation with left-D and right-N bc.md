@@ -74,7 +74,7 @@ function solve_1d_poisson(param)
     A = Laplacian(N)
     b = BC(N, h, α, β)
     v = f.(x[2:end])
-    u = [α; A\(h^2*v - b)] # solve h²(A + b)u = v
+    u = [α; A\(h^2*v - b)] # solve h⁻²(A + b)u = v
     (; x, u, param)
 end
 ```
