@@ -17,10 +17,10 @@ jupyter:
 using Polylogarithms
 setprecision(200)
 
-H(n) = harmonic(big(n))
+H_BigFloat(n) = harmonic(big(n))
 
-function f(x)
-    maxint = round(BigInt, exp(big(200)))
+function f(x, H=H_BigFloat)
+    maxint = round(BigInt, exp(big(precision(BigFloat))))
     a, b = one(BigInt), maxint
     @assert H(a) < x
     @assert H(b) ≥ x
@@ -38,7 +38,29 @@ function f(x)
 end
 
 ENV["LINES"] = 256
-[f(n) for n in 2:100]
+result1 = [f(n) for n in 2:100]
+```
+
+```julia
+using SpecialFunctions
+H_BigFloat2(n) = digamma(big(n+1)) + MathConstants.γ
+result2 = [f(n, H_BigFloat2) for n in 2:100]
+```
+
+```julia
+result1 == result2
+```
+
+```julia
+H_Float64(n) = harmonic(Float64(n))
+result3 = [f(n, H_Float64) for n in 2:34]
+```
+
+```julia
+A = getproperty.(result1[eachindex(result3)], :n)
+B = getproperty.(result3, :n)
+@show A[1:end-1] == B[1:end-1]
+[(x = result1[k].x, n_result1 = A[k], n_result_2 = B[k]) for k in eachindex(A)]
 ```
 
 ```julia
