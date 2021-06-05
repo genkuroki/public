@@ -15,7 +15,6 @@ jupyter:
 
 ```julia
 using Random
-using LoopVectorization
 ```
 
 ```julia
