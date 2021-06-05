@@ -42,5 +42,51 @@ ENV["LINES"] = 256
 ```
 
 ```julia
+using SpecialFunctions
+
+harmonic_naive(n) = sum(inv, Base.OneTo(n))
+harmonic_digamma(n) = digamma(n + 1) - digamma(1)
+```
+
+```julia
+harmonic_naive(10)
+```
+
+```julia
+harmonic_digamma(10)
+```
+
+```julia
+[(n, harmonic_digamma(n) - harmonic_naive(n)) for n in 1:20]
+```
+
+```julia
+[(2^n, harmonic_digamma(2^n) - harmonic_naive(2^n)) for n in 1:20]
+```
+
+```julia
+using Base.MathConstants: γ
+using Plots
+
+harmonic_approx(x) = log(x) + γ + 1/(2x)
+
+n = 1:50
+x = range(extrema(n)...; length=1000)
+plot(; legend=:bottomright)
+scatter!(n, harmonic_naive.(n); label="harmonic numbers")
+plot!(x, harmonic_approx.(x); label="log(x) + γ + 1/(2x)")
+```
+
+```julia
+[(n, harmonic_approx(n) - harmonic_naive(n)) for n in 1:20]
+```
+
+```julia
+harmonic_approx2(x) = log(x) + γ + 1/(2x) - 1/(12x^2)
+
+[(n, harmonic_approx2(n) - harmonic_naive(n)) for n in 1:20]
+```
+
+```julia
 
 ```
