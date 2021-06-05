@@ -88,5 +88,51 @@ simpi_threads(10)
 ```
 
 ```julia
+@show Threads.nthreads()
+
+using Random
+
+# https://github.com/genkuroki/MyUtils.jl
+using MyUtils: @my_threads
+
+@time let
+    N = 10^8
+    a = Threads.Atomic{Int}(0)
+    @my_threads begin
+        rng = Random.default_rng()
+        c = 0
+    end for _ in 1:N
+        c += isone(gcd(rand(rng, Int), rand(rng, Int)))
+    end begin
+        Threads.atomic_add!(a, c)
+    end
+    √(6N/a[])
+end
+```
+
+```julia
+@show Threads.nthreads()
+
+using Random
+
+# https://github.com/genkuroki/MyUtils.jl
+using MyUtils: @my_threads
+
+@time begin
+    N = 10^8
+    a = Threads.Atomic{Int}(0)
+    @my_threads begin
+        rng = Random.default_rng()
+        c = 0
+    end for _ in 1:N
+        c += isone(gcd(rand(rng, Int), rand(rng, Int)))
+    end begin
+        Threads.atomic_add!(a, c)
+    end
+    √(6N/a[])
+end
+```
+
+```julia
 
 ```
