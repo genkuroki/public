@@ -13,6 +13,10 @@ jupyter:
     name: julia-1.7
 ---
 
+* https://twitter.com/genkuroki/status/1401330514175291396
+* https://github.com/genkuroki/public/blob/main/0001/harmonic%20numbers.ipynb
+* https://twitter.com/genkuroki/status/1400995381933051904
+
 ```julia
 versioninfo()
 println()
