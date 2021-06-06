@@ -13,6 +13,13 @@ jupyter:
     name: julia-1.7
 ---
 
+__References__
+
+* https://github.com/genkuroki/public/blob/main/0002/julia%20vs.%20gcc%20-%202021-06-06%20harmonic%20number.ipynb
+* https://twitter.com/genkuroki/status/1401330514175291396
+* https://github.com/genkuroki/public/blob/main/0001/harmonic%20numbers.ipynb
+* https://twitter.com/genkuroki/status/1400995381933051904
+
 ```julia
 function add_kbn(s, c, a)
     t = s + a
