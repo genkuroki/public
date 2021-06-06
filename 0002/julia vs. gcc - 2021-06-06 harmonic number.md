@@ -36,7 +36,7 @@ end
 
 ```julia
 using BenchmarkHistograms
-@benchmark f(21)
+@benchmark f(21) seconds=10
 ```
 
 ```julia
@@ -71,11 +71,46 @@ f_gcc(x::Float64) = @ccall libname.f(x::Float64)::Int64
 ```
 
 ```julia
-@benchmark 6000125006293f_gcc(21.0)
+@benchmark f_gcc(21.0) seconds=10
 ```
 
 ```julia
 0.67/740461601*6000125006293/60^2
+```
+
+```julia
+# Kahan-Babuska-Neumaier (KBN) algorithm
+# See https://github.com/JuliaMath/KahanSummation.jl
+
+versioninfo()
+println()
+
+function f_kbn(x, T=Float64)
+    n = 1
+    s = one(T)
+    c = zero(T)
+    while s < x
+        n += 1
+        a = inv(T(n))
+        t = s + a
+        c += abs(s) ≥ abs(a) ? ((s-t) + a) : ((a-t) + s)
+        s = t
+    end
+    n, s + c
+end
+
+@time f_kbn(21)
+```
+
+```julia
+using SpecialFunctions
+H(n) = digamma(big(n+1)) + MathConstants.γ
+setprecision(128) do; H(740461601) end
+```
+
+```julia
+using BenchmarkHistograms
+@benchmark f_kbn(21) seconds=20
 ```
 
 ```julia
