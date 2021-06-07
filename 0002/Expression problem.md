@@ -118,7 +118,7 @@ for (S, op) in binop_list
     end
 end
 
-Base.show(io::IO, ::MIME"text/plain", x::Expression) = print(io, O.stringify(x))
+Base.show(io::IO, ::MIME"text/plain", x::Expression) = print(io, stringify(x))
 
 end
 ```
