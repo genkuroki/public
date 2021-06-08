@@ -110,10 +110,14 @@ module O
 
 abstract type Expression end
 
+########## 定数
+
 struct Constant{C} <: Expression value::C end
 value(c::Constant) = getfield(c, :value)
 stringify(c::Constant) = string(value(c))
 evaluate(c::Constant) = value(c)
+
+########## 二項演算
 
 abstract type BinOp <: Expression end
 lhs(bo::BinOp) = getfield(bo, :lhs)
@@ -128,7 +132,7 @@ for (S, op) in binop_list
     end
 end
 
-# デフォルトでの表示の仕方
+########## デフォルトでの表示の仕方
 Base.show(io::IO, expr::Expression) = print(io, stringify(expr))
 
 end
@@ -168,11 +172,12 @@ O.evaluate(expr1)
   * 変数の値のリストを文字列に変換するメソッド `O.stringify`
   * 変数の値のリストに従って式を評価する函数 `evaluate`
   * 変数の値のリストに従って変数に式を代入した式を作る函数 `substitute`
+* 式をシリアル化する函数 `serialize`
 
 ```julia
 module P
 
-### 函数呼び出し機能を追加
+########## 函数呼び出し機能を追加
 
 using ..O: O, Expression
 
@@ -182,7 +187,7 @@ arg(fc::FunctionCall) = getfield(fc, :x)
 O.stringify(fc::FunctionCall) = string(fun(fc)) * "(" * O.stringify(arg(fc)) * ")"
 O.evaluate(fc::FunctionCall) = fun(fc)(O.evaluate(arg(fc)))
 
-### 変数を扱う機能を追加
+########## 変数を扱う機能を追加
 
 using ..O: O, Expression, Constant, BinOp, lhs, rhs
 
@@ -217,7 +222,19 @@ for (S, op) in O.binop_list
         O.$S(substitute(lhs(bo), list), substitute(rhs(bo), list))
 end
 
-# デフォルトでの表示の仕方
+######### シリアル化
+
+using ..O: O, Expression, Constant, BinOp, lhs, rhs
+
+serialize(c::Constant) = "O.Constant(" * repr(O.value(c)) *")"
+for (S, op) in O.binop_list
+    s = "O." * string(S)
+    @eval serialize(bo::O.$S) = $s * "(" * serialize(lhs(bo)) * ", " * serialize(rhs(bo)) *")"
+end
+serialize(fc::FunctionCall) = "P.FunctionCall(" * repr(fun(fc)) * ", " * serialize(arg(fc)) * ")"
+serialize(var::Variable) = "P.Variable(" * repr(name(var)) * ")"
+
+########## デフォルトでの表示の仕方
 Base.show(io::IO, list::ValueList) = print(io, O.stringify(list))
 
 end
@@ -268,6 +285,10 @@ P.evaluate(expr2, P.ValueList(u=2, v=3, w=4, x=5, y=6))
 expr3 = P.substitute(expr2, P.ValueList(u=2, v=3, w=4))
 ```
 
+```julia tags=[]
+P.evaluate(expr3, P.ValueList(x = 5, y = 6))
+```
+
 ```julia
 expr4 = P.substitute(expr3, P.ValueList(x = 5, y = 6))
 ```
@@ -277,7 +298,27 @@ O.evaluate(expr4)
 ```
 
 ```julia
-P.evaluate(expr3, P.ValueList(x = 5, y = 6))
+str1 = P.serialize(sinpi_x_div_y)
+```
+
+```julia
+sinpi_x_div_y_eval = Meta.parse(str1) |> eval
+```
+
+```julia
+sinpi_x_div_y_eval == sinpi_x_div_y
+```
+
+```julia
+str2 = P.serialize(expr1)
+```
+
+```julia
+expr1_eval = Meta.parse(str2) |> eval
+```
+
+```julia
+expr1_eval == expr1
 ```
 
 <!-- #region -->
@@ -378,8 +419,12 @@ module Q
 
 abstract type Expression end
 
+########## 定数
+
 struct Constant{T} <: Expression value::T end
 value(x::Constant) = getfield(x, :value)
+
+########## 二項演算
 
 abstract type BinOp <: Expression end
 lhs(bo::BinOp) = getfield(bo, :lhs)
@@ -390,12 +435,16 @@ for (S, op) in binop_list
     @eval struct $S{L<:Expression, R<:Expression} <: BinOp lhs::L; rhs::R end
 end
 
+########## 訪問者
+
 abstract type ExprVisitor end
 memory(visitor::ExprVisitor) = getfield(visitor, :memory)
 function (visitor::ExprVisitor)(expr::Expression) # 多重ディスパッチを利用
     visit(visitor, expr)
     memory(visitor)[expr]
 end
+
+########## 評価者
 
 struct Evaluator <: ExprVisitor memory::Dict{Expression, Any} end
 Evaluator() = Evaluator(Dict{Expression, Any}())
@@ -409,6 +458,8 @@ for (S, op) in binop_list
         memory(visitor)[bo] = $op(memory(visitor)[lhs(bo)], memory(visitor)[rhs(bo)])
     end
 end
+
+########## 文字列化
 
 struct Stringifier <: ExprVisitor memory::Dict{Expression, String} end
 Stringifier() = Stringifier(Dict{Expression, String}())
@@ -424,7 +475,7 @@ for (S, op) in binop_list
     end
 end
 
-# デフォルトでの表示の仕方
+########## デフォルトでの表示の仕方
 Base.show(io::IO, expr::Expression) = print(io, Stringifier()(expr))
 
 end
@@ -549,6 +600,7 @@ O.evaluate(fx::FunctionCall) = fun(fx)(O.evaluate(arg(fx)))
 * 変数の値のリストの下で、式訪問者が式を訪れて記憶を得るメソッド `Q.visit`
 * 変数の値のリストの下で、式訪問者が式を訪れて仕事をした結果を得る函数 `(::ExprVisitor)(::Expression, ::ValueList)`
 * 代入する式訪問者の型 `Substitution`
+* シリアル化を行うものの型 `Serilizer`
 
 ```julia tags=[]
 module R
@@ -618,17 +670,12 @@ for (S, op) in Q.binop_list
     end
 end
 
+######### 代入
+
 struct Substitution <: ExprVisitor memory::Dict{Expression, Expression} end
 Substitution() = Substitution(Dict{Expression, Expression}())
 
 # 多重ディスパッチを利用
-function Q.visit(visitor::Substitution, var::Variable, list::ValueList)
-    Q.memory(visitor)[var] = name(var) ∈ names(list) ? Constant(value(list, name(var))) : var
-end
-function Q.visit(visitor::Substitution, fc::FunctionCall, list::ValueList)
-    Q.visit(visitor, arg(fc), list)
-    Q.memory(visitor)[fc] = FunctionCall(fun(fc), Q.memory(visitor)[arg(fc)])
-end
 function Q.visit(visitor::Substitution, c::Constant, list::ValueList)
     Q.memory(visitor)[c] = c
 end
@@ -639,8 +686,40 @@ for (S, op) in Q.binop_list
         Q.memory(visitor)[bo] = Q.$S(Q.memory(visitor)[lhs(bo)], Q.memory(visitor)[rhs(bo)])
     end
 end
+function Q.visit(visitor::Substitution, fc::FunctionCall, list::ValueList)
+    Q.visit(visitor, arg(fc), list)
+    Q.memory(visitor)[fc] = FunctionCall(fun(fc), Q.memory(visitor)[arg(fc)])
+end
+function Q.visit(visitor::Substitution, var::Variable, list::ValueList)
+    Q.memory(visitor)[var] = name(var) ∈ names(list) ? Constant(value(list, name(var))) : var
+end
 
-# デフォルトでの表示の仕方
+########## シリアル化
+
+struct Serializer <: ExprVisitor memory::Dict{Expression, String} end
+Serializer() = Serializer(Dict{Expression, String}())
+
+# 多重ディスパッチを利用
+function Q.visit(visitor::Serializer, c::Constant)
+    Q.memory(visitor)[c] = "Q.Constant(" * repr(Q.value(c)) *")"
+end
+for (S, op) in Q.binop_list
+    s = "Q." * string(S)
+    @eval function Q.visit(visitor::Serializer, bo::Q.$S)
+        Q.visit(visitor, lhs(bo))
+        Q.visit(visitor, rhs(bo))
+        Q.memory(visitor)[bo] = $s * "(" * Q.memory(visitor)[lhs(bo)] * ", " * Q.memory(visitor)[rhs(bo)] *")"
+    end
+end
+function Q.visit(visitor::Serializer, fc::FunctionCall)
+    Q.visit(visitor, arg(fc))
+    Q.memory(visitor)[fc] = "R.FunctionCall(" * repr(fun(fc)) * ", " * Q.memory(visitor)[arg(fc)] * ")"
+end
+function Q.visit(visitor::Serializer, var::Variable)
+    Q.memory(visitor)[var] = "R.Variable(" * repr(name(var)) * ")"
+end
+
+########## デフォルトでの表示の仕方
 Base.show(io::IO, list::ValueList) = print(io, stringify(list))
 
 end
@@ -723,6 +802,40 @@ Q.Evaluator()(expr4)
 
 ```julia
 Q.Evaluator()(expr3, R.ValueList(x = 5, y = 6))
+```
+
+```julia
+serializer = R.Serializer()
+str1 = serializer(sinpi_x_div_y)
+```
+
+```julia
+Q.memory(serializer)
+```
+
+```julia
+sinpi_x_div_y_eval = Meta.parse(str1) |> eval
+```
+
+```julia
+sinpi_x_div_y_eval == sinpi_x_div_y
+```
+
+```julia
+serializer = R.Serializer()
+str2 = serializer(expr1)
+```
+
+```julia
+Q.memory(serializer)
+```
+
+```julia
+expr1_eval = Meta.parse(str2) |> eval
+```
+
+```julia
+expr1_eval == expr1
 ```
 
 ```julia
