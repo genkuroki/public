@@ -37,7 +37,7 @@ public:
 ```C++
 class Constant : public Expr {
 public:
-  Constant(double value) : value_(value) {}
+  Constant(double value) : val(value) {}
 
   std::string ToString() const {
     std::ostringstream ss;
@@ -95,11 +95,15 @@ evaluate (BinaryPlus lhs rhs) = evaluate lhs + evaluate rhs
 
 ## 値の四則演算を行えるモジュールO
 
-* 式の型
-  * 定数の型
-  * 二項演算達の型
-* これらを文字列に変換する函数
-* そららの値を評価する函数
+以下をモジュールOで定義する。
+
+* 式の型 `Expression`
+  * 定数の型 `Constant`
+    * 定数の値を得る函数 `value`
+  * 二項演算達の型 `Plus`, `Minus`, `Mul`, `Dic`
+    * 二項演算の左辺と右辺を得る函数 `lhs`, `rhs`
+* これらを文字列に変換する函数 `stringify`
+* そららの値を評価する函数 `evaluate`
 
 ```julia
 module O
@@ -115,7 +119,7 @@ abstract type BinOp <: Expression end
 lhs(x::BinOp) = getfield(x, :lhs)
 rhs(x::BinOp) = getfield(x, :rhs)
 
-const binop_list = ((:Plus, :+), (:Minus, :-), (:Mult, :*), (:Div, :/))
+const binop_list = ((:Plus, :+), (:Minus, :-), (:Mul, :*), (:Div, :/))
 for (S, op) in binop_list
     @eval begin
         struct $S{L<:Expression, R<:Expression} <: BinOp lhs::L; rhs::R end
@@ -140,7 +144,7 @@ a, b, c, d, e
 ```
 
 ```julia
-expr1 = O.Div(O.Plus(O.Minus(c, a), O.Mult(b, e)), d)
+expr1 = O.Div(O.Plus(O.Minus(c, a), O.Mul(b, e)), d)
 ```
 
 ```julia
@@ -151,27 +155,37 @@ O.evaluate(expr1)
 
 モジュールPでは以下をO.Expression型に追加する。
 
-* 函数呼び出しの型
-* 函数呼び出しを文字列に変換するメソッド
-* 函数を呼び出すメソッド
-* 変数の型
-* 変数を文字列に変換するメソッド
-* 変数の値のリストの型
-* 変数の値のリストを文字列に変換するメソッド
-* 変数の値のリストに従って式を評価する函数
-* 変数の値のリストに従って変数に式を代入した式を作る函数
+* 函数呼び出しの型 `FunctionCall`
+  * 函数呼び出しの函数部分を取り出す函数 `fun`
+  * 函数呼び出しの引数部分を取り出す函数 `arg`
+  * 函数呼び出しを文字列に変換するメソッド `O.stringify`
+  * 函数呼び出した結果を得るメソッド `O.evaluate`
+* 変数の型 `Variable`
+  * 変数の名前を得る函数 `name`
+  * 変数を文字列に変換するメソッド `O.stringify`
+* 変数の値のリストの型 `ValueList`
+  * 変数の値のリストの内部実装を取り出す函数 `parent`
+  * 変数の値のリストを文字列に変換するメソッド `O.stringify`
+  * 変数の値のリストに従って式を評価する函数 `evaluate`
+  * 変数の値のリストに従って変数に式を代入した式を作る函数 `substitute`
 
 ```julia
 module P
 
-using InteractiveUtils: subtypes
-using ..O: O, Expression, Constant, BinOp, lhs, rhs
+### 函数呼び出し機能を追加
+
+using ..O: O, Expression
 
 struct FunctionCall{F, X<:Expression} <: Expression f::F; x::X end
 fun(fx::FunctionCall) = getfield(fx, :f)
 arg(fx::FunctionCall) = getfield(fx, :x)
 O.stringify(fx::FunctionCall) = string(fun(fx)) * "(" * O.stringify(arg(fx)) * ")"
 O.evaluate(fx::FunctionCall) = fun(fx)(O.evaluate(arg(fx)))
+
+### 変数を扱う機能を追加
+
+using ..O: O, Expression, Constant, BinOp, lhs, rhs
+using InteractiveUtils: subtypes
 
 struct Variable <:Expression name::Symbol end
 name(x::Variable) = getfield(x, :name)
@@ -235,7 +249,7 @@ P.evaluate(expr1, P.ValueList())
 ```
 
 ```julia
-expr2 = O.Div(O.Plus(O.Minus(w, u), O.Mult(v, y)), x)
+expr2 = O.Div(O.Plus(O.Minus(w, u), O.Mul(v, y)), x)
 ```
 
 ```julia
@@ -256,6 +270,299 @@ O.evaluate(expr4)
 
 ```julia
 P.evaluate(expr3, P.ValueList(x = 5, y = 6))
+```
+
+<!-- #region -->
+## Visitor patternでモジュールOを全面的に書き直し
+
+* https://eli.thegreenplace.net/2016/the-expression-problem-and-its-solutions/
+
+__C++__
+
+```C++
+class ExprVisitor {
+public:
+  virtual void VisitConstant(const Constant& c) = 0;
+  virtual void VisitBinaryPlus(const BinaryPlus& bp) = 0;
+};
+```
+
+```C++
+class Expr {
+public:
+  virtual void Accept(ExprVisitor* visitor) const = 0;
+};
+```
+
+```C++
+class Constant : public Expr {
+public:
+  Constant(double value) : val(value) {}
+
+  void Accept(ExprVisitor* visitor) const {
+    visitor->VisitConstant(*this);
+  }
+
+  double GetValue() const {
+    return value_;
+  }
+
+private:
+  double value_;
+};
+
+// ... similarly, BinaryPlus would have
+//
+//    void Accept(ExprVisitor* visitor) const {
+//      visitor->VisitBinaryPlus(*this);
+//    }
+//
+// ... etc.
+```
+
+```C++
+class Evaluator : public ExprVisitor {
+public:
+  double GetValueForExpr(const Expr& e) {
+    return value_map_[&e];
+  }
+
+  void VisitConstant(const Constant& c) {
+    value_map_[&c] = c.GetValue();
+  }
+
+  void VisitBinaryPlus(const BinaryPlus& bp) {
+    bp.GetLhs().Accept(this);
+    bp.GetRhs().Accept(this);
+    value_map_[&bp] = value_map_[&(bp.GetLhs())] + value_map_[&(bp.GetRhs())];
+  }
+
+private:
+  std::map<const Expr*, double> value_map_;
+};
+```
+<!-- #endregion -->
+
+Visitor patternに従って、モジュールOを完全に作り直してしまう。 新モジュール名をQとする。
+
+モジュールOと比較すると圧倒的に複雑で面倒になってしまっている。
+
+* 式の型 `Expression`
+  * 定数の型 `Constant`
+    * 定数の値を得る函数 `value`
+  * 二項演算の型 `Plus`, `Minus`, `Mul`, `Div`
+    * 二項演算の左辺と右辺を得る函数 `lhs`, `rhs`
+* 式訪問者の型 `ExprVisitor`
+  * 式を文字列化する者の型 `Stringifier`
+  * 式の評価者の型 `Evaluator`
+  * 式訪問者の記憶を取り出す函数 `memory`
+  * 式訪問者が式を訪れて仕事をした結果を得る函数 `(::ExprVisitor)(::Expression)`
+  * 式訪問者が式を訪れて記憶(思い出)を得る函数 `visit`
+
+```julia
+module Q
+
+abstract type Expression end
+
+struct Constant{T} <: Expression value::T end
+value(x::Constant) = getfield(x, :value)
+
+abstract type BinOp <: Expression end
+lhs(x::BinOp) = getfield(x, :lhs)
+rhs(x::BinOp) = getfield(x, :rhs)
+
+const binop_list = ((:Plus, :+), (:Minus, :-), (:Mul, :*), (:Div, :/))
+for (S, op) in binop_list
+    @eval struct $S{L<:Expression, R<:Expression} <: BinOp lhs::L; rhs::R end
+end
+
+abstract type ExprVisitor end
+memory(x::ExprVisitor) = getfield(x, :memory)
+function (x::ExprVisitor)(e::Expression) # 多重ディスパッチを利用
+    visit(x, e)
+    memory(x)[e]
+end
+
+struct Evaluator <: ExprVisitor memory::Dict{Expression, Any} end
+Evaluator() = Evaluator(Dict{Expression, Any}())
+
+# 多重ディスパッチを利用
+visit(x::Evaluator, c::Constant) = memory(x)[c] = value(c)
+for (S, op) in binop_list
+    @eval function visit(x::Evaluator, bp::$S)
+        visit(x, lhs(bp))
+        visit(x, rhs(bp))
+        memory(x)[bp] = $op(memory(x)[lhs(bp)], memory(x)[rhs(bp)])
+    end
+end
+
+struct Stringifier <: ExprVisitor memory::Dict{Expression, String} end
+Stringifier() = Stringifier(Dict{Expression, String}())
+
+# 多重ディスパッチを利用
+visit(x::Stringifier, c::Constant) = memory(x)[c] = string(value(c))
+for (S, op) in binop_list
+    @eval function visit(x::Stringifier, bp::$S)
+        visit(x, lhs(bp))
+        visit(x, rhs(bp))
+        memory(x)[bp] = "(" * memory(x)[lhs(bp)] * " $($op) " * memory(x)[rhs(bp)] * ")"
+    end
+end
+
+# デフォルトでの表示の仕方
+Base.show(io::IO, x::Expression) = print(io, Stringifier()(x))
+
+end
+```
+
+```julia
+expr = Q.Plus(Q.Constant(1), Q.Constant(2))
+```
+
+```julia
+stringifier = Q.Stringifier()
+Q.visit(stringifier, expr)
+Q.memory(stringifier)
+```
+
+```julia
+Q.Stringifier()(expr)
+```
+
+```julia
+evaluator = Q.Evaluator()
+Q.visit(evaluator, expr)
+Q.memory(evaluator)
+```
+
+```julia
+Q.Evaluator()(expr)
+```
+
+<!-- #region -->
+## Visitor patternで機能を追加
+
+* https://eli.thegreenplace.net/2016/the-expression-problem-and-its-solutions/
+
+__C++__
+
+```C++
+class Evaluator : virtual public ExprVisitor {
+  // .. the rest is the same
+};
+```
+
+```C++
+// This is the new ("extended") expression we're adding.
+class FunctionCall : public Expr {
+public:
+  FunctionCall(const std::string& name, const Expr& argument)
+      : name_(name), argument_(argument) {}
+
+  void Accept(ExprVisitor* visitor) const {
+    ExprVisitorWithFunctionCall* v =
+        dynamic_cast<ExprVisitorWithFunctionCall*>(visitor);
+    if (v == nullptr) {
+      std::cerr << "Fatal: visitor is not ExprVisitorWithFunctionCall\n";
+      exit(1);
+    }
+    v->VisitFunctionCall(*this);
+  }
+
+private:
+  std::string name_;
+  const Expr& argument_;
+};
+```
+
+```C++
+class ExprVisitorWithFunctionCall : virtual public ExprVisitor {
+public:
+  virtual void VisitFunctionCall(const FunctionCall& fc) = 0;
+};
+```
+
+```C++
+class EvaluatorWithFunctionCall : public ExprVisitorWithFunctionCall,
+                                  public Evaluator {
+public:
+  void VisitFunctionCall(const FunctionCall& fc) {
+    std::cout << "Visiting FunctionCall!!\n";
+  }
+};
+```
+<!-- #endregion -->
+
+Visitor patternでモジュールOに函数呼び出しの機能を追加してみる。 
+
+多重ディスパッチのおかげで、上のＣ＋＋版と比較すると圧倒的にシンプルになっている。
+
+しかし、モジュールPにおける次のコードと比較するとロジックは複雑で込み入ったものになってしまう。
+
+```Julia
+struct FunctionCall{F, X<:Expression} <: Expression f::F; x::X end
+fun(fx::FunctionCall) = getfield(fx, :f)
+arg(fx::FunctionCall) = getfield(fx, :x)
+O.stringify(fx::FunctionCall) = string(fun(fx)) * "(" * O.stringify(arg(fx)) * ")"
+O.evaluate(fx::FunctionCall) = fun(fx)(O.evaluate(arg(fx)))
+```
+
+以下を追加する。
+
+* 函数呼び出しの型 `FunctionCall`
+  * 函数呼び出しの函数部分を取り出す函数 `fun`
+  * 函数呼び出しの引数部分を取り出す函数 `arg`
+* 式を文字列に変換する者が函数呼び出しを訪れて記憶を得るメソッド `Q.visit`
+* 式評価者が函数呼び出しを訪れて記憶を得るメソッド `Q.visit`
+
+```julia tags=[]
+module R
+
+### 函数呼び出し機能を追加
+
+using ..Q: Q, Expression
+
+struct FunctionCall{F, X<:Expression} <: Expression f::F; x::X end
+fun(fx::FunctionCall) = getfield(fx, :f)
+arg(fx::FunctionCall) = getfield(fx, :x)
+
+# 多重ディスパッチを利用
+function Q.visit(x::Q.Stringifier, fx::FunctionCall)
+    Q.visit(x, arg(fx))
+    Q.memory(x)[fx] = string(fun(fx)) * "(" * Q.memory(x)[arg(fx)] * ")"
+end
+
+# 多重ディスパッチを利用
+function Q.visit(x::Q.Evaluator, fx::FunctionCall)
+    Q.visit(x, arg(fx))
+    Q.memory(x)[fx] = fun(fx)(Q.memory(x)[arg(fx)])
+end
+
+end
+```
+
+```julia
+fx = R.FunctionCall(sinpi, Q.Div(Q.Constant(1), Q.Constant(6)))
+```
+
+```julia
+stringifier = Q.Stringifier()
+Q.visit(stringifier, fx)
+Q.memory(stringifier)
+```
+
+```julia tags=[]
+Q.Stringifier()(fx)
+```
+
+```julia
+evaluator = Q.Evaluator()
+Q.visit(evaluator, fx)
+Q.memory(evaluator)
+```
+
+```julia tags=[]
+Q.Evaluator()(fx)
 ```
 
 ```julia
