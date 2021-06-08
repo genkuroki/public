@@ -249,6 +249,10 @@ P.substitute(sinpi_x_div_y, P.ValueList(x = 1, y = 6))
 ```
 
 ```julia
+expr1
+```
+
+```julia
 P.evaluate(expr1, P.ValueList())
 ```
 
@@ -427,27 +431,36 @@ end
 ```
 
 ```julia
-expr = Q.Plus(Q.Constant(1), Q.Constant(2))
+a = Q.Constant(2)
+b = Q.Constant(3)
+c = Q.Constant(4)
+d = Q.Constant(5)
+e = Q.Constant(6)
+a, b, c, d, e
+```
+
+```julia
+expr1 = Q.Div(Q.Plus(Q.Minus(c, a), Q.Mul(b, e)), d)
 ```
 
 ```julia
 stringifier = Q.Stringifier()
-Q.visit(stringifier, expr)
+Q.visit(stringifier, expr1)
 Q.memory(stringifier)
 ```
 
 ```julia
-Q.Stringifier()(expr)
+Q.Stringifier()(expr1)
 ```
 
 ```julia
 evaluator = Q.Evaluator()
-Q.visit(evaluator, expr)
+Q.visit(evaluator, expr1)
 Q.memory(evaluator)
 ```
 
 ```julia
-Q.Evaluator()(expr)
+Q.Evaluator()(expr1)
 ```
 
 <!-- #region -->
@@ -634,55 +647,82 @@ end
 ```
 
 ```julia
-fc = R.FunctionCall(sinpi, Q.Div(Q.Constant(1), Q.Constant(6)))
+R.ValueList(u=2, v=3, w=4, x=5, y=6)
+```
+
+```julia
+u = R.Variable(:u)
+v = R.Variable(:v)
+w = R.Variable(:w)
+x = R.Variable(:x)
+y = R.Variable(:y)
+u, v, w, x, y
+```
+
+```julia
+sinpi_x_div_y = R.FunctionCall(sinpi, Q.Div(x, y))
 ```
 
 ```julia
 stringifier = Q.Stringifier()
-Q.visit(stringifier, fc)
+Q.visit(stringifier, sinpi_x_div_y)
 Q.memory(stringifier)
 ```
 
-```julia tags=[]
-Q.Stringifier()(fc)
+```julia
+Q.Stringifier()(sinpi_x_div_y)
 ```
 
 ```julia
 evaluator = Q.Evaluator()
-Q.visit(evaluator, fc)
+Q.visit(evaluator, sinpi_x_div_y, R.ValueList(x = 1, y = 6))
 Q.memory(evaluator)
 ```
 
-```julia tags=[]
-Q.Evaluator()(fc)
-```
-
 ```julia
-fxy = R.FunctionCall(sinpi, Q.Div(R.Variable(:x), R.Variable(:y)))
+Q.Evaluator()(sinpi_x_div_y, R.ValueList(x = 1, y = 6))
 ```
 
 ```julia
 substitution = R.Substitution()
-Q.visit(substitution, fxy, R.ValueList(x = 1))
+Q.visit(substitution, sinpi_x_div_y, R.ValueList(x = 1))
 Q.memory(substitution)
 ```
 
 ```julia
-R.Substitution()(fxy, R.ValueList(x = 1))
+R.Substitution()(sinpi_x_div_y, R.ValueList(x = 1))
 ```
 
 ```julia
-substitution = R.Substitution()
-Q.visit(substitution, fxy, R.ValueList(x = 1, y = 6))
-Q.memory(substitution)
+expr1
 ```
 
 ```julia
-R.Substitution()(fxy, R.ValueList(x = 1, y = 6))
+Q.Evaluator()(expr1, R.ValueList())
 ```
 
 ```julia
-Q.Evaluator()(fxy, R.ValueList(x = 1, y = 6))
+expr2 = Q.Div(Q.Plus(Q.Minus(w, u), Q.Mul(v, y)), x)
+```
+
+```julia
+Q.Evaluator()(expr2, R.ValueList(u=2, v=3, w=4, x=5, y=6))
+```
+
+```julia
+expr3 = R.Substitution()(expr2, R.ValueList(u=2, v=3, w=4))
+```
+
+```julia
+expr4 = R.Substitution()(expr3, R.ValueList(x = 5, y = 6))
+```
+
+```julia
+Q.Evaluator()(expr4)
+```
+
+```julia
+Q.Evaluator()(expr3, R.ValueList(x = 5, y = 6))
 ```
 
 ```julia
