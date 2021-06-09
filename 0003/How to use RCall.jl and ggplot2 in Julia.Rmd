@@ -1,0 +1,326 @@
+---
+jupyter:
+  jupytext:
+    formats: ipynb,Rmd
+    text_representation:
+      extension: .Rmd
+      format_name: rmarkdown
+      format_version: '1.2'
+      jupytext_version: 1.11.2
+  kernelspec:
+    display_name: Julia 1.7.0-DEV
+    language: julia
+    name: julia-1.7
+---
+
+# How to use RCall.jl and ggplot2 in Julia
+
+Gen Kuroki
+
+2020-08-23, 2021-06-09
+
+
+References
+
+* https://gist.github.com/genkuroki/04c9af425ce92073c0236fa7ea835c4d
+* https://gist.github.com/genkuroki/e1def6d087fea3753b8dcd2cc2896d44
+* http://juliainterop.github.io/RCall.jl/dev/internal/#RCall.ijulia_setdevice-Tuple{MIME}
+* https://avt.im/blog/2018/03/23/R-packages-ggplot-in-julia
+
+<!-- #region toc=true -->
+<h1>Table of Contents<span class="tocSkip"></span></h1>
+<div class="toc"><ul class="toc-item"><li><span><a href="#Load-Rcall.jl" data-toc-modified-id="Load-Rcall.jl-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Load Rcall.jl</a></span><ul class="toc-item"><li><span><a href="#Impotant-to-do-Sys.setenv(LANG-=-&quot;en&quot;)" data-toc-modified-id="Impotant-to-do-Sys.setenv(LANG-=-&quot;en&quot;)-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>Impotant to do Sys.setenv(LANG = "en")</a></span></li><li><span><a href="#Utility-functions" data-toc-modified-id="Utility-functions-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Utility functions</a></span></li><li><span><a href="#Avoid-svg-display-bug" data-toc-modified-id="Avoid-svg-display-bug-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>Avoid svg display bug</a></span></li></ul></li><li><span><a href="#Simple-ggplot2-example" data-toc-modified-id="Simple-ggplot2-example-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Simple ggplot2 example</a></span></li><li><span><a href="#How-to-use-R's-fisher.test-and-exact2x2::fisher.exact" data-toc-modified-id="How-to-use-R's-fisher.test-and-exact2x2::fisher.exact-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>How to use R's fisher.test and exact2x2::fisher.exact</a></span><ul class="toc-item"><li><span><a href="#fisher.test" data-toc-modified-id="fisher.test-3.1"><span class="toc-item-num">3.1&nbsp;&nbsp;</span>fisher.test</a></span></li><li><span><a href="#exact2x2::fisher.exact" data-toc-modified-id="exact2x2::fisher.exact-3.2"><span class="toc-item-num">3.2&nbsp;&nbsp;</span>exact2x2::fisher.exact</a></span></li></ul></li><li><span><a href="#Simple-ggplot2-examples" data-toc-modified-id="Simple-ggplot2-examples-4"><span class="toc-item-num">4&nbsp;&nbsp;</span>Simple ggplot2 examples</a></span></li></ul></div>
+<!-- #endregion -->
+
+## Load Rcall.jl
+
+
+### Impotant to do Sys.setenv(LANG = "en")
+
+```{julia}
+using DataFrames
+
+using RCall
+@rimport base as R
+#R.Sys_setenv(LANG = "en") # 2020-08-23 これを実行しておかないとハングすることがある.
+
+macro sym_str(x) :(Symbol($(esc(x)))) end
+@show sym"conf.int";
+```
+
+### Utility functions
+
+```{julia}
+rcalljl_options(; kwargs...) = rcopy(RCall.rcall_p(:options, rcalljl_options=Dict(kwargs)))
+
+function rplotsize(w, h)
+    if RCall.ijulia_mime == MIME("image/svg+xml")
+        rcalljl_options(; width=w/100, height=h/100)
+    else
+        rcalljl_options(; width=w, height=h)
+    end
+end
+
+function rplotpng(; kwargs...)
+    RCall.ijulia_setdevice(MIME("image/png"); kwargs...)
+    RCall.ijulia_mime, rcalljl_options()
+end
+
+function rplotsvg(; kwargs...)
+    RCall.ijulia_setdevice(MIME("image/svg+xml"); kwargs...)
+    RCall.ijulia_mime, rcalljl_options()
+end
+```
+
+### Avoid svg display bug
+
+
+https://github.com/JuliaInterop/RCall.jl/blob/master/src/ijulia.jl#L37-L48
+
+```{julia}
+# original
+
+# function RCall.ijulia_displayfile(m::MIME"image/svg+xml", f)
+#     # R svg images use named defs, which cause problem when used inline, see
+#     # https://github.com/jupyter/notebook/issues/333
+#     # we get around this by renaming the elements.
+#     open(f) do f
+#         r = RCall.randstring()
+#         d = read(f, String)
+#         d = replace(d, "id=\"glyph" => "id=\"glyph"*r)
+#         d = replace(d, "href=\"#glyph" => "href=\"#glyph"*r)
+#         display(m,d)
+#     end
+# end
+```
+
+```{julia}
+# using Base64
+
+# function RCall.ijulia_displayfile(m::MIME"image/svg+xml", f)
+#     open(f) do io
+#         svg = read(io, String)
+#         base64 = base64encode(svg)
+#         html = """<img src="data:$m;base64,$base64" />"""
+#         display(MIME("text/html"), html)
+#     end
+# end
+```
+
+## Simple ggplot2 example
+
+```{julia}
+@rlibrary ggplot2
+rplotsvg()
+```
+
+```{julia}
+rplotsize(640, 400)
+t = range(-10, 10, length=1000)
+data = DataFrame(t = t, x = cos.(t), y = sin.(t))
+ggplot(data=data, aes(x=:t, y=:x)) + 
+geom_line(color="red") +
+geom_line(aes(y=:y), color="blue")
+```
+
+```{julia}
+# プロットの表示サイズの変更のテスト
+
+@show rplotsize(400, 250)
+sleep(0.1)
+
+P = ggplot(data=data, aes(x=:t, y=:x)) + 
+geom_line(color="red") +
+geom_line(aes(y=:y), color="blue")
+display(P)
+```
+
+## How to use R's fisher.test and exact2x2::fisher.exact
+
+
+### fisher.test
+
+```{julia}
+@rlibrary stats # R の fisher.test などが fisher_test という名前で使えるようになる
+```
+
+```{julia}
+A = [
+    10 10
+     7 27
+]
+
+f = fisher_test(A) # P値が5%未満なのに, 95%信頼区間が1を含む
+```
+
+```{julia}
+f = rcopy(f) # RObject の h を Julia の object に変換
+```
+
+```{julia}
+@show f[:p_value]
+@show f[:conf_int];
+```
+
+### exact2x2::fisher.exact
+
+```{julia}
+@rlibrary exact2x2
+rcall(:library, :exact2x2) # これがないと fisher_exact の利用で exact2x2 が見付からないと怒られる
+```
+
+```{julia}
+g = fisher_exact(A) # P値が5%未満なので, 95%信頼区間が1を含まない(正常な結果)
+```
+
+```{julia}
+g = rcopy(g)　# RObject の g を Julia の object に変換
+```
+
+```{julia}
+@show g[:p_value]
+@show g[:conf_int];
+```
+
+```{julia}
+# 上と同様のことを別の方法で実現
+
+rcall(:library, :exact2x2)
+@rput A
+R"""h = fisher.exact(A)"""
+@rget h
+```
+
+```{julia}
+@show h[:p_value]
+@show h[:conf_int];
+```
+
+## Simple ggplot2 examples
+
+* https://rstudio-pubs-static.s3.amazonaws.com/12581_042080eb6d9a498da1f7dc99238e2efc.html
+
+```{julia}
+R"mtcars <- mtcars"
+@rget mtcars
+first(mtcars, 5)
+```
+
+```{julia}
+R"""
+library(ggplot2)
+library(ggplot2movies)
+movies <- movies
+# Select 1000 of the movies
+movies <- movies[sample(nrow(movies), 1000), ]
+"""
+@rget movies
+first(movies, 5)
+```
+
+```{julia}
+rplotsvg()
+```
+
+```{julia}
+rplotsize(640, 400)
+p = ggplot(data=movies, aes(x=:rating)) # raring -> :rating
+p + geom_histogram(color="black", fill="pink")  # default bins
+```
+
+```{julia}
+p + geom_histogram(binwidth=1, color="black", fill="pink")  # big bins
+```
+
+```{julia}
+p + geom_histogram(binwidth=0.1, color="black", fill="pink")  # small bins
+```
+
+```{julia}
+p + geom_density(fill="pink")
+```
+
+```{julia}
+# Boxplot
+m = ggplot(data=movies, aes(y=:rating, x=R.factor(0))) # rating, factor -> :rating, R.factor
+m + geom_boxplot(fill="pink") + coord_flip()
+```
+
+```{julia}
+c = ggplot(mtcars, R"aes(cyl)") # aes(cyl) -> R"aes(cyl)"
+c + geom_bar(fill="lightgreen")
+```
+
+```{julia}
+rplotsize(400, 400)
+p = ggplot(mtcars, R"aes(wt, mpg)")
+p + geom_point(size=4, color="lightgreen")
+```
+
+```{julia}
+rplotsize(480, 400)
+p + geom_point(R"aes(colour=factor(cyl), size = qsec)")
+```
+
+```{julia}
+rplotsize(480, 400)
+p = ggplot(:mpg, R"aes(factor(cyl), hwy, colour=factor(cyl))")
+p + geom_point(size=4)  # Overlaid dots
+```
+
+```{julia}
+p + geom_point(size=4, position="jitter")  # Jittered dots
+```
+
+```{julia}
+p + geom_point(size=4, alpha=.2)  # Transparent dots
+```
+
+```{julia}
+rplotsize(670, 600)
+p = ggplot(:mpg, R"aes(x=factor(cyl), y=hwy, fill=factor(cyl))")
+p + geom_violin(scale = "width")
+```
+
+```{julia}
+p + geom_violin(scale = "width") + geom_point(size=2, position="jitter")
+```
+
+```{julia}
+rplotsize(600, 600)
+R"""mosaicplot(~ Sex + Survived, data = Titanic, color = TRUE)"""
+```
+
+```{julia}
+rplotsize(700, 700)
+R"""mosaicplot(Titanic, color = TRUE)"""
+```
+
+```{julia}
+R"""
+# Coefficient plots
+library(coefplot)  # Install this package
+model1 <- lm(mpg ~ wt + disp + hp + factor(cyl), data=mtcars)
+summary(model1)
+"""
+```
+
+```{julia}
+rplotsize(600, 600)
+R"""coefplot(model1) + labs(title=NULL) + theme_bw()"""
+```
+
+```{julia}
+R"""
+# Scatterplot matrix
+library(car)
+"""
+```
+
+```{julia}
+R"""scatterplotMatrix(~ mpg + wt + disp + hp | cyl, data=mtcars, main=NULL)"""
+```
+
+```{julia}
+
+```
