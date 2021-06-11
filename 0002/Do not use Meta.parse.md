@@ -16,6 +16,9 @@ jupyter:
 https://twitter.com/wasisama/status/1401804568468484099
 
 ```julia
+ENV["LINES"] = 20
+ENV["COLUMNS"] = 100
+
 using MyUtils: showimg
 showimg("image/png", "E3Q1019VoAEZfmL.png")
 ```
@@ -65,6 +68,61 @@ equalrows(a, r, names_aaa_to_eee)
 ```julia
 @show names_last_3 = [:wfawefa, :okfkpe, :eorjgr]
 equalrows(a, r, names_last_3)
+```
+
+```julia
+function equalrows_revised(a, r, names = propertynames(a))
+    a[.&((isequal.(getproperty(a, n), getproperty(r, n)) for n in names)...), :]
+end
+```
+
+```julia
+@show names_last_3 = [:wfawefa, :okfkpe, :eorjgr]
+equalrows_revised(a, r, names_last_3)
+```
+
+```julia
+A, R = copy(a), copy(r)
+A.okfkpe[2] = R.okfkpe[2] = NaN;
+```
+
+```julia
+A
+```
+
+```julia
+R
+```
+
+```julia
+equalrows(A, R, names_last_3)
+```
+
+```julia
+equalrows_revised(A, R, names_last_3)
+```
+
+```julia
+B, S = copy(a), copy(r)
+tmp = Vector{Union{Missing, eltype(B.okfkpe)}}(B.okfkpe)
+B.okfkpe = S.okfkpe = tmp
+B.okfkpe[2] = S.okfkpe[2] = missing;
+```
+
+```julia
+B
+```
+
+```julia
+S
+```
+
+```julia
+equalrows(B, S, names_last_3)
+```
+
+```julia
+equalrows_revised(B, S, names_last_3)
 ```
 
 ```julia
