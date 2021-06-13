@@ -33,7 +33,7 @@ x = range(-π, π; length=n+1)[1:end-1]
 dx = step(x)
 f(x) = sin(x) - cos(2x)
 u = f.(x)
-plot(x, u; label="", title="y = u0(x)")
+plot(x, u; label="", title="y = u(x)")
 
 # %%
 v = similar(u)
