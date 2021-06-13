@@ -240,3 +240,53 @@ ylim = (minimum(minimum.(u0)), maximum(maximum.(u0)))
 end
 
 # %%
+# laplacian! と heateq で型を書くのをやめたもの (最適化がまったくされていない場合)
+
+function laplacian1!(v, u, dx)
+    v[1] = (u[end] + u[2] - 2u[1])/dx^2
+    v[2:end-1] = (u[1:end-2] + u[3:end] - 2u[2:end-1])/dx^2
+    v[end] = (u[end-1] + u[1] - 2u[1end])/dx^2
+    return
+end
+
+function heateq1(u0, dx, tmax, N=200)
+    t = 0:dx:tmax
+    dt = t[2] - t[1]
+    u = similar(u0, length(u0), length(t)+1)
+    u[:, 1] = u0
+    v = similar(u0)
+    for i in 2:length(t)+1
+        u[:, i] = u[:, i-1]
+        for _ in 1:N
+            laplacian1!(v, u[:, i], dx)
+            u[:, i] += v*dt/N
+        end
+    end
+    t, u
+end
+
+using StaticArrays
+
+n = 200
+x = range(-π, π; length=n+1)[1:end-1]
+dx = step(x)
+m = 200
+noise1, noise2 = 0.3randn(m), 0.3randn(m)
+f(x) = SVector{m}((1 .+ noise1)*sin(x) .- (1 .+ noise2)*cos(2x))
+u0 = f.(x)
+tmax = 1.0
+
+@time t, u = heateq1(u0, dx, tmax)
+@time t, u = heateq1(u0, dx, tmax)
+
+ylim = (minimum(minimum.(u0)), maximum(maximum.(u0)))
+@gif for i in 1:length(t)
+    title = @sprintf("t = %4.2f", t[i])
+    plot()
+    for k in 1:m
+        plot!(x, (p -> p[k]).(u[:, i]); ylim, lw=0.1, color=:blue)
+    end
+    title!(title)
+end
+
+# %%
