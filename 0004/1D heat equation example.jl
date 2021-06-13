@@ -74,8 +74,8 @@ tmax = 1.0
 @time t, u = heateq(u0, dx, tmax)
 @time t, u = heateq(u0, dx, tmax)
 @gif for i in 1:length(t)
-    tstr = @sprintf("t = %4.2f", t[i])
-    plot(x, u[:, i]; ylim=extrema(u0), title="$tstr")
+    title = @sprintf("t = %4.2f", t[i])
+    plot(x, u[:, i]; ylim=extrema(u0), title)
 end
 
 # %%
@@ -146,8 +146,8 @@ tmax = 1.0
 @time t, u = heateq3(u0, dx, tmax)
 @time t, u = heateq3(u0, dx, tmax)
 @gif for i in 1:length(t)
-    tstr = @sprintf("t = %4.2f", t[i])
-    plot(x, u[:, i]; ylim=extrema(u0), title="$tstr")
+    title = @sprintf("t = %4.2f", t[i])
+    plot(x, u[:, i]; ylim=extrema(u0), title)
 end
 
 # %%
@@ -186,8 +186,8 @@ tmax = 1.0
 @time t, u = heateq4(u0, dx, tmax)
 @time t, u = heateq4(u0, dx, tmax)
 @gif for i in 1:length(t)
-    tstr = @sprintf("t = %4.2f", t[i])
-    plot(x, u[:, i]; ylim=extrema(u0), title="$tstr")
+    title = @sprintf("t = %4.2f", t[i])
+    plot(x, u[:, i]; ylim=extrema(u0), title)
 end
 
 # %%
@@ -203,8 +203,8 @@ tmax = Float32(1)
 t, u = heateq4(u0, dx, tmax)
 @show typeof(t) typeof(u)
 @gif for i in 1:length(t)
-    tstr = @sprintf("t = %4.2f", t[i])
-    plot(x, u[:, i]; ylim=extrema(u0), title="$tstr")
+    title = @sprintf("t = %4.2f", t[i])
+    plot(x, u[:, i]; ylim=extrema(u0), title)
 end
 
 # %%
