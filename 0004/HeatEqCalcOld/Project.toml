@@ -1,0 +1,7 @@
+name = "HeatEqCalcOld"
+uuid = "fdae067f-0c9c-4ff1-9bc9-a0db8e5cd607"
+authors = ["Gen Kuroki <genkuroki@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
