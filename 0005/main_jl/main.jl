@@ -93,9 +93,14 @@ write(pkg_jl, code_pkg)
 
 run(`julia --compile=all --trace-compile=$pkgname/src/trace.jl main.jl`)
 
-end
+Pkg.activate(pkgname)
+using HeatEqCalc
+
+else
 
 Pkg.activate(pkgname)
 using HeatEqCalc
 sol = HeatEqCalc.calc_sol()
 HeatEqCalc.save_sol(sol)
+
+end

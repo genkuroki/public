@@ -7,6 +7,7 @@ PKG = HeatEqCalc
 
 all:
 	$(JULIA) main.jl PRECOMPILE
+	$(JULIA) main.jl
 	$(JULIA) animate.jl
 
 bench:
