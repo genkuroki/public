@@ -48,6 +48,8 @@ save_sol(sol) = write("sol.txt", repr(sol))
 #
 # in the parent directory.
 #
-include("trace.jl")
+if isfile(joinpath(pkgdir(@__MODULE__), "src", "trace.jl"))
+    include("trace.jl")
+end
 
 end # module
