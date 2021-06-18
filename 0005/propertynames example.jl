@@ -70,3 +70,27 @@ foo.priv
 foo.pub
 
 # %%
+f(foo::O.Foo) = foo.multiple
+
+# %%
+f(foo)
+
+# %%
+@code_typed f(foo)
+
+# %%
+g(foo::O.Foo) = foo.pub
+
+# %%
+g(foo)
+
+# %%
+@code_typed g(foo)
+
+# %%
+foo.priv = 10
+
+# %%
+foo.multiple
+
+# %%
