@@ -31,8 +31,8 @@ function wk5!(dP, P, params, t)
     Formulation for DifferentialEquations.jl
 
     P:          solution vector (pressures p1 and p2)
-    params: parameter array
-                [ Rc, Rp, C, Lp, Ls ]
+    params: parameter tuple
+                (Rc, Rp, C, Lp, Ls, I, q)
 
 
     I need to find a way to tranfer the function name as well
@@ -40,7 +40,7 @@ function wk5!(dP, P, params, t)
 
     =#
 
-    # Split parameter array:
+    # Split parameter tuple:
     Rc, Rp, C, Lp, Ls, I, q = params
 
     dP[1] = (
@@ -125,6 +125,24 @@ dtmax = 1e-4
 @time solutionDP5 = solve(problem,DP5()); GC.gc()
 @time solutionDP5Lowdt = solve(problem,DP5(), dtmax=dtmax); GC.gc()
 @time solutionStiff = solve(problem, alg_hints=[:stiff]); GC.gc()
+
+# %%
+@time solutionTsit = solve(problem); GC.gc()
+@time solutionTsitLowdt = solve(problem, Tsit5(), dtmax=dtmax); GC.gc()
+@time solutionBS3 = solve(problem, BS3()); GC.gc()
+@time solutionBS3Lowdt = solve(problem, BS3(), dtmax=dtmax); GC.gc()
+@time solutionDP5 = solve(problem,DP5()); GC.gc()
+@time solutionDP5Lowdt = solve(problem,DP5(), dtmax=dtmax); GC.gc()
+@time solutionStiff = solve(problem, alg_hints=[:stiff]); GC.gc()
+
+# %%
+@show length(solutionTsit.t)
+@show length(solutionTsitLowdt.t)
+@show length(solutionBS3.t)
+@show length(solutionBS3Lowdt.t)
+@show length(solutionDP5.t)
+@show length(solutionDP5Lowdt.t)
+@show length(solutionStiff.t);
 
 # %%
 a, b = 0, 2
