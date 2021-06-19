@@ -68,3 +68,9 @@ y_global = randn(100, 100)
 @btime f4!()
 
 # %%
+@code_warntype h!()
+
+# %%
+@code_warntype g!(x_global, y_global)
+
+# %%
