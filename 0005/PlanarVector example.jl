@@ -15,6 +15,10 @@
 # ---
 
 # %%
+# privateとpublicの区別は`Base.propertynames`の定義で行える。
+@doc propertynames
+
+# %%
 module O
 
 """
@@ -42,6 +46,11 @@ end
 抽象平面ベクトルは (x, y) の形式で表示される
 """
 Base.show(io::IO, p::AbstractPlanarVector) = show(io, (p.x, p.y))
+
+"""
+AbstractPlanarVector{T}型の抽象平面ベクトルの成分の型は T
+"""
+Base.eltype(x::AbstractPlanarVector{T}) where T = T
 
 """
 平面ベクトルの型
@@ -78,34 +87,42 @@ end
 
 ########## ベクトルの演算達
 
+# 抽象平面ベクトル p, q について、 +p, -p, p + q, p - q を定義
 for op in (:+, :-)
     @eval Base.$op(p::AbstractPlanarVector) = PlanarVector($op(p.x), $op(p.y))
-    @eval Base.$op(p::AbstractPlanarVector{T}, q::AbstractPlanarVector{U}) where {T, U} =
-        PlanarVector{promote_type(T, U)}($op(p.x, q.x), $op(p.y, q.y))
+    @eval Base.$op(p::AbstractPlanarVector, q::AbstractPlanarVector) =
+        PlanarVector($op(p.x, q.x), $op(p.y, q.y))
 end
 
-Base.:*(a::T, p::AbstractPlanarVector{U}) where {T, U} =
-    PlanarVector{promote_type(T, U)}(*(a, p.x), *(a, p.y))
-Base.:*(p::AbstractPlanarVector{U}, a::T) where {T, U} =
-    PlanarVector{promote_type(T, U)}(*(p.x, a), *(p.y, a))
-Base.:\(a, p::AbstractPlanarVector) = inv(a) * p
-Base.:/(p::AbstractPlanarVector, a) = p * inv(a)
+# 抽象平面ベクトル p とスカラー a について、 a * p, p * a, a \ p, p / a を定義
+Base.:*(a, p::AbstractPlanarVector) = PlanarVector(a * p.x, a * p.y)
+Base.:*(p::AbstractPlanarVector, a) = PlanarVector(p.x * a, p.y * a)
+Base.:\(a, p::AbstractPlanarVector) = PlanarVector(a \ p.x, a \ p.y)
+Base.:/(p::AbstractPlanarVector, a) = PlanarVector(p.x / a, p.y / a)
 
+# LinearAlgebra の dot の定義の準備
 using LinearAlgebra
 
+##### 抽象ベクトルの内積を定義
+
+# まず、一般的な定義式で内積を定義
 LinearAlgebra.dot(p::AbstractPlanarVector, q::AbstractPlanarVector) =
     conj(p.x) * q.x + conj(p.y) * q.y
-LinearAlgebra.dot(p::CanonBasis{T, i}, q::AbstractPlanarVector) where {T, i} =
-    i == 1 ? q.x : q.y
-LinearAlgebra.dot(p::AbstractPlanarVector, q::CanonBasis{T, i}) where {T, i} =
-    conj(i == 1 ? p.x : p.y)
+
+# 次に、標準基底の場合に特殊化した定義を行う。多重ディスパッチを本質的に使っている。
+LinearAlgebra.dot(p::CanonBasis{T, i}, q::AbstractPlanarVector{U}) where {T, i, U} =
+    (P = promote_type(T, U); P(i == 1 ? q.x : q.y))
+LinearAlgebra.dot(p::AbstractPlanarVector{U}, q::CanonBasis{T, i}) where {U, T, i} =
+    (P = promote_type(T, U); P(conj(i == 1 ? p.x : p.y)))
+
+# Juliaの多重ディスパッチでは上の2つの場合のintersectionの場合の定義もしておく必要がある。
 LinearAlgebra.dot(p::CanonBasis{T, i}, q::CanonBasis{U, j}) where {T, i, U, j} =
     (P = promote_type(T, U); i == j ? one(P) : zero(P))
 
 end
 
 # %%
-p = O.PlanarVector(2, 3)
+p = O.PlanarVector(2+im, 3+im)
 
 # %%
 q = O.PlanarVector(-5.0, 10.0)
@@ -114,13 +131,16 @@ q = O.PlanarVector(-5.0, 10.0)
 p + q
 
 # %%
+eltype(p + q)
+
+# %%
 -3p + 4q
 
 # %%
 O.dot(p, q)
 
 # %%
-e1 = O.CanonBasis(1)
+e1 = O.CanonBasis{Float64}(1)
 
 # %%
 e2 = O.CanonBasis(2)
@@ -157,10 +177,10 @@ getx(p), gety(p)
 @code_typed gety(q)
 
 # %%
-@code_typed getx(e1)
+@code_typed getx(e2)
 
 # %%
-@code_typed gety(e1)
+@code_typed gety(e2)
 
 # %%
 @code_typed O.dot(p, q)
@@ -172,16 +192,16 @@ getx(p), gety(p)
 @code_typed O.dot(p, e2)
 
 # %%
-@code_llvm O.dot(p, e2)
+@code_llvm debuginfo=:none O.dot(p, e2)
 
 # %%
-@code_typed O.dot(e1, e1)
+@code_typed O.dot(e2, e2)
 
 # %%
 @code_typed O.dot(e1, e2)
 
 # %%
-@code_llvm O.dot(e1, e2)
+@code_llvm debuginfo=:none O.dot(e1, e2)
 
 # %%
 using BenchmarkTools
