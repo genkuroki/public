@@ -74,3 +74,12 @@ y_global = randn(100, 100)
 @code_warntype g!(x_global, y_global)
 
 # %%
+@code_typed f3!()
+
+# %%
+@code_typed g!(x_global, y_global)
+
+# %%
+@code_warntype f3!()
+
+# %%
