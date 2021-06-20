@@ -25,7 +25,6 @@ VERSION
 using JETTest
 using Test
 
-# %%
 module O
 
 struct Foo
@@ -61,6 +60,9 @@ println("\n", "="^80, "\n")
 end
 
 # %%
+using JETTest
+using Test
+
 module O
 
 struct Foo
@@ -96,6 +98,9 @@ println("\n", "="^80, "\n")
 end
 
 # %%
+using JETTest
+using Test
+
 module O
 
 struct Foo
@@ -131,6 +136,47 @@ println("\n", "="^80, "\n")
 end
 
 # %%
+using JETTest
+using Test
+
+module O
+
+struct Foo
+    a::Array{Float64}
+end
+
+function Base.sum(foo::Foo)
+    a = foo.a
+    s = zero(eltype(a))
+    for x in a
+        s += x
+    end
+    s
+end
+
+end
+
+foo = O.Foo(randn(10^3))
+@show sum(foo)
+
+println("\n", "="^80, "\n")
+
+@report_dispatch frame_filter = (sv -> sv.mod === @__MODULE__) sum(foo)
+
+println("\n", "="^80, "\n")
+
+@code_warntype sum(foo)
+
+println("\n", "="^80, "\n")
+
+@testset "check type-stabilities" begin
+    @test_nodispatch frame_filter = (sv -> sv.mod === @__MODULE__) sum(foo)
+end
+
+# %%
+using JETTest
+using Test
+
 module O
 
 struct Foo
