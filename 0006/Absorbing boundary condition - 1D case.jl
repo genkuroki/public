@@ -94,18 +94,18 @@ x = range(-10, 10; length=21)
 dx = step(x)
 p = (; dx)
 
-U(t, x) = 2/3*exp(-(x - t)^2) + 1/3*exp(-(x + t)^2)
+U(t, x) = 2/3*exp(-(x - t + 5)^2) + 1/3*exp(-(x + t - 5)^2)
 V(t, x) = ForwardDiff.derivative(t -> U(t, x), t)
 u0 = U.(0, x)
 v0 = V.(0, x)
-tspan = (0.0, 30.0)
+tspan = (0.0, 40.0)
 
 prob = SecondOrderODEProblem(f2_abc!, v0, u0, tspan, p)
 sol = solve(prob)
 
-ts = range(sol.prob.tspan...; length=150)
+ts = range(sol.prob.tspan...; length=200)
 anim = @animate for t in [fill(ts[begin], 10); ts; fill(ts[end], 10)]
-    plot(x, sol(t)[end÷2+1:end]; label="", ylim=(-0.25, 1.05), size=(600, 300))
+    plot(x, sol(t)[end÷2+1:end]; label="", ylim=(-0.4, 1.0), size=(600, 300))
 end
 gif(anim, "1d_wave_eq_abc_21.gif")
 
@@ -114,7 +114,7 @@ x = range(-10, 10; length=201)
 dx = step(x)
 p = (; dx)
 
-U(t, x) = 2/3*exp(-(x - t)^2) + 1/3*exp(-(x + t)^2)
+U(t, x) = 2/3*exp(-(x - t + 5)^2) + 1/3*exp(-(x + t - 5)^2)
 V(t, x) = ForwardDiff.derivative(t -> U(t, x), t)
 u0 = U.(0, x)
 v0 = V.(0, x)
@@ -125,7 +125,7 @@ sol = solve(prob)
 
 ts = range(sol.prob.tspan...; length=100)
 anim = @animate for t in [fill(ts[begin], 10); ts; fill(ts[end], 10)]
-    plot(x, sol(t)[end÷2+1:end]; label="", ylim=(-0.25, 1.05), size=(600, 300))
+    plot(x, sol(t)[end÷2+1:end]; label="", ylim=(-0.1, 1.1), size=(600, 250))
 end
 gif(anim, "1d_wave_eq_abc_201.gif")
 
