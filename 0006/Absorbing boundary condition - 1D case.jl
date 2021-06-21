@@ -14,6 +14,59 @@
 #     name: julia-1.8
 # ---
 
+# %% [markdown]
+# 1D Wave equation on the interval $[a, b]$ with absorbing boundary condition:
+#
+# $$
+# \begin{aligned}
+# &
+# \frac{\partial^2 u}{\partial t^2} = \frac{\partial^2 u}{\partial x^2} \quad (a\le x \le b), 
+# \\ &
+# \left.\left(\frac{\partial}{\partial t} - \frac{\partial}{\partial x}\right)u\;\right|_{x = a} = 0,
+# \\ &
+# \left.\left(\frac{\partial}{\partial t} + \frac{\partial}{\partial x}\right)u\;\right|_{x = b} = 0.
+# \end{aligned}
+# $$
+#
+# The second equation means backward wave only and the third means forward wave only.
+#
+# Its discretization: $dx = (b-a)/n$, $x = a + k\,dx$, $k=0,1,\ldots,n$,
+#
+# $$
+# \begin{aligned}
+# &
+# u_{tt}(t, x) = \frac{u(t, x - dx) + u(t, x + dx) - 2u(t, x)}{dx^2} \quad (a\le x\le b),
+# \\ &
+# u_t(t, a) - \frac{u(t, a+dx) - u(t, a-dx)}{2dx} = 0,
+# \\ &
+# u_t(t, b) + \frac{u(t, b+dx) - u(t, b-dx)}{2dx} = 0.
+# \end{aligned}
+# $$
+#
+# The second and third equations are equivalent to
+#
+# $$
+# \begin{aligned}
+# &
+# u(t, a-dx) = u(t, a+dx) - 2u_t(t, a)\,dx, 
+# \\ &
+# u(t, b+dx) = u(t, b-dx) - 2u_t(t, b)\,dx.
+# \end{aligned}
+# $$
+#
+# Therefore the discretization above can be rewritten as
+#
+# $$
+# \begin{aligned}
+# &
+# u_{tt}(t, x) = \frac{u(t, x - dx) + u(t, x + dx) - 2u(t, x)}{dx^2} \quad (a < x < b),
+# \\ &
+# u_{tt}(t, a) = \frac{2u(t, a + dx) - 2u(t, a)}{dx^2} - \frac{2u_t(t, a)}{dx},
+# \\ &
+# u_{tt}(t, b) = \frac{2u(t, b - dx) - 2u(t, b)}{dx^2} - \frac{2u_t(t, b)}{dx}.
+# \end{aligned}
+# $$
+
 # %%
 @show VERSION
 @time using DifferentialEquations
