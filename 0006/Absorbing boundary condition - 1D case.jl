@@ -15,6 +15,12 @@
 # ---
 
 # %% [markdown]
+# # Absorbing boundary condition - 1D case
+#
+# Gen Kuroki
+#
+# 2021-06-21
+#
 # 1D Wave equation on the interval $[a, b]$ with absorbing boundary condition:
 #
 # $$
@@ -61,9 +67,9 @@
 # &
 # u_{tt}(t, x) = \frac{u(t, x - dx) + u(t, x + dx) - 2u(t, x)}{dx^2} \quad (a < x < b),
 # \\ &
-# u_{tt}(t, a) = \frac{2u(t, a + dx) - 2u(t, a)}{dx^2} - \frac{2u_t(t, a)}{dx},
+# u_{tt}(t, a) = 2\left(\frac{u(t, a + dx) - u(t, a)}{dx^2} - \frac{u_t(t, a)}{dx}\right),
 # \\ &
-# u_{tt}(t, b) = \frac{2u(t, b - dx) - 2u(t, b)}{dx^2} - \frac{2u_t(t, b)}{dx}.
+# u_{tt}(t, b) = 2\left(\frac{u(t, b - dx) - u(t, b)}{dx^2} - \frac{u_t(t, b)}{dx}\right).
 # \end{aligned}
 # $$
 
@@ -74,12 +80,12 @@
 @time using Plots
 
 # %%
-function f2_mur!(dv, v, u, p, t)
+function f2_abc!(dv, v, u, p, t)
     (; dx) = p
     a, b = firstindex(u), lastindex(u)
     @. @views dv[a+1:b-1] = (u[a:b-2] + u[a+2:b] - 2u[a+1:b-1])/dx^2
-    dv[a] = 2(u[a+1] - u[a])/dx^2 - 2v[a]/dx
-    dv[b] = 2(u[b-1] - u[b])/dx^2 - 2v[b]/dx
+    dv[a] = 2((u[a+1] - u[a])/dx^2 - v[a]/dx)
+    dv[b] = 2((u[b-1] - u[b])/dx^2 - v[b]/dx)
     return
 end
 
@@ -94,14 +100,14 @@ u0 = U.(0, x)
 v0 = V.(0, x)
 tspan = (0.0, 30.0)
 
-prob = SecondOrderODEProblem(f2_mur!, v0, u0, tspan, p)
+prob = SecondOrderODEProblem(f2_abc!, v0, u0, tspan, p)
 sol = solve(prob)
 
 ts = range(sol.prob.tspan...; length=150)
 anim = @animate for t in [fill(ts[begin], 10); ts; fill(ts[end], 10)]
     plot(x, sol(t)[end÷2+1:end]; label="", ylim=(-0.25, 1.05), size=(600, 300))
 end
-gif(anim, "1d_wave_eq_mur_21.gif")
+gif(anim, "1d_wave_eq_abc_21.gif")
 
 # %%
 x = range(-10, 10; length=201)
@@ -114,13 +120,13 @@ u0 = U.(0, x)
 v0 = V.(0, x)
 tspan = (0.0, 20.0)
 
-prob = SecondOrderODEProblem(f2_mur!, v0, u0, tspan, p)
+prob = SecondOrderODEProblem(f2_abc!, v0, u0, tspan, p)
 sol = solve(prob)
 
 ts = range(sol.prob.tspan...; length=100)
 anim = @animate for t in [fill(ts[begin], 10); ts; fill(ts[end], 10)]
     plot(x, sol(t)[end÷2+1:end]; label="", ylim=(-0.25, 1.05), size=(600, 300))
 end
-gif(anim, "1d_wave_eq_mur_201.gif")
+gif(anim, "1d_wave_eq_abc_201.gif")
 
 # %%
