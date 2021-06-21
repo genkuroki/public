@@ -90,7 +90,8 @@ function f2_abc!(dv, v, u, p, t)
 end
 
 # %%
-x = range(-10, 10; length=21)
+n = 20
+x = range(-10, 10; length=n+1)
 dx = step(x)
 p = (; dx)
 
@@ -105,12 +106,61 @@ sol = solve(prob)
 
 ts = range(sol.prob.tspan...; length=200)
 anim = @animate for t in [fill(ts[begin], 10); ts; fill(ts[end], 10)]
-    plot(x, sol(t)[end÷2+1:end]; label="", ylim=(-0.4, 1.0), size=(600, 300))
+    plot(x, sol(t)[end÷2+1:end]; label="numerical n = $n", ylim=(-0.4, 1.0), size=(600, 300))
+    xs = range(extrema(x)...; length=201)
+    plot!(xs, U.(t, xs); label="exact solution", ls=:dash)
 end
 gif(anim, "1d_wave_eq_abc_21.gif")
 
 # %%
-x = range(-10, 10; length=201)
+n = 40
+x = range(-10, 10; length=n+1)
+dx = step(x)
+p = (; dx)
+
+U(t, x) = 2/3*exp(-(x - t + 5)^2) + 1/3*exp(-(x + t - 5)^2)
+V(t, x) = ForwardDiff.derivative(t -> U(t, x), t)
+u0 = U.(0, x)
+v0 = V.(0, x)
+tspan = (0.0, 40.0)
+
+prob = SecondOrderODEProblem(f2_abc!, v0, u0, tspan, p)
+sol = solve(prob)
+
+ts = range(sol.prob.tspan...; length=200)
+anim = @animate for t in [fill(ts[begin], 10); ts; fill(ts[end], 10)]
+    plot(x, sol(t)[end÷2+1:end]; label="numerical n = $n", ylim=(-0.2, 1.0), size=(600, 300))
+    xs = range(extrema(x)...; length=201)
+    plot!(xs, U.(t, xs); label="exact solution", ls=:dash)
+end
+gif(anim, "1d_wave_eq_abc_41.gif")
+
+# %%
+n = 100
+x = range(-10, 10; length=n+1)
+dx = step(x)
+p = (; dx)
+
+U(t, x) = 2/3*exp(-(x - t + 5)^2) + 1/3*exp(-(x + t - 5)^2)
+V(t, x) = ForwardDiff.derivative(t -> U(t, x), t)
+u0 = U.(0, x)
+v0 = V.(0, x)
+tspan = (0.0, 40.0)
+
+prob = SecondOrderODEProblem(f2_abc!, v0, u0, tspan, p)
+sol = solve(prob)
+
+ts = range(sol.prob.tspan...; length=200)
+anim = @animate for t in [fill(ts[begin], 10); ts; fill(ts[end], 10)]
+    plot(x, sol(t)[end÷2+1:end]; label="numerical n = $n", ylim=(-0.1, 1.1), size=(600, 250))
+    xs = range(extrema(x)...; length=201)
+    plot!(xs, U.(t, xs); label="exact solution", ls=:dash)
+end
+gif(anim, "1d_wave_eq_abc_101.gif")
+
+# %%
+n = 200
+x = range(-10, 10; length=n+1)
 dx = step(x)
 p = (; dx)
 
@@ -125,7 +175,8 @@ sol = solve(prob)
 
 ts = range(sol.prob.tspan...; length=100)
 anim = @animate for t in [fill(ts[begin], 10); ts; fill(ts[end], 10)]
-    plot(x, sol(t)[end÷2+1:end]; label="", ylim=(-0.1, 1.1), size=(600, 250))
+    plot(x, sol(t)[end÷2+1:end]; label="numerical n = $n", ylim=(-0.1, 1.1), size=(600, 250))
+    plot!(x, U.(t, x); label="exact solution", ls=:dash)
 end
 gif(anim, "1d_wave_eq_abc_201.gif")
 
