@@ -72,9 +72,7 @@ function Param(isin_func, x::AbstractVector, y::AbstractVector)
         if D[i, j]
             push!(V, (i, j))
             for (p, q) in ((-1, 0), (1, 0), (0, -1), (0, 1))
-                i+p in I || continue
-                j+q in J || continue
-                if D[i+p, j+q]
+                if i+p in I && j+q in J && D[i+p, j+q]
                     push!(E_mat[i, j], (i+p, j+q))
                 else
                     D[i-p, j-q] && push!(B_mat[i, j], (i-p, j-q))
@@ -139,19 +137,21 @@ U0 = Int.(My.vec2mat(p, u0; default_value=0))
 U0'
 
 # %%
-function anim_sol2D(sol; L = 201, clim=(-0.06, 0.06), color=:bwr, bg=:lightgray)
+function anim_sol2D(sol; L=201, fps=20, fn="tmp.gif",
+        clim=(-0.06, 0.06), color=:bwr, bg=:lightgray)
     (; prob, u) = sol
     (; tspan, p) = prob
     (; x, y) = p
     ts = range(tspan...; length=L) |> r -> [fill(r[1], 20); r; fill(r[end], 20)]
     prog = Progress(length(ts), 0)
-    @gif for t in ts
+    anim = @animate for t in ts
         U = My.vec2mat(p, sol(t).x[2])
         heatmap(x, y, U'; colorbar=false, clim, color, bg)
         title!(f"t = {$t:4.2f}"; titlefontsize=12)
         plot!(size=(420, 440), xlim=extrema(x), ylim=extrema(y), aspectratio=1)
         next!(prog)
     end
+    gif(anim, fn; fps)
 end
 
 function plot_sol(sol, t; zlim=(-0.06, 0.06),
@@ -241,7 +241,7 @@ umax = maximum(maximum(u.x[2]) for u in u)
 @show umin, umax;
 
 # %%
-anim_sol2D(sol)
+anim_sol2D(sol; fn="wave eq on pentagon with dirichlet bc 2d.gif")
 
 # %%
 plot_sol(sol, 1.0)
@@ -261,7 +261,7 @@ umax = maximum(maximum(u.x[2]) for u in u)
 @show umin, umax;
 
 # %%
-anim_sol2D(sol)
+anim_sol2D(sol; fn="wave eq on pentagon with neumann bc 2d.gif")
 
 # %%
 plot_sol(sol, 1.0)
@@ -281,7 +281,7 @@ umax = maximum(maximum(u.x[2]) for u in u)
 @show umin, umax;
 
 # %%
-anim_sol2D(sol)
+anim_sol2D(sol; fn="wave eq on pentagon with absorbing bc 2d.gif")
 
 # %%
 plot_sol(sol, 1.0)
