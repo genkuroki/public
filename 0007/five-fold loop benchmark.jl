@@ -9,10 +9,29 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.11.2
 #   kernelspec:
-#     display_name: Julia 1.7.0-beta2
+#     display_name: Julia 1.6.1
 #     language: julia
-#     name: julia-1.7
+#     name: julia-1.6
 # ---
+
+# %%
+VERSION
+
+# %%
+function G(n)
+    for i1 in 0:n-1, i2 in 0:n-1, i3 in 0:n-1, i4 in 0:n-1, i5 in 0:n-1
+    end
+end
+
+@code_native debuginfo=:none G(20)
+
+# %%
+function H(n)
+    for i in 0:n^5-1
+    end
+end
+
+@code_native debuginfo=:none H(20)
 
 # %%
 function f(n)
