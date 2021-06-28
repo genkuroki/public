@@ -185,14 +185,14 @@ function coefs_lm_formula!(result, data, X, mod_level, mod_dmean, XtX, Xty)
     x2_dmean::Vector{Float64} = data.x2_dmean
     y::Vector{Float64} = data.y
     
-    @views X[:, 1] .= 1
-    @views X[:, 2] .= id
-    @views X[:, 3] .= x1
-    @views X[:, 4] .= x2
-    @views X[:, 5] .= x1 .* x2
+    X[:, 1] .= 1
+    X[:, 2] .= id
+    X[:, 3] .= x1
+    X[:, 4] .= x2
+    X[:, 5] .= x1 .* x2
     fastfit!(mod_level, X, y, XtX, Xty)
 
-    @views X[:, 5] .= x1_dmean .* x2_dmean
+    X[:, 5] .= x1_dmean .* x2_dmean
     fastfit!(mod_dmean, X, y, XtX, Xty)
     
     result .= (mod_level[end], mod_dmean[end])
