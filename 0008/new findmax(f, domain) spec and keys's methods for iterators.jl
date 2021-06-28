@@ -29,6 +29,11 @@
 # findmax(f, domain) = mapfoldl( ((k, v),) -> (f(v), k), _rf_findmax, pairs(domain) )
 #  _rf_findmax((fm, im), (fx, ix)) = isless(fm, fx) ? (fx, ix) : (fm, im)
 # ```
+#
+# Ref. [`findmax` and friends: confusing behaviour to be introduced in 1.7](https://discourse.julialang.org/t/findmax-and-friends-confusing-behaviour-to-be-introduced-in-1-7/61904)
+
+# %%
+using OffsetArrays
 
 # %%
 VERSION
@@ -105,7 +110,6 @@ H((x, y)) = cos(x) * sin(y)
 @show cos(X[idx]) * sin(reverse(Y)[idx]);
 
 # %%
-using OffsetArrays
 Base.keys(ac::Iterators.Accumulate) = keys(ac.itr)
 A = OffsetArray(range(-2, 2; length=401), -200:200)
 
@@ -129,5 +133,24 @@ methods(keys, Main)
 
 # %%
 ?Base.isgreater
+
+# %%
+?findmax
+
+# %%
+findmax([8, 0.1, -9, pi])
+
+# %%
+A = [1.0 2; 3 4]
+findmax(A, dims=1)
+
+# %%
+methods(findmax)
+
+# %%
+findmax(-(-4:5).^2)
+
+# %%
+findmax(x -> -x^2, -4:5)
 
 # %%
