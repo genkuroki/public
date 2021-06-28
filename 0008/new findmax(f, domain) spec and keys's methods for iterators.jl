@@ -78,7 +78,10 @@ F((x, y)) = f(x, y)
 @show argmax(F.(XtimesY));
 
 # %%
-valargmax(f, X) = (x = argmax(f, X); (f(x), x))
+#valargmax(f, X) = (x = argmax(f, X); (f(x), x))
+struct ValArg{F} <:Function f::F end
+(valarg::ValArg)(x) = (valarg.f(x), x)
+valargmax(f, X) = mapfoldl(ValArg(f), Base._rf_findmax, X)
 valargmax(X) = valargmax(Base.Fix1(getindex, X), keys(X))
 F((x, y)) = f(x, y)
 
@@ -152,5 +155,21 @@ findmax(-(-4:5).^2)
 
 # %%
 findmax(x -> -x^2, -4:5)
+
+# %%
+valindargmax(f, X) = valargmax(f∘last, pairs(X))
+
+X = range(-2, 2; length=401)
+@show m, (i, x) = valindargmax(sin, X)
+m, (i, x)
+
+# %%
+F((x, y)) = f(x, y)
+
+X = range(-2, 2; length=401)
+Y = range(-2, 2; length=401)
+XtimesY = Iterators.product(X, Y)
+@show m, (i, x) = valindargmax(F, XtimesY)
+m, (i, x)
 
 # %%
