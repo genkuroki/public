@@ -86,6 +86,7 @@ F((x, y)) = f(x, y)
 
 # %%
 Base.keys(rv::Iterators.Reverse) = keys(reverse(rv.itr))
+
 @show val, idx = findmax(sin, Iterators.Reverse(X))
 @show sin(reverse(X)[idx]);
 
@@ -93,14 +94,14 @@ Base.keys(rv::Iterators.Reverse) = keys(reverse(rv.itr))
 Base.keys(en::Iterators.Enumerate) = keys(en.itr)
 G((i, x)) = sin(x)
 
-@show val, idx = findmax(G, Iterators.enumerate(X))
+@show val, idx = findmax(G, enumerate(X))
 @show sin(X[idx]);
 
 # %%
 Base.keys(zp::Iterators.Zip) = Base.OneTo(length(zp))
 H((x, y)) = cos(x) * sin(y)
 
-@show val, idx = findmax(H, Iterators.zip(X, reverse(Y)))
+@show val, idx = findmax(H, zip(X, reverse(Y)))
 @show cos(X[idx]) * sin(reverse(Y)[idx]);
 
 # %%
@@ -113,6 +114,7 @@ A = OffsetArray(range(-2, 2; length=401), -200:200)
 
 # %%
 Base.keys(tk::Iterators.Take) = Base.OneTo(length(tk))
+
 @show val, idx = findmax(sin, Iterators.take(reverse(X), 100))
 @show sin(reverse(X)[idx]);
 
