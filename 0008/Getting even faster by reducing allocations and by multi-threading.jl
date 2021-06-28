@@ -25,7 +25,8 @@ VERSION
 # %% [markdown]
 # ## Original version
 #
-# https://elbersb.com/public/posts/interaction_simulation/
+# * https://twitter.com/elbersb/status/1409454534666207232
+# * https://elbersb.com/public/posts/interaction_simulation/
 
 # %%
 using Distributions 
