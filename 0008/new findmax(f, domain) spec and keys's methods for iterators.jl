@@ -56,10 +56,7 @@ keys(collect(XtimesY))
 val, idx = findmax(collect(XtimesY)) do (x, y); f(x, y) end
 
 # %% [markdown]
-# But `collect` causes memory allocations.
-
-# %%
-@time collect(XtimesY);
+# But `collect` causes memory allocations and I do not feel like it.
 
 # %%
 axes(XtimesY)
@@ -69,76 +66,55 @@ CartesianIndices(axes(XtimesY))
 
 # %%
 Base.keys(pr::Iterators.ProductIterator) = CartesianIndices(axes(pr))
-val, idx = findmax(XtimesY) do (x, y); f(x, y) end
+F((x, y)) = f(x, y)
 
-# %%
-keys(XtimesY)
-@time keys(XtimesY);
-
-# %%
-X[idx[1]], Y[idx[2]]
-
-# %%
-pt = argmax(XtimesY) do (x, y); f(x, y) end
+@show val, idx = findmax(F, XtimesY)
+@show f(X[idx[1]], Y[idx[2]])
+@show argmax(F.(XtimesY));
 
 # %%
 valargmax(f, X) = (x = argmax(f, X); (f(x), x))
-valargmax(XtimesY) do (x, y); f(x, y) end
-
-# %%
 valargmax(X) = valargmax(Base.Fix1(getindex, X), keys(X))
-valargmax((pt -> f(pt...)).(XtimesY))
+F((x, y)) = f(x, y)
 
-# %%
-argmax((pt -> f(pt...)).(XtimesY))
-
-# %%
-findmax(pairs(X)) do (i, x); sin(x) end
-
-# %%
-findmax(sin, pairs(X))
-
-# %%
-pairs(pairs(X)) == pairs(X)
-
-# %%
-@which findmax(sin, pairs(X))
-
-# %%
-@which pairs(pairs(X))
-
-# %% [markdown]
-# https://github.com/JuliaLang/julia/blob/b570546b68de16bd208ca76a20c1385919de18d6/base/iterators.jl#L236
-#
-# ```julia
-# # pairs(v::Pairs) = v # listed for reference, but already defined from being an AbstractDict
-# ```
-
-# %%
-?Base.Pairs
-
-# %% [markdown]
-# https://github.com/JuliaLang/julia/blob/87e08d94a99ea17e7f72493947595eb6b63e0f09/base/essentials.jl#L32
+@show val, idx = findmax(F, XtimesY)
+@show val, (X[idx[1]], Y[idx[2]])
+@show argmax(F, XtimesY)
+@show valargmax(F, XtimesY)
+@show valargmax(F.(XtimesY))
+@show findmax(F, XtimesY);
 
 # %%
 Base.keys(rv::Iterators.Reverse) = keys(reverse(rv.itr))
-findmax(sin, Iterators.Reverse(X))
+@show val, idx = findmax(sin, Iterators.Reverse(X))
+@show sin(reverse(X)[idx]);
 
 # %%
 Base.keys(en::Iterators.Enumerate) = keys(en.itr)
-findmax(Iterators.enumerate(X)) do (i, x); sin(x) end
+G((i, x)) = sin(x)
+
+@show val, idx = findmax(G, Iterators.enumerate(X))
+@show sin(X[idx]);
 
 # %%
 Base.keys(zp::Iterators.Zip) = Base.OneTo(length(zp))
-findmax(Iterators.zip(X, reverse(Y))) do (x, y); cos(x)*sin(y) end
+H((x, y)) = cos(x) * sin(y)
+
+@show val, idx = findmax(H, Iterators.zip(X, reverse(Y)))
+@show cos(X[idx]) * sin(reverse(Y)[idx]);
 
 # %%
+using OffsetArrays
 Base.keys(ac::Iterators.Accumulate) = keys(ac.itr)
-findmax(sin, Iterators.accumulate(+, X; init=π))
+A = OffsetArray(range(-2, 2; length=401), -200:200)
+
+@show val, idx = findmax(sin, Iterators.accumulate(+, A; init=π))
+@show sin(sum(A[begin:idx]) + π);
 
 # %%
-Base.keys(tk::Iterators.Take) = Base.OneTo(tk.n)
-findmax(sin, Iterators.take(reverse(X), 100))
+Base.keys(tk::Iterators.Take) = Base.OneTo(length(tk))
+@show val, idx = findmax(sin, Iterators.take(reverse(X), 100))
+@show sin(reverse(X)[idx]);
 
 # %%
 methods(keys, Main)
@@ -148,5 +124,8 @@ methods(keys, Main)
 
 # %% [markdown]
 # https://github.com/JuliaLang/julia/blob/16f433bb13cfc87eea21d26a797dac7b34a41d86/base/abstractdict.jl#L71
+
+# %%
+?Base.isgreater
 
 # %%
