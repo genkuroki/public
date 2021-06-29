@@ -521,7 +521,6 @@ n = 20000
 
 @show VERSION
 @show n
-@show Threads.nthreads()
 println()
 
 println("Original version (with DataFrame, single thread):")
@@ -538,6 +537,7 @@ println("Multi-thread optimized version (with DataFrame): ")
 println()
 
 println("Multi-thread non-dataframe version (run_simulations5): ")
+@show Threads.nthreads()
 @btime run_simulations5($n)
 println()
 
@@ -546,6 +546,7 @@ println("Optimized non-dataframe version (single thread): ")
 println()
 
 println("Multi-thread optimized non-dataframe version: ")
+@show Threads.nthreads()
 @btime run_simulations_multithread_optimized_nondataframe($n)
 println()
 
