@@ -43,10 +43,9 @@ plot!(; size=(400, 250))
 
 # %%
 f(x, y) = (1 - x)^2 + 100(y - x^2)^2
-f(v) = f(v...)
 
 X = Y = range(-5, 5; length=1001)
-@show m, (x, y) = valargmin(f, Iterators.product(X, Y))
+@show m, (x, y) = valargmin(Base.splat(f), Iterators.product(X, Y))
 
 surface(X, Y, log∘f; color=:rainbow, clim = (-7.5, 10), camera=(30, 60))
 scatter!([x], [y], [-7.5]; label="minimum", color=:cyan)
