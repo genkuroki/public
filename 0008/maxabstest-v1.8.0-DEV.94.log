@@ -1,0 +1,79 @@
+$ julia maxabstest.jl 100
+VERSION = v"1.8.0-DEV.94"
+Threads.nthreads() = 12
+
+N = 100
+simple for loop:       8.567 μs (0 allocations: 0 bytes)
+mapreduce abs∘- max:   9.900 μs (2 allocations: 78.20 KiB)
+maximum(abs, a - b):   9.400 μs (2 allocations: 78.20 KiB)
+maximum(generator):    17.200 μs (0 allocations: 0 bytes)
+maximum splat(abs∘-):  17.200 μs (0 allocations: 0 bytes)
+Tullio:                8.600 μs (1 allocation: 16 bytes)
+Tullio (LoopVect.):    1.290 μs (1 allocation: 16 bytes)
+LoopVect. @turbo:      1.260 μs (0 allocations: 0 bytes)
+LoopVect. @tturbo:     715.267 ns (0 allocations: 0 bytes)
+
+genkuroki@dellg3 MINGW64 /d/OneDrive/public/0008 (main)
+$ julia maxabstest.jl 200
+VERSION = v"1.8.0-DEV.94"
+Threads.nthreads() = 12
+
+N = 200
+simple for loop:       32.800 μs (0 allocations: 0 bytes)
+mapreduce abs∘- max:   32.000 μs (2 allocations: 312.58 KiB)
+maximum(abs, a - b):   31.100 μs (2 allocations: 312.58 KiB)
+maximum(generator):    66.900 μs (0 allocations: 0 bytes)
+maximum splat(abs∘-):  66.900 μs (0 allocations: 0 bytes)
+Tullio:                33.500 μs (1 allocation: 16 bytes)
+Tullio (LoopVect.):    8.375 μs (1 allocation: 16 bytes)
+LoopVect. @turbo:      7.875 μs (0 allocations: 0 bytes)
+LoopVect. @tturbo:     1.970 μs (0 allocations: 0 bytes)
+
+genkuroki@dellg3 MINGW64 /d/OneDrive/public/0008 (main)
+$ julia maxabstest.jl 500
+VERSION = v"1.8.0-DEV.94"
+Threads.nthreads() = 12
+
+N = 500
+simple for loop:       205.100 μs (0 allocations: 0 bytes)
+mapreduce abs∘- max:   417.800 μs (2 allocations: 1.91 MiB)
+maximum(abs, a - b):   438.000 μs (2 allocations: 1.91 MiB)
+maximum(generator):    417.400 μs (0 allocations: 0 bytes)
+maximum splat(abs∘-):  417.300 μs (0 allocations: 0 bytes)
+Tullio:                204.700 μs (1 allocation: 16 bytes)
+Tullio (LoopVect.):    50.800 μs (1 allocation: 16 bytes)
+LoopVect. @turbo:      51.200 μs (0 allocations: 0 bytes)
+LoopVect. @tturbo:     12.700 μs (0 allocations: 0 bytes)
+
+genkuroki@dellg3 MINGW64 /d/OneDrive/public/0008 (main)
+$ julia maxabstest.jl 1000
+VERSION = v"1.8.0-DEV.94"
+Threads.nthreads() = 12
+
+N = 1000
+simple for loop:       988.000 μs (0 allocations: 0 bytes)
+mapreduce abs∘- max:   2.284 ms (2 allocations: 7.63 MiB)
+maximum(abs, a - b):   2.208 ms (2 allocations: 7.63 MiB)
+maximum(generator):    1.796 ms (0 allocations: 0 bytes)
+maximum splat(abs∘-):  1.829 ms (0 allocations: 0 bytes)
+Tullio:                267.100 μs (93 allocations: 5.39 KiB)
+Tullio (LoopVect.):    256.600 μs (93 allocations: 5.39 KiB)
+LoopVect. @turbo:      411.800 μs (0 allocations: 0 bytes)
+LoopVect. @tturbo:     206.200 μs (0 allocations: 0 bytes)
+
+genkuroki@dellg3 MINGW64 /d/OneDrive/public/0008 (main)
+$ julia maxabstest.jl 2000
+VERSION = v"1.8.0-DEV.94"
+Threads.nthreads() = 12
+
+N = 2000
+simple for loop:       4.008 ms (0 allocations: 0 bytes)
+mapreduce abs∘- max:   9.588 ms (2 allocations: 30.52 MiB)
+maximum(abs, a - b):   10.427 ms (2 allocations: 30.52 MiB)
+maximum(generator):    7.565 ms (0 allocations: 0 bytes)
+maximum splat(abs∘-):  7.513 ms (0 allocations: 0 bytes)
+Tullio:                2.337 ms (201 allocations: 11.64 KiB)
+Tullio (LoopVect.):    2.703 ms (200 allocations: 11.61 KiB)
+LoopVect. @turbo:      2.467 ms (0 allocations: 0 bytes)
+LoopVect. @tturbo:     2.240 ms (0 allocations: 0 bytes)
+

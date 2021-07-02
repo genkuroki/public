@@ -1,0 +1,74 @@
+$ julia maxabstest.jl 100
+VERSION = v"1.6.1"
+Threads.nthreads() = 12
+
+N = 100
+simple for loop:       8.733 μs (0 allocations: 0 bytes)
+mapreduce abs∘- max:   11.300 μs (2 allocations: 78.20 KiB)
+maximum(abs, a - b):   10.100 μs (2 allocations: 78.20 KiB)
+maximum(generator):    18.100 μs (0 allocations: 0 bytes)
+maximum splat(abs∘-):  18.100 μs (0 allocations: 0 bytes)
+Tullio:                8.767 μs (1 allocation: 16 bytes)
+Tullio (LoopVect.):    1.290 μs (1 allocation: 16 bytes)
+LoopVect. @turbo:      1.240 μs (0 allocations: 0 bytes)
+LoopVect. @tturbo:     722.689 ns (0 allocations: 0 bytes)
+
+$ julia maxabstest.jl 200
+VERSION = v"1.6.1"
+Threads.nthreads() = 12
+
+N = 200
+simple for loop:       34.900 μs (0 allocations: 0 bytes)
+mapreduce abs∘- max:   42.300 μs (2 allocations: 312.58 KiB)
+maximum(abs, a - b):   34.500 μs (2 allocations: 312.58 KiB)
+maximum(generator):    71.600 μs (0 allocations: 0 bytes)
+maximum splat(abs∘-):  71.700 μs (0 allocations: 0 bytes)
+Tullio:                34.900 μs (1 allocation: 16 bytes)
+Tullio (LoopVect.):    8.400 μs (1 allocation: 16 bytes)
+LoopVect. @turbo:      9.600 μs (0 allocations: 0 bytes)
+LoopVect. @tturbo:     2.010 μs (0 allocations: 0 bytes)
+
+$ julia maxabstest.jl 500
+VERSION = v"1.6.1"
+Threads.nthreads() = 12
+
+N = 500
+simple for loop:       213.400 μs (0 allocations: 0 bytes)
+mapreduce abs∘- max:   454.600 μs (2 allocations: 1.91 MiB)
+maximum(abs, a - b):   444.500 μs (2 allocations: 1.91 MiB)
+maximum(generator):    447.000 μs (0 allocations: 0 bytes)
+maximum splat(abs∘-):  447.100 μs (0 allocations: 0 bytes)
+Tullio:                213.400 μs (1 allocation: 16 bytes)
+Tullio (LoopVect.):    55.900 μs (1 allocation: 16 bytes)
+LoopVect. @turbo:      56.100 μs (0 allocations: 0 bytes)
+LoopVect. @tturbo:     12.700 μs (0 allocations: 0 bytes)
+
+$ julia maxabstest.jl 1000
+VERSION = v"1.6.1"
+Threads.nthreads() = 12
+
+N = 1000
+simple for loop:       1.053 ms (0 allocations: 0 bytes)
+mapreduce abs∘- max:   2.354 ms (2 allocations: 7.63 MiB)
+maximum(abs, a - b):   2.240 ms (2 allocations: 7.63 MiB)
+maximum(generator):    1.939 ms (0 allocations: 0 bytes)
+maximum splat(abs∘-):  1.937 ms (0 allocations: 0 bytes)
+Tullio:                263.000 μs (93 allocations: 4.73 KiB)
+Tullio (LoopVect.):    257.600 μs (93 allocations: 4.73 KiB)
+LoopVect. @turbo:      410.200 μs (0 allocations: 0 bytes)
+LoopVect. @tturbo:     207.600 μs (0 allocations: 0 bytes)
+
+$ julia maxabstest.jl 2000
+VERSION = v"1.6.1"
+Threads.nthreads() = 12
+
+N = 2000
+simple for loop:       4.193 ms (0 allocations: 0 bytes)
+mapreduce abs∘- max:   10.075 ms (2 allocations: 30.52 MiB)
+maximum(abs, a - b):   11.004 ms (2 allocations: 30.52 MiB)
+maximum(generator):    7.903 ms (0 allocations: 0 bytes)
+maximum splat(abs∘-):  7.896 ms (0 allocations: 0 bytes)
+Tullio:                2.388 ms (199 allocations: 10.17 KiB)
+Tullio (LoopVect.):    2.855 ms (200 allocations: 10.20 KiB)
+LoopVect. @turbo:      2.540 ms (0 allocations: 0 bytes)
+LoopVect. @tturbo:     2.275 ms (0 allocations: 0 bytes)
