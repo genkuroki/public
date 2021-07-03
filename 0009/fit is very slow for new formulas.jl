@@ -85,21 +85,25 @@ struct MyLinearModel{T, Y, X}
     x_vars::X
 end
 
-function my_lm(y_var, x_vars, df)
+function my_lm(y_var::Symbol, x_vars::AbstractVector{Symbol}, df::DataFrame)
     y = df[!, y_var]
     X = [ones(nrow(df)) Matrix(df[!, x_vars])]
     linmodel = lm(X, y)
     MyLinearModel(linmodel, y_var, x_vars)
 end
 
+get_y_var(F::FormulaTerm) = F.lhs.sym
+get_x_vars(F::FormulaTerm) = collect((t -> t.sym).(F.rhs))
+my_lm(F::FormulaTerm, df::DataFrame) = my_lm(get_y_var(F), get_x_vars(F), df)
+
 function Base.show(io::IO, mylm::MyLinearModel)
     linmodel, y_var, x_vars = getfield.(Ref(mylm), (:linmodel, :y_var, :x_vars))
     ct = coeftable(linmodel)
     ct.rownms .= string.((Symbol("(Intercept)"), x_vars...,))
-    print(io, "Formula: ")
+    print(io, typeof(mylm), "\n\n")
     print(io, y_var, " ~ 1")
     for x in x_vars print(io, " + ", x) end
-    print(io, "\n\n")
+    print(io, "\n\nCoefficients:\n")
     show(io, ct)
     print(io, "\n")
 end
@@ -112,10 +116,27 @@ df = DataFrame(rand(100, n+1), [:y; x_symbols]);
 myresult = []
 for _ in 1:10
     x_vars = sample(x_symbols, r; replace=false)
-    @time mylinmodel = my_lm(:y, x_vars, df)
+    F = term(:y) ~ sum(term(x) for x in x_vars)
+    @time mylinmodel = my_lm(F, df)
     push!(myresult, mylinmodel)
 end
 myresult
+
+# %% [markdown]
+# ## Comparison
+
+# %%
+F = @formula(y ~ x9 + x5 + x1 + x4 + x6 + x8 + x7 + x2 + x3)
+@time lm(F, df)
+
+# %%
+F = @formula(y ~ x9 + x5 + x1 + x4 + x6 + x8 + x7 + x3 + x2)
+@time my_lm(F, df)
+
+# %%
+F = @formula(y ~ x9 + x5 + x1 + x4 + x6 + x8 + x3 + x2 + x7)
+y_var, x_vars = get_y_var(F), get_x_vars(F)
+@time my_lm(y_var, x_vars, df)
 
 # %% [markdown]
 # ## Analysis of the slow-down
@@ -127,11 +148,12 @@ x_vars = sample(x_symbols, r; replace=false)
 @time lm(F, df)
 
 # %%
-@time my_lm(:y, x_vars, df)
+@time my_lm(F, df)
 
 # %%
 x_vars = sample(x_symbols, r; replace=false)
-@time my_lm(:y, x_vars, df)
+@time F = term(:y) ~ sum(term(x) for x in x_vars)
+@time my_lm(F, df)
 
 # %%
 x_vars = sample(x_symbols, r; replace=false)
