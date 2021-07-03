@@ -118,7 +118,7 @@ end
 myresult
 
 # %% [markdown]
-# ## Analysis of the slow-dows
+# ## Analysis of the slow-down
 
 # %%
 x_vars = sample(x_symbols, r; replace=false)
