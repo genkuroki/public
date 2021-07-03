@@ -134,6 +134,10 @@ F = @formula(y ~ x9 + x5 + x1 + x4 + x6 + x8 + x7 + x3 + x2)
 @time my_lm(F, df)
 
 # %%
+F = @formula(y ~ x9 + x5 + x1 + x4 + x6 + x8 + x3 + x7 + x2)
+@time my_lm(F, df)
+
+# %%
 F = @formula(y ~ x9 + x5 + x1 + x4 + x6 + x8 + x3 + x2 + x7)
 y_var, x_vars = get_y_var(F), get_x_vars(F)
 @time my_lm(y_var, x_vars, df)
