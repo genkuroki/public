@@ -16,6 +16,9 @@
 # %% [markdown]
 # https://github.com/JuliaStats/StatsModels.jl/issues/220
 
+# %% [markdown]
+# ## Reproduce the slow-down (1)
+
 # %%
 using DataFrames
 using GLM
@@ -28,23 +31,26 @@ x_symbols = [Symbol("x$i") for i in 1:n]
 
 # %%
 x_vars = sample(x_symbols, r; replace=false)
-@time M = term(:y) ~ sum(term(x) for x in x_vars)
+@time F = term(:y) ~ sum(term(x) for x in x_vars)
 @time cols = Tables.columntable(df)
-@time mf = ModelFrame(M, cols, model=LinearModel)
+@time mf = ModelFrame(F, cols, model=LinearModel)
 @time mm = ModelMatrix(mf)
 @time y = response(mf)
-@time result_fit = fit(LinearModel, mm.m, y)
-@time regmodel = StatsModels.TableRegressionModel(result_fit, mf, mm)
+@time linmodel = fit(LinearModel, mm.m, y)
+@time regmodel = StatsModels.TableRegressionModel(linmodel, mf, mm)
 
 # %%
 x_vars = sample(x_symbols, r; replace=false)
-@time M = term(:y) ~ sum(term(x) for x in x_vars)
+@time F = term(:y) ~ sum(term(x) for x in x_vars)
 @time cols = Tables.columntable(df)
-@time mf = ModelFrame(M, cols, model=LinearModel)
+@time mf = ModelFrame(F, cols, model=LinearModel)
 @time mm = ModelMatrix(mf)
 @time y = response(mf)
-@time result_fit = fit(LinearModel, mm.m, y)
-@time regmodel = StatsModels.TableRegressionModel(result_fit, mf, mm)
+@time linmodel = fit(LinearModel, mm.m, y)
+@time regmodel = StatsModels.TableRegressionModel(linmodel, mf, mm)
+
+# %% [markdown]
+# ## Reproduce the slow-down (2)
 
 # %%
 using DataFrames
@@ -64,6 +70,9 @@ for _ in 1:10
     push!(result, regmodel)
 end
 result
+
+# %% [markdown]
+# ## Solution
 
 # %%
 using DataFrames
@@ -107,5 +116,67 @@ for _ in 1:10
     push!(myresult, mylinmodel)
 end
 myresult
+
+# %% [markdown]
+# ## Analysis of the slow-dows
+
+# %%
+x_vars = sample(x_symbols, r; replace=false)
+@show x_vars
+@time F = term(:y) ~ sum(term(x) for x in x_vars)
+@time lm(F, df)
+
+# %%
+@time my_lm(:y, x_vars, df)
+
+# %%
+x_vars = sample(x_symbols, r; replace=false)
+@time my_lm(:y, x_vars, df)
+
+# %%
+x_vars = sample(x_symbols, r; replace=false)
+@time F = term(:y) ~ sum(term(x) for x in x_vars)
+@time cols = Tables.columntable(df)
+@time mf = ModelFrame(F, cols, model=LinearModel)
+@time mm = ModelMatrix(mf)
+@time y = response(mf)
+@time linmodel = fit(LinearModel, mm.m, y)
+@time regmodel = StatsModels.TableRegressionModel(linmodel, mf, mm);
+
+# %%
+typeof(cols)
+
+# %%
+typeof(mf)
+
+# %%
+typeof(mm) |> x -> (fieldnames(x), fieldtypes(x))
+
+# %%
+typeof(y)
+
+# %%
+typeof(linmodel)
+
+# %%
+typeof(regmodel)
+
+# %%
+regmodel.model == linmodel
+
+# %%
+regmodel.mf == mf
+
+# %%
+regmodel.mm == mm
+
+# %%
+@which lm(F, df)
+
+# %%
+@which fit(LinearModel, F, df)
+
+# %%
+@which fit(LinearModel, mm.m, y)
 
 # %%
