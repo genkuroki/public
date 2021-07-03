@@ -180,3 +180,27 @@ regmodel.mm == mm
 @which fit(LinearModel, mm.m, y)
 
 # %%
+@code_warntype term(:y) ~ sum(term(x) for x in x_vars)
+
+# %%
+@code_warntype Tables.columntable(df)
+
+# %%
+@code_warntype ModelFrame(F, cols, model=LinearModel)
+
+# %%
+@code_warntype ModelMatrix(mf)
+
+# %%
+@code_warntype response(mf)
+
+# %%
+@code_warntype fit(LinearModel, mm.m, y)
+
+# %%
+@code_warntype StatsModels.TableRegressionModel(linmodel, mf, mm)
+
+# %%
+@code_warntype my_lm(:y, x_vars, df)
+
+# %%
