@@ -1,0 +1,25 @@
+--- 11.jl	2021-07-08 12:02:02.838369500 +0900
++++ 11_revised.jl	2021-07-08 12:30:43.749860400 +0900
+@@ -11,10 +11,10 @@
+ 
+-weights = rand(Float32, 361)/ 10 .+ 0.01;  # weights originally larger in the middle
++weights = rand(Float32, 361)/ 10 .+ Float32(0.01);  # weights originally larger in the middle
+ 
+-function computeSumHours(org_sized, enlarged_size, angle_mat, height_mat, weights, y, x)
++function computeSumHours!(org_sized, enlarged_size, angle_mat, height_mat, weights, y, x, shadowed_segments)
+     height, width = size(height_mat)
+     short_elevations = @view enlarged_size[y:y+height, x:x+width]
+-    shadowed_segments = zeros(eltype(weights), 361)
++    shadowed_segments .= 0
+ 
+-    for x2 in 1:width
++    @inbounds for x2 in 1:width
+         for y2 in 1:height
+@@ -34,5 +34,6 @@
+ function computeAllLines(org_sized, enlarged_size, angle_mat, height_mat, shadow_time_hrs, weights)
++    shadowed_segments = zeros(eltype(weights), 361)
+     for x in 1:size(org_sized, 2) - 1
+         for y  in 1:size(org_sized, 1) - 1
+-            shadow_time_hrs[x, y] = computeSumHours(org_sized, enlarged_size, angle_mat, height_mat, weights, y, x)
++            shadow_time_hrs[x, y] = computeSumHours!(org_sized, enlarged_size, angle_mat, height_mat, weights, y, x, shadowed_segments)
+         end
