@@ -26,6 +26,7 @@ versioninfo()
 height, width = 187, 746;
 #org_sized = rand(Float32, (2001, 2001)) * 60;
 org_sized = rand(Float32, (401, 401)) * 60;
+#org_sized = rand(Float32, (101, 101)) * 60;
 shadow_time_hrs = zeros(Float32, size(org_sized));
 height_mat = rand(Float32, (height, width)) * 100; # originally values getting larger from (0, width//2) to the outside with the distance squared
 
@@ -66,15 +67,16 @@ function computeAllLines(org_sized, enlarged_size, angle_mat, height_mat, shadow
     return shadow_time_hrs
 end
 
-@time result = computeAllLines(org_sized, enlarged_size, angle_mat, height_mat, shadow_time_hrs, weights);
-@time result = computeAllLines(org_sized, enlarged_size, angle_mat, height_mat, shadow_time_hrs, weights);
-@time result = computeAllLines(org_sized, enlarged_size, angle_mat, height_mat, shadow_time_hrs, weights);
+@time result = computeAllLines(org_sized, enlarged_size, angle_mat, height_mat, shadow_time_hrs, weights)
+@time result = computeAllLines(org_sized, enlarged_size, angle_mat, height_mat, shadow_time_hrs, weights)
+@time result = computeAllLines(org_sized, enlarged_size, angle_mat, height_mat, shadow_time_hrs, weights)
 r0 = result;
 
 # %%
 # revised version
 
 weights = Float32.(weights)
+shadowed_segments = zeros(eltype(weights), 361)
 
 function computeSumHours!(org_sized, enlarged_size, angle_mat, height_mat, weights, y, x, shadowed_segments)
     height, width = size(height_mat)
@@ -96,8 +98,7 @@ function computeSumHours!(org_sized, enlarged_size, angle_mat, height_mat, weigh
     return sum(shadowed_segments)
 end
 
-function computeAllLines!(org_sized, enlarged_size, angle_mat, height_mat, shadow_time_hrs, weights)
-    shadowed_segments = zeros(eltype(weights), 361)
+function computeAllLines!(org_sized, enlarged_size, angle_mat, height_mat, shadow_time_hrs, weights, shadowed_segments)
     for x in 1:size(org_sized, 2) - 1
         for y  in 1:size(org_sized, 1) - 1
             shadow_time_hrs[x, y] = computeSumHours!(org_sized, enlarged_size, angle_mat, height_mat, weights, y, x, shadowed_segments)
@@ -106,15 +107,16 @@ function computeAllLines!(org_sized, enlarged_size, angle_mat, height_mat, shado
     return shadow_time_hrs
 end
 
-@time result = computeAllLines!(org_sized, enlarged_size, angle_mat, height_mat, shadow_time_hrs, weights);
-@time result = computeAllLines!(org_sized, enlarged_size, angle_mat, height_mat, shadow_time_hrs, weights);
-@time result = computeAllLines!(org_sized, enlarged_size, angle_mat, height_mat, shadow_time_hrs, weights);
+@time result = computeAllLines!(org_sized, enlarged_size, angle_mat, height_mat, shadow_time_hrs, weights, shadowed_segments)
+@time result = computeAllLines!(org_sized, enlarged_size, angle_mat, height_mat, shadow_time_hrs, weights, shadowed_segments)
+@time result = computeAllLines!(org_sized, enlarged_size, angle_mat, height_mat, shadow_time_hrs, weights, shadowed_segments)
 r1 = result;
 
 # %%
 # revised version 2
 
 weights = Float32.(weights)
+shadowed_segments = zeros(eltype(weights), 361)
 
 function computeSumHours!(org_sized, enlarged_size, angle_mat, height_mat, weights, y, x, shadowed_segments)
     height, width = size(height_mat)
@@ -136,7 +138,48 @@ function computeSumHours!(org_sized, enlarged_size, angle_mat, height_mat, weigh
     return sum(shadowed_segments)
 end
 
-function computeAllLines!(org_sized, enlarged_size, angle_mat, height_mat, shadow_time_hrs, weights)
+function computeAllLines!(org_sized, enlarged_size, angle_mat, height_mat, shadow_time_hrs, weights, shadowed_segments)
+    for x in 1:size(org_sized, 2) - 1
+        for y  in 1:size(org_sized, 1) - 1
+            shadow_time_hrs[x, y] = computeSumHours!(org_sized, enlarged_size, angle_mat, height_mat, weights, y, x, shadowed_segments)
+        end
+    end
+    return shadow_time_hrs
+end
+
+@show Threads.nthreads()
+@time result = computeAllLines!(org_sized, enlarged_size, angle_mat, height_mat, shadow_time_hrs, weights, shadowed_segments)
+@time result = computeAllLines!(org_sized, enlarged_size, angle_mat, height_mat, shadow_time_hrs, weights, shadowed_segments)
+@time result = computeAllLines!(org_sized, enlarged_size, angle_mat, height_mat, shadow_time_hrs, weights, shadowed_segments)
+r2 = result;
+
+# %%
+# revised version 3
+
+weights = Float32.(weights)
+shadowed_segments = zeros(eltype(weights), 361)
+
+function computeSumHours!(org_sized, enlarged_size, angle_mat, height_mat, weights, y, x, shadowed_segments)
+    height, width = size(height_mat)
+    short_elevations = @view enlarged_size[y:y+height, x:x+width]
+    shadowed_segments .= 0
+
+    Threads.@threads for x2 in 1:width
+        @inbounds @simd for y2 in 1:height
+            overshadowed = (short_elevations[y2, x2] - org_sized[y, x]) > height_mat[y2, x2]
+            if overshadowed
+                angle = angle_mat[y2, x2]
+                if shadowed_segments[angle] == 0.0
+                    shadowed_segments[angle] = weights[angle]
+                end
+            end
+        end
+    end
+
+    return sum(shadowed_segments)
+end
+
+function computeAllLines!(org_sized, enlarged_size, angle_mat, height_mat, shadow_time_hrs, weights, shadowed_segments)
     shadowed_segments = zeros(eltype(weights), 361)
     for x in 1:size(org_sized, 2) - 1
         for y  in 1:size(org_sized, 1) - 1
@@ -147,12 +190,12 @@ function computeAllLines!(org_sized, enlarged_size, angle_mat, height_mat, shado
 end
 
 @show Threads.nthreads()
-@time result = computeAllLines!(org_sized, enlarged_size, angle_mat, height_mat, shadow_time_hrs, weights);
-@time result = computeAllLines!(org_sized, enlarged_size, angle_mat, height_mat, shadow_time_hrs, weights);
-@time result = computeAllLines!(org_sized, enlarged_size, angle_mat, height_mat, shadow_time_hrs, weights);
-r2 = result;
+@time result = computeAllLines!(org_sized, enlarged_size, angle_mat, height_mat, shadow_time_hrs, weights, shadowed_segments)
+@time result = computeAllLines!(org_sized, enlarged_size, angle_mat, height_mat, shadow_time_hrs, weights, shadowed_segments)
+@time result = computeAllLines!(org_sized, enlarged_size, angle_mat, height_mat, shadow_time_hrs, weights, shadowed_segments)
+r3 = result;
 
 # %%
-r0 ≈ r1 ≈ r2
+r0 ≈ r1 ≈ r2 ≈ r3
 
 # %%
