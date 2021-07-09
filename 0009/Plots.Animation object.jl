@@ -50,16 +50,14 @@ first(frame(anim), 5)
 
 # %%
 using Images
-
 A = [load(joinpath(anim.dir, fn)) for fn in frame(anim)]
+A[77]
 
+# %%
 for img in A
     IJulia.clear_output(true)
     display(img)
     sleep(1/15)
 end
-
-# %%
-A[77]
 
 # %%
