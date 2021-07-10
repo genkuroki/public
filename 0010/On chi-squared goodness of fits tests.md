@@ -1,4 +1,6 @@
-The Chi-square test can only be used if the distribution of `testValue`s is approximated by the Chi-square distribution.
+https://discourse.julialang.org/t/whats-wrong-with-my-chi-squared-goodness-of-fits-tests/64334/4
+
+The chi-square test can only be used if the distribution of `testValue`s is approximated by the chi-square distribution.
 
 In the standard goodness-of-fit test, the degree of freedom of the chi-square distribution should be equal to (the number of elements in the support of the discrete distribution to be tested) - 1.
 
@@ -6,7 +8,7 @@ However, the real support of `Binomial(100, 0.7)` is at most between 40 and 100.
 
 Let's check this in the following.
 
-The mathematically idealized support of `DiscreteUniform(0, 100)` and `Binomial(100, 0.7)` are both 0:100, but the real support of the latter is much smaller than the former.
+The mathematically idealized support of `DiscreteUniform(0, 100)` and `Binomial(100, 0.7)` are both `0:100`, but the real support of the latter is much smaller than the former.
 
 ```julia
 using Distributions, StatsPlots
