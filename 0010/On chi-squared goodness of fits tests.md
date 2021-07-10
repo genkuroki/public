@@ -15,7 +15,7 @@ Q = plot(Binomial(100, 0.7); label="Binomial(100, 0.7)", legend=:topleft, xtick=
 plot(P, Q; size=(800, 250))
 ```
 
-![2021-07-10 (0).png](2021-07-10 (0).png)
+![images/2021-07-10 (0).png](images/2021-07-10 (0).png)
 
 ```julia
 using Distributions, Random, StatsPlots
@@ -88,7 +88,7 @@ In the `DiscreteUniform(0, 100)` case, the distribution of `testValue`s is almos
 plot_testValue_dist(DiscreteUniform(0, 100))
 ```
 
-![2021-07-10 (1).png](2021-07-10 (0).png)
+![images/2021-07-10 (1).png](images/2021-07-10 (0).png)
 
 But, in the `Binomial(100, 0.7)` case, this is not the case.  The real (or empirical) α value is much smaller than the nominal α value.
 
@@ -96,7 +96,7 @@ But, in the `Binomial(100, 0.7)` case, this is not the case.  The real (or empir
 plot_testValue_dist(Binomial(100, 0.7))
 ```
 
-![2021-07-10 (2).png](2021-07-10 (0).png)
+![images/2021-07-10 (2).png](images/2021-07-10 (0).png)
 
 When the degree of freedom is set to 60, the empirical α value is close to the nominal α value 0.05.
 
@@ -104,4 +104,4 @@ When the degree of freedom is set to 60, the empirical α value is close to the 
 plot_testValue_dist(Binomial(100, 0.7); d = 40)
 ```
 
-![2021-07-10 (3).png](2021-07-10 (0).png)
+![images/2021-07-10 (3).png](images/2021-07-10 (0).png)
