@@ -1,50 +1,26 @@
----
-jupyter:
-  jupytext:
-    encoding: '# -*- coding: utf-8 -*-'
-    formats: ipynb,jl:hydrogen,md
-    text_representation:
-      extension: .md
-      format_name: markdown
-      format_version: '1.3'
-      jupytext_version: 1.11.2
-  kernelspec:
-    display_name: Julia 1.7.0-beta3
-    language: julia
-    name: julia-1.7
----
+https://discourse.julialang.org/t/function-depending-on-the-global-variable-inside-module/64322/10
 
 # Problem-Algorithm-Solver pattern
 
 * Gen Kuroki
 * 2021-07-11
 
-https://discourse.julialang.org/t/function-depending-on-the-global-variable-inside-module/64322/10
+A code will be more readable and efficient if the global variables that store the parameters of a problem are passed as arguments to functions _every time_.
 
-A code will be more readable and efficient if the global variables that store the parameters of a problem are passed as arguments to functions _everytime_.
-
-However, many people find it troublesome to pass the parameters as arguments to the function _everytime_.
+However, many people find it troublesome to pass the parameters as arguments to the function _every time_.
 
 In order to resolve this misunderstanding, they can try the problem-algorithm-solver pattern explained below.
 
 In order to use the `(; a, b, c) = p` syntax, require VERSION ≥ v"1.7.0-beta" [#39285](https://github.com/JuliaLang/julia/pull/39285).
 
 
-In order to use the `(; a, b, c) = p` syntax, require VERSION ≥ v"1.7.0-beta" [#39285](https://github.com/JuliaLang/julia/pull/39285).
-
 ```julia
-VERSION ≥ v"1.7.0-beta"
+VERSION ≥ v"1.7.0-beta" #> true
 ```
 
-## A minimal working example of the problem-algorithm-solver pattern
+__A minimal working example of the problem-algorithm-solver pattern:__
 
 ```julia
-using Plots
-```
-
-```julia
-# minimal working example of the problem-algorithm-solver pattern
-
 module FreeFall
 
 """Problem type"""
@@ -104,12 +80,13 @@ This module will calculate the free-fall motion under a uniform gravity potentia
 
 * Solver function: The function `FreeFall.solve(prob::FreeFall.Problem, alg)` returns the object of type `FreeFall.Solution` obtained by solving the problem `prob` with the algorithm `alg`.
 
-Note that the `(; a, b, c) = p` syntax of Julia ≥ v1.7, is very useful for extracting the contents of the object that contains parameters. (You can also do the same thing with `@unpack` in the exellent well-known package [Parameters.jl](https://github.com/mauro3/Parameters.jl).)
+Note that the `(; a, b, c) = p` syntax, which is available in Julia ≥ v1.7, is very useful for extracting the contents of the object that contains parameters. (You can also do the same thing with `@unpack` in the exellent well-known package [Parameters.jl](https://github.com/mauro3/Parameters.jl).)
 
-
-### Example 1: Compare a numerical solution and an exact one.
+__Example 1:__ Compare a numerical solution and an exact one.
 
 ```julia
+using PLots
+
 earth = FreeFall.Problem()
 sol_euler = FreeFall.solve(earth)
 sol_exact = FreeFall.solve(earth, FreeFall.ExactFormula())
@@ -119,14 +96,13 @@ plot!(sol_exact.t, sol_exact.y; label="exact solution", ls=:auto)
 title!("On the Earth"; xlabel="t", legend=:bottomleft)
 ```
 
+![On the Earth 1](https://raw.githubusercontent.com/genkuroki/public/main/0010/images/IMG_0662.jpg)
+
 Since the time step `dt = 0.1` is not enough small, the error of the Euler method is rather large.
 
-
-### Example 2: Change the algorithm parameter `dt` smaller.
+__Example 2:__ Change the algorithm parameter `dt` smaller.
 
 ```julia
-# change algorithm parameters
-
 earth = FreeFall.Problem()
 sol_euler = FreeFall.solve(earth, FreeFall.EulerMethod(dt = 0.01))
 sol_exact = FreeFall.solve(earth, FreeFall.ExactFormula())
@@ -136,11 +112,11 @@ plot!(sol_exact.t, sol_exact.y; label="exact solution", ls=:auto)
 title!("On the Earth"; xlabel="t", legend=:bottomleft)
 ```
 
-### Example 3: Change the problem parameter `g` to the gravitational acceleration on the moon.
+![On the Earth 2](https://raw.githubusercontent.com/genkuroki/public/main/0010/images/IMG_0663.jpg)
+
+__Example 3:__ Change the problem parameter `g` to gravitational acceleration on the moon.
 
 ```julia
-# change problem parameters
-
 moon = FreeFall.Problem(g = 1.62, tspan = (0.0, 40.0))
 sol_euler = FreeFall.solve(moon)
 sol_exact = FreeFall.solve(moon, FreeFall.ExactFormula(dt = sol_euler.alg.dt))
@@ -150,13 +126,11 @@ plot!(sol_exact.t, sol_exact.y; label="exact solution", ls=:auto)
 title!("On the Moon"; xlabel="t", legend=:bottomleft)
 ```
 
-## Extensibility of the Julia ecosystem
+![On the Moon](https://raw.githubusercontent.com/genkuroki/public/main/0010/images/IMG_0664.jpg)
 
-A different author of the `FreeFall` module can define , in the `SomeExtension` module, a new algorithm type and a new method of the `FreeFall.solve` function.  Both a new type and a new method!
+__Extensibility of the Julia ecosystem:__ A different author of the `FreeFall` module can define , in the `SomeExtension` module, a new algorithm type and a new method of the `FreeFall.solve` function.
 
 ```julia
-# Extensibility of the Julia ecosystem
-
 module SomeExtension
 
 using ..FreeFall
@@ -193,16 +167,13 @@ plot!(sol_exact.t, sol_exact.y; label="exact solution", ls=:auto)
 title!("On the Earth"; xlabel="t", legend=:bottomleft)
 ```
 
+![On the Earth 3](https://raw.githubusercontent.com/genkuroki/public/main/0010/images/IMG_0665.jpg)
+
 The second-order symplectic method gives exact discretizations of the free-fall motions under uniform gravity potentials.
 
-
-## Composability of the Julia ecosystem
-
-By combining the MonteCarloMeasurements.jl package with the modules given above, we can plot the behavior of the system for perturbations of the initial value.  We did not intend for them to be used in this way!
+__Composability of the Julia ecosystem:__ By combining the MonteCarloMeasurements.jl package with the modules given above, we can plot the behavior of the system for perturbations of the initial value.  We did not intend for them to be used in this way!
 
 ```julia
-# Composability of the Julia ecosystem
-
 using MonteCarloMeasurements
 
 earth = FreeFall.Problem(y0 = 0.0 ± 0.0, v0 = 30.0 ± 1.0)
@@ -220,6 +191,4 @@ title!("On the Earth"; xlabel="t", legend=:bottomleft, ylim)
 plot(P, Q, R; size=(720, 600))
 ```
 
-```julia
-
-```
+![On the earth 4](https://raw.githubusercontent.com/genkuroki/public/main/0010/images/IMG_0666.jpg)
