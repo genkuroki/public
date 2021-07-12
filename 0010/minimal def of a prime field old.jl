@@ -8,9 +8,9 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.11.2
 #   kernelspec:
-#     display_name: Julia 1.8.0-DEV
+#     display_name: Julia 1.6.1
 #     language: julia
-#     name: julia-1.8
+#     name: julia-1.6
 # ---
 
 # %%
@@ -48,7 +48,7 @@ A = F7[1 2; 3 4]
 @show(A, 4A, A/4)
 println()
 using LinearAlgebra
-L, U = lu(A, NoPivot())
+L, U = lu(A)
 @show(L, U, L * U, det(A), inv(A), inv(A) * A, A * inv(A));
 
 # %%
@@ -67,7 +67,7 @@ squareroots(k, Fp) = Fp[x for x in Fp if x^2 == k]
 @show(collect(F7), squares(F7), squareroots.(0:6, Ref(F7)));
 
 # %%
-using GaloisFields, LinearAlgebra{}
+using GaloisFields, LinearAlgebra
 GF7 = @GaloisField 7
 B = GF7[1 2; 3 4]
 det(B)
