@@ -8,9 +8,9 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.11.2
 #   kernelspec:
-#     display_name: Julia 1.8.0-DEV
+#     display_name: Julia 1.6.1
 #     language: julia
-#     name: julia-1.8
+#     name: julia-1.6
 # ---
 
 # %% tags=[]
@@ -25,7 +25,7 @@ function simulate_model_selections(models, truedist, samplesize; niters = 10^4)
     selectedmodel = Vector{Int}(undef, niters)
     Threads.@threads for i in 1:niters
         Y = rand(truedist, samplesize)
-        selectedmodel[i] = argmin(aic(model, Y) for model in models)
+        selectedmodel[i] = argmin(aic.(models, Ref(Y)))
     end
     nselected = zeros(Int, 3)
     for i in 1:niters
@@ -85,7 +85,7 @@ simulate_model_selections(models, LogNormal(2.2, 0.47), 100; niters = 10^4)
 #     selectedmodel = Vector{Int}(undef, niters)
 #     Threads.@threads for i in 1:niters
 #         Y = rand(truedist, samplesize)
-#         selectedmodel[i] = argmin(aic(model, Y) for model in models)
+#         selectedmodel[i] = argmin(aic.(models, Ref(Y)))
 #     end
 #     nselected = zeros(Int, 3)
 #     for i in 1:niters
