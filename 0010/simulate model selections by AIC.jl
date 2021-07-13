@@ -102,7 +102,7 @@ simulate_model_selections(models, LogNormal(2.2, 0.47), 100; niters = 10^4)
 # plot!(LogNormal(2.2, 0.47), a, b; label="LogNormal(2.2, 0.47)", ls=:dashdot)
 # ```
 #
-# ![2021-07-13|688x462](upload://bBPbwGrrY352MpZSROkggsdKc71.png)
+# ![2021-07-13|688x462](https://raw.githubusercontent.com/genkuroki/public/main/0010/images/2021-07-13.png)
 #
 # ```julia
 # simulate_model_selections(models, Gamma(5, 2), 100; niters = 10^4)
