@@ -190,7 +190,7 @@ A different author of the `FreeFall` module can define , in the `SomeExtension` 
 
 # ╔═╡ 1ea81f0b-5152-48cd-b477-2f57d2fc89b4
 md"""
-__If you get an error "UndefVarError: XXX not defined" in the following cells, run them again.__
+__If you get an error "UndefVarError: XXX not defined" in the following cell, run it again.__
 """
 
 # ╔═╡ 1ce33cd2-be68-4623-9ec9-fe03cc4f3769
@@ -302,9 +302,9 @@ version = "3.13.0"
 
 [[deps.ColorTypes]]
 deps = ["FixedPointNumbers", "Random"]
-git-tree-sha1 = "32a2b8af383f11cbb65803883837a149d10dfe8a"
+git-tree-sha1 = "024fe24d83e4a5bf5fc80501a314ce0d1aa35597"
 uuid = "3da002f7-5984-5a60-b8a6-cbb66c0b333f"
-version = "0.10.12"
+version = "0.11.0"
 
 [[deps.Colors]]
 deps = ["ColorTypes", "FixedPointNumbers", "Reexport"]

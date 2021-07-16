@@ -199,7 +199,7 @@ A different author of the `FreeFall` module can define , in the `SomeExtension` 
 
 # ╔═╡ 1ea81f0b-5152-48cd-b477-2f57d2fc89b4
 md"""
-__If you get an error "UndefVarError: XXX not defined" in the following cells, run them again.__
+__If you get an error "UndefVarError: XXX not defined" in the following cell, run it again.__
 """
 
 # ╔═╡ 1ce33cd2-be68-4623-9ec9-fe03cc4f3769
