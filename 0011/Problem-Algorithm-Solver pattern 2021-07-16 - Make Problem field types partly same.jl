@@ -211,3 +211,6 @@ title!("On the Earth"; xlabel="t", legend=:bottomleft, ylim)
 plot(P, Q, R; size=(720, 600))
 
 # %%
+typeof(30.0 ± 1.0)
+
+# %%

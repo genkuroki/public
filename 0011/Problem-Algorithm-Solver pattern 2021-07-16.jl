@@ -98,7 +98,7 @@ end
 # Note that the `(; a, b, c) = p` syntax of Julia ≥ v1.7, is very useful for extracting the contents of the object that contains parameters. (You can also do the same thing with `@unpack` in the exellent well-known package [Parameters.jl](https://github.com/mauro3/Parameters.jl).)
 
 # %% [markdown]
-# ### Example 1: Compare a numerical solution and an exact one.
+# ### Example 1: Compare a numerical solution and an exact one
 
 # %%
 using Plots
