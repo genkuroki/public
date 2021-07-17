@@ -14,7 +14,7 @@
 # ---
 
 # %%
-using StatsPlots
+using Plots
 using Distributions
 using KernelDensity
 
