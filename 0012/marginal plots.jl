@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # ---
 # jupyter:
 #   jupytext:
@@ -17,9 +18,15 @@
 using Plots
 using Distributions
 using KernelDensity
+using LinearAlgebra
+
+# true distribution of sample
+dist_true = MvNormal([1.0, 2.0], [2.0 -1.0; -1.0 4.0])
+mu_x, mu_y = mean(dist_true)
+s_x, s_y = .√diag(cov(dist_true))
+distx_true, disty_true = Normal(mu_x, s_x), Normal(mu_y, s_y)
 
 # generate test sample
-dist_true = MvNormal([1.0, 2.0], [2.0 -1.0; -1.0 4.0])
 n = 2^10
 sample = rand(dist_true, n)
 
@@ -81,6 +88,70 @@ legend = colorbar = false
 a = plot(kx.x, kx.density; xlim, legend)
 c = plot(ky.density, ky.x; ylim, legend, xrotation=90)
 b = scatter(X, Y; xlim, ylim, legend, marker_z=pdf.(Ref(ik), X, Y), alpha=0.7, msw=0, color=:rainbow)
+
+plot(a, b, c; layout, link=:both, size=(500, 500))
+
+# %%
+layout = @layout [
+    a             _
+    b{0.8w, 0.8h} c
+]
+
+xlim, ylim = extrema.((k.x, k.y))
+legend = colorbar = false
+a = plot(kx.x, kx.density; xlim, label="X")
+plot!(kx.x, pdf.(distx_true, kx.x); label="true", ls=:dash)
+c = plot(ky.density, ky.x; ylim, xrotation=90, label="Y")
+plot!(pdf.(disty_true, ky.x), ky.x; label="true", ls=:dash)
+b = contour(k.x, k.y, k.density; xlim, ylim, legend)
+
+plot(a, b, c; layout, link=:both, size=(500, 500))
+
+# %%
+layout = @layout [
+    a             _
+    b{0.8w, 0.8h} c
+]
+
+xlim, ylim = extrema.((k.x, k.y))
+legend = colorbar = false
+a = plot(kx.x, kx.density; xlim, label="X")
+plot!(kx.x, pdf.(distx_true, kx.x); label="true", ls=:dash)
+c = plot(ky.density, ky.x; ylim, xrotation=90, label="Y")
+plot!(pdf.(disty_true, ky.x), ky.x; label="true", ls=:dash)
+b = heatmap(k.x, k.y, k.density; xlim, ylim, legend)
+
+plot(a, b, c; layout, link=:both, size=(500, 500))
+
+# %%
+layout = @layout [
+    a             _
+    b{0.8w, 0.8h} c
+]
+
+xlim, ylim = extrema.((k.x, k.y))
+legend = colorbar = false
+a = plot(kx.x, kx.density; xlim, label="X")
+plot!(kx.x, pdf.(distx_true, kx.x); label="true", ls=:dash)
+c = plot(ky.density, ky.x; ylim, xrotation=90, label="Y")
+plot!(pdf.(disty_true, ky.x), ky.x; label="true", ls=:dash)
+b = scatter(X, Y; xlim, ylim, colorbar, marker_z=pdf.(Ref(ik), X, Y), alpha=0.7, msw=0, label="(X, Y)")
+
+plot(a, b, c; layout, link=:both, size=(500, 500))
+
+# %%
+layout = @layout [
+    a             _
+    b{0.8w, 0.8h} c
+]
+
+xlim, ylim = extrema.((k.x, k.y))
+legend = colorbar = false
+a = plot(kx.x, kx.density; xlim, label="X")
+plot!(kx.x, pdf.(distx_true, kx.x); label="true", ls=:dash)
+c = plot(ky.density, ky.x; ylim, xrotation=90, label="Y")
+plot!(pdf.(disty_true, ky.x), ky.x; label="true", ls=:dash)
+b = scatter(X, Y; xlim, ylim, colorbar, marker_z=pdf.(Ref(ik), X, Y), alpha=0.7, msw=0, color=:rainbow, label="(X, Y)")
 
 plot(a, b, c; layout, link=:both, size=(500, 500))
 
