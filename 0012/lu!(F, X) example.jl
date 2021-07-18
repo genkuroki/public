@@ -65,10 +65,11 @@ n = 2^10
 X = I + sprandn(n, n, 1e-3)
 
 F = lu(X)
+G = lu(X)
 @show lu(X).L == lu!(F, X).L
 @show lu(X).U == lu!(F, X).U
-@show lu!(F, X).L == lu_dot!(F, X).L
-@show lu!(F, X).U == lu_dot!(F, X).U
+@show lu!(F, X).L == lu_dot!(G, X).L
+@show lu!(F, X).U == lu_dot!(G, X).U
 println()
 print("lu(X):        ")
 @btime lu($X)

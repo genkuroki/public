@@ -169,10 +169,13 @@ layout = @layout [
 
 xlim, ylim = extrema.((k.x, k.y))
 legend = colorbar = false
+
 a = plot(kx.x, kx.density; xlim, label="X")
 plot!(kx.x, pdf.(distx_true, kx.x); label="true", ls=:dash)
+
 c = plot(ky.density, ky.x; ylim, xrotation=90, label="Y")
 plot!(pdf.(disty_true, ky.x), ky.x; label="true", ls=:dash)
+
 b = contour(k.x, k.y, k.density; xlim, ylim, legend)
 
 plot(a, b, c; layout, link=:both, size=(500, 500))
@@ -185,10 +188,13 @@ layout = @layout [
 
 xlim, ylim = extrema.((k.x, k.y))
 legend = colorbar = false
+
 a = plot(kx.x, kx.density; xlim, label="X")
 plot!(kx.x, pdf.(distx_true, kx.x); label="true", ls=:dash)
+
 c = plot(ky.density, ky.x; ylim, xrotation=90, label="Y")
 plot!(pdf.(disty_true, ky.x), ky.x; label="true", ls=:dash)
+
 b = contourf(k.x, k.y, k.density; xlim, ylim, legend)
 
 plot(a, b, c; layout, link=:both, size=(500, 500))
@@ -201,10 +207,13 @@ layout = @layout [
 
 xlim, ylim = extrema.((k.x, k.y))
 legend = colorbar = false
+
 a = plot(kx.x, kx.density; xlim, label="X")
 plot!(kx.x, pdf.(distx_true, kx.x); label="true", ls=:dash)
+
 c = plot(ky.density, ky.x; ylim, xrotation=90, label="Y")
 plot!(pdf.(disty_true, ky.x), ky.x; label="true", ls=:dash)
+
 b = heatmap(k.x, k.y, k.density; xlim, ylim, legend)
 
 plot(a, b, c; layout, link=:both, size=(500, 500))
@@ -217,10 +226,13 @@ layout = @layout [
 
 xlim, ylim = extrema.((k.x, k.y))
 legend = colorbar = false
+
 a = plot(kx.x, kx.density; xlim, label="X")
 plot!(kx.x, pdf.(distx_true, kx.x); label="true", ls=:dash)
+
 c = plot(ky.density, ky.x; ylim, xrotation=90, label="Y")
 plot!(pdf.(disty_true, ky.x), ky.x; label="true", ls=:dash)
+
 b = scatter(X, Y; xlim, ylim, colorbar, marker_z=pdf.(Ref(ik), X, Y), alpha=0.7, msw=0, label="(X, Y)")
 contour!(k.x, k.y, (x, y)->pdf(dist_true, [x, y]); xlim, ylim, legend, ls=:dash, color=2)
 
@@ -234,10 +246,13 @@ layout = @layout [
 
 xlim, ylim = extrema.((k.x, k.y))
 legend = colorbar = false
+
 a = plot(kx.x, kx.density; xlim, label="X")
 plot!(kx.x, pdf.(distx_true, kx.x); label="true", ls=:dash)
+
 c = plot(ky.density, ky.x; ylim, xrotation=90, label="Y")
 plot!(pdf.(disty_true, ky.x), ky.x; label="true", ls=:dash)
+
 b = scatter(X, Y; xlim, ylim, colorbar, marker_z=pdf.(Ref(ik), X, Y), alpha=0.7, msw=0, color=:rainbow, label="(X, Y)")
 contour!(k.x, k.y, (x, y)->pdf(dist_true, [x, y]); xlim, ylim, legend, ls=:dash, color=2)
 
