@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # ---
 # jupyter:
 #   jupytext:
@@ -22,6 +23,17 @@ using LinearAlgebra
 using Plots
 
 # %%
+function plot_2ndorder(sol; l1=:bottomright, l2=:bottomright, size=(720, 300), kwargs...)
+    t = range(sol.prob.tspan...; length=400)
+    n = Base.size(sol, 1) ÷ 2
+    v = vcat((t -> sol(t)[1:n]').(t)...)
+    d = vcat((t -> sol(t)[n+1:end]').(t)...)
+    P = plot(t, d; label=permutedims(["\$d_{$i}\$" for i in 1:n]), legend=l1)
+    Q = plot(t, v; label=permutedims(["\$v_{$i}\$" for i in 1:n]), legend=l2)
+    plot(P, Q; size, kwargs...)
+end
+
+# %%
 function g_naive!(dv, v, d, p, t)
     m, f, c, K = p
     # The following is equivalent to dv .= M \ (f - (C * v + K * d)),
@@ -34,7 +46,7 @@ end
 m = Float64[1, 2, 3, 4]
 f = Float64[-10, -10, -10, -10]
 c = Float64[1, 1, 1, 1]
-K = [
+K = Float64[
      2 -1  0  0
     -1  2 -1  0
      0  1  2 -1
@@ -47,16 +59,8 @@ tspan = (0.0, 10.0)
 
 # %%
 prob = SecondOrderODEProblem(g_naive!, v0, d0, tspan, p)
-@time sol = solve(prob)
-@time sol = solve(prob)
-@time sol = solve(prob)
-
-t = range(sol.prob.tspan...; length=400)
-v = vcat((t -> sol(t)[1:4]').(t)...)
-d = vcat((t -> sol(t)[5:8]').(t)...)
-P = plot(t, d; label=permutedims(["\$d_$i\$" for i in 1:4]), legend=:bottomleft)
-Q = plot(t, v; label=permutedims(["\$v_$i\$" for i in 1:4]), legend=:bottomright)
-plot(P, Q; size=(720, 300))
+sol = solve(prob)
+plot_2ndorder(sol)
 
 # %%
 function g!(dv, v, d, p, t)
@@ -64,23 +68,19 @@ function g!(dv, v, d, p, t)
     # The following is equivalent to dv .= M \ (f - (C * v + K * d)),
     # where K = Matrix, C = Diagonal(c), M = Diagonal(m)
     mul!(dv, K, d)
-    @. dv += c * v
-    @. dv = f - dv
-    @. dv = m \ dv
+    @. dv = m \ (f - (c * v + dv))
     return
 end
 
 # %%
 prob = SecondOrderODEProblem(g!, v0, d0, tspan, p)
-@time sol = solve(prob)
-@time sol = solve(prob)
-@time sol = solve(prob)
+sol = solve(prob)
+plot_2ndorder(sol)
 
-t = range(sol.prob.tspan...; length=400)
-v = vcat((t -> sol(t)[1:4]').(t)...)
-d = vcat((t -> sol(t)[5:8]').(t)...)
-P = plot(t, d; label=permutedims(["\$d_$i\$" for i in 1:4]), legend=:bottomleft)
-Q = plot(t, v; label=permutedims(["\$v_$i\$" for i in 1:4]), legend=:bottomright)
-plot(P, Q; size=(720, 300))
+# %%
+using BenchmarkTools
+
+@btime g_naive!($(similar(v0)), $v0, $d0, $p, 0.0)
+@btime g!($(similar(v0)), $v0, $d0, $p, 0.0)
 
 # %%
