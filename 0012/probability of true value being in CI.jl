@@ -45,3 +45,47 @@ prob_trueisinci(Exponential(), 20, 0.05)
 prob_trueisinci(MixtureModel([Normal(), Normal(10, 1)], [0.95, 0.05]), 20, 0.05)
 
 # %%
+using Plots
+
+# %%
+normal = Normal(mean(Uniform()), std(Uniform()))
+P = plot(x -> pdf(Uniform(), x), -1, 2; label="Uniform()")
+plot!(x -> pdf(normal, x), -1, 2; label="normal approx.", ls=:dash)
+title!("pdfs")
+Q = plot(x -> cdf(Uniform(), x), -1, 2; label="Uniform()")
+plot!(x -> cdf(normal, x), -1, 2; label="normal approx.", ls=:dash)
+title!("cdfs"; legend=:bottomright)
+plot(P, Q; size=(720, 300))
+
+# %%
+normal = Normal(mean(Exponential()), std(Exponential()))
+P = plot(x -> pdf(Exponential(), x), -3, 6; label="Exponential()")
+plot!(x -> pdf(normal, x), -3, 6; label="normal approx.", ls=:dash)
+title!("pdfs")
+Q = plot(x -> cdf(Exponential(), x), -3, 6; label="Exponential()")
+plot!(x -> cdf(normal, x), -3, 6; label="normal approx.", ls=:dash)
+title!("cdfs"; legend=:bottomright)
+plot(P, Q; size=(720, 300))
+
+# %%
+mixnormal = MixtureModel([Normal(), Normal(10, 1)], [0.95, 0.05])
+P = plot(x -> pdf(mixnormal, x), -5, 15; label="mixnormal")
+plot!(x -> pdf(Normal(), x), -5, 15; label="Normal()", ls=:dash)
+title!("pdfs")
+Q = plot(x -> cdf(mixnormal, x), -5, 15; label="mixnormal")
+plot!(x -> cdf(Normal(), x), -5, 15; label="Normal()", ls=:dash)
+title!("cdfs"; legend=:bottomright)
+plot(P, Q; size=(720, 300))
+
+# %%
+mixnormal = MixtureModel([Normal(), Normal(10, 1)], [0.95, 0.05])
+normal = Normal(mean(mixnormal), std(mixnormal))
+P = plot(x -> pdf(mixnormal, x), -5, 15; label="mixnormal")
+plot!(x -> pdf(normal, x), -5, 15; label="normal approx.", ls=:dash)
+title!("pdfs")
+Q = plot(x -> cdf(mixnormal, x), -5, 15; label="mixnormal")
+plot!(x -> cdf(normal, x), -5, 15; label="normal approx.", ls=:dash)
+title!("cdfs"; legend=:bottomright)
+plot(P, Q; size=(720, 300))
+
+# %%
