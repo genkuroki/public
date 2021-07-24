@@ -59,14 +59,14 @@ x = copy(X); v = [myquantile!(x, 0.02), myquantile!(x, 0.98)]
 println(); @show u == v;
 
 # %%
-x = copy(X); @time z = [quantile!(x, 0.499), quantile!(x, 0.501)]
-x = copy(X); @time z = [quantile!(x, 0.499), quantile!(x, 0.501)]
-x = copy(X); @time z = [quantile!(x, 0.499), quantile!(x, 0.501)];
-
-# %%
 x = copy(X); @time y = quantile!(x, [0.499, 0.501])
 x = copy(X); @time y = quantile!(x, [0.499, 0.501])
 x = copy(X); @time y = quantile!(x, [0.499, 0.501]);
+
+# %%
+x = copy(X); @time z = [quantile!(x, 0.499), quantile!(x, 0.501)]
+x = copy(X); @time z = [quantile!(x, 0.499), quantile!(x, 0.501)]
+x = copy(X); @time z = [quantile!(x, 0.499), quantile!(x, 0.501)];
 
 # %%
 @which quantile!(x, [0.02, 0.98])
