@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # ---
 # jupyter:
 #   jupytext:
@@ -38,8 +39,8 @@ randsimplex(N, T=Float64) = randsimplex!(Vector{T}(undef, N))
 n = 10^4
 A = randsimplex(n)
 @show mean(A), var(A)
-histogram(A; norm=true, alpha=0.3, label="randsimplex")
-plot!(x->exp(-x), 0, 6; xlim=(-0.1, 6), lw=2, label="exp dist")
+histogram(A; norm=true, alpha=0.3, label="randsimplex($n)")
+plot!(x->exp(-x), 0, 6; xlim=(-0.1, 6), lw=2, label="Exponential(1) dist")
 
 # %%
 struct Simplex{T} N::Int end
@@ -62,5 +63,22 @@ d = Simplex(10)
 
 # %%
 rand(Simplex(10))
+
+# %%
+using Random, LinearAlgebra, Statistics, Plots
+
+function randsphere!(rng::AbstractRNG, X)
+    randn!(X)
+    X .*= √(length(X)) / norm(X)
+end
+randsphere(rng::AbstractRNG, N, T=Float64) = randsphere!(rng, Vector{T}(undef, N))
+randsphere!(X) = randsphere!(Random.default_rng(), X)
+randsphere(N, T=Float64) = randsphere!(Vector{T}(undef, N))
+
+n = 10^4
+A = randsphere(n)
+@show mean(A), var(A)
+histogram(A; norm=true, alpha=0.3, xlim=(-5, 5), label="randsphere($n)")
+plot!(x->exp(-x^2/2)/√(2π), -5, 5; lw=2, label="standard normsl dist")
 
 # %%
