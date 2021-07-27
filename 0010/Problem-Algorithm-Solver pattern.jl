@@ -30,9 +30,6 @@
 #
 # In order to use the `(; a, b, c) = p` syntax, require VERSION ≥ v"1.7.0-beta" [#39285](https://github.com/JuliaLang/julia/pull/39285).
 
-# %% [markdown]
-# In order to use the `(; a, b, c) = p` syntax, require VERSION ≥ v"1.7.0-beta" [#39285](https://github.com/JuliaLang/julia/pull/39285).
-
 # %%
 VERSION ≥ v"1.7.0-beta"
 

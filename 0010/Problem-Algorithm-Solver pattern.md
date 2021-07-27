@@ -29,9 +29,6 @@ In order to resolve this misunderstanding, they can try the problem-algorithm-so
 
 In order to use the `(; a, b, c) = p` syntax, require VERSION ≥ v"1.7.0-beta" [#39285](https://github.com/JuliaLang/julia/pull/39285).
 
-
-In order to use the `(; a, b, c) = p` syntax, require VERSION ≥ v"1.7.0-beta" [#39285](https://github.com/JuliaLang/julia/pull/39285).
-
 ```julia
 VERSION ≥ v"1.7.0-beta"
 ```
