@@ -20,6 +20,12 @@
 # https://github.com/JuliaSIMD/LoopVectorization.jl/issues/307
 
 # %%
+println("Julia v$VERSION")
+using Pkg
+Pkg.status("SLEEFPirates")
+Pkg.status("LoopVectorization")
+
+# %%
 using BenchmarkTools
 using LoopVectorization
 
@@ -33,6 +39,13 @@ function assign!(u, x, y, z)
     end 
 end
 
+function assign_broadcast!(uv, X, Y, Z, xx, yy, zz)
+    @. X = sin(xx)
+    @. Y = sin(yy)
+    @. Z = sin(zz)
+    @. uv = X + Y + Z
+end
+
 itot = 384 
 dx = 1. / itot
 x = dx*collect(0:itot-1); y = dx*collect(0:itot-1); z = dx*collect(0:itot-1)
@@ -40,6 +53,7 @@ u = zeros(itot+8, itot+8, itot+8)
 
 uv = @view u[5:5+itot-1, 5:5+itot-1, 5:5+itot-1]
 xx, yy, zz = reshape(x, (:, 1, 1)), reshape(y, (1, :, 1)), reshape(z, (1, 1, :))
+X, Y, Z = similar(xx), similar(yy), similar(zz)
 
 assign!(uv, x, y, z)
 a = deepcopy(uv)
@@ -47,18 +61,17 @@ uv[:, :, :] = [ sin(x) + sin(y) + sin(z) for x=x, y=y, z=z ]
 b = deepcopy(uv)
 @. uv = sin(xx) + sin(yy) + sin(zz)
 c = deepcopy(uv)
-@show a ≈ b ≈ c
+assign_broadcast!(uv, X, Y, Z, xx, yy, zz)
+d = deepcopy(uv)
+@show a ≈ b ≈ c ≈ d
 
 print("LoopVectorization.@turbo:")
 @btime assign!($uv, $x, $y, $z)
 print("comprehension:           ")
 @btime $uv[:, :, :] = [ sin(x) + sin(y) + sin(z) for x=$x, y=$y, z=$z ]
-print("broadcast:               ")
-@btime @. $uv = sin($xx) + sin($yy) + sin($zz);
-
-# %%
-using Pkg
-Pkg.status("SLEEFPirates")
-Pkg.status("LoopVectorization")
+print("simple broadcast:        ")
+@btime @. $uv = sin($xx) + sin($yy) + sin($zz)
+print("assign_broadcast!:       ")
+@btime assign_broadcast!($uv, $X, $Y, $Z, $xx, $yy, $zz);
 
 # %%
