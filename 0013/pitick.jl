@@ -15,31 +15,63 @@
 # ---
 
 # %%
-using Plots
+using Plots, LaTeXStrings
+pyplot(fmt=:svg, fontfamily="sans-serif")
 
-function pitick(start, stop, denom)
+function pitick(start, stop, denom; mode=:text)
     a = Int(cld(start, π/denom))
     b = Int(fld(stop, π/denom))
     tick = range(a*π/denom, b*π/denom; step=π/denom)
-    ticklabel = piticklabel.(a:b, denom)
+    ticklabel = piticklabel.((a:b) .// denom, Val(mode))
     tick, ticklabel
 end
 
-function piticklabel(x, denom)
-    d = repr(denom)
-    x == 0 && return "0"
-    x == 1 && return "π/" * d
-    x == -1 && return "-π/" * d
-    if mod(x, denom) == 0
-        q = x ÷ denom
-        q == 1 && return "π"
-        q == -1 && return "-π"
-        return repr(q) * "π"
-    end
-    return repr(x) * "π/" * d
+function piticklabel(x::Rational, ::Val{:text})
+    iszero(x) && return "0"
+    S = x < 0 ? "-" : ""
+    n, d = abs(numerator(x)), denominator(x)
+    N = n == 1 ? "" : repr(n)
+    d == 1 && return S * N * "π"
+    S * N * "π/" * repr(d)
+end
+
+function piticklabel(x::Rational, ::Val{:latex})
+    iszero(x) && return L"0"
+    S = x < 0 ? "-" : ""
+    n, d = abs(numerator(x)), denominator(x)
+    N = n == 1 ? "" : repr(n)
+    d == 1 && return L"%$S%$N\pi"
+    L"%$S\frac{%$N\pi}{%$d}"
 end
 
 a, b = -2π, 2π
-plot(sin, a, b; xtick=pitick(a, b, 4), label="y = sin(x)", size=(720, 300))
+plot(sin, a, b; xtick=pitick(a, b, 4), label=L"y = \sin(x)", size=(720, 250))
+
+# %%
+plot(sin, a, b; xtick=pitick(a, b, 4; mode=:latex), label=L"y = \sin(x)", size=(720, 250),
+    tickfontsize=10)
+
+# %%
+gr(fmt=:auto)
+
+plot(sin, a, b; xtick=pitick(a, b, 4), label=L"y = \sin(x)", size=(720, 250),
+    fontfamily="Computer Modern", legendfontsize=12) 
+
+# %%
+plot(sin, a, b; xtick=pitick(a, b, 4; mode=:latex), label=L"y = \sin(x)", size=(720, 250),
+    tickfontsize=10, fontfamily="Computer Modern", legendfontsize=12, bottom_margin=3Plots.mm)
+
+# %%
+function piticklabel(x::Rational, ::Val{:gr})
+    iszero(x) && return L"0"
+    S = x < 0 ? "-" : ""
+    n, d = abs(numerator(x)), denominator(x)
+    N = n == 1 ? "" : repr(n)
+    d == 1 && return L"%$S%$N\pi"
+    L"%$S\dfrac{%$N\pi}{%$d}"
+end
+
+plot(sin, a, b; xtick=pitick(a, b, 4; mode=:gr), label=L"y = \sin(x)", size=(720, 250),
+    tickfontsize=10, fontfamily="Computer Modern", legendfontsize=12, bottom_margin=3Plots.mm)
 
 # %%
