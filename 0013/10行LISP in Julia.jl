@@ -108,6 +108,16 @@ end
 @show ev(fib21, Dict());
 
 # %%
+fib(n, a, b) = (u -> u(u))(u -> (n, a, b) -> n == 0 ? a : u(u)(n-1, b, a+b))(n, a, b)
+@show fib(21, 0, 1)
+@show [fib(n, 0, 1) for n in 1:10];
+
+# %%
+f(u, n, a, b) = n == 0 ? a : u(u, n-1, b, a+b)
+@show f(f, 21, 0, 1)
+@show [f(f, n, 0, 1) for n in 1:10];
+
+# %%
 fib21 = 
 [[["lambda", ["u"], ["u", "u"]],
         ["lambda", ["u"],
@@ -124,7 +134,7 @@ function ev(s)
     s[1] == "lambda" && return Expr(:(->), Expr(:tuple, Symbol.(s[2])...), ev(s[3]))
     Expr(:call, ev.(s)...)
 end
-macro ev(x) ev(eval(x)) end
+macro ev(x) ev(Core.eval(__module__, x)) end
 
 @show @ev fib21;
 
@@ -145,6 +155,10 @@ Fib = @ev [["lambda", ["u"], ["u", "u"]],
 @code_native debuginfo=:none Fib(21, 0, 1)
 
 # %%
+f(u, n, a, b) = n == 0 ? a : u(u, n-1, b, a+b)
+@code_native debuginfo=:none f(f, 21, 0, 1)
+
+# %%
 fib21 = 
 [[[:lambda, [:u], [:u, :u]],
         [:lambda, [:u],
@@ -161,7 +175,7 @@ function ev(s)
     s[1] === :lambda && return Expr(:(->), Expr(:tuple, s[2]...), ev(s[3]))
     Expr(:call, ev.(s)...)
 end
-macro ev(x) ev(eval(x)) end
+macro ev(x) ev(Core.eval(__module__, x)) end
 
 @show @ev fib21;
 
@@ -180,5 +194,9 @@ Fib = @ev [[:lambda, [:u], [:u, :u]],
 
 # %%
 @code_native debuginfo=:none Fib(21, 0, 1)
+
+# %%
+f(u, n, a, b) = n == 0 ? a : u(u, n-1, b, a+b)
+@code_native debuginfo=:none f(f, 21, 0, 1)
 
 # %%
