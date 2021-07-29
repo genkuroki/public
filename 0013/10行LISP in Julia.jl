@@ -91,10 +91,10 @@ fib21 =
         [:lambda, [:u],
             [:lambda, [:n, :a, :b],
                 [:if, [:(=), :n, 0], :a,
-                    [[:u, :u], [:(-), :n, 1], :b, [:(+), :a, :b]]]]]],
+                    [[:u, :u], [:-, :n, 1], :b, [:+, :a, :b]]]]]],
     21, 0, 1]
 
-g = Dict(:(=) => ==, :(+) => +, :(-) => -)
+g = Dict(:(=) => ==, :+ => +, :- => -)
 function ev(s, e)
     s isa Symbol     && return merge(g, e)[s]
     s isa Int        && return s
