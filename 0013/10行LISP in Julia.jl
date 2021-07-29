@@ -108,3 +108,77 @@ end
 @show ev(fib21, Dict());
 
 # %%
+fib21 = 
+[[["lambda", ["u"], ["u", "u"]],
+        ["lambda", ["u"],
+            ["lambda", ["n", "a", "b"],
+                ["if", ["=", "n", 0], "a",
+                    [["u", "u"], ["-", "n", 1], "b", ["+", "a", "b"]]]]]],
+    21, 0, 1]
+
+g = Dict("=" => :(==), "+" => :+, "-" => :-)
+function ev(s)
+    s isa String     && return get(g, s, Symbol(s))
+    s isa Int        && return s
+    s[1] == "if"     && return Expr(:if, ev(s[2]), ev(s[3]), ev(s[4]))
+    s[1] == "lambda" && return Expr(:(->), Expr(:tuple, Symbol.(s[2])...), ev(s[3]))
+    Expr(:call, ev.(s)...)
+end
+macro ev(x) ev(eval(x)) end
+
+@show @ev fib21;
+
+# %%
+ev(fib21)
+
+# %%
+Fib = @ev [["lambda", ["u"], ["u", "u"]],
+    ["lambda", ["u"],
+        ["lambda", ["n", "a", "b"],
+            ["if", ["=", "n", 0], "a",
+                [["u", "u"], ["-", "n", 1], "b", ["+", "a", "b"]]]]]]
+
+@show Fib(21, 0, 1)
+@show [Fib(n, 0, 1) for n in 1:10];
+
+# %%
+@code_native debuginfo=:none Fib(21, 0, 1)
+
+# %%
+fib21 = 
+[[[:lambda, [:u], [:u, :u]],
+        [:lambda, [:u],
+            [:lambda, [:n, :a, :b],
+                [:if, [:(==), :n, 0], :a,
+                    [[:u, :u], [:-, :n, 1], :b, [:+, :a, :b]]]]]],
+    21, 0, 1]
+
+g = Dict(:(=) => :(==), :+ => :+, :- => :-)
+function ev(s)
+    s isa Symbol     && return get(g, s, s)
+    s isa Int        && return s
+    s[1] === :if     && return Expr(:if, ev(s[2]), ev(s[3]), ev(s[4]))
+    s[1] === :lambda && return Expr(:(->), Expr(:tuple, s[2]...), ev(s[3]))
+    Expr(:call, ev.(s)...)
+end
+macro ev(x) ev(eval(x)) end
+
+@show @ev fib21;
+
+# %%
+ev(fib21)
+
+# %%
+Fib = @ev [[:lambda, [:u], [:u, :u]],
+        [:lambda, [:u],
+            [:lambda, [:n, :a, :b],
+                [:if, [:(==), :n, 0], :a,
+                    [[:u, :u], [:-, :n, 1], :b, [:+, :a, :b]]]]]]
+
+@show Fib(21, 0, 1)
+@show [Fib(n, 0, 1) for n in 1:10];
+
+# %%
+@code_native debuginfo=:none Fib(21, 0, 1)
+
+# %%
