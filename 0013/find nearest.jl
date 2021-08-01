@@ -60,6 +60,6 @@ using BenchmarkTools
 @btime valindnearest($M, 0.2)
 @btime indargnearest($M, 0.2)
 @btime indnearest($M, 0.2)
-@btime indnearest($M, 0.2);
+@btime Tuple(indnearest($M, 0.2));
 
 # %%
