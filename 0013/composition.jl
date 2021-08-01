@@ -14,9 +14,6 @@
 #     name: julia-1.7
 # ---
 
-# %% [markdown]
-# https://twitter.com/ezx2fofxvpvstik/status/1421673969363480578
-
 # %%
 module Q
 
