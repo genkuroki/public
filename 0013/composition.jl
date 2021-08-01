@@ -44,7 +44,7 @@ for T in subtypes(Creature)
     @eval Base.setproperty!(x::$T, p::Symbol, v) =
         p ∈ fieldnames(_Common) ? setfield!(x._common, p, v) : setfield!(x, p, v)
     @eval Base.propertynames(x::$T) = (fieldnames(_Common)...,
-        (p for p in fieldnames($T) if string(p)[1] != '_')...)
+        (p for p in fieldnames($T) if first(string(p)) != '_')...)
     @eval function Base.show(io::IO, x::$T)
         props = getproperty.(Ref(x), propertynames(x))
         print(io, string(nameof($T)), '(', repr(first(props)))
@@ -97,7 +97,7 @@ n = 2
 
 # %%
 :(Base.propertynames(x::$T) = (fieldnames(_Common)...,
-    (p for p in fieldnames($T) if string(p)[1] != '_')...)) |> Base.remove_linenums! |> print
+    (p for p in fieldnames($T) if first(string(p)) != '_')...)) |> Base.remove_linenums! |> print
 
 # %%
 :(function Base.show(io::IO, x::$T)
