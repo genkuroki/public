@@ -9,9 +9,9 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.11.2
 #   kernelspec:
-#     display_name: Julia 1.7.0-beta3
+#     display_name: Julia 1.6.2
 #     language: julia
-#     name: julia-1.7
+#     name: julia-1.6
 # ---
 
 # %%
@@ -56,7 +56,9 @@ end
 end
 
 @show Q.Goblin()
+@show propertynames(Q.Goblin())
 @show Q.Slime()
+@show propertynames(Q.Slime())
 println()
 @show g = Q.Goblin(123, 45, "dirty dagger")
 @show g.hp
@@ -79,6 +81,31 @@ println()
 @show s
 @show s.sp = "strong acid"
 @show s;
+
+# %%
+T = Q.Goblin
+n = 2
+:($(nameof(T))(a...) = $T(_Common(a[1:$n]...), a[$n+1:end]...)) |> Base.remove_linenums! |> print
+
+# %%
+:(Base.getproperty(x::$T, p::Symbol) =
+    p ∈ fieldnames(_Common) ? getfield(x._common, p) : getfield(x, p)) |> Base.remove_linenums! |> print
+
+# %%
+:(Base.setproperty!(x::$T, p::Symbol, v) =
+    p ∈ fieldnames(_Common) ? setfield!(x._common, p, v) : setfield!(x, p, v)) |> Base.remove_linenums! |> print
+
+# %%
+:(Base.propertynames(x::$T) = (fieldnames(_Common)...,
+    (p for p in fieldnames($T) if string(p)[1] != '_')...)) |> Base.remove_linenums! |> print
+
+# %%
+:(function Base.show(io::IO, x::$T)
+    props = getproperty.(Ref(x), propertynames(x))
+    print(io, string(nameof($T)), '(', repr(first(props)))
+    for p in props[2:end] print(io, ", ", repr(p)) end
+    print(io, ')')
+end) |> Base.remove_linenums! |> print
 
 # %%
 module O
