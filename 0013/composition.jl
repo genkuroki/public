@@ -119,8 +119,8 @@ Base.@kwdef mutable struct _Common
     atk::Int = 100
 end
 for p in fieldnames(_Common)
-    @eval $p(x::Creature) = getfield(x._common, Symbol($p))
-    @eval $(Symbol(:set_, p, :!))(x::Creature, v) = setfield!(x._common, Symbol($p), v)
+    @eval $p(x::Creature) = getfield(x._common, $(QuoteNode(p)))
+    @eval $(Symbol(:set_, p, :!))(x::Creature, v) = setfield!(x._common, $(QuoteNode(p)), v)
 end
 
 Base.@kwdef mutable struct Goblin <: Creature
@@ -138,8 +138,8 @@ for T in subtypes(Creature)
     @eval $(nameof(T))(a...) = $T(_Common(a[1:$n]...), a[$n+1:end]...)
     for p in fieldnames(T)
         first(string(p)) == '_' && continue
-        @eval $p(x::$T) = getfield(x, Symbol($p))
-        @eval $(Symbol(:set_, p, :!))(x::$T, v) = setfield!(x, Symbol($p), v)
+        @eval $p(x::$T) = getfield(x, $(QuoteNode(p)))
+        @eval $(Symbol(:set_, p, :!))(x::$T, v) = setfield!(x, $(QuoteNode(p)), v)
     end
 end
 
@@ -169,5 +169,23 @@ println()
 @show s
 @show O.set_sp!(s, "strong acid")
 @show s;
+
+# %%
+p = :hp
+:($p(x::Creature) = getfield(x._common, $(QuoteNode(p)))) |> Base.remove_linenums! |> print
+
+# %%
+:($(Symbol(:set_, p, :!))(x::Creature, v) = setfield!(x._common, $(QuoteNode(p)), v)) |> Base.remove_linenums! |> print
+
+# %%
+T = O.Goblin
+n = 2
+:($(nameof(T))(a...) = $T(_Common(a[1:$n]...), a[$n+1:end]...)) |> Base.remove_linenums! |> print
+
+# %%
+:($p(x::$T) = getfield(x, $(QuoteNode(p)))) |> Base.remove_linenums! |> print
+
+# %%
+:($(Symbol(:set_, p, :!))(x::$T, v) = setfield!(x, $(QuoteNode(p)), v)) |> Base.remove_linenums! |> print
 
 # %%
