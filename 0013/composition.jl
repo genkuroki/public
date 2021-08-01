@@ -189,3 +189,11 @@ n = 2
 :($(Symbol(:set_, p, :!))(x::$T, v) = setfield!(x, $(QuoteNode(p)), v)) |> Base.remove_linenums! |> print
 
 # %%
+p = :hp
+:(x = $p) |> Base.remove_linenums! |> print
+
+# %%
+p = :hp
+:(x = $(QuoteNode(p))) |> Base.remove_linenums! |> print
+
+# %%
