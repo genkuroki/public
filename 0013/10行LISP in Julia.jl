@@ -163,7 +163,7 @@ fib21 =
 [[[:lambda, [:u], [:u, :u]],
         [:lambda, [:u],
             [:lambda, [:n, :a, :b],
-                [:if, [:(==), :n, 0], :a,
+                [:if, [:(=), :n, 0], :a,
                     [[:u, :u], [:-, :n, 1], :b, [:+, :a, :b]]]]]],
     21, 0, 1]
 
@@ -186,7 +186,7 @@ ev(fib21)
 Fib = @ev [[:lambda, [:u], [:u, :u]],
         [:lambda, [:u],
             [:lambda, [:n, :a, :b],
-                [:if, [:(==), :n, 0], :a,
+                [:if, [:(=), :n, 0], :a,
                     [[:u, :u], [:-, :n, 1], :b, [:+, :a, :b]]]]]]
 
 @show Fib(21, 0, 1)
@@ -198,5 +198,47 @@ Fib = @ev [[:lambda, [:u], [:u, :u]],
 # %%
 f(u, n, a, b) = n == 0 ? a : u(u, n-1, b, a+b)
 @code_native debuginfo=:none f(f, 21, 0, 1)
+
+# %%
+fib21 = 
+(((:lambda, (:u,), (:u, :u)),
+        (:lambda, (:u,),
+            (:lambda, (:n, :a, :b),
+                (:if, (:(=), :n, 0), :a,
+                    ((:u, :u), (:-, :n, 1), :b, (:+, :a, :b)))))),
+    21, 0, 1)
+
+g = Dict(:(=) => :(==), :+ => :+, :- => :-)
+function ev(s)
+    s isa Symbol     && return get(g, s, s)
+    s isa Int        && return s
+    s[1] === :if     && return Expr(:if, ev(s[2]), ev(s[3]), ev(s[4]))
+    s[1] === :lambda && return Expr(:(->), Expr(:tuple, s[2]...), ev(s[3]))
+    Expr(:call, ev.(s)...)
+end
+macro ev(x) ev(Core.eval(__module__, x)) end
+
+@show @ev fib21;
+
+# %%
+fib21 = 
+(((:lambda, (:u,), (:u, :u)),
+        (:lambda, (:u,),
+            (:lambda, (:n, :a, :b),
+                (:if, (:(=), :n, 0), :a,
+                    ((:u, :u), (:-, :n, 1), :b, (:+, :a, :b)))))),
+    21, 0, 1)
+
+g = Dict(:(=) => :(==), :+ => :+, :- => :-)
+l2j(s) = s
+l2j(s::Symbol) = get(g, s, s)
+function l2j(s::Tuple)
+    s[1] === :if     && return Expr(:if, l2j(s[2]), l2j(s[3]), l2j(s[4]))
+    s[1] === :lambda && return Expr(:(->), Expr(:tuple, s[2]...), l2j(s[3]))
+    Expr(:call, l2j.(s)...)
+end
+macro l(x) l2j(Core.eval(__module__, x)) end
+
+@show @l fib21;
 
 # %%
