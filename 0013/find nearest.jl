@@ -36,6 +36,9 @@ M = f.(2.5:0.2:3.7, (1:0.2:2)')
 indnearest_alloc(M, 0.2)
 
 # %%
+Tuple(indnearest_alloc(M, 0.2))
+
+# %%
 valindargnearest(M, 0.2)
 
 # %%
@@ -48,11 +51,15 @@ indargnearest(M, 0.2)
 indnearest(M, 0.2)
 
 # %%
+Tuple(indnearest(M, 0.2))
+
+# %%
 using BenchmarkTools
 @btime indnearest_alloc($M, 0.2)
 @btime valindargnearest($M, 0.2)
 @btime valindnearest($M, 0.2)
 @btime indargnearest($M, 0.2)
+@btime indnearest($M, 0.2)
 @btime indnearest($M, 0.2);
 
 # %%
