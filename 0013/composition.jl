@@ -47,7 +47,7 @@ for T in subtypes(Creature)
         (p for p in fieldnames($T) if first(string(p)) != '_')...)
     @eval function Base.show(io::IO, x::$T)
         props = getproperty.(Ref(x), propertynames(x))
-        print(io, string(nameof($T)), '(', repr(first(props)))
+        print(io, nameof($T), '(', repr(first(props)))
         for p in props[2:end] print(io, ", ", repr(p)) end
         print(io, ')')
     end
@@ -102,7 +102,7 @@ n = 2
 # %%
 :(function Base.show(io::IO, x::$T)
     props = getproperty.(Ref(x), propertynames(x))
-    print(io, string(nameof($T)), '(', repr(first(props)))
+    print(io, nameof($T), '(', repr(first(props)))
     for p in props[2:end] print(io, ", ", repr(p)) end
     print(io, ')')
 end) |> Base.remove_linenums! |> print
