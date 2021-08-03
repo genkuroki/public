@@ -1,0 +1,13 @@
+numbers = randphone(1000000):
+  0.469635 seconds (2.25 M allocations: 250.724 MiB, 11.10% gc time, 14.07% compilation time)
+
+open(loadDictionary, "dictionary.txt"):
+  0.890610 seconds (13.38 M allocations: 503.104 MiB, 27.57% gc time)
+
+translate by printTranslations_original:
+101.994933 seconds (1.35 G allocations: 21.675 GiB, 21.68% gc time, 0.19% compilation time)
+
+translate by printTranslations of jonathanBieler:
+ 11.927243 seconds (49.74 M allocations: 1.678 GiB, 4.95% gc time, 0.51% compilation time)
+
+result_original == result_jonathanBieler = true
