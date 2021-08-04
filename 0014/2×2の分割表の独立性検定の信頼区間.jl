@@ -39,12 +39,12 @@ function pvalue(d, k, ::Val{:dos}) # :dos stands for "doubled one-sided"
 end
 
 @memoize function pvalue(a, b, c, d, ::Val{:fisher}; ω = 1.0)
-    0 < a+c < a+b+c+d || return 0.0
+    iszero(a+c) || iszero(b+d) && return 1.0
     pvalue(FisherNoncentralHypergeometric(a+b, c+d, a+c, ω), a, Val(:ts))
 end
 
 @memoize function pvalue(a, b, c, d, ::Val{:fisher_dos}; ω = 1.0)
-    0 < a+c < a+b+c+d || return 0.0
+    iszero(a+c) || iszero(b+d) && return 1.0
     pvalue(FisherNoncentralHypergeometric(a+b, c+d, a+c, ω), a, Val(:dos))
 end
 
