@@ -48,11 +48,6 @@ end
     pvalue(FisherNoncentralHypergeometric(a+b, c+d, a+c, ω), a, Val(:dos))
 end
 
-@memoize function confidence_interval(a, b, c, d, alg; α = 0.05)
-    CI = exp.(find_zeros(t -> pvalue(a, b, c, d, alg; ω = exp(t)) - α, -20, 20))
-    isone(length(CI)) ? CI[1] < 1 ? (0.0, CI[1]) : (CI[1], Inf) : (CI[1], CI[end])
-end
-
 function delta(a, b, c, d, ω=1.0)
     A = 1 - ω
     B = a + d + ω*(b + c)
@@ -84,6 +79,11 @@ end
 
 @memoize function pvalue(a, b, c, d, ::Val{:chisq_yates}; ω = 1.0)
     ccdf(Chisq(1), chisq_yates(a, b, c, d, ω))
+end
+
+@memoize function confidence_interval(a, b, c, d, alg; α = 0.05)
+    CI = exp.(find_zeros(t -> pvalue(a, b, c, d, alg; ω = exp(t)) - α, -20, 20))
+    isone(length(CI)) ? CI[1] < 1 ? (0.0, CI[1]) : (CI[1], Inf) : (CI[1], CI[end])
 end
 
 # %%
@@ -123,6 +123,43 @@ chisq_test(A, correct = false)
 
 # %%
 chisq_test(A)
+
+# %%
+function dnhyper(a, b, c, d, ncp)
+    nchg = FisherNoncentralHypergeometric(a+b, c+d, a+c, ncp)
+    supp = support(nchg)
+    pdf.(nchg, supp)
+end
+
+# https://github.com/SurajGupta/r-source/blob/master/src/library/stats/R/fisher.test.R#L132
+# https://stat.ethz.ch/R-manual/R-devel/library/stats/html/Hypergeometric.html
+function dnhyper_R(a, b, c, d, ncp)
+    hg = Hypergeometric(a+b, c+d, a+c)
+    supp = support(hg)
+    logdc = logpdf.(hg, supp)
+    d = @. logdc + log(ncp) * supp
+    m = maximum(d)
+    d = @. exp(d - m)
+    d ./ sum(d)
+end
+
+f(ncp) = dnhyper(A..., ncp)
+g(ncp) = dnhyper_R(A..., ncp)
+@show round.(f(0.5) ./ g(0.5); digits=5)
+@show round.(f(1.0) ./ g(1.0); digits=5)
+@show round.(f(2.0) ./ g(2.0); digits=5);
+
+# %%
+# https://github.com/SurajGupta/r-source/blob/master/src/library/stats/R/fisher.test.R#L208
+# https://www.rdocumentation.org/packages/stats/versions/3.6.2/topics/uniroot
+# https://github.com/SurajGupta/r-source/blob/master/src/library/stats/R/nlm.R#L60
+# `tol = .Machine$double.eps^0.25`
+
+@show rcopy(R".Machine$double.eps^0.25")
+@show d = eps()^0.25
+@show CI_R = rcopy(fisher_test(A))[:conf_int]
+@show CI = confidence_interval(A..., Val(:fisher_dos))
+@show log.(CI_R ./ CI);
 
 # %%
 ecdf(A, x) = count(≤(x), A)/length(A)
@@ -172,5 +209,23 @@ plot!(; xtick=range(extrema(p)...; length=11), ytick=range(extrema(p)...; length
 plot!(; title="null = Multinomial(n=$(ncategories(null)), p=$(round.(probs(null); digits=2)))", titlefontsize=9)
 
 plot(P, Q; size=(800, 400), left_margin=5Plots.mm, bottom_margin=5Plots.mm)
+
+# %%
+logω = range(-0.5, 2.0; length=500)
+P = plot()
+plot!(logω, t -> pvalue(A..., Val(:fisher); ω=10^t); label="fisher")
+plot!(logω, t -> pvalue(A..., Val(:fisher_dos); ω=10^t); label="fisher_dos", ls=:dash)
+plot!(logω, t -> pvalue(A..., Val(:chisq); ω=10^t); label="chisq")
+plot!(logω, t -> pvalue(A..., Val(:chisq_yates); ω=10^t); label="chisq_yates", ls=:dashdot)
+plot!(logω, 0.05ones(length(logω)); label="α=0.5", color=:red)
+#plot!(; legend=:topleft)
+x = [0.3, 1.0, 3.0, 10.0, 30.0, 100.0]
+plot!(; xtick = (log10.(x), string.(x)), ytick=0:0.1:1)
+plot!(; title="p-value functions for A = $A", titlefontsize=11)
+
+Q = deepcopy(P)
+plot!(Q; ylim=(0, 0.15), ytick=0:0.05:1)
+
+plot(P, Q; size=(800, 300))
 
 # %%
