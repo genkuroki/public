@@ -217,7 +217,7 @@ plot!(logω, t -> pvalue(A..., Val(:fisher); ω=10^t); label="fisher")
 plot!(logω, t -> pvalue(A..., Val(:fisher_dos); ω=10^t); label="fisher_dos", ls=:dash)
 plot!(logω, t -> pvalue(A..., Val(:chisq); ω=10^t); label="chisq")
 plot!(logω, t -> pvalue(A..., Val(:chisq_yates); ω=10^t); label="chisq_yates", ls=:dashdot)
-plot!(logω, 0.05ones(length(logω)); label="α=0.5", color=:red)
+plot!(logω, 0.05ones(length(logω)); label="α=0.05", color=:red)
 #plot!(; legend=:topleft)
 x = [0.3, 1.0, 3.0, 10.0, 30.0, 100.0]
 plot!(; xtick = (log10.(x), string.(x)), ytick=0:0.1:1)
