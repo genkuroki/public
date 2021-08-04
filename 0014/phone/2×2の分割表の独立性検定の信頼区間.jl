@@ -23,6 +23,8 @@ disable_logging(Logging.Warn)
 
 using Distributions
 using Roots
+using Memoization
+using Plots
 using RCall
 @rlibrary stats
 
@@ -36,15 +38,17 @@ function pvalue(d, k, ::Val{:dos}) # :dos stands for "doubled one-sided"
     min(1, 2cdf(d, k), 2ccdf(d, k-1))
 end
 
-function pvalue(a, b, c, d, ::Val{:fisher}; ω = 1.0)
+@memoize function pvalue(a, b, c, d, ::Val{:fisher}; ω = 1.0)
+    0 < a+c < a+b+c+d || return 0.0
     pvalue(FisherNoncentralHypergeometric(a+b, c+d, a+c, ω), a, Val(:ts))
 end
 
-function pvalue(a, b, c, d, ::Val{:fisher_dos}; ω = 1.0)
+@memoize function pvalue(a, b, c, d, ::Val{:fisher_dos}; ω = 1.0)
+    0 < a+c < a+b+c+d || return 0.0
     pvalue(FisherNoncentralHypergeometric(a+b, c+d, a+c, ω), a, Val(:dos))
 end
 
-function confidence_interval(a, b, c, d, alg; α = 0.05)
+@memoize function confidence_interval(a, b, c, d, alg; α = 0.05)
     CI = exp.(find_zeros(t -> pvalue(a, b, c, d, alg; ω = exp(t)) - α, -20, 20))
     isone(length(CI)) ? CI[1] < 1 ? (0.0, CI[1]) : (CI[1], Inf) : (CI[1], CI[end])
 end
@@ -74,11 +78,11 @@ function chisq_yates(a, b, c, d, ω=1.0)
     iszero(m) ? m : m * (1/(a + δ) + 1/(b - δ) + 1/(c - δ) + 1/(d + δ))
 end
 
-function pvalue(a, b, c, d, ::Val{:chisq}; ω = 1.0)
+@memoize function pvalue(a, b, c, d, ::Val{:chisq}; ω = 1.0)
     ccdf(Chisq(1), chisq(a, b, c, d, ω))
 end
 
-function pvalue(a, b, c, d, ::Val{:chisq_yates}; ω = 1.0)
+@memoize function pvalue(a, b, c, d, ::Val{:chisq_yates}; ω = 1.0)
     ccdf(Chisq(1), chisq_yates(a, b, c, d, ω))
 end
 
@@ -119,5 +123,50 @@ chisq_test(A, correct = false)
 
 # %%
 chisq_test(A)
+
+# %%
+ecdf(A, x) = count(≤(x), A)/length(A)
+
+function multinomial_null(a, b, c, d)
+    n = a + b + c + d
+    pa = (a+b)*(a+c)/n^2
+    pb = (a+b)*(b+d)/n^2
+    pc = (c+d)*(a+c)/n^2
+    pd = (c+d)*(b+d)/n^2
+    Multinomial(n, [pa, pb, pc, pd])
+end
+
+null = multinomial_null(A...)
+L = 10^5
+X = rand(null, L)
+@time pvalue_fisher = vec(mapslices(A -> pvalue(A..., Val(:fisher)), X; dims=1))
+@time pvalue_fisher_dos = vec(mapslices(A -> pvalue(A..., Val(:fisher_dos)), X; dims=1))
+@time pvalue_chisq = vec(mapslices(A -> pvalue(A..., Val(:chisq)), X; dims=1))
+@time pvalue_chisq_yates = vec(mapslices(A -> pvalue(A..., Val(:chisq_yates)), X; dims=1));
+
+# %%
+p = range(0, 1; length=1001)
+P = plot()
+plot!(p, p -> ecdf(pvalue_fisher, p); label="fisher")
+plot!(p, p -> ecdf(pvalue_fisher_dos, p); label="fisher_dos", ls=:dash)
+plot!(p, p -> ecdf(pvalue_chisq, p); label="chisq")
+plot!(p, p -> ecdf(pvalue_chisq_yates, p); label="chisq_yates", ls=:dashdot)
+plot!([0, maximum(p)], [0, maximum(p)]; label="", color=:black, ls=:dot)
+plot!(; size=(400, 400), legend=:topleft)
+plot!(; xlabel="significance level α", ylabel="probability of the first class errors")
+plot!(; xtick=0:0.1:1, ytick=0:0.1:1)
+
+p = range(0, 0.1; length=101)
+Q = plot()
+plot!(p, p -> ecdf(pvalue_fisher, p); label="fisher")
+plot!(p, p -> ecdf(pvalue_fisher_dos, p); label="fisher_dos", ls=:dash)
+plot!(p, p -> ecdf(pvalue_chisq, p); label="chisq")
+plot!(p, p -> ecdf(pvalue_chisq_yates, p); label="chisq_yates", ls=:dashdot)
+plot!([0, maximum(p)], [0, maximum(p)]; label="", color=:black, ls=:dot)
+plot!(; size=(400, 400), legend=:topleft)
+plot!(; xlabel="significance level α", ylabel="probability of the first class errors")
+plot!(; xtick=0:0.01:0.1, ytick=0:0.01:0.1)
+
+plot(P, Q; size=(800, 400), left_margin=5Plots.mm, bottom_margin=5Plots.mm)
 
 # %%
