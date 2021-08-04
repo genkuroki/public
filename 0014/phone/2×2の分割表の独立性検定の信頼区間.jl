@@ -28,7 +28,7 @@ using RCall
 
 x ⪅ y = x < y || x ≈ y
 
-function pvalue(d, k, ::Val{:ts}) # :ts stands for "two-sides"
+function pvalue(d, k, ::Val{:ts}) # :ts stands for "two-sided"
     sum(pdf(d, j) for j in support(d) if pdf(d, j) ⪅ pdf(d, k); init = 0.0)
 end
 
