@@ -27,7 +27,7 @@ function initialboard(; n=200, β=log(1 + √2)/2, rng=MersenneTwister())
     Board(state, β, prob, rng)
 end
 
-P(i, m) = ifelse(i == m, m, i+1)
+P(i, m) = ifelse(i == m, 1, i+1)
 Q(i, m) = ifelse(i == 1, m, i-1)
 
 function update!(board::Board, niters)
