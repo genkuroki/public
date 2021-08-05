@@ -193,7 +193,7 @@ plot!(; xlim=extrema(p), ylim=extrema(p))
 plot!(; size=(400, 400), legend=:topleft)
 plot!(; xlabel="significance level α", ylabel="probability of the first class errors")
 plot!(; xtick=range(extrema(p)...; length=11), ytick=range(extrema(p)...; length=11), tickfontsize=7, guidefontsize=9)
-plot!(; title="null = Multinomial(n=$(ncategories(null)), p=$(round.(probs(null); digits=2)))", titlefontsize=9)
+plot!(; title="null = Multinomial(n=$(ntrials(null)), p=$(round.(probs(null); digits=2)))", titlefontsize=9)
 
 p = range(0, 0.1; length=101)
 Q = plot()
@@ -206,7 +206,7 @@ plot!(; xlim=extrema(p), ylim=extrema(p))
 plot!(; size=(400, 400), legend=:topleft)
 plot!(; xlabel="significance level α", ylabel="probability of the first class errors")
 plot!(; xtick=range(extrema(p)...; length=11), ytick=range(extrema(p)...; length=11), tickfontsize=7, guidefontsize=9)
-plot!(; title="null = Multinomial(n=$(ncategories(null)), p=$(round.(probs(null); digits=2)))", titlefontsize=9)
+plot!(; title="null = Multinomial(n=$(ntrials(null)), p=$(round.(probs(null); digits=2)))", titlefontsize=9)
 
 plot(P, Q; size=(800, 400), left_margin=5Plots.mm, bottom_margin=5Plots.mm)
 
