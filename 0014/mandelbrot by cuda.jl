@@ -37,39 +37,46 @@ end
 n = 2^8
 x = range(-0.714689, -0.714679; length=n)
 y = range( 0.299872,  0.299882; length=n)
-z = complex.(x', y)
+c = complex.(x', y)
 
-@time m = mandelbrot.(z)
-@time m = mandelbrot.(z)
+@show typeof(c)
+@time m = mandelbrot.(c)
+@time m = mandelbrot.(c)
+@show typeof(m)
 plotmandelbrot(m)
 
 # %%
 x32 = range(-0.714689f0, -0.714679f0; length=n)
 y32 = range( 0.299872f0,  0.299882f0; length=n)
-z32 = complex.(x32', y32)
+c32 = complex.(x32', y32)
 
-@time m32 = mandelbrot.(z32)
-@time m32 = mandelbrot.(z32)
+@show typeof(c32)
+@time m32 = mandelbrot.(c32)
+@time m32 = mandelbrot.(c32)
+@show typeof(m32)
 plotmandelbrot(m32)
 
 # %%
 using CUDA
-z_cuda = cu(z32)
+c_cuda = cu(c32)
 
-@time m_cuda = collect(mandelbrot.(z_cuda))
-@time m_cuda = collect(mandelbrot.(z_cuda))
+@show typeof(c_cuda)
+@time m_cuda = collect(mandelbrot.(c_cuda))
+@time m_cuda = collect(mandelbrot.(c_cuda))
+@show typeof(mandelbrot.(c_cuda))
+@show typeof(collect(mandelbrot.(c_cuda)))
 plotmandelbrot(m_cuda)
 
 # %%
-@benchmark mandelbrot.($z)
+@benchmark mandelbrot.($c) # CPU Float64
 
 # %%
-@benchmark mandelbrot.($z32)
+@benchmark mandelbrot.($c32) # CPU Float32
 
 # %%
-@benchmark collect(mandelbrot.($z_cuda))
+@benchmark collect(mandelbrot.($c_cuda)) # GPU Float32
 
 # %%
-@benchmark collect(mandelbrot.(cu($z)))
+@benchmark collect(mandelbrot.(cu($c))) # GPU Float32
 
 # %%
