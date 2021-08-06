@@ -25,11 +25,11 @@ gr(fmt=:png)
 plotmandelbrot(m) = heatmap(m; c=reverse(cgrad(:jet1)), 
     size=(300, 300), colorbar=false, ticks=false, frame=false)
 
-function mandelbrot(c; maxiters=2^10, infabs2=2^10)
+function mandelbrot(c; maxiters=2^10, threshold_abs2=Inf)
     z = zero(c)
     for i in 1:maxiters
         z = z * z + c
-        abs2(z) ≥ infabs2 && return i
+        abs2(z) ≥ threshold_abs2 && return i
     end
     maxiters + 1
 end
@@ -68,15 +68,33 @@ c_cuda = cu(c32)
 plotmandelbrot(m_cuda)
 
 # %%
+function mandelbrot_threads(c)
+    m = similar(c, typeof(mandelbrot(c[end])))
+    Threads.@threads for i in keys(c)
+        m[i] = mandelbrot(c[i])
+    end
+    m
+end
+
+@show Threads.nthreads()
+@time m_th = mandelbrot_threads(c)
+@time m_th = mandelbrot_threads(c)
+plotmandelbrot(m_th)
+
+# %%
 @benchmark mandelbrot.($c) # CPU Float64
 
 # %%
 @benchmark mandelbrot.($c32) # CPU Float32
 
 # %%
-@benchmark collect(mandelbrot.($c_cuda)) # GPU Float32
+@benchmark collect(mandelbrot.($c_cuda)) # GPU Float32 (GPU → GPU)
 
 # %%
-@benchmark collect(mandelbrot.(cu($c))) # GPU Float32
+@benchmark collect(mandelbrot.(cu($c))) # GPU Float32 (CPU → GPU → GPU → CPU)
+
+# %%
+@show Threads.nthreads()
+@benchmark mandelbrot_threads($c) # CPU Float64 multi-threaded version with nthreads = 12
 
 # %%
