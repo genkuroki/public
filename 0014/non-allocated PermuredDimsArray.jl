@@ -15,7 +15,7 @@
 # ---
 
 # %% [markdown]
-# https://github.com/JuliaLang/julia/blob/073af4a7415c6e9f15df29b6cf3732050f4ce7c8/base/permuteddimsarray.jl#L42
+# https://github.com/JuliaLang/julia/blob/073af4a7415c6e9f15df29b6cf3732050f4ce7c8/base/permuteddimsarray.jl
 
 # %%
 # This file is a part of Julia. License is MIT: https://julialang.org/license
@@ -277,5 +277,8 @@ end
 using BenchmarkTools
 x = 100(1:4) .+ 10(1:3)' .+ reshape(1:2, 1, 1, :)
 @btime p = My.PermutedDimsArray($x, (2, 3, 1))
+
+# %%
+@btime q = PermutedDimsArray($x, (2, 3, 1))
 
 # %%
