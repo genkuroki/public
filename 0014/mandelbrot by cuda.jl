@@ -25,7 +25,7 @@ gr(fmt=:png)
 plotmandelbrot(m) = heatmap(m; c=reverse(cgrad(:jet1)), 
     size=(300, 300), colorbar=false, ticks=false, frame=false)
 
-function mandelbrot(c; maxiters=2^10, threshold_abs2=Inf)
+function mandelbrot(c; maxiters=2^10, threshold_abs2=2^10)
     z = zero(c)
     for i in 1:maxiters
         z = z * z + c
