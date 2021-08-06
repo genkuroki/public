@@ -117,3 +117,17 @@ PyPlot.clf()
 gif(anim, "lorenz4.gif")
 
 # %%
+pyplot(fmt = :png)
+anim = @animate for (k, i) in enumerate(1:50:length(X))
+    @views x, y, z = X[1:i], Y[1:i], Z[1:i]
+    A = plot(x, y, z; label="", lw=0.3, xlim, ylim, zlim, camera=(360k/100, 30))
+    B = plot(x, y; label="", lw=0.15, title="x, y", titlefontsize=6, xlim=xlim, ylim=ylim)
+    C = plot(x, z; label="", lw=0.15, title="x, z", titlefontsize=6, xlim=xlim, ylim=zlim)
+    D = plot(y, z; label="", lw=0.15, title="y, z", titlefontsize=6, xlim=ylim, ylim=zlim)
+    layout = @layout [a{0.75w} [b; c; d]]
+    plot(A, B, C, D; layout, size=(360, 250), tickfontsize=5)
+end
+PyPlot.clf()
+gif(anim, "lorenz5.gif")
+
+# %%
