@@ -24,3 +24,23 @@ res_plot(10)
 res_plot(10; label="rand(10)", seriestype=:bar)
 
 # %%
+function plot_MxN(M, N;
+        size = (720, 360),
+        layout = (N, M),
+        labelfunc = (i, j) -> "($i, $j)",
+        kwargs...
+    )
+    PP = []
+    for i in 1:M, j in 1:N
+        P = plot(rand(10); label = labelfunc(i, j))
+        push!(PP, P)
+    end
+    plot(PP...; size, layout, kwargs...)
+end
+
+plot_MxN(4, 3; tickfontsize = 5)
+
+# %%
+plot_MxN(4, 3; tickfontsize = 5, labelfunc = (i, j) -> "\$P_{$i,$j}\$")
+
+# %%
