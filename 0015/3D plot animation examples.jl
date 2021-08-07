@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # ---
 # jupyter:
 #   jupytext:
@@ -12,6 +13,17 @@
 #     language: julia
 #     name: julia-1.6
 # ---
+
+# %% [markdown]
+# # 3D plot animation examples
+#
+# * Gen Kuroki
+# * 2021-08-07～
+
+# %% [markdown]
+# ## Generate test data of simple arrays
+#
+# The test data `X`, `Y`, and `Z` are 1-dimensional arrays (vectors) of length $10^4+1$.
 
 # %%
 # The following code is copied from https://diffeq.sciml.ai/stable/basics/plot/#Example
@@ -30,11 +42,14 @@ prob = ODEProblem(lorenz, u0, tspan,p)
 sol = solve(prob);
 
 # %%
-# Create data for test plotting
+# Create data of simple arrays for test plotting
 
 t = range(sol.prob.tspan...; length=10^4+1)
 X, Y, Z = ((t -> sol(t)[i]).(t) for i in 1:3)
 xlim, ylim, zlim = extrema.((X, Y, Z));
+
+# %% [markdown]
+# ## 3D plotting with gr() backend
 
 # %%
 gr(fmt = :png)
@@ -76,6 +91,9 @@ anim = @animate for i in 1:100:length(X)
     plot(A, B, C, D; layout, size=(640, 640))
 end
 gif(anim, "lorenz2.gif")
+
+# %% [markdown]
+# ## Rotated 3D plotting with pyplot() backend
 
 # %%
 pyplot(fmt = :png)
@@ -129,5 +147,91 @@ anim = @animate for (k, i) in enumerate(1:50:length(X))
 end
 PyPlot.clf()
 gif(anim, "lorenz5.gif")
+
+# %% [markdown]
+# ## Layout examples
+#
+# For details, see https://docs.juliaplots.org/latest/layouts/
+
+# %%
+using Plots
+gr(fmt = :auto)
+
+# %%
+A = plot(rand(10); label="A", color=1)
+B = plot(rand(10); label="B", color=2)
+C = plot(rand(10); label="C", color=3)
+D = plot(rand(10); label="D", color=4)
+E = plot(rand(10); label="E", color=5)
+F = plot(rand(10); label="F", color=6)
+
+# Simple grid layout
+layout = @layout [
+    a b c
+    d e f
+]
+
+plot(A, B, C, D, E, F; layout)
+
+# %%
+A = plot(rand(10); label="A", color=1)
+B = plot(rand(10); label="B", color=2)
+C = plot(rand(10); label="C", color=3)
+D = plot(rand(10); label="D", color=4)
+
+# Use the `_` character to ignore plots
+layout = @layout [
+    a b _
+    c _ d
+]
+
+plot(A, B, C, D; layout)
+
+# %%
+A = plot(rand(10); label="A", color=1)
+B = plot(rand(10); label="B", color=2)
+C = plot(rand(10); label="C", color=3)
+D = plot(rand(10); label="D", color=4)
+E = plot(rand(10); label="E", color=5)
+F = plot(rand(10); label="F", color=6)
+G = plot(rand(10); label="G", color=7)
+H = plot(rand(10); label="H", color=8)
+K = plot(rand(10); label="K", color=9)
+
+# Simple size control
+layout = @layout [
+    a{0.2h, 0.5w} b{0.33w} c
+    d{0.7h} e f
+    g h k
+]
+
+plot(A, B, C, D, E, F, G, H, K; layout)
+
+# %%
+A = plot(rand(10); label="A", color=1)
+B = plot(rand(10); label="B", color=2)
+C = plot(rand(10); label="C", color=3)
+D = plot(rand(10); label="D", color=4)
+
+layout = @layout [
+    a{0.7h} 
+    [b c d]
+]
+
+plot(A, B, C, D; layout)
+
+# %%
+A = plot(rand(10); label="A", color=1)
+B = plot(rand(10); label="B", color=2)
+C = plot(rand(10); label="C", color=3)
+D = plot(rand(10); label="D", color=4)
+
+layout = @layout [
+    a{0.75w} [b
+              c
+              d]
+]
+
+plot(A, B, C, D; layout)
 
 # %%
