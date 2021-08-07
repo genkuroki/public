@@ -43,6 +43,9 @@ mandelbrot.(c);
 # ╔═╡ 69aad9ae-4262-42a0-939a-5b3913b5a878
 mandelbrot.(c);
 
+# ╔═╡ 91904672-0d88-4d84-bd85-54fd34b0e190
+mandelbrot.(c);
+
 # ╔═╡ 3abe10bf-0cfd-4927-b825-a6db8f377f81
 plotmandelbrot(mandelbrot.(c))
 
@@ -62,10 +65,16 @@ mandelbrot.(c32);
 # ╔═╡ e3b077d2-1097-4bcf-893a-0f8ba275a0b0
 plotmandelbrot(mandelbrot.(c32))
 
+# ╔═╡ 6b94b7dd-1ef1-4643-b1d1-9d25d33c368e
+mandelbrot.(c32);
+
 # ╔═╡ cff713cc-01d6-489d-95c8-2cf5405be983
 collect(mandelbrot.(cu(c32)));
 
 # ╔═╡ d6db7898-839e-49cb-9a4a-f4eafb3a52b8
+collect(mandelbrot.(cu(c32)));
+
+# ╔═╡ ced44ebd-ce57-43eb-8cac-999d08c38baf
 collect(mandelbrot.(cu(c32)));
 
 # ╔═╡ b1076082-2f2c-4837-a1c9-dafcf069dccb
@@ -87,6 +96,9 @@ Threads.nthreads()
 mandelbrot_threads(c);
 
 # ╔═╡ e077bf23-1950-4da1-9395-c193b9194115
+mandelbrot_threads(c);
+
+# ╔═╡ 1f3db460-f420-44d9-ad86-36c02b6fc859
 mandelbrot_threads(c);
 
 # ╔═╡ c0d5cd12-7951-412e-bb46-6199a43ffc6b
@@ -1043,19 +1055,23 @@ version = "0.9.1+5"
 # ╠═13af2e79-0f76-4db9-ad69-a81dbf503d4a
 # ╠═4f7d0312-47ba-4f30-ae20-475faf1cb282
 # ╠═69aad9ae-4262-42a0-939a-5b3913b5a878
+# ╠═91904672-0d88-4d84-bd85-54fd34b0e190
 # ╠═3abe10bf-0cfd-4927-b825-a6db8f377f81
 # ╠═dd04c007-5ee7-4a09-bcc2-7e29d551d327
 # ╠═03447a52-145a-4e77-a0db-98a4bffc910a
 # ╠═6115f71e-b291-4d00-af75-4660a8384733
 # ╠═e3b077d2-1097-4bcf-893a-0f8ba275a0b0
+# ╠═6b94b7dd-1ef1-4643-b1d1-9d25d33c368e
 # ╠═51711639-e37f-4b4b-9d61-023721af96a6
 # ╠═cff713cc-01d6-489d-95c8-2cf5405be983
 # ╠═d6db7898-839e-49cb-9a4a-f4eafb3a52b8
+# ╠═ced44ebd-ce57-43eb-8cac-999d08c38baf
 # ╠═b1076082-2f2c-4837-a1c9-dafcf069dccb
 # ╠═354c7eed-0c15-4bc5-bc30-dc75e4f447f4
 # ╠═93ac2799-5548-465c-89a7-23c7dce24ed2
 # ╠═0a25b566-cbc9-4a1a-ac5a-6a5e6a2e1c41
 # ╠═e077bf23-1950-4da1-9395-c193b9194115
+# ╠═1f3db460-f420-44d9-ad86-36c02b6fc859
 # ╠═c0d5cd12-7951-412e-bb46-6199a43ffc6b
 # ╠═b713fe8e-7850-42c1-b5dd-34b1ac89f596
 # ╟─00000000-0000-0000-0000-000000000001
