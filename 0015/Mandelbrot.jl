@@ -62,6 +62,9 @@ mandelbrot.(c32);
 # ╔═╡ 6115f71e-b291-4d00-af75-4660a8384733
 mandelbrot.(c32);
 
+# ╔═╡ 4bd0995d-442d-4759-9715-47bcfc61b4b4
+mandelbrot.(c32);
+
 # ╔═╡ e3b077d2-1097-4bcf-893a-0f8ba275a0b0
 plotmandelbrot(mandelbrot.(c32))
 
@@ -1060,6 +1063,7 @@ version = "0.9.1+5"
 # ╠═dd04c007-5ee7-4a09-bcc2-7e29d551d327
 # ╠═03447a52-145a-4e77-a0db-98a4bffc910a
 # ╠═6115f71e-b291-4d00-af75-4660a8384733
+# ╠═4bd0995d-442d-4759-9715-47bcfc61b4b4
 # ╠═e3b077d2-1097-4bcf-893a-0f8ba275a0b0
 # ╠═6b94b7dd-1ef1-4643-b1d1-9d25d33c368e
 # ╠═51711639-e37f-4b4b-9d61-023721af96a6
