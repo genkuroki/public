@@ -88,13 +88,30 @@ plotmandelbrot(m_th)
 @benchmark mandelbrot.($c32) # CPU Float32
 
 # %%
-@benchmark collect(mandelbrot.($c_cuda)) # GPU Float32 (GPU → GPU)
+@benchmark collect(mandelbrot.($c_cuda)) # GPU Float32 (GPU → GPU → CPU)
 
 # %%
-@benchmark collect(mandelbrot.(cu($c))) # GPU Float32 (CPU → GPU → GPU → CPU)
+@benchmark collect(mandelbrot.(cu($c32))) # GPU Float32 (CPU → GPU → GPU → CPU)
 
 # %%
 @show Threads.nthreads()
 @benchmark mandelbrot_threads($c) # CPU Float64 multi-threaded version with nthreads = 12
+
+# %%
+N = 2^10
+X32 = range(-0.714689f0, -0.714679f0; length=N)
+Y32 = range( 0.299872f0,  0.299882f0; length=N)
+C32 = complex.(X32', Y32)
+
+C_cuda = cu(c32);
+
+# %%
+@benchmark mandelbrot.($C32) # CPU Float32
+
+# %%
+@benchmark collect(mandelbrot.($c_cuda)) # GPU Float32 (GPU → GPU → CPU)
+
+# %%
+@benchmark collect(mandelbrot.(cu($C32))) # GPU Float32 (CPU → GPU → GPU → CPU)
 
 # %%
