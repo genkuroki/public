@@ -125,7 +125,7 @@ Plots = "~1.20.0"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.8.0-DEV.261"
+julia_version = "1.8.0-DEV.310"
 manifest_format = "2.0"
 
 [[deps.AbstractFFTs]]
@@ -763,9 +763,9 @@ version = "1.6.0"
 
 [[deps.StaticArrays]]
 deps = ["LinearAlgebra", "Random", "Statistics"]
-git-tree-sha1 = "b28f39450421d07d89ab5d126fd15e5246350e8a"
+git-tree-sha1 = "3240808c6d463ac46f1c1cd7638375cd22abbccb"
 uuid = "90137ffa-7385-5640-81b9-e52037218182"
-version = "1.2.11"
+version = "1.2.12"
 
 [[deps.Statistics]]
 deps = ["LinearAlgebra", "SparseArrays"]
