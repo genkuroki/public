@@ -60,3 +60,6 @@ end
 @show mean(f_well_multithreaded(L));
 
 # %%
+[mean(f_ill_multithreaded(L)) for _ in 1:20]
+
+# %%
