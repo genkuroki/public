@@ -15,7 +15,7 @@
 # ---
 
 # %%
-using Test
+using Test, Statistics
 L = 20;
 
 # %%
@@ -53,5 +53,10 @@ function f_well_multithreaded(L)
     a
 end
 @test f_well_multithreaded(L) == fill(L, 2^L)
+
+# %%
+@show mean(f(L))
+@show mean(f_ill_multithreaded(L))
+@show mean(f_well_multithreaded(L));
 
 # %%
