@@ -78,3 +78,6 @@ My.Hello("Julia")
 My.Hello(π)
 
 # %%
+methods(Base.show)
+
+# %%
