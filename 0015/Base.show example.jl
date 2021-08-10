@@ -81,3 +81,12 @@ My.Hello(π)
 methods(Base.show)
 
 # %%
+methods(repr)
+
+# %%
+methods(string)
+
+# %%
+methods(print)
+
+# %%
