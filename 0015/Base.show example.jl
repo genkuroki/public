@@ -46,6 +46,9 @@ My.Hello("Julia")
 dump(My.Hello("Julia"))
 
 # %%
+str = repr(My.Hello("Julia"))
+
+# %%
 π
 
 # %%
