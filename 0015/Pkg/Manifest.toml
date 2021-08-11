@@ -1,0 +1,9 @@
+# This file is machine-generated - editing it directly is not advised
+
+julia_version = "1.8.0-DEV.310"
+manifest_format = "2.0"
+
+[[deps.MyPkg]]
+path = "MyPkg"
+uuid = "56e20d83-26ee-45ce-8fae-90d7e509c181"
+version = "0.1.0"
