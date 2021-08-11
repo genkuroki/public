@@ -48,8 +48,7 @@ end
 prepareHfunc!(L) = (C, B) -> Hfunc!(C, B, prepareDiag(L), L)
 
 function f_LinearMap(L)
-    H! = prepareHfunc!(L)
-    H_LinearMap = LinearMap(H!, 2^L, ismutating=true, issymmetric=true, isposdef=false)
+    H_LinearMap = LinearMap(prepareHfunc!(L), 2^L, ismutating=true, issymmetric=true, isposdef=false)
     d_LM, h_LM = partialschur(H_LinearMap, nev=1, which=SR())
     d_LM.eigenvalues[1]
 end
@@ -109,5 +108,48 @@ f_exact(20)
 # %%
 @time H = TransverseFieldIsing_sparse(N=20, h=1)
 @time d, h = partialschur(H; nev=1, which=SR())
+
+# %%
+@time f_LinearMap(10)
+@time f_LinearMap(10)
+
+# %%
+@time f_sparse(10)
+@time f_sparse(10)
+
+# %%
+L = 10
+@time H_LM = LinearMap(prepareHfunc!(L), 2^L, ismutating=true, issymmetric=true, isposdef=false)
+@time d_LM, h_LM = partialschur(H_LM, nev=1, which=SR())
+@time d_LM, h_LM = partialschur(H_LM, nev=1, which=SR())
+
+# %%
+@time H_sparse = TransverseFieldIsing_sparse(N=10, h=1)
+@time d, h = partialschur(H_sparse; nev=1, which=SR())
+@time d, h = partialschur(H_sparse; nev=1, which=SR())
+
+# %%
+using BenchmarkTools
+
+L = 10
+@show L
+println("LinearMaps:")
+H_LM = @btime LinearMap(prepareHfunc!(L), 2^L, ismutating=true, issymmetric=true, isposdef=false)
+@btime d_LM, h_LM = partialschur($H_LM, nev=1, which=$(SR()))
+println("SparseArrays:")
+H_sparse = @btime TransverseFieldIsing_sparse(N=L, h=1)
+@btime d, h = partialschur($H_sparse; nev=1, which=$(SR()));
+
+# %%
+using BenchmarkTools
+
+L = 20
+@show L
+println("LinearMaps:")
+H_LM = @btime LinearMap(prepareHfunc!(L), 2^L, ismutating=true, issymmetric=true, isposdef=false)
+@btime d_LM, h_LM = partialschur($H_LM, nev=1, which=$(SR()))
+println("SparseArrays:")
+H_sparse = @btime TransverseFieldIsing_sparse(N=L, h=1)
+@btime d, h = partialschur($H_sparse; nev=1, which=$(SR()));
 
 # %%
