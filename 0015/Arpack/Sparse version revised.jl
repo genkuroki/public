@@ -210,9 +210,9 @@ function TransverseFieldIsing_sparse_revised2(;N, h)
     d = sigmaz2(N)    
     v = sigmax.(N, 1:N)    
     H = spdiagm(
-        ( 2^(N-k) => v[k] for k in 1:N)...,
+        (-2^(N-k) => v[k] for k in 1:N)...,
         0 => d,
-        (-2^(N-k) => v[k] for k in 1:N)...)
+        ( 2^(N-k) => v[k] for k in 1:N)...)
 end
 
 function f_sparse_revised2(L)
@@ -243,9 +243,9 @@ function TransverseFieldIsing_sparse_revised2_time(;N, h)
     @time d = sigmaz2(N)    
     @time v = sigmax.(N, 1:N)    
     @time H = spdiagm(
-        ( 2^(N-k) => v[k] for k in 1:N)...,
+        (-2^(N-k) => v[k] for k in 1:N)...,
         0 => d,
-        (-2^(N-k) => v[k] for k in 1:N)...)
+        ( 2^(N-k) => v[k] for k in 1:N)...)
 end
 
 TransverseFieldIsing_sparse_revised2_time(N=20, h=1); println()
@@ -275,9 +275,9 @@ function TransverseFieldIsing_sparse_revised3(;N, h)
     d = sigmaz2_sparse(N)    
     v = sigmax_sparse.(N, 1:N)    
     H = spdiagm(
-        ( 2^(N-k) => v[k] for k in 1:N)...,
+        (-2^(N-k) => v[k] for k in 1:N)...,
         0 => d,
-        (-2^(N-k) => v[k] for k in 1:N)...)
+        ( 2^(N-k) => v[k] for k in 1:N)...)
 end
 
 function f_sparse_revised3(L)
@@ -299,13 +299,18 @@ L = 20
 @time d, h = partialschur(H; nev=1, which=SR())
 
 # %%
+L = 20
+@time H = TransverseFieldIsing_sparse_revised3(N=L, h=1)
+@time d, h = partialschur(H; nev=1, which=SR())
+
+# %%
 function TransverseFieldIsing_sparse_revised3_time(;N, h)
     @time d = sigmaz2_sparse(N)    
     @time v = sigmax_sparse.(N, 1:N)    
     @time H = spdiagm(
-        ( 2^(N-k) => v[k] for k in 1:N)...,
+        (-2^(N-k) => v[k] for k in 1:N)...,
         0 => d,
-        (-2^(N-k) => v[k] for k in 1:N)...)
+        ( 2^(N-k) => v[k] for k in 1:N)...)
 end
 
 TransverseFieldIsing_sparse_revised3_time(N=20, h=1); println()
