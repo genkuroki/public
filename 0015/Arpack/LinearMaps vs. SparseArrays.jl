@@ -58,6 +58,7 @@ f_exact(L) = -2sum(abs(sin((n-1/2) * pi/L)) for n in 1:L)
 # %%
 # https://juliaphysics.github.io/PhysicsTutorials.jl/tutorials/general/quantum_ising/quantum_ising.html
 
+using LinearAlgebra
 using SparseArrays
 using ArnoldiMethod
 ⊗(x,y) = kron(x,y)
