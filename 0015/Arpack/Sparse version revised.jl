@@ -101,7 +101,7 @@ end
 
 function f_sparse(L)
     H = TransverseFieldIsing_sparse(N=L, h=1)
-    d, h = partialschur(H; nev=1, which=SR())
+    d, hist = partialschur(H; nev=1, which=SR())
     d.eigenvalues[1]
 end
 
@@ -112,17 +112,17 @@ f_sparse(20), f_exact(20)
 # %%
 L = 20
 @time H = TransverseFieldIsing_sparse(N=L, h=1)
-@time d, h = partialschur(H; nev=1, which=SR())
+@time d, hist = partialschur(H; nev=1, which=SR())
 
 # %%
 L = 20
 @time H = TransverseFieldIsing_sparse(N=L, h=1)
-@time d, h = partialschur(H; nev=1, which=SR())
+@time d, hist = partialschur(H; nev=1, which=SR())
 
 # %%
 L = 20
 @time H = TransverseFieldIsing_sparse(N=L, h=1)
-@time d, h = partialschur(H; nev=1, which=SR())
+@time d, hist = partialschur(H; nev=1, which=SR())
 
 # %%
 TransverseFieldIsing_sparse(N=20, h=1)
@@ -163,7 +163,7 @@ end
 
 function f_sparse_revised(L)
     H = TransverseFieldIsing_sparse_revised(N=L, h=1)
-    d, h = partialschur(H; nev=1, which=SR())
+    d, hist = partialschur(H; nev=1, which=SR())
     d.eigenvalues[1]
 end
 
@@ -172,17 +172,17 @@ TransverseFieldIsing_sparse_revised(N=10, h=1) == TransverseFieldIsing_sparse(N=
 # %%
 L = 20
 @time H = TransverseFieldIsing_sparse_revised(N=L, h=1)
-@time d, h = partialschur(H; nev=1, which=SR())
+@time d, hist = partialschur(H; nev=1, which=SR())
 
 # %%
 L = 20
 @time H = TransverseFieldIsing_sparse_revised(N=L, h=1)
-@time d, h = partialschur(H; nev=1, which=SR())
+@time d, hist = partialschur(H; nev=1, which=SR())
 
 # %%
 L = 20
 @time H = TransverseFieldIsing_sparse_revised(N=L, h=1)
-@time d, h = partialschur(H; nev=1, which=SR())
+@time d, hist = partialschur(H; nev=1, which=SR())
 
 # %%
 TransverseFieldIsing_sparse_revised(N=20, h=1)
@@ -198,17 +198,17 @@ function sigmaz2(N)
     d
 end
 
-function sigmax(N, k)
+function sigmax(N, h, k)
     v = zeros(Int, 2^N - 2^(N-k))
     for i in 1:2:2^k-1
-        v[(2^(N-k)*(i-1) + 1):2^(N-k)*i] .= -1
+        v[(2^(N-k)*(i-1) + 1):2^(N-k)*i] .= -h
     end
     v
 end
 
-function TransverseFieldIsing_sparse_revised2(;N, h)
+function TransverseFieldIsing_sparse_revised2(; N, h)
     d = sigmaz2(N)    
-    v = sigmax.(N, 1:N)    
+    v = sigmax.(N, h, 1:N)
     H = spdiagm(
         (-2^(N-k) => v[k] for k in 1:N)...,
         0 => d,
@@ -217,7 +217,7 @@ end
 
 function f_sparse_revised2(L)
     H = TransverseFieldIsing_sparse_revised2(N=L, h=1)
-    d, h = partialschur(H; nev=1, which=SR())
+    d, hist = partialschur(H; nev=1, which=SR())
     d.eigenvalues[1]
 end
 
@@ -226,22 +226,22 @@ TransverseFieldIsing_sparse_revised2(N=10, h=1) == TransverseFieldIsing_sparse(N
 # %%
 L = 20
 @time H = TransverseFieldIsing_sparse_revised2(N=L, h=1)
-@time d, h = partialschur(H; nev=1, which=SR())
+@time d, hist = partialschur(H; nev=1, which=SR())
 
 # %%
 L = 20
 @time H = TransverseFieldIsing_sparse_revised2(N=L, h=1)
-@time d, h = partialschur(H; nev=1, which=SR())
+@time d, hist = partialschur(H; nev=1, which=SR())
 
 # %%
 L = 20
 @time H = TransverseFieldIsing_sparse_revised2(N=L, h=1)
-@time d, h = partialschur(H; nev=1, which=SR())
+@time d, hist = partialschur(H; nev=1, which=SR())
 
 # %%
 function TransverseFieldIsing_sparse_revised2_time(;N, h)
     @time d = sigmaz2(N)    
-    @time v = sigmax.(N, 1:N)    
+    @time v = sigmax.(N, h, 1:N)    
     @time H = spdiagm(
         (-2^(N-k) => v[k] for k in 1:N)...,
         0 => d,
@@ -263,17 +263,17 @@ function sigmaz2_sparse(N)
     sparse(d) # should be sparse
 end
 
-function sigmax_sparse(N, k)
+function sigmax_sparse(N, h, k)
     v = zeros(Int, 2^N - 2^(N-k))
     for i in 1:2:2^k-1
-        v[(2^(N-k)*(i-1) + 1):2^(N-k)*i] .= -1
+        v[(2^(N-k)*(i-1) + 1):2^(N-k)*i] .= -h
     end
     sparse(v) # should be sparse
 end
 
-function TransverseFieldIsing_sparse_revised3(;N, h)
+function TransverseFieldIsing_sparse_revised3(; N, h)
     d = sigmaz2_sparse(N)    
-    v = sigmax_sparse.(N, 1:N)    
+    v = sigmax_sparse.(N, h, 1:N)    
     H = spdiagm(
         (-2^(N-k) => v[k] for k in 1:N)...,
         0 => d,
@@ -282,31 +282,31 @@ end
 
 function f_sparse_revised3(L)
     H = TransverseFieldIsing_sparse_revised3(N=L, h=1)
-    d, h = partialschur(H; nev=1, which=SR())
+    d, hist = partialschur(H; nev=1, which=SR())
     d.eigenvalues[1]
 end
 
-TransverseFieldIsing_sparse_revised3(;N=10, h=1) == TransverseFieldIsing_sparse(;N=10, h=1)
+TransverseFieldIsing_sparse_revised3(N=10, h=1) == TransverseFieldIsing_sparse(N=10, h=1)
+
+# %% tags=[]
+L = 20
+@time H = TransverseFieldIsing_sparse_revised3(N=L, h=1)
+@time d, hist = partialschur(H; nev=1, which=SR())
 
 # %%
 L = 20
 @time H = TransverseFieldIsing_sparse_revised3(N=L, h=1)
-@time d, h = partialschur(H; nev=1, which=SR())
+@time d, hist = partialschur(H; nev=1, which=SR())
 
 # %%
 L = 20
 @time H = TransverseFieldIsing_sparse_revised3(N=L, h=1)
-@time d, h = partialschur(H; nev=1, which=SR())
+@time d, hist = partialschur(H; nev=1, which=SR())
 
 # %%
-L = 20
-@time H = TransverseFieldIsing_sparse_revised3(N=L, h=1)
-@time d, h = partialschur(H; nev=1, which=SR())
-
-# %%
-function TransverseFieldIsing_sparse_revised3_time(;N, h)
+function TransverseFieldIsing_sparse_revised3_time(; N, h)
     @time d = sigmaz2_sparse(N)    
-    @time v = sigmax_sparse.(N, 1:N)    
+    @time v = sigmax_sparse.(N, h, 1:N)    
     @time H = spdiagm(
         (-2^(N-k) => v[k] for k in 1:N)...,
         0 => d,
@@ -316,5 +316,77 @@ end
 TransverseFieldIsing_sparse_revised3_time(N=20, h=1); println()
 TransverseFieldIsing_sparse_revised3_time(N=20, h=1); println()
 TransverseFieldIsing_sparse_revised3_time(N=20, h=1)
+
+# %%
+bit(a, k) = (a >> k) & 1
+
+function sigmaz2(N)
+    d = zeros(Int8, 2^N)
+    for k in 1:N, a in 0:2^N-1
+        d[a+1] -= ifelse(bit(a, N-k) == bit(a, N - mod1(k+1, N)), 1, -1)
+    end
+    d
+end
+
+function IJV(N, h=1)
+    i, v = findnz(sigmaz2_sparse(N))
+    m = length(i)
+    M = 2^N
+    
+    I = Vector{Int32}(undef, m + N*M)
+    J = similar(I)
+    V = similar(I, Int8)
+    
+    I[1:m] .= i
+    J[1:m] .= i
+    V[1:m] .= v
+    V[m+1:end] .= -h
+    
+    for a in 0:M-1
+        s = m + N*a
+        I[s+1:s+N] .= a+1
+        for i in 1:N
+            b = a ⊻ (1 << (N-i))
+            J[s+i] = b+1
+        end
+    end
+    
+    I, J, V
+end
+
+TransverseFieldIsing_sparse_revised4(; N, h) = sparse(IJV(N, h)...)
+
+function f_sparse_revised4(L)
+    H = TransverseFieldIsing_sparse_revised4(N=L, h=1)
+    d, hist = partialschur(H; nev=1, which=SR())
+    d.eigenvalues[1]
+end
+
+TransverseFieldIsing_sparse_revised4(N=10, h=1) == TransverseFieldIsing_sparse(N=10, h=1)
+
+# %%
+L = 20
+@time H = TransverseFieldIsing_sparse_revised4(N=L, h=1)
+@time d, hist = partialschur(H; nev=1, which=SR())
+
+# %%
+L = 20
+@time H = TransverseFieldIsing_sparse_revised4(N=L, h=1)
+@time d, hist = partialschur(H; nev=1, which=SR())
+
+# %%
+L = 20
+@time H = TransverseFieldIsing_sparse_revised4(N=L, h=1)
+@time d, hist = partialschur(H; nev=1, which=SR())
+
+# %%
+function TransverseFieldIsing_sparse_revised4_time(; N, h)
+    @time I, J, V = IJV(N, h)
+    @time sparse(I, J, V)
+end
+    
+TransverseFieldIsing_sparse_revised4_time(N=20, h=1); println()
+TransverseFieldIsing_sparse_revised4_time(N=20, h=1); println()
+TransverseFieldIsing_sparse_revised4_time(N=20, h=1)
 
 # %%
