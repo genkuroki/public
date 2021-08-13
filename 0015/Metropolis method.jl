@@ -231,3 +231,56 @@ plot!(xr,f.(xr),lw=3,label="Gaussian") |> display
 end
 
 # %%
+using Plots
+using Distributions
+
+function update(H, prop, x)
+    y = prop(x)
+    a = exp(H(x) - H(y))
+    a > 1 || rand() ≤ a ? y : x
+end
+
+function iter_update(H, prop, x0, N; warmup=min(N ÷ 10, 10^3))
+    x = x0
+    for _ in 1:warmup
+        x = update(H, prop, x)
+    end
+    X = similar([x], N)
+    X[1] = x
+    for i in 2:N
+        X[i] = update(H, prop, X[i-1])
+    end
+    X
+end
+
+H(x) = x^2/2
+prop(x) = x + 0.2randn()
+x0 = randn()
+N = 10^6
+X = iter_update(H, prop, x0, N)
+
+histogram(X; norm=true, alpha=0.3, bin=100, label="MH sample")
+plot!(x -> pdf(Normal(), x), -5, 5; ls=:dash, lw=2, label="normal dist.")
+
+# %%
+H(x) = x ≤ 0 ? Inf : x
+prop(x) = x + 0.1randn()
+x0 = abs(randn())
+N = 10^6
+X = iter_update(H, prop, x0, N)
+
+histogram(X; norm=true, alpha=0.3, bin=100, label="MH sample")
+plot!(x -> pdf(Exponential(), x), eps(), 10; label="exp. dist.")
+plot!(xlim=(-0.1, 8))
+
+# %%
+H(x) = x ≤ 0 ? Inf : x/3 - (4 - 1)*log(x)
+prop(x) = x + randn()
+x0 = abs(randn())
+N = 10^6
+X = iter_update(H, prop, x0, N)
+
+histogram(X; norm=true, alpha=0.3, bin=100, label="MH sample")
+plot!(x -> pdf(Gamma(4, 3), x), eps(), 50; label="Gamma(4, 3)")
+
+# %%
