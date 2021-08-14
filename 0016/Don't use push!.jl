@@ -69,3 +69,14 @@ print("a = Vector{Float64}(undef, L) and a[i] =...:")
 @btime sum($c);
 
 # %%
+function h_inbounds(L)
+    a = Vector{Float64}(undef, L)
+    @inbounds for i in eachindex(a)
+        a[i] = rand()
+    end
+    a
+end
+
+@btime h_inbounds(10^6);
+
+# %%
