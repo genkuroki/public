@@ -15,9 +15,6 @@
 # ---
 
 # %%
-]activate .
-
-# %%
 #using LinearAlgebra, SparseArrays, Plots, DifferentialEquations
 #using Surrogates
 using Plots
