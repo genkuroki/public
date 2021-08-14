@@ -320,12 +320,12 @@ TransverseFieldIsing_sparse_revised3_time(N=20, h=1)
 # %%
 bit(a, k) = (a >> k) & 1
 
-function sigmaz2(N)
+function sigmaz2_sparse(N)
     d = zeros(Int8, 2^N)
     for k in 1:N, a in 0:2^N-1
         d[a+1] -= ifelse(bit(a, N-k) == bit(a, N - mod1(k+1, N)), 1, -1)
     end
-    d
+    sparse(d)
 end
 
 function IJV(N, h=1)
