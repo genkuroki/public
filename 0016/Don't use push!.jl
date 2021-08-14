@@ -80,3 +80,6 @@ end
 @btime h_inbounds(10^6);
 
 # %%
+@btime rand(10^6);
+
+# %%
