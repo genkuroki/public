@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # ---
 # jupyter:
 #   jupytext:
@@ -206,9 +207,11 @@ function fit(optimizer::NaiveGreedy, k, sample_cost)
             
             @timeit to "select_next" begin
                 # Select next
-                current_values += view(optimizer.X, :, best_idx)
-                current_concave_values .= sqrt.(current_values)
-                current_concave_values_sum = sum(current_concave_values)
+                #current_values += view(optimizer.X, :, best_idx)
+                #current_concave_values .= sqrt.(current_values)
+                #current_concave_values_sum = sum(current_concave_values)
+                current_values .+= view(optimizer.X, :, best_idx)
+                current_concave_values_sum = sum(sqrt, current_values)
 
                 push!(ranking, best_idx)
                 push!(total_gains, gain)
@@ -231,6 +234,6 @@ to
 
 # %%
 @show res1rev.ranking == res1.ranking
-@show res1rev.gains == res1.gains
+@show res1rev.gains ≈ res1.gains
 
 # %%
