@@ -15,6 +15,19 @@
 # ---
 
 # %%
+using Plots
+
+f(t, x) = exp(-x^2/(2t))/√(2π*t)
+u(t, x) = f(t+0.1, x+2) + 2f(t+0.2, x-2)
+t = range(0, 3; length=101)
+x = range(-5, 5; length=101)
+T = u.(t', x)
+
+surface(t, x, T; colorbar=false,
+    xlabel="t", ylabel="x", zlabel="T",
+    camera=(30, 70), color=reverse(cgrad(:RdYlBu_11)))
+
+# %%
 #using LinearAlgebra, SparseArrays, Plots, DifferentialEquations
 #using Surrogates
 using Plots
@@ -104,5 +117,12 @@ plot(T[:, 1])
 
 # %%
 ?@.
+
+# %%
+@show VERSION
+using Pkg
+Pkg.status("Plots")
+Pkg.status("PlotUtils"; mode=PKGMODE_MANIFEST)
+Pkg.status("GR"; mode=PKGMODE_MANIFEST)
 
 # %%
