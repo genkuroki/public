@@ -161,7 +161,7 @@ function fit(optimizer::NaiveGreedy, k, sample_cost)
         ranking = Int32[]
         total_gains = Float64[]
 
-        mask = zeros(Int8, n)
+        #mask = zeros(Int8, n)
         current_values = zeros(Float64, d)
         current_concave_values = sqrt.(current_values)
         current_concave_values_sum = sum(current_concave_values)
