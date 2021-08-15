@@ -234,6 +234,6 @@ to
 
 # %%
 @show res1rev.ranking == res1.ranking
-@show res1rev.gains ≈ res1.gains
+@show res1rev.gains ≈ res1.gains;
 
 # %%
