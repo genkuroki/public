@@ -23,7 +23,7 @@ using Seaborn
 using ScikitLearn: @sk_import
 @sk_import datasets: fetch_covtype
 using Random
-using StatsBase
+using StatsBase: sample
 
 # %%
 digits_data = fetch_covtype()
