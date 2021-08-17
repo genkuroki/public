@@ -15,6 +15,8 @@
 
 # %% [markdown]
 # Straightforward translation of https://github.com/rmeinl/apricot-julia/blob/5f130f846f8b7f93bb4429e2b182f0765a61035c/notebooks/python_reimpl.ipynb
+#
+# See also https://github.com/genkuroki/public/blob/main/0016/apricot/python_reimpl.ipynb
 
 # %%
 using Seaborn
