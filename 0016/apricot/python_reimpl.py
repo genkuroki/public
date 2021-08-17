@@ -14,7 +14,7 @@
 # ---
 
 # %% [markdown]
-# https://github.com/rmeinl/apricot-julia/blob/5f130f846f8b7f93bb4429e2b182f0765a61035c/notebooks/python_reimpl.ipynb
+# This is essentially a copy of https://github.com/rmeinl/apricot-julia/blob/5f130f846f8b7f93bb4429e2b182f0765a61035c/notebooks/python_reimpl.ipynb
 
 # %%
 import matplotlib.pyplot as plt
