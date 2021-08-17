@@ -33,7 +33,7 @@ X_digits = permutedims(abs.(digits_data["data"]))
 summary(X_digits)
 
 # %%
-"""`calculate_gains!(X, gains, current_values, idxs, current_concave_values_sum)` mutate `gains` only"""
+"""`calculate_gains!(X, gains, current_values, idxs, current_concave_values_sum)` mutates `gains` only"""
 function calculate_gains!(X, gains, current_values, idxs, current_concave_values_sum)
     Threads.@threads for i in eachindex(idxs)
         @inbounds idx = idxs[i]
