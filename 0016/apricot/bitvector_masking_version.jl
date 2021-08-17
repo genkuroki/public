@@ -17,11 +17,11 @@
 # Modified version of https://github.com/genkuroki/public/blob/main/0016/apricot/julia_translation_of_python_reimpl.ipynb
 
 # %%
-using Seaborn
+#using Seaborn
 using ScikitLearn: @sk_import
 @sk_import datasets: fetch_covtype
-using Random
-using StatsBase: sample
+#using Random
+#using StatsBase: sample
 
 # %%
 digits_data = fetch_covtype()
@@ -91,7 +91,7 @@ function fit_bitvector(X, k; calculate_gains! = calculate_gains!)
     ranking = Int[]
     total_gains = Float64[]
 
-    mask = trues(n) # false stands for "masked"
+    mask = trues(n) # `false` stands for "masked".
     current_values = zeros(d)
     current_concave_values_sum = sum(sqrt, current_values)
 
@@ -119,7 +119,7 @@ function fit_bitvector(X, k; calculate_gains! = calculate_gains!)
         push!(total_gains, gain)
 
         mask[best_idx] = 0
-        idxs = axes(mask, 1)[mask]
+        idxs = findall(mask)
     end
     return ranking, total_gains
 end
@@ -146,6 +146,7 @@ k = 1000
 @time ranking0_bv, gains0_bv = fit_bitvector(X_digits, k; calculate_gains! = calculate_gains!);
 
 # %%
-@show ranking0_bv == ranking0_pa gains0_bv == gains0_pa;
+@show ranking0_pa == ranking0_bv
+@show gains0_pa == gains0_bv;
 
 # %%
