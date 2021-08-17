@@ -79,7 +79,7 @@ function fit(X, k; calculate_gains! = calculate_gains!)
         push!(ranking, best_idx)
         push!(total_gains, gain)
 
-        popat!(idxs, best_idx)
+        popat!(idxs, idx)
     end
     return ranking, total_gains
 end
