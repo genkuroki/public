@@ -85,3 +85,16 @@ A = unique(sort(rand(1:10^4, 10^4)))
 @btime sum(length, LazyConsecLists.ConsecList($A))
 
 # %%
+using OffsetArrays
+x = OffsetArray([1, 2, 5, 9, 10, 11, 14, 15, 16, 19], -4:5)
+
+# %%
+conseclist_forloop(x)
+
+# %%
+conseclist_bitvector(x)
+
+# %%
+LazyConsecLists.ConsecList(x)
+
+# %%
