@@ -43,6 +43,9 @@ end
 @doc calculate_gains!
 
 # %%
+"""
+The revised version of using popat!(idxs, idx) without mask
+"""
 function fit_popat(X, k; calculate_gains! = calculate_gains!)
     d, n = size(X)
 
@@ -83,6 +86,9 @@ function fit_popat(X, k; calculate_gains! = calculate_gains!)
 end
 
 # %%
+"""
+The revised version of using mask::BitVector with findall(mask)
+"""
 function fit_bitvector(X, k; calculate_gains! = calculate_gains!)
     d, n = size(X)
 
@@ -125,6 +131,9 @@ function fit_bitvector(X, k; calculate_gains! = calculate_gains!)
 end
 
 # %%
+"""
+The revised version of using mask::Vector{Float64} with findall(mask .== 0)
+"""
 function fit_f64vector(X, k; calculate_gains! = calculate_gains!)
     d, n = size(X)
 
@@ -167,6 +176,51 @@ function fit_f64vector(X, k; calculate_gains! = calculate_gains!)
 end
 
 # %%
+"""
+The original version of using mask::Vector{Float64} with findall(==(0), mask)
+"""
+function fit_f64vector_org(X, k; calculate_gains! = calculate_gains!)
+    d, n = size(X)
+
+    cost = 0.0
+
+    ranking = Int[]
+    total_gains = Float64[]
+
+    mask = zeros(n)
+    current_values = zeros(d)
+    current_concave_values_sum = sum(sqrt, current_values)
+
+    idxs = collect(1:n)
+
+    gains = zeros(n)
+    while cost < k
+        calculate_gains!(X, gains, current_values, idxs, current_concave_values_sum)
+
+        idx = argmax(gains)
+        best_idx = idxs[idx]
+        curr_cost = 1.0
+        
+        cost + curr_cost > k && break
+
+        cost += curr_cost
+        # Calculate gains
+        gain = gains[idx] * curr_cost
+
+        # Select next
+        current_values .+= @view X[:, best_idx]
+        current_concave_values_sum = sum(sqrt, current_values)
+
+        push!(ranking, best_idx)
+        push!(total_gains, gain)
+
+        mask[best_idx] = 1
+        idxs = findall(==(0), mask)
+    end
+    return ranking, total_gains
+end
+
+# %%
 k = 1000
 
 # %%
@@ -197,7 +251,16 @@ k = 1000
 @time ranking0_f64v, gains0_f64v = fit_f64vector(X_digits, k; calculate_gains! = calculate_gains!);
 
 # %%
-@show ranking0_pa == ranking0_bv == ranking0_f64v
-@show gains0_pa == gains0_bv == gains0_f64v;
+@time ranking0_org, gains0_org = fit_f64vector_org(X_digits, k; calculate_gains! = calculate_gains!);
+
+# %%
+@time ranking0_org, gains0_org = fit_f64vector_org(X_digits, k; calculate_gains! = calculate_gains!);
+
+# %%
+@time ranking0_org, gains0_org = fit_f64vector_org(X_digits, k; calculate_gains! = calculate_gains!);
+
+# %%
+@show ranking0_pa == ranking0_bv == ranking0_f64v == ranking0_org
+@show gains0_pa == gains0_bv == gains0_f64v == gains0_org;
 
 # %%
