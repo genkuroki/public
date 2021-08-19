@@ -107,3 +107,13 @@ plot_surface(u_sphere, v_sphere, spherefunc, sphereparam; size=(500, 500),
     lims=(-20, 20), color=:gist_earth, R=rotate(30, 30, 30))
 
 # %%
+using Pkg
+println("Julia v", VERSION)
+Pkg.status("IJulia")
+Pkg.status("Plots")
+Pkg.status("PyPlot")
+Pkg.status("Plotly")
+Pkg.status("StaticArrays")
+Pkg.status("Parameters")
+
+# %%
