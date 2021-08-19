@@ -110,6 +110,7 @@ plot_surface(u_sphere, v_sphere, spherefunc, sphereparam; size=(500, 500),
 using Pkg
 println("Julia v", VERSION)
 Pkg.status("IJulia")
+Pkg.status("PyCall"; mode = PKGMODE_MANIFEST)
 Pkg.status("Plots")
 Pkg.status("PyPlot")
 Pkg.status("Plotly")
