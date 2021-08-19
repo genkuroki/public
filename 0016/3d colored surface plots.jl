@@ -30,8 +30,8 @@ function plot_surface(u, v, surffunc, param; R = rotate(0, 0, 0), kwargs...)
     xyzh = surffunc.(u', v, Ref(param))
     xyz = (((x, y, z, h),) -> R * SVector(x, y, z)).(xyzh)
     x, y, z = ((a -> a[i]).(xyz) for i in 1:3)
-    fill_z = (((x, y, z, h),) -> h).(xyzh)
-    surface(x, y, z; fill_z, kwargs...)
+    h = (((x, y, z, h),) -> h).(xyzh)
+    surface(x, y, z; fill_z = h, kwargs...)
 end
 
 # %%
@@ -105,8 +105,5 @@ plot_surface(u_torus, v_torus, torusfunc, torusparam; size=(500, 500),
 plotly(fmt=:auto)
 plot_surface(u_sphere, v_sphere, spherefunc, sphereparam; size=(500, 500), 
     lims=(-20, 20), color=:gist_earth, R=rotate(30, 30, 30))
-
-# %%
-; ls -l torus.gif sphere.gif
 
 # %%
