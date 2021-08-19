@@ -45,9 +45,15 @@ i = 4
 @views A22 = A[i+1:end, i+1:end]
 
 # %%
-?@views
+?"subarray"
+
+# %%
+?view
 
 # %%
 ?@view
+
+# %%
+?@views
 
 # %%
