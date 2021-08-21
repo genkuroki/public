@@ -1,0 +1,62 @@
+# -*- coding: utf-8 -*-
+# ---
+# jupyter:
+#   jupytext:
+#     formats: ipynb,jl:hydrogen
+#     text_representation:
+#       extension: .jl
+#       format_name: hydrogen
+#       format_version: '1.3'
+#       jupytext_version: 1.11.2
+#   kernelspec:
+#     display_name: Julia 1.6.2
+#     language: julia
+#     name: julia-1.6
+# ---
+
+# %%
+"""
+    big!(expr)
+
+converts `Int` and `Float64` literals in `expr` to big ones and returns the result.
+"""
+big!(expr) = expr
+big!(expr::Int) = big(expr)
+big!(expr::Float64) = big(expr)
+function big!(expr::Expr)
+    for i in eachindex(expr.args)
+        expr.args[i] = big!(expr.args[i])
+    end
+    expr
+end
+
+"""
+    @big(expr)
+
+converts `Int` and `Float64` literal in `expr` to big ones.
+"""
+macro big(expr) big!(expr) end
+
+# %%
+@doc bigliteral!
+
+# %%
+@doc @big
+
+# %%
+1.0π
+
+# %%
+@big 1.0π
+
+# %%
+for n in 20:24
+    println("factorial(", n, ") = ", factorial(n))
+end
+
+# %%
+@big for n in 20:24
+    println("factorial(", n, ") = ", factorial(n))
+end
+
+# %%
