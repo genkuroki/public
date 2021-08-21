@@ -46,7 +46,7 @@ end
 @show seqper(X)
 @btime seqper($X)
 @show seqper(Y)
-@btime seqper($Y)
+@btime seqper($Y);
 
 # %%
 function seqper1(x; tol=1e-3)
@@ -61,6 +61,6 @@ end
 @show seqper1(X)
 @btime seqper1($X)
 @show seqper1(Y)
-@btime seqper1($Y)
+@btime seqper1($Y);
 
 # %%
