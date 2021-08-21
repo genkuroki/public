@@ -18,7 +18,7 @@
 """
     big!(expr)
 
-converts `Int` and `Float64` literals in `expr` to big ones and returns the result.
+replaces `Int` and `Float64` values in `expr` by big ones and returns the result.
 """
 big!(expr) = expr
 big!(expr::Int) = big(expr)
@@ -32,13 +32,14 @@ end
 
 """
     @big(expr)
+    @big expr
 
-converts `Int` and `Float64` literal in `expr` to big ones.
+replaces `Int` and `Float64` values in `expr` by big ones and executes the result.
 """
 macro big(expr) big!(expr) end
 
 # %%
-@doc bigliteral!
+@doc big!
 
 # %%
 @doc @big
