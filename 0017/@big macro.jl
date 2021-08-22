@@ -61,3 +61,16 @@ end
 end
 
 # %%
+@big @eval begin
+    n = 57
+    c = Tuple(1/factorial(k) for k in 0:n)
+end
+evalpoly(1, c)
+
+# %%
+@big exp(1)
+
+# %%
+typeof(c)
+
+# %%
