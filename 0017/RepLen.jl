@@ -29,7 +29,7 @@ Iterator generating tuples of repeat length of `v` and value `v` in `A`
 """
 struct RepVal{T} A::T end
 Base.IteratorSize(::Type{RepVal{T}}) where T = Base.SizeUnknown()
-Base.eltype(x::RepVal) = Tuple{Int, eltype(x.A)}
+Base.eltype(x::RepVal) = Tuple{Int, eltype(x.A)} # (rep.len., value)
 
 Base.iterate(x::RepVal) = iterate(x, firstindex(x.A))
 function Base.iterate(x::RepVal, i::Int)
