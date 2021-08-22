@@ -25,7 +25,7 @@ end
 
 """
     RepVal(A)
-Iterator generating tuples of repeat length of `v` and value `v` in `A`
+Iterator generating the all (repeat length, value)-tuples in `A`.
 """
 struct RepVal{T} A::T end
 Base.IteratorSize(::Type{RepVal{T}}) where T = Base.SizeUnknown()
@@ -41,6 +41,8 @@ end
 maxrep_maxval(A) = maximum(RepVal(A))
 negrep((k, v)) = (-k, v)
 maxrep_minval(A) = negrep(minimum(negrep, RepVal(A)))
+
+@doc RepVal
 
 # %%
 A = [1, 2, 3, 3, 3, 1, 1, 1, NaN, NaN, NaN, 2, 2, 3]
