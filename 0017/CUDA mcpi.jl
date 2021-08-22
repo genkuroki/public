@@ -22,14 +22,14 @@ function mcpi(n)
     4count(_ -> rand(rng, Float32)^2 + rand(rng, Float32)^2 ≤ 1, 1:n)/n
 end
 @show mcpi(10^8)
-@btime mcpi(10^8)
+@btime mcpi(10^8);
 
 # %%
 using BenchmarkTools
 using CUDA
 mcpi_cu(n) = 4count(x -> x^2 + rand(Float32)^2 ≤ 1, CUDA.rand(n))/n
 @show mcpi_cu(10^8)
-@btime mcpi_cu(10^8)
+@btime mcpi_cu(10^8);
 
 # %%
 CUDA.versioninfo()
