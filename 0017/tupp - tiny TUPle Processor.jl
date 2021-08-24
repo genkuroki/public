@@ -8,9 +8,9 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.11.2
 #   kernelspec:
-#     display_name: Julia 1.8.0-DEV
+#     display_name: Julia 1.6.2
 #     language: julia
-#     name: julia-1.8
+#     name: julia-1.6
 # ---
 
 # %%
@@ -73,8 +73,7 @@ macro tupp(x) t2j(Core.eval(__module__, x)) end
         (:kw, :ls, (:quote, :dash))),
     (:plot!, :xs, (:., :evalpoly, (:tuple, :xs, (:Ref, :b))),
         (:kw, :label, "degree-3 polynomial"),
-        (:kw, :color, 2), (:kw, :lw, 2)),
-) |> t2j
+        (:kw, :color, 2), (:kw, :lw, 2))) |> t2j
 
 # %%
 @tupp (:block,
@@ -92,7 +91,6 @@ macro tupp(x) t2j(Core.eval(__module__, x)) end
         (:kw, :ls, (:quote, :dash))),
     (:plot!, :xs, (:., :evalpoly, (:tuple, :xs, (:Ref, :b))),
         (:kw, :label, "degree-3 polynomial"),
-        (:kw, :color, 2), (:kw, :lw, 2)),
-)
+        (:kw, :color, 2), (:kw, :lw, 2)))
 
 # %%
