@@ -116,8 +116,8 @@ end) |> Base.remove_linenums!
 # %%
 N = 4
 s = 0
-@eval @nloops $N k d->0:9 begin
-    @nexprs $N d->global s+=10^(d-1)*k_d
+@eval @nloops $N i d -> 0:9 begin
+    @nexprs $N d -> global s += 10^(d-1)*i_d
 end
 s
 
