@@ -106,11 +106,11 @@ end
 using Base.Cartesian
 
 # %%
-(@macroexpand @nexprs 4 d->s+=10^(d-1)*k_d) |> Base.remove_linenums!
+(@macroexpand @nexprs 4 d -> s += 10^(d-1)*i_d) |> Base.remove_linenums!
 
 # %%
-(@macroexpand @nloops 4 k d->0:9 begin
-    @nexprs 4 d->s+=10^(d-1)*k_d
+(@macroexpand @nloops 4 i d -> 0:9 begin
+    @nexprs 4 d -> s += 10^(d-1)*i_d
 end) |> Base.remove_linenums!
 
 # %%
