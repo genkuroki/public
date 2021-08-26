@@ -306,3 +306,9 @@ end
 end)|> Base.remove_linenums!
 
 # %%
+@ntuple 10 i -> (i - 1) ^ 3
+
+# %%
+(@macroexpand @ntuple 10 i -> (i - 1) ^ 3) |> Base.remove_linenums!
+
+# %%
