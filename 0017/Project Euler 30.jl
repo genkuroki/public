@@ -170,9 +170,9 @@ end) |> Base.remove_linenums!
         a = Int[]
         s = 0
         x = 0
-        @inbounds @nloops $N i d -> 0:9 begin
+        @inbounds @nloops $N i d -> 0:9 d -> y_d = p[i_d+1] begin
             y = 0
-            @nexprs $N d -> y += p[i_d+1]
+            @nexprs $N d -> y += y_d
             if x > 1 && x == y
                 push!(a, x)
                 s += x
@@ -300,7 +300,7 @@ end
 ?@nloops
 
 # %%
-(@macroexpand @nloops 3 i (d -> 0:9) (d -> y_d = i_d^2) begin
+(@macroexpand @nloops 3 i d -> 0:9 d -> y_d = i_d^2 begin
     y = 0
     @nexprs 3 d -> y += y_d
 end)|> Base.remove_linenums!
