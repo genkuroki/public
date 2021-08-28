@@ -109,7 +109,7 @@ function save_period(r, k, period; fn = "result.csv")
     CSV.write(fn, df)
 end
 
-function load_period(fn = "result.txt")
+function load_period(fn = "result.csv")
     df = CSV.read(fn, DataFrame)
     imax = maximum(df.i)
     jmax = maximum(df.j)
