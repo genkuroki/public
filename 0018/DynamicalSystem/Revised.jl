@@ -73,13 +73,14 @@ end
 traj2d!(zeros(21), zeros(21), ((a, b), p, t) -> (b, a+b), nothing, (0, 1), 20)
 
 # %%
-function seqper_new(x; tol=1e-3)       # function to calculate periodicity 
-    @inbounds for k in 2:length(x)
+function seqper_new(x; tol=1e-3)       # function to calculate periodicity
+    n = length(x)
+    @inbounds for k in 2:(n ÷ 2 + 1)
         if abs(x[k] - x[1]) ≤ tol
-            all(j -> abs(x[j] - x[j-k+1]) ≤ tol, k:lastindex(x)) && return k - 1
+            all(j -> abs(x[j] - x[j-k+1]) ≤ tol, k:n) && return k - 1
         end
     end 
-    return length(x)
+    return n
 end
 
 # %%
@@ -311,7 +312,7 @@ println("********** Confirmation of equivalence:")
 @show result_org .== result_rev1;
 @show result_rev1 .== result_rev2;
 
-# %%
+# %% tags=[]
 ##  Test
 
 parameter_area = [1.0 5.0 2.0 5.0]
@@ -371,12 +372,13 @@ println("********** Confirmation of equivalence:")
 
 # %%
 using Plots
+xoxp1(x) = x/(x+1)
 
 r, k, period = @time isoperiodic_test_rev2([0.4, 0.5], [1.0 5.0 2.0 5.0], 2000, 1, 1, 50000, 80, 60)
 r = reshape(r, 60, 80)
 k = reshape(k, 60, 80)
 period = reshape(period, 60, 80)
-heatmap(vec(r[1,:]), vec(k[:,1]), log10.(period); xlabel="r", ylabel="k", title="log10(period)")
+heatmap(vec(r[1,:]), vec(k[:,1]), xoxp1.(period); xlabel="r", ylabel="k", title="period/(period + 1)")
 
 # %%
 @btime isoperiodic_test_rev2($([0.4, 0.5]), $([1.0 5.0 2.0 5.0]), 2000, 1, 1, 50000, 80, 60)
