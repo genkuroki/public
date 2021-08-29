@@ -13,6 +13,14 @@
 #     name: julia-1.6
 # ---
 
+# %% [markdown]
+# * https://discourse.julialang.org/t/for-monte-carlo-simulation-with-same-code-same-algorithm-how-fast-is-julia-compared-with-fortran/67021/41
+# * https://discourse.julialang.org/t/for-monte-carlo-simulation-with-same-code-same-algorithm-how-fast-is-julia-compared-with-fortran/67021/43
+# * https://github.com/genkuroki/public/blob/main/0018/%40defkwargs.ipynb
+# * https://github.com/genkuroki/public/blob/main/0018/%40defunpack.ipynb
+# * https://github.com/genkuroki/public/blob/main/0018/How%20to%20define%20unpacking%20macros.ipynb
+# * https://github.com/genkuroki/public/blob/main/0018/How%20to%20define%20unpacking%20macros%20Part%202.ipynb
+
 # %%
 """
 The `DefUnPack` module only exports the `@defunpack` macro,
