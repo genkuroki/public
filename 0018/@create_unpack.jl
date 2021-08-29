@@ -53,7 +53,7 @@ which unpacks the fields specified by `expr` of an object.
 Let `val` be the value of `expr`.
 
 * If `val` is a tuple of symbols, then set the unpacking fields to `val`.
-* If `val` is a typp, then set the unpacking fields to `fieldnames(val)`.
+* If `val` is a type, then set the unpacking fields to `fieldnames(val)`.
 * Otherwise, set the unpacking fields to `propertynames(val)`.
 
 __Example:__
