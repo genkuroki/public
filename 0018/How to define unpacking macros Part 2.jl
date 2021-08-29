@@ -22,6 +22,8 @@ names = fieldnames(Foo)
 kwargs = Expr(:parameters, (Expr(:kw, name, v) for (v, name) in enumerate(names))...)
 @eval Foo($kwargs) = Foo($(names...))
 
+foo = Foo(a = "meow", m = 'm', z = 99.99)
+
 # %%
 """
 `@unpackall_Foo(obj)` unpacks all fields of the object `obj` of type `Foo`.
@@ -34,7 +36,7 @@ macro unpackall_Foo(obj)
     ) |> esc
 end
 
-let foo = Foo(o = 9999)
+let
     @unpackall_Foo foo
     @show a b c d e f g h i j k l m n o p q r s t u v w x y z
 end;
@@ -42,7 +44,7 @@ end;
 # %%
 using Parameters
 
-let foo = Foo(o = 9999)
+let
     @unpack a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z = foo
     @show a b c d e f g h i j k l m n o p q r s t u v w x y z
 end;
@@ -55,5 +57,8 @@ methods(Foo)
 
 # %%
 ?@unpack
+
+# %% [markdown]
+# See also https://github.com/genkuroki/public/blob/main/0018/%40defunpack.ipynb
 
 # %%
