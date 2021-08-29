@@ -59,6 +59,9 @@ methods(Foo)
 ?@unpack
 
 # %% [markdown]
-# See also https://github.com/genkuroki/public/blob/main/0018/%40defunpack.ipynb
+# See also 
+#
+# * https://github.com/genkuroki/public/blob/main/0018/How%20to%20define%20unpacking%20macros.ipynb
+# * https://github.com/genkuroki/public/blob/main/0018/%40defunpack.ipynb
 
 # %%
