@@ -49,4 +49,7 @@ end
 
 f(foo)
 
+# %% [markdown]
+# See also https://github.com/genkuroki/public/blob/main/0018/%40defunpack.ipynb
+
 # %%
