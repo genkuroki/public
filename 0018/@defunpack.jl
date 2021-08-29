@@ -16,7 +16,7 @@
 # %%
 """
 The `DefUnPack` module only exports the `@defunpack` macro,
-which defines a macro unpacking fields or properties of an object.
+which defines a macro unpacking properties of an object.
 
 __Simple Intended Usage:__
 ```
@@ -48,13 +48,13 @@ export @defunpack
     @defunpack(name::Symbol, expr)
 
 defines the macro named `Symbol(:unpack, name)`
-which unpacks the fields specified by `expr` of an object.
+which unpacks the properties specified by `expr` of an object.
 
-Let `val` be the value of `expr`.
+Let `val` be the value of `expr`. Then the list of the unpacking properties is set to
 
-* If `val` is a tuple of symbols, then set the unpacking fields to `val`.
-* If `val` is a type, then set the unpacking fields to `fieldnames(val)`.
-* Otherwise, set the unpacking fields to `propertynames(val)`.
+* `val` if `val` is a tuple of symbols,
+* `fieldnames(val)` if `val` is a type,
+* `propertynames(val)` otherwise.
 
 __Example:__
 
@@ -116,7 +116,7 @@ macro defunpack(name::Symbol, expr)
     val = Core.eval(__module__, expr)
     names = val isa Tuple{Vararg{Symbol}} ? val :
             val isa Type ? fieldnames(val) : propertynames(val)
-    docstr = """`$atmacroname(obj)` unpacks the fields `$names` of `obj`."""
+    docstr = """`$atmacroname(obj)` unpacks the properties `$names` of `obj`."""
     quote
         macro $macroname(obj)
             Expr(:(=),
