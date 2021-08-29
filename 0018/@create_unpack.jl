@@ -114,7 +114,7 @@ macro create_unpack(name::Symbol, expr)
     macroname = Symbol(:unpack, name)
     atmacroname = Symbol('@', macroname)
     val = Core.eval(__module__, expr)
-    names = val isa NTuple{N, Symbol} where N ? val :
+    names = val isa Tuple{Vararg{Symbol}} ? val :
             val isa Type ? fieldnames(val) : propertynames(val)
     docstr = """`$atmacroname(obj)` unpacks the fields `$names` of `obj`."""
     quote
