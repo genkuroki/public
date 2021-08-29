@@ -18,14 +18,14 @@ using ConcreteStructs
 
 @concrete struct Foo a; b; c end
 
-macro with_kwargs(typename::Symbol)
+macro defkwargs(typename::Symbol)
     T = Core.eval(__module__, typename)
     names = fieldnames(T)
     kwargs = Expr(:parameters, names...)
     :($typename($kwargs) = $typename($(names...))) |> esc
 end
 
-macro with_kwargs(typename::Symbol, kwargs_expr)
+macro defkwargs(typename::Symbol, kwargs_expr)
     T = Core.eval(__module__, typename)
     names = fieldnames(T)
     D = Core.eval(__module__, kwargs_expr)
@@ -43,10 +43,10 @@ end
 
 
 # %%
-@macroexpand @with_kwargs Foo
+@macroexpand @defkwargs Foo
 
 # %%
-@with_kwargs Foo
+@defkwargs Foo
 
 # %%
 methods(Foo)
@@ -55,10 +55,10 @@ methods(Foo)
 Foo(a = 1, b = 2.0, c = "three")
 
 # %%
-@macroexpand @with_kwargs Foo (a = 1, c = "three")
+@macroexpand @defkwargs Foo (a = 1, c = "three")
 
 # %%
-@with_kwargs Foo (a = 1, c = "three")
+@defkwargs Foo (a = 1, c = "three")
 
 # %%
 methods(Foo)
@@ -68,10 +68,10 @@ Foo(b = 2.0)
 
 # %%
 default = (a = 1, b = 2.0, c = "three")
-@macroexpand @with_kwargs Foo default
+@macroexpand @defkwargs Foo default
 
 # %%
-@with_kwargs Foo default
+@defkwargs Foo default
 
 # %%
 methods(Foo)
