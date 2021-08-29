@@ -15,20 +15,20 @@
 
 # %%
 """
-The `CreateUnPack` module only exports the `@create_unpack` macro,
-which creates a macro unpacking fields or properties of an object.
+The `DefUnPack` module only exports the `@defunpack` macro,
+which defines a macro unpacking fields or properties of an object.
 
 __Simple Intended Usage:__
 ```
-julia> using .CreateUnPack
+julia> using .DefUnPack
 
 julia> struct Foo{A, B, C} a::A; b::B; c::C end
 
-julia> @create_unpack all_Foo Foo
+julia> @defunpack all_Foo Foo
 @unpackall_Foo (macro with 1 method)
 
 help?> @unpackall_Foo
-@unpackall_Foo(x) unpacks the fields (:a, :b, :c) of x.
+@unpackall_Foo(obj) unpacks the fields (:a, :b, :c) of obj.
 
 julia> @macroexpand @unpackall_Foo foo
 :((a, b, c) = (foo.a, foo.b, foo.c))
@@ -40,14 +40,14 @@ julia> a, b, c
 (1, 2.0, "three")
 ```
 """
-module CreateUnPack
+module DefUnPack
 
-export @create_unpack
+export @defunpack
 
 """
-    @create_unpack(name::Symbol, expr)
+    @defunpack(name::Symbol, expr)
 
-creates the macro named `Symbol(:unpack, name)`
+defines the macro named `Symbol(:unpack, name)`
 which unpacks the fields specified by `expr` of an object.
 
 Let `val` be the value of `expr`.
@@ -59,7 +59,7 @@ Let `val` be the value of `expr`.
 __Example:__
 
 ```
-julia> @create_unpack _cat_and_dog (:cat, :dog)
+julia> @defunpack _cat_and_dog (:cat, :dog)
 @unpack_cat_and_dog (macro with 1 method)
 
 help?> @unpack_cat_and_dog
@@ -76,7 +76,7 @@ julia> cat, dog
 
 julia> struct Foo{A, B, C} a::A; b::B; c::C end
 
-julia> @create_unpack all_Foo Foo
+julia> @defunpack all_Foo Foo
 @unpackall_Foo (macro with 1 method)
 
 help?> @unpackall_Foo
@@ -93,7 +93,7 @@ julia> a, b, c
 
 julia> baz = (p = "one", q = 2.0, r = 3)
 
-julia> @create_unpack all_baz baz
+julia> @defunpack all_baz baz
 @unpackall_baz (macro with 1 method)
 
 help?> @unpackall_baz
@@ -110,7 +110,7 @@ julia> p, q, r
 
 ```
 """
-macro create_unpack(name::Symbol, expr)
+macro defunpack(name::Symbol, expr)
     macroname = Symbol(:unpack, name)
     atmacroname = Symbol('@', macroname)
     val = Core.eval(__module__, expr)
@@ -132,14 +132,14 @@ end
 end
 
 # %%
-@doc CreateUnPack
+@doc DefUnPack
 
 # %%
-using .CreateUnPack
-@doc @create_unpack
+using .DefUnPack
+@doc @defunpack
 
 # %%
-@create_unpack _cat_and_dog (:cat, :dog)
+@defunpack _cat_and_dog (:cat, :dog)
 
 # %%
 ?@unpack_cat_and_dog
@@ -157,7 +157,7 @@ cat, dog
 struct Foo{A, B, C} a::A; b::B; c::C end
 
 # %%
-@create_unpack all_Foo Foo
+@defunpack all_Foo Foo
 
 # %%
 ?@unpackall_Foo
@@ -185,7 +185,7 @@ f(Foo(1, 2.0, "three"))
 baz = (p = "one", q = 2.0, r = 3)
 
 # %%
-@create_unpack all_baz baz
+@defunpack all_baz baz
 
 # %%
 ?@unpackall_baz
@@ -201,9 +201,9 @@ p, q, r
 
 # %%
 module A
-using ..CreateUnPack
+using ..DefUnPack
 struct Bar{X, Y} x::X; y::Y end
-@create_unpack Bar Bar
+@defunpack Bar Bar
 end
 
 # %%
