@@ -45,6 +45,9 @@ end
 @time get_S1(W)
 
 # %%
+sort.(unique.(collect.(get_S(W)))) == sort.(get_S1(W))
+
+# %%
 function get_S2(W)
     m, n = size(W)
     b1, b2 = fill(false, m), fill(false, n)
