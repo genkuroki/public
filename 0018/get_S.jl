@@ -47,15 +47,15 @@ end
 # %%
 function get_S2(W)
     m, n = size(W)
-    b1, b2 = falses(m), falses(n)
-    for j in 1:n
+    b1, b2 = fill(false, m), fill(false, n)
+    Threads.@threads for j in 1:n
         for i in 1:n
             @inbounds if W[i, j] == 0
                 b1[i] = b2[j] = true
             end
         end
     end
-    findall(b1), findall(b2)
+    b1, b2
 end
 
 # %%
@@ -64,6 +64,26 @@ end
 @time get_S2(W)
 
 # %%
-sort.(get_S1(W)) == get_S2(W)
+get_S3(W) = findall.(get_S2(W))
+
+# %%
+@time get_S3(W)
+@time get_S3(W)
+@time get_S3(W)
+
+# %%
+sort.(get_S1(W)) == get_S3(W)
+
+# %%
+get_S(W) |> typeof
+
+# %%
+get_S1(W) |> typeof
+
+# %%
+get_S2(W) |> typeof
+
+# %%
+get_S3(W) |> typeof
 
 # %%
