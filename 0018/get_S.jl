@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # ---
 # jupyter:
 #   jupytext:
@@ -14,8 +15,11 @@
 # ---
 
 # %%
-W = trues(10000, 10000)
-W[rand(1:length(W), round(Int, 0.1length(W)))] .= 0
+using BenchmarkTools
+
+# %%
+W = trues(30000, 30000)
+W[rand(1:length(W), round(Int, √length(W)))] .= 0
 W
 
 # %%
@@ -27,9 +31,7 @@ function get_S(W)
 end
 
 # %%
-@time get_S(W)
-@time get_S(W)
-@time get_S(W)
+@btime get_S($W)
 
 # %%
 function get_S1(W)
@@ -40,9 +42,7 @@ function get_S1(W)
 end
 
 # %%
-@time get_S1(W)
-@time get_S1(W)
-@time get_S1(W)
+@btime get_S1($W)
 
 # %%
 sort.(unique.(collect.(get_S(W)))) == sort.(get_S1(W))
@@ -62,17 +62,13 @@ function get_S2(W)
 end
 
 # %%
-@time get_S2(W)
-@time get_S2(W)
-@time get_S2(W)
+@btime get_S2($W)
 
 # %%
 get_S3(W) = findall.(get_S2(W))
 
 # %%
-@time get_S3(W)
-@time get_S3(W)
-@time get_S3(W)
+@btime get_S3($W)
 
 # %%
 sort.(get_S1(W)) == get_S3(W)
