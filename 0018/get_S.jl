@@ -65,7 +65,7 @@ end
 @btime get_S2($W)
 
 # %%
-sort.(get_S1(W)) == get_S2(W)
+sort.(get_S1(W)) == findall.(get_S2(W))
 
 # %%
 get_S(W) |> typeof
