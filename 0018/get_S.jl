@@ -18,7 +18,7 @@
 using BenchmarkTools
 
 # %%
-W = trues(30000, 30000)
+W = trues(30000, 30001)
 W[rand(1:length(W), round(Int, √length(W)))] .= 0
 W
 
@@ -52,7 +52,7 @@ function get_S2(W)
     m, n = size(W)
     b1, b2 = fill(false, m), fill(false, n)
     Threads.@threads for j in 1:n
-        for i in 1:n
+        for i in 1:m
             @inbounds if W[i, j] == 0
                 b1[i] = b2[j] = true
             end
@@ -65,13 +65,7 @@ end
 @btime get_S2($W)
 
 # %%
-get_S3(W) = findall.(get_S2(W))
-
-# %%
-@btime get_S3($W)
-
-# %%
-sort.(get_S1(W)) == get_S3(W)
+sort.(get_S1(W)) == get_S2(W)
 
 # %%
 get_S(W) |> typeof
@@ -81,8 +75,5 @@ get_S1(W) |> typeof
 
 # %%
 get_S2(W) |> typeof
-
-# %%
-get_S3(W) |> typeof
 
 # %%
