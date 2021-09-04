@@ -85,6 +85,8 @@ using BenchmarkTools
 @btime My.HMC($lf);
 
 # %%
+# https://github.com/moruten/julia-code/blob/c0dfc2443d6b74256364e698b3edb37f98214ce7/Test-2021-9-3-no4.ipynb
+
 #HMC method
 using Plots
 using StatsBase
@@ -224,5 +226,8 @@ x = zeros(n_size)
 
 # %%
 length(Ω), length(X)
+
+# %%
+1.3/0.080
 
 # %%
