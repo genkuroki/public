@@ -48,7 +48,7 @@ function solve(lf::LFProblem, x, v)
     x, v
 end
 
-"""Hamilton Monte Carlo"""
+"""Hamiltonian Monte Carlo"""
 function HMC(lf::LFProblem; x0 = randn(), niters = 10^5, burnin = 0, rng = default_rng())
     @unpack H = lf
     T = typeof(x0)
