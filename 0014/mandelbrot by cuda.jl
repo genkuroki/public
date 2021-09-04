@@ -21,6 +21,7 @@
 using BenchmarkTools
 using Plots
 gr(fmt=:png)
+using CUDA
 
 plotmandelbrot(m) = heatmap(m; c=reverse(cgrad(:jet1)), 
     size=(300, 300), colorbar=false, ticks=false, frame=false)
@@ -46,6 +47,16 @@ c = complex.(x', y)
 plotmandelbrot(m)
 
 # %%
+c_cuda = CuMatrix{ComplexF64}(c)
+
+@show typeof(c_cuda)
+@time m_cuda = collect(mandelbrot.(c_cuda))
+@time m_cuda = collect(mandelbrot.(c_cuda))
+@show typeof(mandelbrot.(c_cuda))
+@show typeof(collect(mandelbrot.(c_cuda)))
+plotmandelbrot(m_cuda)
+
+# %%
 x32 = range(-0.714689f0, -0.714679f0; length=n)
 y32 = range( 0.299872f0,  0.299882f0; length=n)
 c32 = complex.(x32', y32)
@@ -57,15 +68,14 @@ c32 = complex.(x32', y32)
 plotmandelbrot(m32)
 
 # %%
-using CUDA
-c_cuda = cu(c32)
+c32_cuda = cu(c32)
 
-@show typeof(c_cuda)
-@time m_cuda = collect(mandelbrot.(c_cuda))
-@time m_cuda = collect(mandelbrot.(c_cuda))
-@show typeof(mandelbrot.(c_cuda))
-@show typeof(collect(mandelbrot.(c_cuda)))
-plotmandelbrot(m_cuda)
+@show typeof(c32_cuda)
+@time m32_cuda = collect(mandelbrot.(c32_cuda))
+@time m32_cuda = collect(mandelbrot.(c32_cuda))
+@show typeof(mandelbrot.(c32_cuda))
+@show typeof(collect(mandelbrot.(c32_cuda)))
+plotmandelbrot(m32_cuda)
 
 # %%
 function mandelbrot_threads(c)
@@ -85,10 +95,16 @@ plotmandelbrot(m_th)
 @benchmark mandelbrot.($c) # CPU Float64
 
 # %%
+@benchmark collect(mandelbrot.($c_cuda)) # GPU Float64 (GPU → GPU → CPU)
+
+# %%
+@benchmark collect(mandelbrot.(CuMatrix{ComplexF64}($c))) # GPU Float64 (CPU → GPU → GPU → CPU)
+
+# %%
 @benchmark mandelbrot.($c32) # CPU Float32
 
 # %%
-@benchmark collect(mandelbrot.($c_cuda)) # GPU Float32 (GPU → GPU → CPU)
+@benchmark collect(mandelbrot.($c32_cuda)) # GPU Float32 (GPU → GPU → CPU)
 
 # %%
 @benchmark collect(mandelbrot.(cu($c32))) # GPU Float32 (CPU → GPU → GPU → CPU)
@@ -99,17 +115,30 @@ plotmandelbrot(m_th)
 
 # %%
 N = 2^10
+X = range(-0.714689, -0.714679; length=N)
+Y = range( 0.299872,  0.299882; length=N)
+C = complex.(X', Y)
 X32 = range(-0.714689f0, -0.714679f0; length=N)
 Y32 = range( 0.299872f0,  0.299882f0; length=N)
 C32 = complex.(X32', Y32)
 
-C_cuda = cu(c32);
+C_cuda = CuMatrix{ComplexF64}(C)
+C32_cuda = cu(C32);
+
+# %%
+@benchmark mandelbrot.($C) # CPU Float64
+
+# %%
+@benchmark collect(mandelbrot.($C_cuda)) # GPU Float64 (GPU → GPU → CPU)
+
+# %%
+@benchmark collect(mandelbrot.(CuMatrix{ComplexF64}($C))) # GPU Float64 (CPU → GPU → GPU → CPU)
 
 # %%
 @benchmark mandelbrot.($C32) # CPU Float32
 
 # %%
-@benchmark collect(mandelbrot.($c_cuda)) # GPU Float32 (GPU → GPU → CPU)
+@benchmark collect(mandelbrot.($C32_cuda)) # GPU Float32 (GPU → GPU → CPU)
 
 # %%
 @benchmark collect(mandelbrot.(cu($C32))) # GPU Float32 (CPU → GPU → GPU → CPU)
