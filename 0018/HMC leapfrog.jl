@@ -17,17 +17,17 @@
 # %%
 module My
 
+using ConcreteStructs: @concrete
+using ForwardDiff: derivative
+using Parameters: @unpack
 using Random: default_rng
-using Parameters
-using ForwardDiff
-using ConcreteStructs
 
 @concrete struct LFProblem ϕ; H; F; dt; nsteps end
 
 """ϕ should be a potential function."""
 function LFProblem(ϕ; dt = 0.05, nsteps = 100)
     H(x, v) = v^2/2 + ϕ(x)
-    F(x) = -ForwardDiff.derivative(ϕ, x)
+    F(x) = -derivative(ϕ, x)
     LFProblem(ϕ, H, F, dt, nsteps)
 end
 
@@ -73,7 +73,10 @@ end
 
 # %%
 using Plots
+using QuadGK
+using BenchmarkTools
 
+# %%
 ϕ(x) = x^2/2
 lf = My.LFProblem(ϕ)
 @time X = My.HMC(lf)
@@ -81,8 +84,19 @@ histogram(X; norm=true, alpha=0.3, label="HMC LF sample")
 plot!(x -> exp(-x^2/2)/√(2π), -4, 4, label="std Gaussian", lw=2)
 
 # %%
-using BenchmarkTools
 @btime My.HMC($lf);
+
+# %%
+ϕ2(x) = x^4 - 4x^2
+Z = quadgk(x -> exp(-ϕ2(x)), -Inf, Inf)[1]
+lf2 = My.LFProblem(ϕ2)
+@time X2 = My.HMC(lf2)
+histogram(X2; norm=true, alpha=0.3, label="HMC LF sample", bin=100)
+plot!(x -> exp(-ϕ2(x))/Z, -2.5, 2.5; label="exp(-ϕ2(x))/Z", lw=2)
+plot!(; legend=:outertop)
+
+# %%
+@btime My.HMC($lf2);
 
 # %%
 # https://github.com/moruten/julia-code/blob/c0dfc2443d6b74256364e698b3edb37f98214ce7/Test-2021-9-3-no4.ipynb
