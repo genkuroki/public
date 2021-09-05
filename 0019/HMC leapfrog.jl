@@ -177,6 +177,21 @@ xr = range(-3,6,length=1000)
 plot(Ω,st=:histogram,nbins=50,norm=:pdf,alpha=0.3,label="HMC's sample",legend=:topleft)
 plot!(xr,normed_u.(xr),label="pdf_ana")
 
+# %% [markdown]
+# 以下のコードでの主な変更点
+#
+# * `r < exp(H_ini - H_fin)` → `r ≤ min(1, exp(H_ini - H_fin))` (Metropolis-Hastings化)
+# * `n_size` を函数内から削除 (必要なら `n_size = length(x)` とできる)
+# * `parameter` に作業用配列 `p_ini`, `p_fin`, `x_ini`, `x_fin` を含めて、メモリアロケーションを削減。
+# * `parameter` にポテンシャル函数 `u` も含め、函数 `H` などに渡すようにした。
+# * Zygote.jl ではなく、ForwardDiff.jl を使うようにして、初回実行時の遅延の短縮。
+#
+# References
+#
+# * https://docs.julialang.org/en/v1/manual/performance-tips/#Pre-allocating-outputs
+# * https://docs.julialang.org/en/v1/manual/performance-tips/#More-dots:-Fuse-vectorized-operations
+# * https://github.com/genkuroki/public/blob/main/0018/HMC%20leapfrog.ipynb
+
 # %%
 using Plots
 # using StatsBase
@@ -203,8 +218,8 @@ H(x, p, parameter) = S(x, parameter) + 0.5sum(square, p)
 
 #１変数更新のHMC法
 function HMC_1dim!(x, parameter)
-        #n_size = length(x)
         _, n_tau, τ, p_ini, p_fin, x_ini, x_fin = parameter
+        
         #初期化
         rand!(Normal(0,1), p_ini)
     
