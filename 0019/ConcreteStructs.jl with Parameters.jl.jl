@@ -19,7 +19,7 @@
 # * Gen Kuroki
 # * 2021-09-06
 #
-# I have tried to use ConcreteStructs.jl with Parameters.jl.
+# I have independently tried to make ConcreteStructs.jl and Parameters.jl work together well.
 #
 # __Conclusion:__ It is possible to do so by making the following two changes.
 #
