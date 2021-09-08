@@ -18,13 +18,14 @@
 #
 # * Gen Kuroki
 # * 2021-09-06
+# * https://github.com/jonniedie/ConcreteStructs.jl/issues/4#issuecomment-913998030
 #
 # I have tried to make ConcreteStructs.jl and Parameters.jl work together well.
 #
 # __Conclusion:__ It is possible to do so by making the following two changes.
 #
 # * Change `@concrete` not creating the inner constructor, so that the `Foo{__T_a, __T_b, __T_c}(a, b, c)`-type default constructor will be defined.
-# * Change `@with_kw` expanding macros in the argument, like `Base.@kwdef`.
+# * Change `@with_kw` expanding macros in the argument, [like `Base.@kwdef`](https://github.com/JuliaLang/julia/blob/4931faa34a8a1c98b39fb52ed4eb277729120128/base/util.jl#L455).
 #
 # Then `@concrete` works well with `@with_kw` and more completely with `Base.@kwdef`.
 #
