@@ -65,3 +65,9 @@ end
 [(x = big(2)^k; (k, log2(msb(x - 2)), log2(msb(x - 1)), log2(msb(x)))) for k in 1:precision(BigFloat)+1]
 
 # %%
+@code_typed msb(12345)
+
+# %%
+@code_native debuginfo=:none msb(12345)
+
+# %%
