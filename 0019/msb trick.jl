@@ -27,6 +27,8 @@ function msb64(x)
     Int64(m)
 end
 
+@show eps(Float64) == 1/2^52
+
 [(x = 2^k; (k, log2(msb64(x - 2)), log2(msb64(x - 1)), log2(msb64(x)))) for k in 1:54]
 
 # %%
@@ -38,6 +40,8 @@ function msb128(x)
     m = q - (1 - ε/2) * q
     Int128(m)
 end
+
+@show eps(Float128) == 1/Int128(2)^112
 
 [(x = Int128(2)^k; (k, log2(msb128(x - 2)), log2(msb128(x - 1)), log2(msb128(x)))) for k in 1:114]
 
