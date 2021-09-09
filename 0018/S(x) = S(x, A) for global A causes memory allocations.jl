@@ -54,8 +54,35 @@ end
 
 # %%
 using BenchmarkTools
-
+@show f(niters, x, A) == f(niters, x)
 @btime f(niters, $x, $A)
 @btime f(niters, $x);
+
+# %%
+function g(niters, x, A, S)
+    y = Vector{eltype(x)}(undef, niters)
+    for i in 1:niters
+        y[i] = S(x, A)
+    end
+    y
+end
+
+@code_warntype g(niters, x, A, S)
+
+# %%
+function g(niters, x, S)
+    y = Vector{eltype(x)}(undef, niters)
+    for i in 1:niters
+        y[i] = S(x)
+    end
+    y
+end
+
+@code_warntype g(niters, x, S)
+
+# %%
+@show g(niters, x, A, S) == g(niters, x, S)
+@btime g(niters, $x, $A, $S)
+@btime g(niters, $x, $S);
 
 # %%
