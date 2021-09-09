@@ -59,7 +59,8 @@ function _update!(lf::LFProblem{dim}, x, vtmp, param, rng) where dim
 end
 
 """Hamiltonian Monte Carlo"""
-function HMC(lf::LFProblem{dim}, param = nothing; niters = 10^5, burnin = 0, rng = default_rng(),
+function HMC(lf::LFProblem{dim}, param = nothing;
+        niters = 10^5, burnin = 0, rng = default_rng(),
         x0 = SVector{dim}(randn(rng, dim))) where dim
     @unpack H = lf
     vtmp = MVector{dim}(zeros(eltype(x0), dim))

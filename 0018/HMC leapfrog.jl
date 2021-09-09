@@ -61,7 +61,8 @@ function _update!(lf::LFProblem{dim}, x, T, param, rng) where dim
 end
 
 """Hamiltonian Monte Carlo"""
-function HMC(lf::LFProblem, param = nothing; niters = 10^5, burnin = 0, rng = default_rng(),
+function HMC(lf::LFProblem, param = nothing;
+        niters = 10^5, burnin = 0, rng = default_rng(),
         x0 = randn())
     @unpack H = lf
     T = typeof(x0)
