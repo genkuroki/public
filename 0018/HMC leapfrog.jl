@@ -64,7 +64,6 @@ end
 function HMC(lf::LFProblem, param = nothing;
         niters = 10^5, burnin = 0, rng = default_rng(),
         x0 = randn())
-    @unpack H = lf
     T = typeof(x0)
     x = x0
     for _ in 1:burnin

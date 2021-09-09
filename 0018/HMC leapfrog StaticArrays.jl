@@ -62,7 +62,6 @@ end
 function HMC(lf::LFProblem{dim}, param = nothing;
         niters = 10^5, burnin = 0, rng = default_rng(),
         x0 = SVector{dim}(randn(rng, dim))) where dim
-    @unpack H = lf
     vtmp = MVector{dim}(zeros(eltype(x0), dim))
     x = x0
     for _ in 1:burnin
