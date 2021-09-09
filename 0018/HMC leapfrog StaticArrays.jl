@@ -14,6 +14,9 @@
 #     name: julia-1.6
 # ---
 
+# %% [markdown]
+# Scalar version: https://github.com/genkuroki/public/blob/main/0018/HMC%20leapfrog.ipynb
+
 # %%
 module My
 
