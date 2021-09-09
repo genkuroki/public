@@ -55,7 +55,10 @@ function HMC(lf::LFProblem, param=nothing; x0 = randn(), niters = 10^5, burnin =
     x = x0
     for _ in 1:burnin
         v = randn(rng, T)
-        x, v = solve(lf, x, v, param)
+        xnew, vnew = solve(lf, x, v, param)
+        dH = H(xnew, vnew, param) - H(x, v, param)
+        alpha = min(1, exp(-dH))
+        rand(rng) ≤ alpha && (x = xnew)
     end
     X = Vector{T}(undef, niters)
     for i in 1:niters
@@ -251,7 +254,7 @@ function leapfrog!(x,p)
         p_end = p1 - dSdx(x15,k)*Δτ
         x_end = x15 + p_end*0.5*Δτ
         
-        x[k]  = x_end-
+        x[k]  = x_end
         p[k]  = p_end
     end
 end
