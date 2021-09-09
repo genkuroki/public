@@ -51,25 +51,27 @@ function solve(lf::LFProblem, x, v, param)
     x, v
 end
 
+function _update!(lf::LFProblem{dim}, x, T, param, rng) where dim
+    @unpack H = lf
+    v = randn(rng, T)
+    xnew, vnew = solve(lf, x, v, param)
+    dH = H(xnew, vnew, param) - H(x, v, param)
+    alpha = min(1, exp(-dH))
+    rand(rng) ≤ alpha ? xnew : x
+end
+
 """Hamiltonian Monte Carlo"""
-function HMC(lf::LFProblem, param=nothing; x0 = randn(), niters = 10^5, burnin = 0, rng = default_rng())
+function HMC(lf::LFProblem, param = nothing; niters = 10^5, burnin = 0, rng = default_rng(),
+        x0 = randn())
     @unpack H = lf
     T = typeof(x0)
     x = x0
     for _ in 1:burnin
-        v = randn(rng, T)
-        xnew, vnew = solve(lf, x, v, param)
-        dH = H(xnew, vnew, param) - H(x, v, param)
-        alpha = min(1, exp(-dH))
-        rand(rng) ≤ alpha && (x = xnew)
+        x = _update!(lf, x, T, param, rng)
     end
     X = Vector{T}(undef, niters)
     for i in 1:niters
-        v = randn(rng, T)
-        xnew, vnew = solve(lf, x, v, param)
-        dH = H(xnew, vnew, param) - H(x, v, param)
-        alpha = min(1, exp(-dH))
-        rand(rng) ≤ alpha && (x = xnew)
+        x = _update!(lf, x, T, param, rng)
         X[i] = x
     end
     X
