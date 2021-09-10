@@ -34,24 +34,20 @@ function LFProblem(ϕ; dt = 0.05, nsteps = 100)
     LFProblem(ϕ, H, F, dt, nsteps)
 end
 
-function update(lf::LFProblem, x, v, param)
-    @unpack dt, F = lf
-    vtmp = v + F(x, param)*dt/2
-    xnew = x + vtmp*dt
-    vnew = vtmp + F(xnew, param)*dt/2
-    xnew, vnew
-end
-
 """Numerically solve Hamilton's equation of motion with leapfrog method"""
 function solve(lf::LFProblem, x, v, param)
-    @unpack nsteps = lf
-    for _ in 1:nsteps
-        x, v = update(lf, x, v, param)
+    @unpack F, dt, nsteps = lf
+    v = v + F(x, param)*dt/2
+    x = x + v*dt
+    for _ in 2:nsteps
+        v = v + F(x, param)*dt
+        x = x + v*dt
     end
+    v = v + F(x, param)*dt/2
     x, v
 end
 
-function _update!(lf::LFProblem{dim}, x, T, param, rng) where dim
+@inline function _update!(lf::LFProblem{dim}, x, T, param, rng) where dim
     @unpack H = lf
     v = randn(rng, T)
     xnew, vnew = solve(lf, x, v, param)
@@ -62,19 +58,21 @@ end
 
 """Hamiltonian Monte Carlo"""
 function HMC(lf::LFProblem, param = nothing;
-        niters = 10^5, burnin = 0, rng = default_rng(),
-        x0 = randn())
+        niters = 10^5, nskips = 1, thin = 1, burnin = 0, rng = default_rng(),
+        x0 = randn(rng))
     T = typeof(x0)
     x = x0
     for _ in 1:burnin
         x = _update!(lf, x, T, param, rng)
     end
-    X = Vector{T}(undef, niters)
+    sample = Vector{T}(undef, niters)
     for i in 1:niters
-        x = _update!(lf, x, T, param, rng)
-        X[i] = x
+        #or _ in 1:thin
+            x = _update!(lf, x, T, param, rng)
+        #end
+        @inbounds sample[i] = x
     end
-    X
+    sample
 end
 
 end
@@ -305,6 +303,6 @@ x = zeros(n_size)
 length(Ω), length(X)
 
 # %%
-1.3/0.080
+1.3/0.057
 
 # %%
