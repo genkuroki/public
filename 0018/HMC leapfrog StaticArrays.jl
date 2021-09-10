@@ -22,12 +22,13 @@
 # %% tags=[]
 module My
 
-using LinearAlgebra
 using ConcreteStructs: @concrete
-using ForwardDiff: gradient
 using Parameters: @unpack
+
+using LinearAlgebra: dot
+using ForwardDiff: gradient
 using Random: default_rng, randn!
-using StaticArrays
+using StaticArrays: SVector, MVector
 
 @concrete struct LFProblem{dim} ϕ; H; F; dt; nsteps end
 
