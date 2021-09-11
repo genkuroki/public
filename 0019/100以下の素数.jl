@@ -18,3 +18,38 @@
 (a->a[a.∉(a*a',)])(2:100)
 
 # %%
+function supertypes(x)
+    T = typeof(x)
+    t = DataType[]
+    while T != Any
+        push!(t, T)
+        T = supertype(T)
+    end
+    t
+end
+
+# %%
+a = 2:100
+
+# %%
+supertypes(a)
+
+# %%
+a*a'
+
+# %%
+supertypes(a*a')
+
+# %%
+a .∉ (a*a',)
+
+# %%
+supertypes(a .∉ (a*a',))
+
+# %%
+a[a .∉ (a*a',)]
+
+# %%
+supertypes(a[a .∉ (a*a',)])
+
+# %%
