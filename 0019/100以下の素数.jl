@@ -35,6 +35,12 @@ a = 2:100
 supertypes(a)
 
 # %%
+a'
+
+# %%
+supertypes(a')
+
+# %%
 a*a'
 
 # %%
