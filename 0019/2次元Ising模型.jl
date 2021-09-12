@@ -119,7 +119,7 @@ Spin, Energy_density, Magnetization_density
 
 # %%
 P = plot(Energy_density; label="", title="energy density", lw=0.5)
-Q = plot(Magnetization_density; label="", title="magnetization density", lw=0.5)
+Q = plot(Magnetization_density; label="", title="magnetization density", lw=0.5, ylim=(-1, 1))
 plot(P, Q; layout=(2, 1), titlefontsize=12) |> display
 
 @gif for k in 1:100
@@ -212,7 +212,7 @@ Spin, Energy_density, Magnetization_density
 
 # %%
 P = plot(Energy_density; label="", title="energy density", lw=0.5)
-Q = plot(Magnetization_density; label="", title="magnetization density", lw=0.5)
+Q = plot(Magnetization_density; label="", title="magnetization density", lw=0.5, ylim=(-1, 1))
 plot(P, Q; layout=(2, 1), titlefontsize=12) |> display
 
 @gif for k in 1:100
@@ -223,5 +223,27 @@ end
 @show Orig.main(number_of_iterations = 100) == My.main(number_of_iterations = 100)
 @btime Orig.main(number_of_iterations = 100)
 @btime My.main(number_of_iterations = 100);
+
+# %%
+@time Spin, Energy_density, Magnetization_density = My.main(beta = 0.9log(1 + √2)/2)
+
+P = plot(Energy_density; label="", title="energy density", lw=0.5)
+Q = plot(Magnetization_density; label="", title="magnetization density", lw=0.5, ylim=(-1, 1))
+plot(P, Q; layout=(2, 1), titlefontsize=12) |> display
+
+@gif for k in 1:100
+    heatmap(Spin[k]; size=(300, 300), colorbar=false, ticks=false, axes=false)
+end
+
+# %%
+@time Spin, Energy_density, Magnetization_density = My.main(beta = 1.1log(1 + √2)/2)
+
+P = plot(Energy_density; label="", title="energy density", lw=0.5)
+Q = plot(Magnetization_density; label="", title="magnetization density", lw=0.5, ylim=(-1, 1))
+plot(P, Q; layout=(2, 1), titlefontsize=12) |> display
+
+@gif for k in 1:100
+    heatmap(Spin[k]; size=(300, 300), colorbar=false, ticks=false, axes=false)
+end
 
 # %%
