@@ -63,11 +63,11 @@ end
 
 """Hamiltonian Monte Carlo"""
 function HMC(lf::LFProblem{dim}, param = nothing;
-        niters = 10^5, thin = 1, burnin = 0, rng = default_rng(),
+        niters = 10^5, thin = 1, nwarmups = 0, rng = default_rng(),
         init = SVector{dim}(randn(rng, dim))) where dim
     vtmp = MVector{dim}(zeros(eltype(init), dim))
     x = init
-    for _ in 1:burnin
+    for _ in 1:nwarmups
         x = _update!(lf, x, vtmp, param, rng)
     end
     sample = Vector{typeof(init)}(undef, niters)
