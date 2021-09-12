@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # ---
 # jupyter:
 #   jupytext:
@@ -20,7 +21,7 @@ using Distributions
 function update!(X, nskips, tmp)
     for k in 1:nskips
         i, j = sample!(1:length(X), tmp)
-        if X[i] > 0
+        if X[i] ≥ 1
             X[i] -= 1
             X[j] += 1
         end
@@ -51,7 +52,7 @@ bin = range(0, 8a; length=51)
     histogram(X; alpha=0.3, norm=true, bin, label="sample")
     plot!(x -> pdf(Exponential(a), x), 0, 8a; label="Exponential($a)", lw=1.5)
     plot!(; xtick=0:a:8a, ylim=(0, 1.1/a))
-    title!("fixed tax amount = 1")
+    title!("fixed tax amount = 1     (i = $i)")
 end
 
 # %%
@@ -92,7 +93,7 @@ bin = range(0, 3a; length=51)
     histogram(X; alpha=0.3, norm=true, bin, label="sample")
     plot!(x -> pdf(Gamma(20, 5), x), 0, 3a; label="Gamma(20, 5)", lw=1.5)
     plot!(; xtick=0:a/2:3a, ylim=(0, 2/a))
-    title!("tax rate = $rate")
+    title!("tax rate = $rate     (i = $i)")
 end
 
 # %%
@@ -108,7 +109,7 @@ bin = range(0, 8a; length=51)
     histogram(X; alpha=0.3, norm=true, bin, label="sample")
     plot!(x -> pdf(Exponential(100), x), 0, 8a; label="Exponential(100)", lw=1.5)
     plot!(; xtick=0:a:8a, ylim=(0, 1.1/a))
-    title!("tax rate = $rate")
+    title!("tax rate = $rate     (i = $i)")
 end
 
 # %%
@@ -137,5 +138,52 @@ histogram(X; alpha=0.3, norm=true, bin, label="sample")
 plot!(x -> pdf(Exponential(a), x), 0, 8a; label="Exponential($a)", lw=1.5)
 plot!(; xtick=0:a:8a, ylim=(0, 1.1/a))
 title!("sample of the uniform distribution on a simplex")
+
+# %%
+a = 10^2
+n = 10^4
+init = uniform_rand_on_simplex(n, a)
+nskips = 10^5
+niters = 200
+@time Sample = random_walk_on_simplex(init; nskips, niters)
+
+@show count(Sample[end] .≥ 100)/length(Sample[end])
+
+bin = range(0, 8a; length=51)
+@gif for i in [fill(1, 20); 1:lastindex(Sample); fill(lastindex(Sample), 20)]
+    X = Sample[i]
+    histogram(X; alpha=0.3, norm=true, bin, label="sample")
+    plot!(x -> pdf(Exponential(a), x), 0, 8a; label="Exponential($a)", lw=1.5)
+    plot!(; xtick=0:a:8a, ylim=(0, 1.1/a))
+    title!("n = $n,  a = $a    (t = $(i-1)×$(nskips))", titlefontsize=12)
+end
+
+# %%
+poor = findall(Sample[1] .≤ 20)
+@show count(Sample[end][poor] .≥ 100)/length(poor)
+
+bin = range(0, 8a; length=51)
+@gif for i in [fill(1, 20); 1:lastindex(Sample); fill(lastindex(Sample), 20)]
+    X = Sample[i]
+    histogram(X[poor]; alpha=0.3, norm=true, bin, label="sample")
+    plot!(x -> pdf(Exponential(a), x), 0, 8a; label="Exponential($a)", lw=1.5)
+    plot!(; xtick=0:a:8a, ylim=(0, 4/a))
+    title!("persons from poor class $(length(poor))/$(n)   (t = $(i-1)×$(nskips))",
+        titlefontsize=12)
+end
+
+# %%
+rich = findall(Sample[1] .≥ 200)
+@show count(Sample[end][rich] .≤ 100)/length(rich)
+
+bin = range(0, 8a; length=51)
+@gif for i in [fill(1, 20); 1:lastindex(Sample); fill(lastindex(Sample), 20)]
+    X = Sample[i]
+    histogram(X[rich]; alpha=0.3, norm=true, bin, label="sample")
+    plot!(x -> pdf(Exponential(a), x), 0, 8a; label="Exponential($a)", lw=1.5)
+    plot!(; xtick=0:a:8a, ylim=(0, 4/a))
+    title!("persons from rich class $(length(poor))/$(n)   (t = $(i-1)×$(nskips))",
+        titlefontsize=12)
+end
 
 # %%
