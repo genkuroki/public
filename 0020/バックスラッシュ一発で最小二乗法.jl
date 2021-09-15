@@ -9,9 +9,9 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.11.2
 #   kernelspec:
-#     display_name: Julia 1.6.2
+#     display_name: Julia 1.8.0-DEV
 #     language: julia
-#     name: julia-1.6
+#     name: julia-1.8
 # ---
 
 # %%
@@ -46,11 +46,33 @@ x .^ (0:3)'
 X \ y
 
 # %%
-(X'X)\X'y
+using LinearAlgebra
+qr(X, ColumnNorm()) \ y
 
 # %%
-using LinearAlgebra
+(X'X)\X'y
+
+# %% tags=[]
+@which X \ y
+
+# %% [markdown]
+# https://github.com/JuliaLang/julia/blob/master/stdlib/LinearAlgebra/src/generic.jl#L1128
+
+# %%
 pinv(X)y
+
+# %%
+pinv(X)
+
+# %%
+U, S, Vt = svd(X)
+Vt' * Diagonal(inv.(S)) * U'
+
+# %%
+@which pinv(X)
+
+# %% [markdown]
+# https://github.com/JuliaLang/julia/blob/master/stdlib/LinearAlgebra/src/dense.jl#L1430
 
 # %% [markdown]
 # https://discourse.julialang.org/t/differences-in-a-b-for-sparse-and-nonsparse-rank-deficient-a/66917
