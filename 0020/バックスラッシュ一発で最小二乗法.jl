@@ -69,6 +69,9 @@ U, S, Vt = svd(X)
 Vt' * Diagonal(inv.(S)) * U'
 
 # %%
+(X'X)\X'
+
+# %%
 @which pinv(X)
 
 # %% [markdown]
