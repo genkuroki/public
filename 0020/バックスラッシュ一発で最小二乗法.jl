@@ -18,17 +18,39 @@
 using Plots
 
 f(x) = 1 - 2x
-x = range(0, 2; length=20)
+x = range(0, 2; length=21)
 y = @. f(x) + randn()
 X = x .^ (0:1)'
 
-β̂ = X \ y
+β̂ = X \ y # \beta TAB \hat TAB
 g(x) = β̂[1] + β̂[2]*x
 
 xs = range(extrema(x)...; length=300)
 scatter(x, y; label="data", color=1)
 plot!(xs, f; label="true line", color=1, ls=:dash)
 plot!(xs, g; label="regression line", color=2, lw=2)
+
+# %%
+x = range(0, 2; length=21)
+
+# %%
+collect(x)
+
+# %%
+X = x .^ (0:1)'
+
+# %%
+x .^ (0:3)'
+
+# %%
+X \ y
+
+# %%
+(X'X)\X'y
+
+# %%
+using LinearAlgebra
+pinv(X)y
 
 # %% [markdown]
 # https://discourse.julialang.org/t/differences-in-a-b-for-sparse-and-nonsparse-rank-deficient-a/66917
