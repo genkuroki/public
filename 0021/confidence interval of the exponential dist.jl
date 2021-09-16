@@ -17,10 +17,7 @@
 # %%
 using Distributions
 using StatsPlots
-using Random
-using Roots
 
-# %%
 n = 10
 L = 10^5
 μ = 1.0
