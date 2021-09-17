@@ -16,11 +16,21 @@
 # %%
 using StatsBase
 
+sample([2, 3, 5], ProbabilityWeights([0.2, 0.3, 0.5]))
+
+# %%
+using StatsBase
+
 a = sample([2, 3, 5], ProbabilityWeights([0.2, 0.3, 0.5]), 10^6)
 [(x, count(==(x), a)/length(a)) for x in sort(unique(a))]
 
 # %%
 ?sample
+
+# %%
+using Distributions
+
+rand(DiscreteNonParametric([2, 3, 5], [0.2, 0.3, 0.5]))
 
 # %%
 using Distributions
