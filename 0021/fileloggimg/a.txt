@@ -1,0 +1,2 @@
+┌ Info:  here is some context specific logging with SimpleLogger
+└ @ Main In[2]:4
