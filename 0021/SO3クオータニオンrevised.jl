@@ -14,6 +14,10 @@
 #     name: julia-1.6
 # ---
 
+# %% [markdown]
+# * https://github.com/KB-satou/GotchaGotcha/blob/master/SO3%E3%82%AF%E3%82%AA%E3%83%BC%E3%82%BF%E3%83%8B%E3%82%AA%E3%83%B3.ipynb
+# * https://twitter.com/KB_satou/status/1440604608405983245
+
 # %%
 using SymPy, LinearAlgebra
 
@@ -52,7 +56,7 @@ SymPy.expand(q::Quaternion) = Quaternion(expand(q.w), expand(q.x), expand(q.y), 
 @syms a::real b::real c::real
 @syms a1::real b1::real c1::real
 @syms a2::real b2::real c2::real
-@syms α::real, β::real
+@syms α::real β::real
 @syms θ::real
 
 # %%
