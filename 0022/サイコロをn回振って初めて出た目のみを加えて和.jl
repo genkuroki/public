@@ -23,7 +23,7 @@ default(titlefontsize=12, tickfontsize=6)
 function f!(a, n)
     a .= false
     s = 0
-    for _ in 1:n
+    @inbounds for _ in 1:n
         i = rand(1:6)
         a[i] && continue
         a[i] = true
@@ -51,5 +51,54 @@ for n in 1:10
     push!(PP, P)
 end
 plot(PP...; layout=(5, 2), size=(700, 1000))
+
+# %%
+using Plots
+default(titlefontsize=12, tickfontsize=6)
+
+function g!(X, a, iter::Iterators.ProductIterator)
+    X .= 0
+    @inbounds for t in iter
+        a .= false
+        s = 0
+        for i in t
+            a[i] && continue
+            a[i] = true
+            s += i
+            all(a) && break
+        end
+        X[s] += 1
+    end
+    X
+end
+
+function g!(X, a, n)
+    iter = Iterators.product(ntuple(_ -> 1:6, n)...)
+    g!(X, a, iter)
+end
+
+X = zeros(Int, 21)
+a = falses(6)
+PP = []
+for n in 1:10
+    @time g!(X, a, n); flush(stdout)
+    P = bar(1:21, X/6^n; alpha=0.3, xtick=1:21, label="", title="n = $n")
+    push!(PP, P)
+end
+plot(PP...; layout=(5, 2), size=(700, 1000))
+
+# %%
+X = zeros(Int, 21)
+a = falses(6)
+PP = []
+for n in 1:10
+    @time g!(X, a, n); flush(stdout)
+    P = bar(1:21, X/6^n; alpha=0.3, xtick=1:21, label="", title="n = $n")
+    push!(PP, P)
+end
+plot(PP...; layout=(5, 2), size=(700, 1000))
+
+# %%
+@code_warntype g!(X, a, Iterators.product(ntuple(_ -> 1:6, 10)...))
 
 # %%
