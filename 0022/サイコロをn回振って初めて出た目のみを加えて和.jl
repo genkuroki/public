@@ -18,8 +18,10 @@
 
 # %%
 using Plots
+default(titlefontsize=12, tickfontsize=6)
 
-function f(n, a=falses(6))
+function f!(n, a)
+    a .= false
     s = 0
     for _ in 1:n
         i = rand(1:6)
@@ -31,9 +33,23 @@ function f(n, a=falses(6))
     s
 end
 
-for n in 1:10
-    @time X = [f(n) for _ in 1:10^6]; flush(stdout)
-    histogram(X; norm=true, alpha=0.3, bin=0.5:21.5, xtick=1:21, label="", title="n = $n") |> display
+function countf!(X, a, n, L)
+    X .= 0
+    for _ in 1:L
+        @inbounds X[f!(n, a)] +=1
+    end
+    X
 end
+
+X = zeros(Int, 21)
+a = falses(6)
+L = 10^6
+PP = []
+for n in 1:10
+    @time countf!(X, a, n, L); flush(stdout)
+    P = bar(1:21, X/L; alpha=0.3, xtick=1:21, label="", title="n = $n")
+    push!(PP, P)
+end
+plot(PP...; layout=(5, 2), size=(700, 1000))
 
 # %%
