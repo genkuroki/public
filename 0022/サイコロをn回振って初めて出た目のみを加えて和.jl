@@ -20,7 +20,7 @@
 using Plots
 default(titlefontsize=12, tickfontsize=6)
 
-function f!(n, a)
+function f!(a, n)
     a .= false
     s = 0
     for _ in 1:n
@@ -36,7 +36,7 @@ end
 function countf!(X, a, n, L)
     X .= 0
     for _ in 1:L
-        @inbounds X[f!(n, a)] +=1
+        @inbounds X[f!(a, n)] +=1
     end
     X
 end
