@@ -99,6 +99,18 @@ end
 plot(PP...; layout=(5, 2), size=(700, 1000))
 
 # %%
+X = zeros(Int, 21)
+a = falses(6)
+PP = []
+for n in 1:10
+    iter = Iterators.product(ntuple(_ -> 1:6, n)...)
+    @time g!(X, a, iter); flush(stdout)
+    P = bar(1:21, X/6^n; alpha=0.3, xtick=1:21, label="", title="n = $n")
+    push!(PP, P)
+end
+plot(PP...; layout=(5, 2), size=(700, 1000))
+
+# %%
 @code_warntype g!(X, a, Iterators.product(ntuple(_ -> 1:6, 10)...))
 
 # %%
