@@ -114,7 +114,7 @@ plot_both(; null = Uniform(-1, 1))
 
 # %%
 null = TDist(3)
-plot(null, -8, 8; label="TDist(5)")
+plot(null, -8, 8; label="TDist(3)")
 plot!(Normal(mean(null), std(null)), -8, 8; label="normal approx.", ls=:dash)
 
 # %%
