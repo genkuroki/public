@@ -48,8 +48,8 @@ function plot_pvals(;
     histogram(PVal; norm=true, alpha=0.3, bin=0.001:0.025:1.001, label="")
     plot!(; xtick=0:0.05:1, xrotation=90, bottom_margin=3Plots.mm)
     title!("""
-        pval = $pval
-        null = $null,  n = $n
+        pval = $pval,  n = $n
+        null = $null
         P(p-value < 0.05) = $realalpha,  niters = $L""",
         titlefontsize=8)
 end
@@ -77,7 +77,7 @@ plot_both(; null = Gamma(4, 1), n = 100)
 plot_both(null = Gamma(4, 1), n = 300, L=10^5)
 
 # %%
-plot_both(; null = Gamma(4, 1), n = 1000, L=10^4)
+plot_both(; null = Gamma(4, 1), n = 1000, L=10^5)
 
 # %%
 plot(Gamma(10, 1); label="Gamma(10, 1)")
@@ -104,7 +104,7 @@ plot_both(; null = Gamma(50, 1), n = 100)
 plot_both(; null=Gamma(50, 1), n = 300, L=10^5)
 
 # %%
-plot_both(; null=Gamma(50, 1), n = 1000, L=10^4)
+plot_both(; null=Gamma(50, 1), n = 1000, L=10^5)
 
 # %%
 plot(Uniform(-1, 1), -3, 3; label="Uniform(-1, 1)")
@@ -119,5 +119,27 @@ plot!(Normal(mean(null), std(null)), -8, 8; label="normal approx.", ls=:dash)
 
 # %%
 plot_both(; null)
+
+# %%
+null = MixtureModel([Normal(), Normal(10, 1)], [0.95, 0.05])
+plot(null, -5, 15; label="", title="$null", titlefontsize=8) |> display
+plot_both(; null, n = 30)
+
+# %%
+plot_both(; null, n = 100)
+
+# %%
+plot_both(; null, n = 300, L = 10^5)
+
+# %%
+plot_both(; null, n = 1000, L = 10^5)
+
+# %%
+null = Exponential()
+plot(null; label="", title="$null", titlefontsize=8) |> display
+plot_both(; null, n = 30)
+
+# %%
+plot_both(; null, n = 100)
 
 # %%
