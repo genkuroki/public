@@ -114,3 +114,45 @@ plot(PP...; layout=(5, 2), size=(700, 1000))
 @code_warntype g!(X, a, Iterators.product(ntuple(_ -> 1:6, 10)...))
 
 # %%
+using Combinatorics
+using Memoization
+
+P(n, s) = sum(k -> p(n, k) * q(n, k, s), 1:min(6, n))
+@memoize p(n, k) = c(n, k)/6^n
+c(n, k) = binomial(6, k) * sum(i -> binomial(k, i)*(-1)^(i+k)*i^n, 1:k)
+S(k) = (a = binomial(k+1, 2); a:(7k - a))
+@memoize B(k, s) = Iterators.filter(A -> sum(A) == s, powerset(1:6, k, k))
+@memoize b(k, s) = count(_ -> true, B(k, s))
+@memoize q(n, k, s) = b(k, s)/sum(t -> b(k, t), S(k))
+
+X = zeros(21)
+QQ = []
+for n in 1:10
+    @time for s in 1:21
+        X[s] = P(n, s)
+    end
+    Q = bar(1:21, X; alpha=0.3, xtick=1:21, label="", title="n = $n")
+    push!(QQ, Q)
+end
+plot(QQ...; layout=(5, 2), size=(700, 1000))
+
+# %%
+X = zeros(21)
+QQ = []
+for n in 1:10
+    @time for s in 1:21
+        X[s] = P(n, s)
+    end
+    Q = bar(1:21, X; alpha=0.3, xtick=1:21, label="", title="n = $n")
+    push!(QQ, Q)
+end
+plot(QQ...; layout=(5, 2), size=(700, 1000))
+
+# %%
+@memoize G(n) = g!(zeros(Int, 21), falses(6), n)
+g(n, s) = G(n)[s]/6^n
+
+ENV["COLUMNS"] = 130
+@time M = [round(g(n, s) - P(n, s); digits = 16) for n in 1:10, s in 1:21]
+
+# %%
