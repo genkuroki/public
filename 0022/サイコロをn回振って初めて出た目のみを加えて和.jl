@@ -14,7 +14,22 @@
 # ---
 
 # %% [markdown]
+# https://nbviewer.jupyter.org/urls/gist.githubusercontent.com/terasakisatoshi/e4af4f618161d87cdc288285585527c5/raw/3a50de35748be12ab6461156440685052aadfcd2/hexagon_something.ipynb
+
+# %%
+using HTTP, JSON
+function display_tweet(link)
+    api = "https://publish.twitter.com/oembed?url=$link"
+    r = response = HTTP.request("GET", api);
+    j = JSON.parse(String(r.body))
+    HTML(j["html"])
+end
+
+# %% [markdown]
 # https://twitter.com/dannchu/status/1443524638252810248
+
+# %%
+display_tweet("https://twitter.com/dannchu/status/1443524638252810248")
 
 # %%
 using Plots
@@ -112,6 +127,12 @@ plot(PP...; layout=(5, 2), size=(700, 1000))
 
 # %%
 @code_warntype g!(X, a, Iterators.product(ntuple(_ -> 1:6, 10)...))
+
+# %% [markdown]
+# https://twitter.com/croce1/status/1445311359973937155
+
+# %%
+display_tweet("https://twitter.com/croce1/status/1445311359973937155")
 
 # %%
 using Combinatorics
