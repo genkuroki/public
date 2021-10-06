@@ -29,9 +29,10 @@ function plot_tstat(;
     tstat(sample) = (mean(sample) - mean(dist))/√(var(sample)/n)
     T = [tstat(rand(dist, n)) for _ in 1:L]
     histogram(T; norm=true, alpha=0.3, label="(x - μ)/√(u²/n)", xlim, xtick, bin)
-    plot!(TDist(n-1); lw=1.5, label="Tdist(n - 1)")
+    plot!(TDist(n-1); lw=1.5, label="TDist(n - 1)")
+    sk = skewness(dist)
     diststr = replace("$dist", r"\{.*\}"=>"")
-    title!("$diststr,  n = $n"; titlefontsize=10)
+    title!("$diststr,  n = $n\nskewness = $(round(sk; digits=3))"; titlefontsize=10)
 end
 
 function plot_chisqstat(;
@@ -41,14 +42,17 @@ function plot_chisqstat(;
     )
     X = (n-1)*[var(rand(dist, n)) for _ in 1:L]/var(dist)
     m, s = mean(X), std(X)
-    M, S = n - 1, (n - 1)*√((kurtosis(dist) + 3)/n - (n - 3)/(n*(n - 1)))
     xlim = (max(-1, m - 4s), n + 4s)
-    bin = range(0, maximum(xlim); length=101)
+    bin = range(0, xlim[2]; length=round(Int, 51/(1 - xlim[1]/xlim[2])))
     histogram(X; norm=true, alpha=0.3, label="(n - 1)u²/σ²", xlim, bin)
     plot!(Chisq(n-1); lw=1.5, label="Chisq(n - 1)")
-    S == Inf || plot!(Normal(M, S); lw=1.5, ls=:dash, label="normal dist.")
+    kurt = kurtosis(dist)
+    if isfinite(kurt)
+        M, S = n - 1, (n - 1)*√((kurt + 3)/n - (n - 3)/(n*(n - 1)))
+        plot!(Normal(M, S); lw=1.5, ls=:dash, label="normal dist.")
+    end
     diststr = replace("$dist", r"\{.*\}"=>"")
-    title!("$diststr,  n = $n"; titlefontsize=10)
+    title!("$diststr,  n = $n\nkurtosis = $(round(kurt; digits=3))"; titlefontsize=10)
 end
 
 function plot_both(;
