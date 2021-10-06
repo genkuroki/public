@@ -9,7 +9,7 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.11.2
 #   kernelspec:
-#     display_name: Julia 1.6.2
+#     display_name: Julia 1.6.3
 #     language: julia
 #     name: julia-1.6
 # ---
@@ -41,10 +41,12 @@ function plot_chisqstat(;
     )
     X = (n-1)*[var(rand(dist, n)) for _ in 1:L]/var(dist)
     m, s = mean(X), std(X)
+    M, S = n - 1, (n - 1)*√((kurtosis(dist) + 3)/n - (n - 3)/(n*(n - 1)))
     xlim = (max(-1, m - 4s), n + 4s)
-    bin = range(0, maximum(xlim); length=51)
+    bin = range(0, maximum(xlim); length=101)
     histogram(X; norm=true, alpha=0.3, label="(n - 1)u²/σ²", xlim, bin)
     plot!(Chisq(n-1); lw=1.5, label="Chisq(n - 1)")
+    S == Inf || plot!(Normal(M, S); lw=1.5, ls=:dash, label="normal dist.")
     diststr = replace("$dist", r"\{.*\}"=>"")
     title!("$diststr,  n = $n"; titlefontsize=10)
 end
@@ -63,39 +65,43 @@ function plot_both(;
 end
 
 # %%
-plot_both()
+for n in (10, 20, 50, 100, 200, 400)
+    plot_both(; n) |> display
+end
 
 # %%
-plot_both(dist = Uniform(0, 1))
+for n in (10, 20, 50, 100, 200, 400)
+        plot_both(; dist = Uniform(0, 1), n) |> display
+end
 
 # %%
-plot_both(dist = TDist(4))
+for n in (10, 20, 50, 100, 200, 400)
+    plot_both(; dist = TDist(4), n) |> display
+end
 
 # %%
-plot_both(dist = Gamma(2, 1))
+for n in (10, 20, 50, 100, 200, 400)
+    plot_both(; dist = TDist(5), n) |> display
+end
 
 # %%
-plot_both(dist = Gamma(4, 1))
+for n in (10, 20, 50, 100, 200, 400)
+    plot_both(; dist = Gamma(2, 1), n) |> display
+end
 
 # %%
-plot_both(dist = Gamma(10, 1))
+for n in (10, 20, 50, 100, 200, 400)
+    plot_both(; dist = Gamma(4, 1), n) |> display
+end
 
 # %%
-plot_both(dist = Exponential())
+for n in (10, 20, 50, 100, 200, 400)
+    plot_both(; dist = Gamma(10, 1), n) |> display
+end
 
 # %%
-plot_both(dist = Exponential(), n = 20)
-
-# %%
-plot_both(dist = Exponential(), n = 50)
-
-# %%
-plot_both(dist = Exponential(), n = 100)
-
-# %%
-plot_both(dist = Exponential(), n = 200)
-
-# %%
-plot_both(dist = Exponential(), n = 400)
+for n in (10, 20, 50, 100, 200, 400)
+    plot_both(; dist = Exponential(), n) |> display
+end
 
 # %%
