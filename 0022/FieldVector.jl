@@ -21,6 +21,9 @@ struct Point{T} <: FieldVector{2, T} x::T; y::T end
 p = Point(1, 2)
 
 # %%
+p[2], p.y
+
+# %%
 q = Point(3, 4)
 
 # %%
