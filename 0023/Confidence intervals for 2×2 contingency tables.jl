@@ -155,4 +155,5 @@ title!("p-value functions for data A = $A")
 plot!(; xlabel="log₁₀(odds ratio)")
 plot!(; xtick=-20:20, ytick=0:0.05:1)
 
-# %%
+# %% [markdown]
+#
