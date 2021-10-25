@@ -177,14 +177,31 @@ A = [
 @show ci_chisq(A...) ci_gtest(A...) ci_fisher(A...) ci_fisher_dos(A...) ci_logOR(A...) ci_barnard(A...);
 
 # %%
-fisher_test(A)
+@rput A
+R"fisher.test(A)"
 
 # %% [markdown]
-# Rのfisher.testの結果は本質的に以上の `pval_fisher` と `ci_fisher_dos` と一致し、P値と信頼区間のあいだに整合性がない。
+# Rの `fisher.test` の結果は本質的に以上の `pval_fisher` と `ci_fisher_dos` と一致し、P値と信頼区間のあいだに整合性がない。
 #
 # 信頼区間の数値の違いはRにおける数値計算の許容誤差が大きいことが原因。詳しくは以下のリンク先を参照：
 #
 # * https://twitter.com/genkuroki/status/1422926792210280451
+
+# %%
+R"chisq.test(A)"
+
+# %% [markdown]
+# Rの `chisq.test` はデフォルトでYatesの連続性補正を適用する。その結果は `fisher_dos` に近くなる。
+#
+# Yatesの連続性補正はいかなる場合も使用しない方がよいと思う。
+
+# %%
+R"chisq.test(A, correct = FALSE)"
+
+# %% [markdown]
+# Rの `chisq.test` で補正をオフにすると、その結果は `chisq` に一致する。
+#
+# Rの `chisq.test` はしつこく "Chi-squared approximation may be incorrect" と警告して来るが、この警告は必ずしも正しくない。
 
 # %% [markdown]
 # ## P値函数のプロット
@@ -229,18 +246,20 @@ plot(θ1, p; label="", xtick=0:0.1:1, xlabel = "θ₁")
 title!("pval_2bins(B..., θ₁, 0.9) for B = $B")
 
 # %% [markdown]
-# ## 第一種の過誤が起こる確率を優位水準の函数としてプロット
+# ## 第一種の過誤が起こる確率を有意水準の函数としてプロット
 
 # %%
 function plot_pvalecdfs(dist_true; L = 10^5,
         plotPQ = trues(2), pvals = trues(6),
-        size = (400count(plotPQ), 400), kwargs...)
+        size = (400count(plotPQ), 400), kwargs...
+    )
     pvals[1] && (P_chisq = Vector{Float64}(undef, L))
     pvals[2] && (P_gtest = Vector{Float64}(undef, L))
     pvals[3] && (P_fisher = Vector{Float64}(undef, L))
     pvals[4] && (P_fisher_dos = Vector{Float64}(undef, L))
     pvals[5] && (P_barnard = Vector{Float64}(undef, L))
     pvals[6] && (P_logOR = Vector{Float64}(undef, L))
+    
     Threads.@threads for i in 1:L
         A = rand(dist_true)
         pvals[1] && (P_chisq[i] = pval_chisq(A...))
@@ -288,6 +307,12 @@ end
 # ### 小サンプルだが、χ²検定が十分に適切だと考えられる場合
 #
 # 極端な場合を除けば、小サンプルであっても、χ²検定の使用が十分に適切だと考えられる。
+
+# %%
+n = 13
+p, q = 6//n, 6//n
+dist_true = Multinomial(n, Float64.(vec([p, 1-p]*[q, 1-q]')))
+plot_pvalecdfs(dist_true; title="Multinomial($n, $(round.(probs(dist_true), digits=3)))", titlefontsize=10)
 
 # %%
 n = 20
