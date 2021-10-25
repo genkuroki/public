@@ -30,6 +30,9 @@
 #
 # 実際の計算では「P値がαに等しくなるパラメーター値」を数値計算することによって信頼区間を求める。
 
+# %% [markdown]
+# ## P値函数と信頼区間函数のシンプルな実装
+
 # %%
 using Distributions
 using Roots
@@ -37,6 +40,8 @@ using Optim
 using Memoization
 using StatsPlots
 using StatsBase
+
+default(fmt = :png)
 
 using RCall
 @rlibrary stats
@@ -181,24 +186,35 @@ fisher_test(A)
 #
 # * https://twitter.com/genkuroki/status/1422926792210280451
 
-# %%
-t = range(log(10, 1e-1), log(10, 1e8), length=1000)
-p_chisq = pval_chisq.(A..., exp.(t))
-p_gtest = pval_gtest.(A..., exp.(t))
-p_fisher = pval_fisher.(A..., exp.(t))
-p_fisher_dos = pval_fisher_dos.(A..., exp.(t))
-p_logOR = pval_logOR.(A..., exp.(t))
-@time p_barnard = pval_barnard.(A..., exp.(t))
+# %% [markdown]
+# ## P値函数のプロット
 
-plot(t, p_chisq; label="chisq")
-plot!(t, p_gtest; label="gtest", ls=:dash)
-plot!(t, p_fisher; label="fisher", ls=:dash)
-plot!(t, p_fisher_dos; label="fisher_dos", ls=:dashdot)
-plot!(t, p_barnard; label="barnard", ls=:dot)
-plot!(t, p_logOR; label="logOR", ls=:dot)
-title!("p-value functions for data A = $A")
-plot!(; xlabel="log₁₀(odds ratio)")
-plot!(; xtick=-20:20, ytick=0:0.05:1)
+# %%
+function plot_pvalfuncs(A, ωmin, ωmax; xtick = -20:20, ytick = 0:0.05:1)
+    t = range(log(10, ωmin), log(10, ωmax), length=1000)
+    p_chisq = pval_chisq.(A..., exp.(t))
+    p_gtest = pval_gtest.(A..., exp.(t))
+    p_fisher = pval_fisher.(A..., exp.(t))
+    p_fisher_dos = pval_fisher_dos.(A..., exp.(t))
+    p_logOR = pval_logOR.(A..., exp.(t))
+    p_barnard = pval_barnard.(A..., exp.(t))
+
+    plot(t, p_chisq; label="chisq")
+    plot!(t, p_gtest; label="gtest", ls=:dash)
+    plot!(t, p_fisher; label="fisher", ls=:dash)
+    plot!(t, p_fisher_dos; label="fisher_dos", ls=:dashdot)
+    plot!(t, p_barnard; label="barnard", ls=:dot)
+    plot!(t, p_logOR; label="logOR", ls=:dot)
+    title!("p-value functions for data A = $A")
+    plot!(; xlabel="log₁₀(odds ratio)")
+    plot!(; xtick=-20:20, ytick=0:0.05:1)
+end
+
+# %%
+plot_pvalfuncs(A, 1e-1, 1e8)
+
+# %% [markdown]
+# ## Barnard検定の最大値を取る前のP値函数のプロット
 
 # %%
 B = [
@@ -212,54 +228,110 @@ p = pval_2bins.(B..., θ1, 0.9)
 plot(θ1, p; label="", xtick=0:0.1:1, xlabel = "θ₁")
 title!("pval_2bins(B..., θ₁, 0.9) for B = $B")
 
+# %% [markdown]
+# ## 第一種の過誤が起こる確率を優位水準の函数としてプロット
+
 # %%
-function plot_pvalecdfs(dist_true, L = 10^5)
-    P_chisq = Vector{Float64}(undef, L)
-    P_gtest = similar(P_chisq)
-    P_fisher = similar(P_chisq)
-    P_fisher_dos = similar(P_chisq)
-    P_barnard = similar(P_chisq)
-    P_logOR = similar(P_chisq)
+function plot_pvalecdfs(dist_true; L = 10^5,
+        plotPQ = trues(2), pvals = trues(6),
+        size = (400count(plotPQ), 400), kwargs...)
+    pvals[1] && (P_chisq = Vector{Float64}(undef, L))
+    pvals[2] && (P_gtest = Vector{Float64}(undef, L))
+    pvals[3] && (P_fisher = Vector{Float64}(undef, L))
+    pvals[4] && (P_fisher_dos = Vector{Float64}(undef, L))
+    pvals[5] && (P_barnard = Vector{Float64}(undef, L))
+    pvals[6] && (P_logOR = Vector{Float64}(undef, L))
     Threads.@threads for i in 1:L
         A = rand(dist_true)
-        P_chisq[i] = pval_chisq(A...)
-        P_gtest[i] = pval_gtest(A...)
-        P_fisher[i] = pval_fisher(A...)
-        P_fisher_dos[i] = pval_fisher_dos(A...)
-        P_barnard[i] = pval_barnard(A...)
-        P_logOR[i] = pval_logOR(A...)
+        pvals[1] && (P_chisq[i] = pval_chisq(A...))
+        pvals[2] && (P_gtest[i] = pval_gtest(A...))
+        pvals[3] && (P_fisher[i] = pval_fisher(A...))
+        pvals[4] && (P_fisher_dos[i] = pval_fisher_dos(A...))
+        pvals[5] && (P_barnard[i] = pval_barnard(A...))
+        pvals[6] && (P_logOR[i] = pval_logOR(A...))
     end
     
-    P = plot()
-    plot!(StatsBase.ecdf(P_chisq); label="chisq")
-    plot!(StatsBase.ecdf(P_gtest); label="gtest", ls=:dash)
-    plot!(StatsBase.ecdf(P_fisher); label="fisher", ls=:dash)
-    plot!(StatsBase.ecdf(P_fisher_dos); label="fisher_dos", ls=:dashdot)
-    plot!(StatsBase.ecdf(P_barnard); label="barnard", ls=:dot)
-    plot!(StatsBase.ecdf(P_logOR); label="logOR", ls=:dot)
-    plot!(identity; label="", c=:black, ls=:dot)
-    plot!(; xtick = 0:0.1:1, ytick = 0:0.1:1)
-    plot!(; xlim = (-0.05, 1.05), ylim = (-0.05, 1.05))
+    PP = []
     
-    Q = plot()
-    plot!(StatsBase.ecdf(P_chisq); label="chisq")
-    plot!(StatsBase.ecdf(P_gtest); label="gtest", ls=:dash)
-    plot!(StatsBase.ecdf(P_fisher); label="fisher", ls=:dash)
-    plot!(StatsBase.ecdf(P_fisher_dos); label="fisher_dos", ls=:dashdot)
-    plot!(StatsBase.ecdf(P_barnard); label="barnard", ls=:dot)
-    plot!(StatsBase.ecdf(P_logOR); label="logOR", ls=:dot)
-    plot!(identity; label="", c=:black, ls=:dot)
-    plot!(; xlim = (-0.005, 0.105), ylim = (-0.005, 0.105))
-    plot!(; xtick = 0:0.01:1, ytick = 0:0.01:1)
+    plotPQ[1] && begin
+        P = plot()
+        pvals[1] && plot!(StatsBase.ecdf(P_chisq); c=1, label="chisq")
+        pvals[2] && plot!(StatsBase.ecdf(P_gtest); c=2, label="gtest", ls=:dash)
+        pvals[3] && plot!(StatsBase.ecdf(P_fisher); c=3, label="fisher", ls=:dash)
+        pvals[4] && plot!(StatsBase.ecdf(P_fisher_dos); c=4, label="fisher_dos", ls=:dashdot)
+        pvals[5] && plot!(StatsBase.ecdf(P_barnard); c=5, label="barnard", ls=:dot)
+        pvals[6] && plot!(StatsBase.ecdf(P_logOR); c=6, label="logOR", ls=:dot)
+        plot!(identity; label="", c=:black, ls=:dot)
+        plot!(; xtick = 0:0.1:1, ytick = 0:0.1:1)
+        plot!(; xlim = (-0.05, 1.05), ylim = (-0.05, 1.05))
+        push!(PP, P)
+    end
+    
+    plotPQ[2] && begin
+        Q = plot()
+        pvals[1] && plot!(StatsBase.ecdf(P_chisq); c=1, label="chisq")
+        pvals[2] && plot!(StatsBase.ecdf(P_gtest); c=2, label="gtest", ls=:dash)
+        pvals[3] && plot!(StatsBase.ecdf(P_fisher); c=3, label="fisher", ls=:dash)
+        pvals[4] && plot!(StatsBase.ecdf(P_fisher_dos); c=4, label="fisher_dos", ls=:dashdot)
+        pvals[5] && plot!(StatsBase.ecdf(P_barnard); c=5, label="barnard", ls=:dot)
+        pvals[6] && plot!(StatsBase.ecdf(P_logOR); c=6, label="logOR", ls=:dot)
+        plot!(identity; label="", c=:black, ls=:dot)
+        plot!(; xlim = (-0.005, 0.105), ylim = (-0.005, 0.105))
+        plot!(; xtick = 0:0.01:1, ytick = 0:0.01:1)
+        push!(PP, Q)
+    end
 
-    plot(P, Q; size=(800, 400))
+    plot(PP...; size, kwargs...)
 end
+
+# %% [markdown]
+# ### 小サンプルだが、χ²検定が十分に適切だと考えられる場合
+#
+# 極端な場合を除けば、小サンプルであっても、χ²検定の使用が十分に適切だと考えられる。
 
 # %%
 n = 20
 p, q = 1//4, 2//5
 dist_true = Multinomial(n, Float64.(vec([p, 1-p]*[q, 1-q]')))
-@show dist_true
-plot_pvalecdfs(dist_true)
+plot_pvalecdfs(dist_true; title="Multinomial$(params(dist_true))", titlefontsize=10)
+
+# %%
+n = 10
+p, q = 4//10, 4//10
+dist_true = Multinomial(n, Float64.(vec([p, 1-p]*[q, 1-q]')))
+plot_pvalecdfs(dist_true; title="Multinomial$(params(dist_true))", titlefontsize=10)
+
+# %%
+n = 100
+p, q = 1//20, 1//5
+dist_true = Multinomial(n, Float64.(vec([p, 1-p]*[q, 1-q]')))
+plot_pvalecdfs(dist_true; title="Multinomial$(params(dist_true))", titlefontsize=10)
+
+# %% [markdown]
+# ### χ²検定が不適切になるほど極端な場合
+#
+# 以下のような極端過ぎる設定のもとではχ²検定で第一種の過誤が起こる確率は大きくなってしまう。
+#
+# 非常に大雑把には０のセルがある場合にはχ²検定が不適切になりやすい。
+
+# %%
+n = 20
+p, q = 1//10, 1//10
+dist_true = Multinomial(n, Float64.(vec([p, 1-p]*[q, 1-q]')))
+plot_pvalecdfs(dist_true; title="Multinomial$(params(dist_true))", titlefontsize=10)
+
+# %%
+n = 100
+p, q = 1//25, 1//25
+dist_true = Multinomial(n, Float64.(vec([p, 1-p]*[q, 1-q]')))
+plot_pvalecdfs(dist_true; 
+    title="Multinomial$(params(dist_true))", titlefontsize=8)
+
+# %%
+n = 1000
+p, q = 1//200, 1//40
+dist_true = Multinomial(n, Float64.(vec([p, 1-p]*[q, 1-q]')))
+plot_pvalecdfs(dist_true; pvals = (tmp = trues(6); tmp[4:6] .= false; tmp),
+    title="Multinomial$(params(dist_true))", titlefontsize=8)
 
 # %%
