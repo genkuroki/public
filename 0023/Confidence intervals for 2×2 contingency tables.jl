@@ -46,6 +46,42 @@ default(fmt = :png)
 using RCall
 @rlibrary stats
 
+# %%
+struct TwoBinomials{T<:Real} <: DiscreteMultivariateDistribution
+    m::Int
+    p::T
+    n::Int
+    q::T
+end
+
+Base.length(d::TwoBinomials) = 4
+Base.eltype(d::TwoBinomials) = Int
+Distributions.params(d::TwoBinomials) = (d.m, d.p, d.n, d.q)
+
+function Distributions._rand!(rng::Distributions.AbstractRNG, d::TwoBinomials, x::AbstractVector)
+    k = rand(rng, Binomial(d.m, d.p))
+    l = rand(rng, Binomial(d.n, d.q))
+    @inbounds x[1], x[2], x[3], x[4] = k, l, d.m - k, d.n - l
+    x
+end
+
+function Distributions._rand!(rng::Distributions.AbstractRNG, d::TwoBinomials, x::AbstractMatrix)
+    @inbounds for j in axes(x, 2) 
+        k = rand(rng, Binomial(d.m, d.p))
+        l = rand(rng, Binomial(d.n, d.q))
+        x[1,j], x[2,j], x[3,j], x[4,j] = k, l, d.m - k, d.n - l
+    end
+    x
+end
+
+function Distributions._logpdf(d::TwoBinomials, x::AbstractVector)
+    x[1] + x[3] == d.m || x[2] + x[4] == d.m || return -Inf
+    logpdf(Binomial(d.m, d.p), x[1]) + logpdf(Binomial(d.n, d.q), x[2]) 
+end
+
+Distributions.mean(d::TwoBinomials) = [d.m*d.p, d.n*d.q, d.m*(1 - d.p), d.n*(1 - d.q)]
+
+# %%
 safemul(x, y) = x == 0 ? x : x*y
 safediv(x, y) = x == 0 ? x : x/y
 x ⪅ y = x < y || x ≈ y
@@ -84,6 +120,7 @@ function chisq_stat(a, b, c, d, ω = 1.0)
 end
 
 @memoize function pval_chisq(a, b, c, d, ω = 1.0)
+    (a + b == 0 || c + d == 0 || a + c == 0 || b + d == 0) && return 1.0
     X² = chisq_stat(a, b, c, d, ω)
     ccdf(Chisq(1), X²)
 end
@@ -99,6 +136,7 @@ function g_stat(a, b, c, d, ω = 1.0)
 end
 
 @memoize function pval_gtest(a, b, c, d, ω = 1.0)
+    (a + b == 0 || c + d == 0 || a + c == 0 || b + d == 0) && return 1.0
     X² = g_stat(a, b, c, d, ω)
     ccdf(Chisq(1), X²)
 end
@@ -132,6 +170,7 @@ ci_fisher_dos(a, b, c, d, α = 0.05; xmin = 1e-8, xmax = 1e8) =
 @memoize function pval_2bins(a, b, c, d, θ1, ω = 1.0)
     (a + c == 0 || b + d == 0) && return 1.0
     θ2 = θ1/(θ1 + ω*(1 - θ1))
+    # Fix n1 = a + c and n2 = b + d for data [a c; b d]
     n1, n2 = a + c, b + d
     bin1, bin2 = Binomial(n1, θ1), Binomial(n2, θ2)
     f0 = pval_fisher(a, b, c, d, ω)
@@ -143,14 +182,14 @@ ci_fisher_dos(a, b, c, d, α = 0.05; xmin = 1e-8, xmax = 1e8) =
     min(1, pval)
 end
 
-@memoize _pval_barnard(a, b, c, d, ω = 1.0) =
+@memoize _pval_boschloo(a, b, c, d, ω = 1.0) =
     maximizefunc(θ1 -> pval_2bins(a, b, c, d, θ1, ω), 0, 1)
 
-pval_barnard(a, b, c, d, ω = 1.0) = 
-    _pval_barnard(a, b, c, d, ω) |> first
+pval_boschloo(a, b, c, d, ω = 1.0) = 
+    _pval_boschloo(a, b, c, d, ω) |> first
 
-ci_barnard(a, b, c, d, α = 0.05; xmin = 1e-8, xmax = 1e8) =
-    ci_generic(pval_barnard, a, b, c, d, α; xmin, xmax)
+ci_boschloo(a, b, c, d, α = 0.05; xmin = 1e-8, xmax = 1e8) =
+    ci_generic(pval_boschloo, a, b, c, d, α; xmin, xmax)
 
 # %%
 oddsratio(a, b, c, d) = safediv(a*d, b*c)
@@ -173,8 +212,8 @@ A = [
     1 6
 ]
 
-@show pval_chisq(A...) pval_gtest(A...) pval_fisher(A...) pval_fisher_dos(A...) pval_logOR(A...) pval_barnard(A...);
-@show ci_chisq(A...) ci_gtest(A...) ci_fisher(A...) ci_fisher_dos(A...) ci_logOR(A...) ci_barnard(A...);
+@show pval_chisq(A...) pval_gtest(A...) pval_fisher(A...) pval_fisher_dos(A...) pval_logOR(A...) pval_boschloo(A...);
+@show ci_chisq(A...) ci_gtest(A...) ci_fisher(A...) ci_fisher_dos(A...) ci_logOR(A...) ci_boschloo(A...);
 
 # %%
 @rput A
@@ -205,35 +244,67 @@ R"chisq.test(A, correct = FALSE)"
 #
 # Rの `chisq.test` はしつこく "Chi-squared approximation may be incorrect" と警告して来るが、この警告は必ずしも正しくない。
 
+# %%
+@show pvalmax, maximizer = _pval_boschloo(A...)
+θ1 = range(0, 1; length=1001)
+p = pval_2bins.(A..., θ1)
+plot(θ1, p; label="", xtick=0:0.1:1, xlabel = "θ₁")
+scatter!([maximizer], [pvalmax]; label="")
+title!("pval_2bins(A..., θ₁) for A = $A")
+plot!(; size=(400, 300), titlefontsize=10)
+
+# %%
+R"library(Exact)"
+R"""exact.test(A, method="Boschloo")"""
+
+# %%
+X = [2 3; 35 10]
+@show pvalmax, maximizer = _pval_boschloo(X...)
+θ1 = range(0, 1; length=1001)
+p = pval_2bins.(X..., θ1)
+plot(θ1, p; label="", xtick=0:0.1:1, xlabel = "θ₁")
+scatter!([maximizer], [pvalmax]; label="")
+title!("pval_2bins(X..., θ₁) for X = $X")
+plot!(; size=(400, 300), titlefontsize=10)
+
+# %%
+@rput X
+R"""exact.test(X, method="Boschloo")"""
+
+# %% [markdown]
+# 以上のように、`pval_boschloo(A)`の値はRのExactパッケージの `exact.test(A, method="Boschloo")`のP値に一致している。
+
 # %% [markdown]
 # ## P値函数のプロット
 
 # %%
-function plot_pvalfuncs(A, ωmin, ωmax; xtick = -20:20, ytick = 0:0.05:1)
+function plot_pvalfuncs(A, ωmin, ωmax; xtick = -20:20, ytick = 0:0.05:1, kwargs...)
     t = range(log(10, ωmin), log(10, ωmax), length=1000)
     p_chisq = pval_chisq.(A..., exp.(t))
     p_gtest = pval_gtest.(A..., exp.(t))
     p_fisher = pval_fisher.(A..., exp.(t))
     p_fisher_dos = pval_fisher_dos.(A..., exp.(t))
     p_logOR = pval_logOR.(A..., exp.(t))
-    p_barnard = pval_barnard.(A..., exp.(t))
+    p_boschloo = pval_boschloo.(A..., exp.(t))
 
     plot(t, p_chisq; label="chisq")
     plot!(t, p_gtest; label="gtest", ls=:dash)
     plot!(t, p_fisher; label="fisher", ls=:dash)
     plot!(t, p_fisher_dos; label="fisher_dos", ls=:dashdot)
-    plot!(t, p_barnard; label="barnard", ls=:dot)
+    plot!(t, p_boschloo; label="boschloo", ls=:dot)
     plot!(t, p_logOR; label="logOR", ls=:dot)
     title!("p-value functions for data A = $A")
     plot!(; xlabel="log₁₀(odds ratio)")
-    plot!(; xtick=-20:20, ytick=0:0.05:1)
+    plot!(; xtick, ytick, kwargs...)
 end
 
 # %%
-plot_pvalfuncs(A, 1e-1, 1e8)
+P = plot_pvalfuncs(A, 1e-1, 1e8)
+Q = plot_pvalfuncs(A, 1e-1, 1e1; legend=:topleft, ylim=(-0.005, 0.105), xtick=-1:0.2:1, ytick=0:0.01:0.1)
+plot(P, Q; size=(800, 300), tickfontsize=7, guidefontsize=9, titlefontsize=10, bottommargin=4Plots.mm)
 
 # %% [markdown]
-# ## Barnard検定の最大値を取る前のP値函数のプロット
+# ## Boschloo検定の最大値を取る前のP値函数のプロット
 
 # %%
 B = [
@@ -241,11 +312,13 @@ B = [
     12 10
 ]
 
-@show _pval_barnard(B..., 0.9)
+@show pvalmax, maximizer = _pval_boschloo(B..., 0.9)
 θ1 = range(0, 1; length=1001)
 p = pval_2bins.(B..., θ1, 0.9)
 plot(θ1, p; label="", xtick=0:0.1:1, xlabel = "θ₁")
+scatter!([maximizer], [pvalmax]; label="")
 title!("pval_2bins(B..., θ₁, 0.9) for B = $B")
+plot!(; size=(400, 300), titlefontsize=10)
 
 # %% [markdown]
 # ## 第一種の過誤が起こる確率を有意水準の函数としてプロット
@@ -259,7 +332,7 @@ function plot_pvalecdfs(dist_true; L = 10^5,
     pvals[2] && (P_gtest = Vector{Float64}(undef, L))
     pvals[3] && (P_fisher = Vector{Float64}(undef, L))
     pvals[4] && (P_fisher_dos = Vector{Float64}(undef, L))
-    pvals[5] && (P_barnard = Vector{Float64}(undef, L))
+    pvals[5] && (P_boschloo = Vector{Float64}(undef, L))
     pvals[6] && (P_logOR = Vector{Float64}(undef, L))
     
     Threads.@threads for i in 1:L
@@ -268,7 +341,7 @@ function plot_pvalecdfs(dist_true; L = 10^5,
         pvals[2] && (P_gtest[i] = pval_gtest(A...))
         pvals[3] && (P_fisher[i] = pval_fisher(A...))
         pvals[4] && (P_fisher_dos[i] = pval_fisher_dos(A...))
-        pvals[5] && (P_barnard[i] = pval_barnard(A...))
+        pvals[5] && (P_boschloo[i] = pval_boschloo(A...))
         pvals[6] && (P_logOR[i] = pval_logOR(A...))
     end
     
@@ -280,7 +353,7 @@ function plot_pvalecdfs(dist_true; L = 10^5,
         pvals[2] && plot!(StatsBase.ecdf(P_gtest); c=2, label="gtest", ls=:dash)
         pvals[3] && plot!(StatsBase.ecdf(P_fisher); c=3, label="fisher", ls=:dash)
         pvals[4] && plot!(StatsBase.ecdf(P_fisher_dos); c=4, label="fisher_dos", ls=:dashdot)
-        pvals[5] && plot!(StatsBase.ecdf(P_barnard); c=5, label="barnard", ls=:dot)
+        pvals[5] && plot!(StatsBase.ecdf(P_boschloo); c=5, label="boschloo", ls=:dot, lw=1.5)
         pvals[6] && plot!(StatsBase.ecdf(P_logOR); c=6, label="logOR", ls=:dot)
         plot!(identity; label="", c=:black, ls=:dot)
         plot!(; xtick = 0:0.1:1, ytick = 0:0.1:1)
@@ -294,7 +367,7 @@ function plot_pvalecdfs(dist_true; L = 10^5,
         pvals[2] && plot!(StatsBase.ecdf(P_gtest); c=2, label="gtest", ls=:dash)
         pvals[3] && plot!(StatsBase.ecdf(P_fisher); c=3, label="fisher", ls=:dash)
         pvals[4] && plot!(StatsBase.ecdf(P_fisher_dos); c=4, label="fisher_dos", ls=:dashdot)
-        pvals[5] && plot!(StatsBase.ecdf(P_barnard); c=5, label="barnard", ls=:dot)
+        pvals[5] && plot!(StatsBase.ecdf(P_boschloo); c=5, label="boschloo", ls=:dot, lw=1.5)
         pvals[6] && plot!(StatsBase.ecdf(P_logOR); c=6, label="logOR", ls=:dot)
         plot!(identity; label="", c=:black, ls=:dot)
         plot!(; xlim = (-0.005, 0.105), ylim = (-0.005, 0.105))
@@ -360,5 +433,50 @@ p, q = 1//200, 1//40
 dist_true = Multinomial(n, Float64.(vec([p, 1-p]*[q, 1-q]')))
 plot_pvalecdfs(dist_true; pvals = (tmp = trues(6); tmp[4:6] .= false; tmp),
     title="Multinomial$(params(dist_true))", titlefontsize=8)
+
+# %% [markdown]
+# ### サンプルを２つの二項分布で生成する場合
+
+# %%
+m, n = 4, 6
+θ = 0.4
+dist_true = TwoBinomials(m, θ, n, θ)
+plot_pvalecdfs(dist_true; title="TwoBinomials$(params(dist_true))", titlefontsize=10)
+
+# %%
+m, n = 12, 18
+θ = 0.4
+dist_true = TwoBinomials(m, θ, n, θ)
+plot_pvalecdfs(dist_true; title="TwoBinomials$(params(dist_true))", titlefontsize=10)
+
+# %%
+m, n = 24, 36
+θ = 0.3
+dist_true = TwoBinomials(m, θ, n, θ)
+plot_pvalecdfs(dist_true; title="TwoBinomials$(params(dist_true))", titlefontsize=10)
+
+# %% [markdown]
+# ### サンプルを4つのPoisson分布で生成する場合
+
+# %%
+n = 10
+p, q = 4//10, 3//10
+λ = Float64.(n * vec([p, 1-p]*[q, 1-q]'))
+dist_true = product_distribution(Poisson.(λ))
+plot_pvalecdfs(dist_true; title="FourPoissons($λ)", titlefontsize=10)
+
+# %%
+n = 20
+p, q = 4//10, 3//10
+λ = Float64.(n * vec([p, 1-p]*[q, 1-q]'))
+dist_true = product_distribution(Poisson.(λ))
+plot_pvalecdfs(dist_true; title="FourPoissons($λ)", titlefontsize=10)
+
+# %%
+n = 40
+p, q = 4//10, 3//10
+λ = Float64.(n * vec([p, 1-p]*[q, 1-q]'))
+dist_true = product_distribution(Poisson.(λ))
+plot_pvalecdfs(dist_true; title="FourPoissons($λ)", titlefontsize=10)
 
 # %%
