@@ -24,6 +24,9 @@ using CUDA
 plotjulia(j) = heatmap(j; c=:gist_earth,
     size=(540, 540), colorbar=false, ticks=false, frame=false)
 
+plotmandelbrot(m) = heatmap(m; c=reverse(cgrad(:jet1)), 
+    size=(540, 540), colorbar=false, ticks=false, frame=false)
+
 function julia(z, c, maxiters=2^10, threshold_abs2=Inf)
     for i in Base.OneTo(maxiters)
         z = z * z + c
@@ -31,9 +34,6 @@ function julia(z, c, maxiters=2^10, threshold_abs2=Inf)
     end
     maxiters + oneunit(maxiters)
 end
-
-plotmandelbrot(m) = heatmap(m; c=reverse(cgrad(:jet1)), 
-    size=(540, 540), colorbar=false, ticks=false, frame=false)
 
 mandelbrot(c, maxiters=2^10, threshold_abs2=Inf) =
     julia(zero(c), c, maxiters, threshold_abs2)
