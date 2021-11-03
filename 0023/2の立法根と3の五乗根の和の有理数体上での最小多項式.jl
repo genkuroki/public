@@ -18,6 +18,57 @@
 using SymPy
 @vars x y z
 
+# %% [markdown]
+# ## $\sqrt[3]{2} + \sqrt[3]{3}$ の $\mathbb Q$ 上での最小多項式
+
+# %%
+a = Sym(2)^(1/Sym(3))
+
+# %%
+b = Sym(3)^(1/Sym(3))
+
+# %%
+θ = a + b
+
+# %%
+sympy.minimal_polynomial(θ, x)
+
+# %%
+f = sympy.minimal_polynomial(a, x)
+
+# %%
+g = sympy.minimal_polynomial(b, x)
+
+# %%
+h = -f(z - x).expand()
+
+# %%
+h1 = g - h |> expand
+
+# %%
+r = 3z*h - (x - 2z)*h1 |> expand
+
+# %%
+Denom, Numer = sympy.Poly(r, x).coeffs() |> C -> [C[1], -C[2]]
+
+# %%
+Numer / Denom
+
+# %%
+denom = Denom(z => θ) |> expand |> simplify
+
+# %%
+numer = Numer(z => θ) |> expand |> simplify
+
+# %%
+c = numer/denom |> simplify
+
+# %%
+numer / (b * denom |> expand)
+
+# %% [markdown]
+# ## $\sqrt[3]{2} + \sqrt[5]{3}$ の $\mathbb Q$ 上での最小多項式
+
 # %%
 a = Sym(2)^(1/Sym(3))
 
