@@ -34,7 +34,7 @@ h1 = g - h
 h2 = (a + p + 3t)^2*h - ((a + p + 3t)*X + (-a^2 - a*p - 4a*t + b - 3p*t - q - 6t^2))*h1 |> expand |> simplify
 
 # %%
-Denom, Numer = sympy.Poly(h2, X).coeffs() |> C -> [C[1], -C[2]];
+Denom, Numer = sympy.Poly(h2, X).coeffs() |> C -> [C[1], -C[2]]
 
 # %%
 DENOM = sympy.Poly(Denom, t)
@@ -50,5 +50,29 @@ numer = Numer(t => α + β).expand()(α^5 => α^5 - α^2*f(X=>α), β^5 => β^5 
 
 # %%
 βdenom == numer
+
+# %%
+sympy.Poly(Denom(a=>0, b=>0, c=>-2, p=>0, q=>0, r=>-3)/(3t), t)
+
+# %%
+sympy.Poly(Numer(a=>0, b=>0, c=>-2, p=>0, q=>0, r=>-3)/(3t), t)
+
+# %%
+sympy.Poly(Denom(a=>0, b=>0, p=>0, q=>0)/(3t), t)
+
+# %%
+sympy.Poly(Numer(a=>0, b=>0, p=>0, q=>0)/(3t), t)
+
+# %%
+sympy.Poly(Denom(a=>0, p=>0, q=>0), t)
+
+# %%
+sympy.Poly(Numer(a=>0, p=>0, q=>0), t)
+
+# %%
+sympy.Poly(Denom(a=>0, p=>0), t)
+
+# %%
+sympy.Poly(Numer(a=>0, p=>0), t)
 
 # %%
