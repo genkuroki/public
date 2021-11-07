@@ -190,6 +190,41 @@ g = x^5 + p*x^3 + q*x^2 + r*x + s
 dispallresults(z, x, f, g)
 
 # %%
+f = a*x^2 + b*x + c
+g = p*x^2 + q*x + r
+dispallresults(z, x, f, g)
+
+# %%
+f = x^2 + b*x + c
+g = x^2 + q*x + r
+dispallresults(z, x, f, g)
+
+# %%
+f = x^2 + b*x + c
+g = x^3 + p*x^2 + q*x + r
+dispallresults(z, x, f, g)
+
+# %%
+f = x^2 + a*x + b
+g = x^4 + p*x^3 + q*x^2 + r*x + s
+dispallresults(z, x, f, g)
+
+# %%
+f = x^2 + a*x + b
+g = x^5 + p*x^3 + q*x^2 + r*x + s
+dispallresults(z, x, f, g)
+
+# %%
+f = x^2 + a*x + b
+g = x^6 + p*x^3 + q*x^2 + r*x + s
+dispallresults(z, x, f, g)
+
+# %%
+f = x^2 + a*x + b
+g = x^7 + p*x^3 + q*x^2 + r*x + s
+dispallresults(z, x, f, g)
+
+# %%
 f = x^3 - a
 g = x^3 + p*x + q
 dispallresults(z, x, f, g)
