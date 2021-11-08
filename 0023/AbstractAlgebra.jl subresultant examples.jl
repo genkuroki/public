@@ -86,11 +86,14 @@ function calcallresults(z, x, f, g)
     val_F_mult = val(F_mult, α * β, L)
     test_β_mult = testval(β_mult, α * β, β, L)
     
-    F_plus, β_plus, F_mult, β_mult, val_F_plus, test_β_plus, val_F_mult, test_β_mult
+    S_plus = subresultant((-1)^degree(f)*f(z-x), g, 1)
+    rootS_plus = rootdeg1(S_plus)
+    
+    F_plus, β_plus, F_mult, β_mult, val_F_plus, test_β_plus, val_F_mult, test_β_mult, S_plus, rootS_plus
 end
 
 function dispallresults(z, x, f, g)
-    F_plus, β_plus, F_mult, β_mult, val_F_plus, test_β_plus, val_F_mult, test_β_mult =
+    F_plus, β_plus, F_mult, β_mult, val_F_plus, test_β_plus, val_F_mult, test_β_mult, S_plus, rootS_plus =
         @time calcallresults(z, x, f, g)
     flush(stdout)
     dispeq("F_\\alpha(x)", f)
@@ -103,6 +106,8 @@ function dispallresults(z, x, f, g)
     dispeq("R_{\\alpha\\beta}(\\alpha\\beta)", val_F_mult)
     dispeq("\\beta_\\mathrm{mult}(z)", β_mult)
     dispeq("\\beta_\\mathrm{mult}(\\alpha\\beta) = \\beta", test_β_mult)
+    dispeq("\\text{1-subresultant}", S_plus)
+    dispeq("\\text{root of 1-subresultant}", rootS_plus)
 end
 
 safecoeff(f, k) = 0 ≤ k ≤ degree(f) ? coeff(f, k) : zero(base_ring(f))
@@ -110,11 +115,11 @@ safecoeff(f, k) = 0 ≤ k ≤ degree(f) ? coeff(f, k) : zero(base_ring(f))
 function subresultant_matrix(p::PolyElem{T}, q::PolyElem{T}, k) where T <: RingElement
     check_parent(p, q)
     R = parent(p)
-    if length(p) == 0 || length(q) == 0
-       return zero_matrix(R, 0, 0)
-    end
     m = degree(p)
     n = degree(q)
+    if length(p) == 0 || length(q) == k || m + n < 2k
+       return zero_matrix(R, 0, 0)
+    end
     M = zero_matrix(R, m + n - 2k, m + n - 2k)
     x = gen(R)
     for i in 1:n-k
@@ -125,7 +130,7 @@ function subresultant_matrix(p::PolyElem{T}, q::PolyElem{T}, k) where T <: RingE
     end
     for i in 1:m-k
         for j in 1:m+n-2k-1
-           M[n-k+i, j] = coeff(q, n + (i-1) - (j-1))
+           M[n-k+i, j] = safecoeff(q, n + (i-1) - (j-1))
         end
         M[n-k+i, end] = x^(m-k-i)*q
     end
@@ -141,21 +146,47 @@ Rz, z = R["z"]
 Kz = FractionField(Rz)
 Rx, x = Kz["x"]
 
-# %% tags=[]
-f = x^3 + a*x^2 + b*x + c
-g = x^4 + p*x^3 + q*x^2 + r*x + s
-subresultant_matrix(f, g, 1)
-
-# %% tags=[]
-subresultant(f, g, 1)
-
 # %%
 f = x^3 + a*x^2 + b*x + c
 g = x^4 + p*x^3 + q*x^2 + r*x + s
-subresultant_matrix(f, g, 2)
+subresultant_matrix(f, g, 0)
+
+# %%
+S0 = sylvester_matrix(f, g)
+
+# %%
+subresultant(f, g, 0) == resultant(f, g) == det(S0)
+
+# %% tags=[]
+subresultant_matrix(f, g, 1)
+
+# %%
+S1 = Rx[
+    1 a b c 0
+    0 1 a b c*x
+    0 0 1 a b*x+c
+    1 p q r s*x
+    0 1 p q r*x+s
+]
+
+# %%
+subresultant(f, g, 1)
+
+# %% tags=[]
+subresultant(f, g, 1) == det(S1)
+
+# %%
+S2 = Rx[
+    1 a b*x^2+c*x
+    0 1 a*x^2+b*x+c
+    1 p q*x^2+r*x+s
+]
 
 # %%
 subresultant(f, g, 2)
+
+# %%
+subresultant(f, g, 2) == det(S2)
 
 # %%
 f = x^3 - a
@@ -166,66 +197,67 @@ dispallresults(z, x, f, g)
 subresultant_matrix(-f(z-x), g, 1)
 
 # %%
-subresultant(-f(z-x), g, 1)
+s1 = Rx[
+    1 -3z 3z^2 -z^3+a 0
+    0 1   -3z  3z^2   (-z^3+a)*x
+    0 0   1    -3z    3z^2*x-z^3+a
+    1 0   0    0      -p*x
+    0 1   0    0      -p
+]
 
 # %%
-subresultant(-f(z-x), g, 1) |> rootdeg1 |> rhs -> dispeq("\\text{root of 1-subresultant}", rhs)
+S_plus = subresultant(-f(z-x), g, 1)
 
 # %%
-subresultant(f(z-x), g, 1) |> rootdeg1 |> rhs -> dispeq("\\text{root of 1-subresultant}", rhs)
+subresultant(-f(z-x), g, 1) == det(s1)
+
+# %%
+rootS_plus = rootdeg1(S_plus)
+dispeq("\\text{root of 1-subresultant}", rootS_plus)
 
 # %%
 f = x^2 - a
 g = x^2 - p
 dispallresults(z, x, f, g)
-subresultant(f(z-x), g, 1) |> rootdeg1 |> rhs -> dispeq("\\text{root of 1-subresultant}", rhs)
 
 # %%
 f = x^2 - a
 g = x^3 - p
 dispallresults(z, x, f, g)
-subresultant(f(z-x), g, 1) |> rootdeg1 |> rhs -> dispeq("\\text{root of 1-subresultant}", rhs)
 
 # %%
 f = x^2 - a
 g = x^4 - p
 dispallresults(z, x, f, g)
-subresultant(f(z-x), g, 1) |> rootdeg1 |> rhs -> dispeq("\\text{root of 1-subresultant}", rhs)
 
 # %%
 f = x^2 - a
 g = x^5 - p
 dispallresults(z, x, f, g)
-subresultant(f(z-x), g, 1) |> rootdeg1 |> rhs -> dispeq("\\text{root of 1-subresultant}", rhs)
 
 # %%
 f = x^3 - a
 g = x^3 - p
 dispallresults(z, x, f, g)
-subresultant(f(z-x), g, 1) |> rootdeg1 |> rhs -> dispeq("\\text{root of 1-subresultant}", rhs)
 
 # %%
 f = x^3 - a
 g = x^4 - p
 dispallresults(z, x, f, g)
-subresultant(f(z-x), g, 1) |> rootdeg1 |> rhs -> dispeq("\\text{root of 1-subresultant}", rhs)
 
 # %%
 f = x^3 - a
 g = x^5 - p
 dispallresults(z, x, f, g)
-subresultant(f(z-x), g, 1) |> rootdeg1 |> rhs -> dispeq("\\text{root of 1-subresultant}", rhs)
 
 # %%
 f = x^2 - a
 g = x^3 + p*x^2 + q*x + r
 dispallresults(z, x, f, g)
-subresultant(f(z-x), g, 1) |> rootdeg1 |> rhs -> dispeq("\\text{root of 1-subresultant}", rhs)
 
 # %%
 f = x^3 + a*x + b
 g = x^4 + p*x + r
 dispallresults(z, x, f, g)
-subresultant(f(z-x), g, 1) |> rootdeg1 |> rhs -> dispeq("\\text{root of 1-subresultant}", rhs)
 
 # %%
