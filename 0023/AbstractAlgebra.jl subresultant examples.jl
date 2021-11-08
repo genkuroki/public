@@ -131,6 +131,7 @@ function subresultant_matrix(p::PolyElem{T}, q::PolyElem{T}, k) where T <: RingE
     end
     return M
 end
+
 subresultant(p, q, k) = det(subresultant_matrix(p, q, k))
 
 # %%
