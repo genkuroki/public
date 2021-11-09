@@ -64,53 +64,37 @@
 # ```
 #
 # Windows が「アクセスを許可してよいか？」のような意味の警告を発して来た場合には「許可」するように答える.
+#
+# 追記 2021-11-09: 次の一行を追加しないと、 `display(x)` を手動で実行しないとエラーになってしまう。
+#
+# ```julia
+# Base.convert(::Type{Any}, x::MExpr) = x
+# ```
 
 # %%
 using Maxima
-
-# function Base.show(io::IO, ::MIME"text/latex", m::MExpr)
-#     check = "'(" * replace(convert(String, m), r";" => ")\$\n'(") * ")"
-#     write(Maxima.ms.input, "$check\$\n print(ascii(4))\$")
-#     out = (readuntil(Maxima.ms.output, Maxima.EOT) |> String
-#                                      |> str -> rstrip(str, Maxima.EOT))
-#     if occursin(Maxima.synerr, out) || occursin(Maxima.maxerr, out)
-#         @warn "Invalid Maxima expression"
-#         print(io, out)
-#     else
-#         write(Maxima.ms, "tex('("*replace(convert(String, m), r";" => "))\$\ntex('(") * "))")
-#         texstr = read(Maxima.ms)
-#         texstr = replace(texstr, "\r"=>"")
-#         print(io, replace(texstr, r"\nfalse\n" => ""))
-#     end
-# end
+Base.convert(::Type{Any}, x::MExpr) = x
 
 # %%
-a = m"sin(%pi/3)";
-display(a)
+a = m"sin(%pi/3)"
 
 # %%
-b = integrate(m"log(sin(x))", 'x');
-display(b)
+b = integrate(m"log(sin(x))", 'x')
 
 # %%
-c = integrate(m"x*log(sin(x))", 'x');
-display(c)
+c = integrate(m"x*log(sin(x))", 'x')
 
 # %%
-d = factor(MExpr("a^2 - b^2"));
-display(d)
+d = factor(MExpr("a^2 - b^2"))
 
 # %%
-A = diff(m"log(f(x))", 'x', 4);
-display(A)
+A = diff(m"log(f(x))", 'x', 4)
 
 # %%
-B = integrate(m"log(sin(x))", 'x', m"0", m"%pi/2");
-display(B)
+B = integrate(m"log(sin(x))", 'x', m"0", m"%pi/2")
 
 # %%
-C = integrate(m"1/sqrt(1+x+x^2)", 'x');
-display(C)
+C = integrate(m"1/sqrt(1+x+x^2)", 'x')
 
 # %%
 # gnuplot が立ち上がる
