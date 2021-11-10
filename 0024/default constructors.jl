@@ -57,7 +57,7 @@ typeof(x.p)
 # `Kuma(p::Tuple{T, U}) where {T, U}` をpromotionによって作成。
 
 # %%
-Kuma(p::Tuple{T, U}) where {T, U} = Kuma{promote_type(T, U)}(p)
+Kuma(p::Tuple{T, U}) where {T, U} = Kuma(promote(p...))
 
 # %%
 methods(Kuma)
