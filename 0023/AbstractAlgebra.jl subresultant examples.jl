@@ -215,6 +215,28 @@ subresultant(-f(z-x), g, 1) == det(s1)
 rootS_plus = rootdeg1(S_plus)
 dispeq("\\text{root of 1-subresultant}", rootS_plus)
 
+# %% tags=[]
+f = x^3 - a
+g = x^3 + p*x + q
+dispallresults(z, x, f, g)
+
+# %% tags=[]
+f = x^3 - a
+g = x^3 + p*x + q
+dispallresults(z, x, g, f)
+
+# %%
+h1 = g(z-x) + f
+
+# %%
+(3z)^2*f - 3z*x*h1
+
+# %%
+h2 = (3z)^2*f - (3z*x + 3z^2 + p)*h1
+
+# %%
+subresultant(f, g(z-x), 1)
+
 # %%
 f = x^2 - a
 g = x^2 - p
@@ -251,13 +273,18 @@ g = x^5 - p
 dispallresults(z, x, f, g)
 
 # %%
+f = x^3 + a*x + b
+g = x^3 + p*x + q
+dispallresults(z, x, f, g)
+
+# %%
 f = x^2 - a
 g = x^3 + p*x^2 + q*x + r
 dispallresults(z, x, f, g)
 
 # %%
 f = x^3 + a*x + b
-g = x^4 + p*x + r
+g = x^4 + p*x^2 + q*x + r
 dispallresults(z, x, f, g)
 
 # %%
