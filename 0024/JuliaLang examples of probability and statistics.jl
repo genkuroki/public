@@ -162,14 +162,27 @@ x ⪅ y = x < y || x ≈ y
 pval_exact(dist, k) = sum(pdf(dist, j) for j in support(dist) if pdf(dist, j) ⪅ pdf(dist, k))
 
 # %%
-# 正確二項検定のP値の例
+# 正確二項検定のP値の例　(パラメータpを固定した場合)
 
-n, p = 20, 0.4
+n, p = 20, 0.3
 bin = Binomial(n, p)
 
-x = support(bin)
-y = pval_exact.(bin, support(bin))
-bar(x, y; alpha=0.3, label="p-value")
+k = support(bin)
+y = pval_exact.(bin, k)
+plot(k, y; label="")
+plot!(; xtick=0:20, ytick=0:0.1:1)
+plot!(; xlabel="data k", ylabel="p-value for parameter n = $n, p = $p")
+
+# %%
+# 正確二項検定のP値の例　(データkを固定した場合)
+
+n, k = 20, 6
+
+p = 0:0.002:1
+y = @. pval_exact(Binomial(n, p), k)
+plot(p, y; label="")
+plot!(; xtick=0:0.1:1, ytick=0:0.1:1)
+plot!(; xlabel="parameter p", ylabel="p-value for data n = $n, k = $k")
 
 # %%
 # 信頼区間函数の定義
