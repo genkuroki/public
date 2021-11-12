@@ -170,7 +170,7 @@ bin = Binomial(n, p)
 k = support(bin)
 y = pval_exact.(bin, k)
 plot(k, y; label="")
-plot!(; xtick=0:20, ytick=0:0.1:1)
+plot!(; xtick=0:20, ytick=0:0.05:1)
 plot!(; xlabel="data k", ylabel="p-value for parameter n = $n, p = $p")
 
 # %%
@@ -181,7 +181,7 @@ n, k = 20, 6
 p = 0:0.002:1
 y = @. pval_exact(Binomial(n, p), k)
 plot(p, y; label="")
-plot!(; xtick=0:0.1:1, ytick=0:0.1:1)
+plot!(; xtick=0:0.1:1, ytick=0:0.05:1)
 plot!(; xlabel="parameter p", ylabel="p-value for data n = $n, k = $k")
 
 # %%
@@ -205,16 +205,16 @@ mlefunc(n, k) = k/n
 pmin, pmax = 0.0, 1.0
 
 n = 20
-k = 0:20
+k = 0:n
 α = 0.05
 ci = confint.(pvalfunc, mlefunc, n, k, pmin, pmax; α)
 ciL, ciR = first.(ci), last.(ci)
 
 plot(; legend=:topleft)
-plot!(k, ciL; label="min. of conf. int.")
-plot!(k, ciR; label="max. of conf. int.")
-plot!(k, ciL; label="$(100(1 - α))% confidence interval", lw=0, frange=ciR, fa=0.1)
+plot!(k, ciL; label="min. of confidence interval")
+plot!(k, ciR; label="max. of confidenceinterval")
+plot!(k, ciL; label="$(100(1 - α))% confidence interval (n = $n)", lw=0, frange=ciR, fa=0.1)
 plot!(; xtick=0:n, ytick=0:0.1:1)
-plot!(; xlabel="data", ylabel="parameter")
+plot!(; xlabel="data k", ylabel="parameter p")
 
 # %%
