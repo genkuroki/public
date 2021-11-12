@@ -112,7 +112,7 @@ bin1 = Binomial(m, p)
 bin2 = Binomial(n, p)
 Z = [zstat(gensample(bin1, bin2)...) for _ in 1:10^5]
 
-histogram(Z; norm=true, alpha=0.3, bin=-4.25:0.5:4.25)
+histogram(Z; norm=true, alpha=0.3, bin=-4.25:0.5:4.25, label="Z statistics")
 plot!(Normal(), -4, 4; label="std normal dist.", lw=2)
 
 # %%
