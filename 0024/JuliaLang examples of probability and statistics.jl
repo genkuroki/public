@@ -91,6 +91,7 @@ plot!(Normal(mean(1:6), std(1:6; corrected=false)/√n), 1, 6; label="normal app
 # 2つの確率パラメータ(比率パラメータ)が等しい二項分布で生成されたサンプルのZ統計量は
 # 近似的に標準正規分布に従う。
 
+""""""
 function gensample(bin1, bin2)
     m, n = ntrials(bin1), ntrials(bin2)
     a, b = rand(bin1), rand(bin2)
@@ -98,6 +99,7 @@ function gensample(bin1, bin2)
     a, b, c, d
 end
 
+"""Z statistic of 2×2 contingency table"""
 function zstat(a, b, c, d)
     a*d - b*c == 0 && return zero(inv(a))
     m, n = a + c, b + d
@@ -136,6 +138,7 @@ Z^2 |> factor
 # %%
 # (O - E)²/E の和で定義されたPearsonのχ²統計量
 
+"""Pearson's χ² statistic of 2×2 contingency table"""
 function chisqstat(a, b, c, d)
     a*d - b*c == 0 && return zero(inv(a))
     N = a + b + c + d
@@ -159,6 +162,7 @@ X² |> factor
 # \approx TAB → ≈
 x ⪅ y = x < y || x ≈ y
 
+"""p-value function of exact binomial test"""
 pval_exact(dist, k) = sum(pdf(dist, j) for j in support(dist) if pdf(dist, j) ⪅ pdf(dist, k))
 
 # %%
@@ -189,6 +193,7 @@ plot!(; xlabel="parameter p", ylabel="p-value for data n = $n, k = $k")
 
 using Roots
 
+"""generic confidence interval function"""
 function confint(pvalfunc, mlefunc, n, k, pmin, pmax; α = 0.05)
     f(p) = pvalfunc(n, p, k) - α
     ci = find_zeros(f, pmin, pmax)
@@ -197,17 +202,36 @@ function confint(pvalfunc, mlefunc, n, k, pmin, pmax; α = 0.05)
     first(ci) > pmle ? [pmin, first(ci)] : [first(ci), pmax]
 end
 
-# %%
-# 信頼区間の例
+"""confidence interval function for exact binomial test"""
+function confint_bin(n, k; α = 0.05)
+    pvalfunc(n, p, k) = pval_exact(Binomial(n, p), k)
+    mlefunc(n, k) = k/n
+    pmin, pmax = 0.0, 1.0
+    confint(pvalfunc, mlefunc, n, k, pmin, pmax; α)
+end
 
-pvalfunc(n, p, k) = pval_exact(Binomial(n, p), k)
-mlefunc(n, k) = k/n
-pmin, pmax = 0.0, 1.0
+# %%
+# 正確二項検定のデータkを固定した場合のP値函数のプロットに
+# 95%信頼区間のプロットを追加
+
+n, k = 20, 6
+α = 0.05
+ci = confint_bin(n, k; α)
+
+p = 0:0.002:1
+y = @. pval_exact(Binomial(n, p), k)
+plot(p, y; label="")
+plot!(ci, [α, α]; label="$(100(1 - α))% confidence interval", lw=3)
+plot!(; xtick=0:0.1:1, ytick=0:0.05:1)
+plot!(; xlabel="parameter p", ylabel="p-value for data n = $n, k = $k")
+
+# %% tags=[]
+# データkを動かして信頼区間をプロット (1)
 
 n = 20
 k = 0:n
 α = 0.05
-ci = confint.(pvalfunc, mlefunc, n, k, pmin, pmax; α)
+ci = confint_bin.(n, k; α)
 ciL, ciR = first.(ci), last.(ci)
 
 plot(; legend=:topleft)
@@ -216,5 +240,37 @@ plot!(k, ciR; label="max. of confidenceinterval")
 plot!(k, ciL; label="$(100(1 - α))% confidence interval (n = $n)", lw=0, frange=ciR, fa=0.1)
 plot!(; xtick=0:n, ytick=0:0.1:1)
 plot!(; xlabel="data k", ylabel="parameter p")
+
+# %% tags=[]
+# データkを動かして信頼区間をプロット (2)
+
+n = 20
+k = 0:n
+α = 0.05
+ci = confint_bin.(n, k; α)
+
+plot(; legend=:topleft)
+for i in eachindex(ci)
+    plot!([k[i], k[i]], ci[i]; label="", lw=5)
+end
+plot!(; xtick=0:n, ytick=0:0.1:1)
+plot!(; xlabel="data k", ylabel="parameter p")
+title!("$(100(1 - α))% confidence intervals (n = $n)"; titlefontsize=12)
+
+# %% tags=[]
+# データkを動かして信頼区間をプロット (3)
+
+n = 20
+k = 0:n
+α = 0.05
+ci = confint_bin.(n, k; α)
+
+plot(; legend=:topleft)
+for i in eachindex(ci)
+    plot!([k[i], k[i]], ci[i]; label="", lw=5, c=1)
+end
+plot!(; xtick=0:n, ytick=0:0.1:1)
+plot!(; xlabel="data k", ylabel="parameter p")
+title!("$(100(1 - α))% confidence intervals (n = $n)"; titlefontsize=12)
 
 # %%
