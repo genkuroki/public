@@ -166,14 +166,14 @@ x ⪅ y = x < y || x ≈ y
 pval_exact(dist, k) = sum(pdf(dist, j) for j in support(dist) if pdf(dist, j) ⪅ pdf(dist, k))
 
 # %%
-# 正確二項検定のP値の例　(パラメータpを固定した場合)
+# 正確二項検定のP値の例　(パラメータpを固定した場合(1))
 
 n, p = 20, 0.3
 bin = Binomial(n, p)
 
 k = support(bin)
 y = pval_exact.(bin, k)
-plot(k, y; label="")
+plot(k, y; label="", marker=:o)
 plot!(; xtick=0:20, ytick=0:0.05:1)
 plot!(; xlabel="data k", ylabel="p-value for parameter n = $n, p = $p")
 
@@ -271,6 +271,41 @@ for i in eachindex(ci)
 end
 plot!(; xtick=0:n, ytick=0:0.1:1)
 plot!(; xlabel="data k", ylabel="parameter p")
+title!("$(100(1 - α))% confidence intervals (n = $n)"; titlefontsize=12)
+
+# %%
+# P値函数のヒートマップ
+
+n = 20
+p = 0:0.002:1
+k = 0:n
+α = 0.05
+ci = confint_bin.(n, k; α)
+
+z = @. pval_exact(Binomial(n, p), k')
+heatmap(k, p, z; clim=(-0.2, 1.2), colorbar_title="p-value")
+plot!(; xtick=0:n, ytick=0:0.1:1)
+plot!(; xlabel="data k", ylabel="parameter p")
+plot!(; size=(680, 400))
+
+# %%
+# P値函数のヒートマップと信頼区間
+
+n = 20
+p = 0:0.002:1
+k = 0:n
+α = 0.05
+ci = confint_bin.(n, k; α)
+
+z = @. pval_exact(Binomial(n, p), k')
+heatmap(k, p, z; clim=(-0.2, 1.2), colorbar_title="p-value")
+plot!(; xtick=0:n, ytick=0:0.1:1)
+plot!(; xlabel="data k", ylabel="parameter p")
+plot!(; size=(680, 400))
+for i in eachindex(ci)
+    plot!([k[i], k[i]], ci[i]; label="", lw=3, c=:cyan, alpha=0.8)
+end
+plot!(xlim=(-0.5, n+0.5), ylim=(0, 1))
 title!("$(100(1 - α))% confidence intervals (n = $n)"; titlefontsize=12)
 
 # %%
