@@ -66,10 +66,12 @@ xlogy(x, y) = iszero(x) ? x : x*log(y)
 
 @memoize function gstat(a, b, c, d)
     A, B, C, D = expectval(a, b, c, d)
-    xlogy(a, a) - xlogy(a, A) +
-    xlogy(b, b) - xlogy(b, B) +
-    xlogy(c, c) - xlogy(c, C) +
-    xlogy(d, d) - xlogy(d, D)
+    2(
+        xlogy(a, a) - xlogy(a, A) +
+        xlogy(b, b) - xlogy(b, B) +
+        xlogy(c, c) - xlogy(c, C) +
+        xlogy(d, d) - xlogy(d, D)
+    )
 end
 gstat(A) = gstat(A...)
 
