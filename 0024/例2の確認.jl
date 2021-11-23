@@ -19,7 +19,7 @@
 
 # %%
 using SymPy
-@vars x w μ σ²
+@vars x w μ σ² f real=true
 N(x, μ, σ²) = 1/√(2oftype(x, π)*σ²) * exp(-(x - μ)^2/(2σ²))
 N(x, μ, σ²)
 
@@ -43,5 +43,14 @@ var"P(w|x)" = var"P(x, w)"/var"P(x)" |> expand |> simplify
 
 # %%
 var"P(w|x)" == N(w, x/2, 1//2) |> expand |> simplify
+
+# %%
+var"∫L(f, w)P(w|x)dw" = integrate((f - w)^2 * var"P(w|x)", (w, -oo, oo)) |> expand |> simplify
+
+# %%
+var"∫L(f, w)P(w|x)dw" == (f - x/2)^2 + 1//2 |> expand
+
+# %%
+var"∫L(f, w)P(w|x)dw" - 1//2 |> factor |> expr -> expr + 1//2
 
 # %%
