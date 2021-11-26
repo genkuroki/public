@@ -51,6 +51,3 @@ var"∫L(f, w)P(w|x)dw" = integrate((f - w)^2 * var"P(w|x)", (w, -oo, oo)) |> ex
 var"∫L(f, w)P(w|x)dw" == (f - x/2)^2 + 1//2 |> expand
 
 # %%
-var"∫L(f, w)P(w|x)dw" - 1//2 |> factor |> expr -> expr + 1//2
-
-# %%
