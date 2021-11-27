@@ -41,13 +41,18 @@ end
 """信頼区間函数"""
 function confidence_interval(n, k; α = 0.05)
     f(t) = pvalue(n, logistic(t), k) - α
-    CI = logistic.(find_zeros(f, -10, 10))
+    CI = logistic.(find_zeros(f, -10.0, 10.0))
+    if length(CI) < 2
+        return 2k ≤ n ? [0.0, first(CI)] : [first(CI), 1.0]
+    else
+        return [first(CI), last(CI)]
+    end
 end
 
 # %%
 # Bernoulli分布モデルと共役事前分布に関するベイズ版信用区間
 
-"""事後分布"""
+"""共役事後分布"""
 posterior_dist(n, k; a = 0.5, b = 0.5) = Beta(a + k, b + n - k)
 
 """ベイズ版P値函数"""
@@ -55,12 +60,16 @@ function pvalue_bayes(n, p, k; a = 0.5, b = 0.5)
     posterior = posterior_dist(n, k; a, b)
     v0 = logpdf(posterior, p)
     f(t) = logpdf(posterior, logistic(t)) - v0
-    m = mode(posterior)
-    if p ≤ m
-        q = logistic(find_zero(f, logit(m) + 1))
+    m = params(posterior) |> ((α, β),) -> (α - 1)/(α + β - 2)
+    if m ≤ 0
+        s = ccdf(posterior, p)
+    elseif m ≥ 1
+        s = cdf(posterior, p)
+    elseif p ≤ m
+        q = logistic(find_zero(f, min(50, logit(m) + 1)))
         s = cdf(posterior, p) + ccdf(posterior, q)
     else
-        q = logistic(find_zero(f, logit(m) - 1))
+        q = logistic(find_zero(f, max(-50, logit(m) - 1)))
         s = cdf(posterior, q) + ccdf(posterior, p)
     end
     min(1, s)
@@ -70,9 +79,22 @@ end
 function credible_interval(n, k; α = 0.05, a = 0.5, b = 0.5)
     g(t) = pvalue_bayes(n, logistic(t), k; a, b) - α
     posterior = posterior_dist(n, k; a, b)
-    m = mode(posterior)
-    L, R = max(-50, logit(m) - 5), min(50, logit(m) + 5)
-    CI = logistic.(find_zeros(g, L, R))  
+    m = params(posterior) |> ((α, β),) -> (α - 1)/(α + β - 2)
+    if m ≤ 0
+        p = logistic.(find_zero(g, 0.0))
+        return [0.0, p]
+    elseif m ≥ 1
+        p = logistic.(find_zero(g, 0.0))
+        return [p, 1.0]
+    else
+        L, R = max(-50, logit(m) - 5), min(50, logit(m) + 5)
+        CI = logistic.(find_zeros(g, L, R))
+        if length(CI) < 2
+            return 2k ≤ n ? [0.0, first(CI)] : [first(CI), 1.0]
+        else
+            return [first(CI), last(CI)]
+        end
+    end
 end
 
 # %%
