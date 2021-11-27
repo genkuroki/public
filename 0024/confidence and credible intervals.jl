@@ -88,8 +88,8 @@ function plot_cis(n, k; α = 0.05, a = 0.5, b = 0.5)
     plot(p, p -> pvalue_bayes(n, p, k); label="Bayesian p-value function", c = 1, lw=1.5)
     plot!(p, p -> pvalue(n, p, k); label="ordinary p-value function", c = 2, ls=:dash, lw=1.5)
     plot!(; ytick=0:0.05:1)
-    plot!(credint, fill( 0.005, 2); label="Baysian credible interval", c=:blue, lw=2)
-    plot!(confint, fill(-0.005, 2); label="confidence interval", c=:red, ls=:dash, lw=2)
+    plot!(credint, fill(1.1α, 2); label="Baysian credible interval", c=:blue, lw=2)
+    plot!(confint, fill(0.9α, 2); label="confidence interval", c=:red, ls=:dash, lw=2)
     title!("n = $n, k = $k, α = $α, prior = Beta($a, $b)"; titlefontsize=10)
 end
 
@@ -103,7 +103,7 @@ plot_cis(100, 30)
 plot_cis(1000, 300)
 
 # %% [markdown]
-# $n$ が大きくするにつれて数値的に通常の信頼区間とベイズ版信用区間は数値的によく一致するようになる。
+# $n$ を大きくするにつれて数値的に通常の信頼区間とベイズ版信用区間は数値的によく一致するようになる。
 #
 # このようなことはシンプルなモデルでは一般的に広く成立している.
 
