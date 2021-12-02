@@ -134,6 +134,7 @@ title!("ecdf(number of trials)"; titlefontsize=12)
 # %%
 """
 対数周辺尤度比 (χ²分布のスケールに合わせるために2倍しておく)
+exp(logmarginallikrat(n, p, k; a, b)/2) = (Bayes factor)
 """
 @memoize function logmarginallikrat(n, p, k; a=1, b=a)
     logmarginallik = 2(logbeta(k + a, n - k + b) - logbeta(a, b))
@@ -178,6 +179,12 @@ function try_phacking_like_lmlrhacking(pvalue_func, N, p; threshold=5, L=10^4)
     numtrials
 end
 
+# %% [markdown]
+# threshold は (Bayes factor) > exp(threshold / 2) という条件でデータ取得を止めることを意味している。
+
+# %%
+exp(5/2)
+
 # %%
 N, threshold= 3000, 5
 numtrials_lmlrhack = try_lmlrhacking(N, 0.5; threshold)
@@ -189,5 +196,8 @@ plot!(n -> ecdf(numtrials_lmlrhack)(n), 0, N; label="log marginal likelihood rat
 plot!(n -> ecdf(numtrials_phack_like_lmlrhack_exact)(n), 0, N; label="p-hacking like the above (exact)", ls=:dash)
 plot!(n -> ecdf(numtrials_phack_like_lmlrhack_normal)(n), 0, N; label="p-hacking like the above (normal dist. approx.)", ls=:dashdot)
 title!("ecdf(number of trials),  threshold = $threshold"; titlefontsize=12)
+
+# %% [markdown]
+# この場合には threshold = 5 のとき、(Bayes factor) > exp(threshold / 2) = 12.18… という条件でデータ取得を止めることに成功する確率は概ね 5% 程度になっている。これに対応すると考えられることをP値を使ってやっても概ね結果は同じになる(有意水準を `α_n = ccdef(Chisq(1), threshold + log(n))` によって n について単調減少するように決めている)。
 
 # %%
