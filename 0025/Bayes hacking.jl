@@ -16,7 +16,7 @@
 
 # %%
 using Distributions
-using Plots
+using StatsPlots
 using StatsFuns: logit, logistic
 using Roots
 using StatsBase: ecdf
@@ -134,7 +134,7 @@ title!("ecdf(number of trials)"; titlefontsize=12)
 # %%
 """
 対数周辺尤度比 (χ²分布のスケールに合わせるために2倍しておく)
-exp(logmarginallikrat(n, p, k; a, b)/2) = (Bayes factor)
+Bayes因子 = exp(logmarginallikrat(n, p, k; a, b)/2)
 """
 @memoize function logmarginallikrat(n, p, k; a=1, b=a)
     logmarginallik = 2(logbeta(k + a, n - k + b) - logbeta(a, b))
@@ -143,15 +143,16 @@ exp(logmarginallikrat(n, p, k; a, b)/2) = (Bayes factor)
 end
 
 """
-対数周辺尤度比ハッキングに挑戦
+Bayes因子ハッキングに挑戦
+Bayes因子 > threshold となるまでデータを取得し続ける。
 """
-function try_lmlrhacking(N, p; threshold=5, L=10^4, a=1, b=a)
+function try_bfhacking(N, p; threshold=10, L=10^4, a=1, b=a)
     numtrials = fill(N + 1, L)
     Threads.@threads for i in 1:L
         k = 0
         for n in 1:N
             k += rand(Bernoulli(p))
-            if logmarginallikrat(n, p, k; a, b) > threshold
+            if logmarginallikrat(n, p, k; a, b) > 2log(threshold)
                 numtrials[i] = n
                 break
             end
@@ -161,15 +162,15 @@ function try_lmlrhacking(N, p; threshold=5, L=10^4, a=1, b=a)
 end
 
 """
-対数周辺尤度比ハッキングに類似のpハッキングに挑戦
+Bayes因子ハッキングに類似のpハッキングに挑戦
 """
-function try_phacking_like_lmlrhacking(pvalue_func, N, p; threshold=5, L=10^4)
+function try_phacking_like_bfhacking(pvalue_func, N, p; threshold=10, L=10^4)
     numtrials = fill(N + 1, L)
     Threads.@threads for i in 1:L
         k = 0
         for n in 1:N
             k += rand(Bernoulli(p))
-            α_n = ccdf(Chisq(1), threshold + log(n))
+            α_n = ccdf(Chisq(1), 2log(threshold) + log(n))
             if pvalue_func(n, p, k) < α_n
                 numtrials[i] = n
                 break
@@ -179,25 +180,79 @@ function try_phacking_like_lmlrhacking(pvalue_func, N, p; threshold=5, L=10^4)
     numtrials
 end
 
-# %% [markdown]
-# threshold は (Bayes factor) > exp(threshold / 2) という条件でデータ取得を止めることを意味している。
-
 # %%
-exp(5/2)
+N, threshold = 5000, 10
+a, b = 1, 1
+numtrials_lmlrhack = try_bfhacking(N, 0.5; threshold, a, b)
+numtrials_phack_like_lmlrhack_exact = try_phacking_like_bfhacking(pvalue_exact, N, 0.5; threshold)
+numtrials_phack_like_lmlrhack_normal = try_phacking_like_bfhacking(pvalue_normal, N, 0.5; threshold)
 
-# %%
-N, threshold= 3000, 5
-numtrials_lmlrhack = try_lmlrhacking(N, 0.5; threshold)
-numtrials_phack_like_lmlrhack_exact = try_phacking_like_lmlrhacking(pvalue_exact, N, 0.5; threshold)
-numtrials_phack_like_lmlrhack_normal = try_phacking_like_lmlrhacking(pvalue_normal, N, 0.5; threshold)
-
-plot(; legend=:bottomright)
-plot!(n -> ecdf(numtrials_lmlrhack)(n), 0, N; label="log marginal likelihood ratio hacking")
+P = plot(; legend=:bottomright)
+plot!(n -> ecdf(numtrials_lmlrhack)(n), 0, N; label="Bayes factor hacking")
 plot!(n -> ecdf(numtrials_phack_like_lmlrhack_exact)(n), 0, N; label="p-hacking like the above (exact)", ls=:dash)
 plot!(n -> ecdf(numtrials_phack_like_lmlrhack_normal)(n), 0, N; label="p-hacking like the above (normal dist. approx.)", ls=:dashdot)
 title!("ecdf(number of trials),  threshold = $threshold"; titlefontsize=12)
 
+Q = plot(Beta(a, b); ylim=(0, 2), label="")
+title!("prior = Beta($a, $a)"; titlefontsize=12)
+
+plot(P, Q; size=(640, 800), layout=(2, 1))
+
 # %% [markdown]
-# この場合には threshold = 5 のとき、(Bayes factor) > exp(threshold / 2) = 12.18… という条件でデータ取得を止めることに成功する確率は概ね 5% 程度になっている。これに対応すると考えられることをP値を使ってやっても概ね結果は同じになる(有意水準を `α_n = ccdef(Chisq(1), threshold + log(n))` によって n について単調減少するように決めている)。
+# この場合には threshold = 5 のとき、Bayes因子 > 10 という条件でデータ取得を止めることに成功する確率は数パーセントのオーダーになっている。これの類似をP値を使ってやっても概ね結果は同じになる(有意水準を `α_n = ccdf(Chisq(1), 2log(threshold) + log(n))` によって n について単調減少するように決めている)。
+
+# %%
+N, threshold = 5000, 10
+a, b = 0.5, 0.5
+numtrials_lmlrhack = try_bfhacking(N, 0.5; threshold, a, b)
+numtrials_phack_like_lmlrhack_exact = try_phacking_like_bfhacking(pvalue_exact, N, 0.5; threshold)
+numtrials_phack_like_lmlrhack_normal = try_phacking_like_bfhacking(pvalue_normal, N, 0.5; threshold)
+
+P = plot(; legend=:bottomright)
+plot!(n -> ecdf(numtrials_lmlrhack)(n), 0, N; label="Bayes factor hacking")
+plot!(n -> ecdf(numtrials_phack_like_lmlrhack_exact)(n), 0, N; label="p-hacking like the above (exact)", ls=:dash)
+plot!(n -> ecdf(numtrials_phack_like_lmlrhack_normal)(n), 0, N; label="p-hacking like the above (normal dist. approx.)", ls=:dashdot)
+title!("ecdf(number of trials),  threshold = $threshold"; titlefontsize=12)
+
+Q = plot(Beta(a, b), 0.001, 0.999; label="")
+title!("prior = Beta($a, $a)"; titlefontsize=12)
+
+plot(P, Q; size=(640, 800), layout=(2, 1))
+
+# %%
+N, threshold = 5000, 10
+a, b = 0.1, 0.1
+numtrials_lmlrhack = try_bfhacking(N, 0.5; threshold, a, b)
+numtrials_phack_like_lmlrhack_exact = try_phacking_like_bfhacking(pvalue_exact, N, 0.5; threshold)
+numtrials_phack_like_lmlrhack_normal = try_phacking_like_bfhacking(pvalue_normal, N, 0.5; threshold)
+
+P = plot(; legend=:bottomright)
+plot!(n -> ecdf(numtrials_lmlrhack)(n), 0, N; label="Bayes factor hacking")
+plot!(n -> ecdf(numtrials_phack_like_lmlrhack_exact)(n), 0, N; label="p-hacking like the above (exact)", ls=:dash)
+plot!(n -> ecdf(numtrials_phack_like_lmlrhack_normal)(n), 0, N; label="p-hacking like the above (normal dist. approx.)", ls=:dashdot)
+title!("ecdf(number of trials),  threshold = $threshold"; titlefontsize=12)
+
+Q = plot(Beta(a, b), 0.001, 0.999; label="")
+title!("prior = Beta($a, $a)"; titlefontsize=12)
+
+plot(P, Q; size=(640, 800), layout=(2, 1))
+
+# %%
+N, threshold = 5000, 10
+a, b = 10, 10
+numtrials_lmlrhack = try_bfhacking(N, 0.5; threshold, a, b)
+numtrials_phack_like_lmlrhack_exact = try_phacking_like_bfhacking(pvalue_exact, N, 0.5; threshold)
+numtrials_phack_like_lmlrhack_normal = try_phacking_like_bfhacking(pvalue_normal, N, 0.5; threshold)
+
+P = plot(; legend=:bottomright)
+plot!(n -> ecdf(numtrials_lmlrhack)(n), 0, N; label="Bayes factor hacking")
+plot!(n -> ecdf(numtrials_phack_like_lmlrhack_exact)(n), 0, N; label="p-hacking like the above (exact)", ls=:dash)
+plot!(n -> ecdf(numtrials_phack_like_lmlrhack_normal)(n), 0, N; label="p-hacking like the above (normal dist. approx.)", ls=:dashdot)
+title!("ecdf(number of trials),  threshold = $threshold"; titlefontsize=12)
+
+Q = plot(Beta(a, b); label="")
+title!("prior = Beta($a, $a)"; titlefontsize=12)
+
+plot(P, Q; size=(640, 800), layout=(2, 1))
 
 # %%
