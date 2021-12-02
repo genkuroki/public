@@ -21,6 +21,7 @@ using StatsFuns: logit, logistic
 using Roots
 using StatsBase: ecdf
 using Memoization
+using SpecialFunctions
 
 x ⪅ y = x < y || x ≈ y
 
@@ -59,7 +60,7 @@ pがベイズ版信用区間から外れるまでの試行回数をL個計算
 """
 function bayeshacking(N, p; α = 0.05, L = 10^4, a = 1, b = a)
     numtrials = fill(N + 1, L)
-    for i in 1:L
+    Threads.@threads for i in 1:L
         k = 0
         for n in 1:N
             k += rand(Bernoulli(p))
@@ -102,7 +103,7 @@ P値がα未満になるまでの試行回数をL個計算
 """
 function phacking(pvalue_func, N, p; α = 0.05, L = 10^4)
     numtrials = fill(N + 1, L)
-    for i in 1:L
+    Threads.@threads for i in 1:L
         k = 0
         for n in 1:N
             k += rand(Bernoulli(p))
@@ -129,5 +130,64 @@ plot!(n -> ecdf(numtrials_bhack)(n), 0, 10^3; label="Bayes hacking", xtick=0:100
 plot!(n -> ecdf(numtrials_phack_exact)(n), 0, 10^3; label="p-hacking (exact p-value)", xtick=0:100:1000, ls=:dash)
 plot!(n -> ecdf(numtrials_phack_normal)(n), 0, 10^3; label="p-hacking (normal dist. approx.)", xtick=0:100:1000, ls=:dashdot)
 title!("ecdf(number of trials)"; titlefontsize=12)
+
+# %%
+"""
+対数周辺尤度比 (χ²分布のスケールに合わせるために2倍しておく)
+"""
+@memoize function logmarginallikrat(n, p, k; a=1, b=a)
+    logmarginallik = 2(logbeta(k + a, n - k + b) - logbeta(a, b))
+    logmarginallik0 = 2(k*log(p) + (n - k)*log(1 - p))
+    logmarginallik - logmarginallik0
+end
+
+"""
+対数周辺尤度比ハッキングに挑戦
+"""
+function try_lmlrhacking(N, p; threshold=5, L=10^4, a=1, b=a)
+    numtrials = fill(N + 1, L)
+    Threads.@threads for i in 1:L
+        k = 0
+        for n in 1:N
+            k += rand(Bernoulli(p))
+            if logmarginallikrat(n, p, k; a, b) > threshold
+                numtrials[i] = n
+                break
+            end
+        end
+    end
+    numtrials
+end
+
+"""
+対数周辺尤度比ハッキングに類似のpハッキングに挑戦
+"""
+function try_phacking_like_lmlrhacking(pvalue_func, N, p; threshold=5, L=10^4)
+    numtrials = fill(N + 1, L)
+    Threads.@threads for i in 1:L
+        k = 0
+        for n in 1:N
+            k += rand(Bernoulli(p))
+            α_n = ccdf(Chisq(1), threshold + log(n))
+            if pvalue_func(n, p, k) < α_n
+                numtrials[i] = n
+                break
+            end
+        end
+    end
+    numtrials
+end
+
+# %%
+N, threshold= 3000, 5
+numtrials_lmlrhack = try_lmlrhacking(N, 0.5; threshold)
+numtrials_phack_like_lmlrhack_exact = try_phacking_like_lmlrhacking(pvalue_exact, N, 0.5; threshold)
+numtrials_phack_like_lmlrhack_normal = try_phacking_like_lmlrhacking(pvalue_normal, N, 0.5; threshold)
+
+plot(; legend=:bottomright)
+plot!(n -> ecdf(numtrials_lmlrhack)(n), 0, N; label="log marginal likelihood ratio hacking")
+plot!(n -> ecdf(numtrials_phack_like_lmlrhack_exact)(n), 0, N; label="p-hacking like the above (exact)", ls=:dash)
+plot!(n -> ecdf(numtrials_phack_like_lmlrhack_normal)(n), 0, N; label="p-hacking like the above (normal dist. approx.)", ls=:dashdot)
+title!("ecdf(number of trials),  threshold = $threshold"; titlefontsize=12)
 
 # %%
