@@ -89,7 +89,7 @@ struct Variables{U}
 end
 
 function update_u!(var::Variables, rhs)
-    rand!(rhs)
+    randn!(rhs)
     var.u .+= rhs
     var
 end
