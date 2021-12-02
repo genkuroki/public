@@ -23,7 +23,20 @@ using StatsBase: ecdf
 using Memoization
 using SpecialFunctions
 
+using Base64
+showimg(mime, fn; tag="img") = open(fn) do f
+    base64 = base64encode(f)
+    display("text/html", """<$tag src="data:$mime;base64,$base64" />""")
+end
+
+safemul(x, y) = iszero(x) ? x : x*y
 x ⪅ y = x < y || x ≈ y
+
+# %%
+showimg("image/jpeg", "IMG_2864.jpg"; tag="img width=50%")
+
+# %%
+showimg("image/jpeg", "IMG_2865.jpg"; tag="img width=60%")
 
 # %%
 """
@@ -138,7 +151,7 @@ Bayes因子 = exp(logmarginallikrat(n, p, k; a, b)/2)
 """
 @memoize function logmarginallikrat(n, p, k; a=1, b=a)
     logmarginallik = 2(logbeta(k + a, n - k + b) - logbeta(a, b))
-    logmarginallik0 = 2(k*log(p) + (n - k)*log(1 - p))
+    logmarginallik0 = 2(safemul(k, log(p)) + safemul(n - k, log(1 - p)))
     logmarginallik - logmarginallik0
 end
 
@@ -183,18 +196,18 @@ end
 # %%
 N, threshold = 5000, 10
 a, b = 1, 1
-numtrials_lmlrhack = try_bfhacking(N, 0.5; threshold, a, b)
-numtrials_phack_like_lmlrhack_exact = try_phacking_like_bfhacking(pvalue_exact, N, 0.5; threshold)
-numtrials_phack_like_lmlrhack_normal = try_phacking_like_bfhacking(pvalue_normal, N, 0.5; threshold)
+numtrials_bfhack = try_bfhacking(N, 0.5; threshold, a, b)
+numtrials_phack_like_bfhack_exact = try_phacking_like_bfhacking(pvalue_exact, N, 0.5; threshold)
+numtrials_phack_like_bfhack_normal = try_phacking_like_bfhacking(pvalue_normal, N, 0.5; threshold)
 
 P = plot(; legend=:bottomright)
-plot!(n -> ecdf(numtrials_lmlrhack)(n), 0, N; label="Bayes factor hacking")
-plot!(n -> ecdf(numtrials_phack_like_lmlrhack_exact)(n), 0, N; label="p-hacking like the above (exact)", ls=:dash)
-plot!(n -> ecdf(numtrials_phack_like_lmlrhack_normal)(n), 0, N; label="p-hacking like the above (normal dist. approx.)", ls=:dashdot)
+plot!(n -> ecdf(numtrials_bfhack)(n), 0, N; label="Bayes factor hacking")
+plot!(n -> ecdf(numtrials_phack_like_bfhack_exact)(n), 0, N; label="p-hacking like the above (exact)", ls=:dash)
+plot!(n -> ecdf(numtrials_phack_like_bfhack_normal)(n), 0, N; label="p-hacking like the above (normal dist. approx.)", ls=:dashdot)
 title!("ecdf(number of trials),  threshold = $threshold"; titlefontsize=12)
 
 Q = plot(Beta(a, b); ylim=(0, 2), label="")
-title!("prior = Beta($a, $a)"; titlefontsize=12)
+title!("prior = Beta($a, $b)"; titlefontsize=12)
 
 plot(P, Q; size=(640, 800), layout=(2, 1))
 
@@ -204,54 +217,72 @@ plot(P, Q; size=(640, 800), layout=(2, 1))
 # %%
 N, threshold = 5000, 10
 a, b = 0.5, 0.5
-numtrials_lmlrhack = try_bfhacking(N, 0.5; threshold, a, b)
-numtrials_phack_like_lmlrhack_exact = try_phacking_like_bfhacking(pvalue_exact, N, 0.5; threshold)
-numtrials_phack_like_lmlrhack_normal = try_phacking_like_bfhacking(pvalue_normal, N, 0.5; threshold)
+numtrials_bfhack = try_bfhacking(N, 0.5; threshold, a, b)
+numtrials_phack_like_bfhack_exact = try_phacking_like_bfhacking(pvalue_exact, N, 0.5; threshold)
+numtrials_phack_like_bfhack_normal = try_phacking_like_bfhacking(pvalue_normal, N, 0.5; threshold)
 
 P = plot(; legend=:bottomright)
-plot!(n -> ecdf(numtrials_lmlrhack)(n), 0, N; label="Bayes factor hacking")
-plot!(n -> ecdf(numtrials_phack_like_lmlrhack_exact)(n), 0, N; label="p-hacking like the above (exact)", ls=:dash)
-plot!(n -> ecdf(numtrials_phack_like_lmlrhack_normal)(n), 0, N; label="p-hacking like the above (normal dist. approx.)", ls=:dashdot)
+plot!(n -> ecdf(numtrials_bfhack)(n), 0, N; label="Bayes factor hacking")
+plot!(n -> ecdf(numtrials_phack_like_bfhack_exact)(n), 0, N; label="p-hacking like the above (exact)", ls=:dash)
+plot!(n -> ecdf(numtrials_phack_like_bfhack_normal)(n), 0, N; label="p-hacking like the above (normal dist. approx.)", ls=:dashdot)
 title!("ecdf(number of trials),  threshold = $threshold"; titlefontsize=12)
 
 Q = plot(Beta(a, b), 0.001, 0.999; label="")
-title!("prior = Beta($a, $a)"; titlefontsize=12)
+title!("prior = Beta($a, $b)"; titlefontsize=12)
 
 plot(P, Q; size=(640, 800), layout=(2, 1))
 
 # %%
 N, threshold = 5000, 10
 a, b = 0.1, 0.1
-numtrials_lmlrhack = try_bfhacking(N, 0.5; threshold, a, b)
-numtrials_phack_like_lmlrhack_exact = try_phacking_like_bfhacking(pvalue_exact, N, 0.5; threshold)
-numtrials_phack_like_lmlrhack_normal = try_phacking_like_bfhacking(pvalue_normal, N, 0.5; threshold)
+numtrials_bfhack = try_bfhacking(N, 0.5; threshold, a, b)
+numtrials_phack_like_bfhack_exact = try_phacking_like_bfhacking(pvalue_exact, N, 0.5; threshold)
+numtrials_phack_like_bfhack_normal = try_phacking_like_bfhacking(pvalue_normal, N, 0.5; threshold)
 
 P = plot(; legend=:bottomright)
-plot!(n -> ecdf(numtrials_lmlrhack)(n), 0, N; label="Bayes factor hacking")
-plot!(n -> ecdf(numtrials_phack_like_lmlrhack_exact)(n), 0, N; label="p-hacking like the above (exact)", ls=:dash)
-plot!(n -> ecdf(numtrials_phack_like_lmlrhack_normal)(n), 0, N; label="p-hacking like the above (normal dist. approx.)", ls=:dashdot)
+plot!(n -> ecdf(numtrials_bfhack)(n), 0, N; label="Bayes factor hacking")
+plot!(n -> ecdf(numtrials_phack_like_bfhack_exact)(n), 0, N; label="p-hacking like the above (exact)", ls=:dash)
+plot!(n -> ecdf(numtrials_phack_like_bfhack_normal)(n), 0, N; label="p-hacking like the above (normal dist. approx.)", ls=:dashdot)
 title!("ecdf(number of trials),  threshold = $threshold"; titlefontsize=12)
 
 Q = plot(Beta(a, b), 0.001, 0.999; label="")
-title!("prior = Beta($a, $a)"; titlefontsize=12)
+title!("prior = Beta($a, $b)"; titlefontsize=12)
 
 plot(P, Q; size=(640, 800), layout=(2, 1))
 
 # %%
 N, threshold = 5000, 10
 a, b = 10, 10
-numtrials_lmlrhack = try_bfhacking(N, 0.5; threshold, a, b)
-numtrials_phack_like_lmlrhack_exact = try_phacking_like_bfhacking(pvalue_exact, N, 0.5; threshold)
-numtrials_phack_like_lmlrhack_normal = try_phacking_like_bfhacking(pvalue_normal, N, 0.5; threshold)
+numtrials_bfhack = try_bfhacking(N, 0.5; threshold, a, b)
+numtrials_phack_like_bfhack_exact = try_phacking_like_bfhacking(pvalue_exact, N, 0.5; threshold)
+numtrials_phack_like_bfhack_normal = try_phacking_like_bfhacking(pvalue_normal, N, 0.5; threshold)
 
 P = plot(; legend=:bottomright)
-plot!(n -> ecdf(numtrials_lmlrhack)(n), 0, N; label="Bayes factor hacking")
-plot!(n -> ecdf(numtrials_phack_like_lmlrhack_exact)(n), 0, N; label="p-hacking like the above (exact)", ls=:dash)
-plot!(n -> ecdf(numtrials_phack_like_lmlrhack_normal)(n), 0, N; label="p-hacking like the above (normal dist. approx.)", ls=:dashdot)
+plot!(n -> ecdf(numtrials_bfhack)(n), 0, N; label="Bayes factor hacking")
+plot!(n -> ecdf(numtrials_phack_like_bfhack_exact)(n), 0, N; label="p-hacking like the above (exact)", ls=:dash)
+plot!(n -> ecdf(numtrials_phack_like_bfhack_normal)(n), 0, N; label="p-hacking like the above (normal dist. approx.)", ls=:dashdot)
 title!("ecdf(number of trials),  threshold = $threshold"; titlefontsize=12)
 
 Q = plot(Beta(a, b); label="")
-title!("prior = Beta($a, $a)"; titlefontsize=12)
+title!("prior = Beta($a, $b)"; titlefontsize=12)
+
+plot(P, Q; size=(640, 800), layout=(2, 1))
+
+# %%
+N, threshold = 5000, 10
+a, b = 5, 15
+numtrials_bfhack = try_bfhacking(N, 0.5; threshold, a, b)
+numtrials_phack_like_bfhack_exact = try_phacking_like_bfhacking(pvalue_exact, N, 0.5; threshold)
+numtrials_phack_like_bfhack_normal = try_phacking_like_bfhacking(pvalue_normal, N, 0.5; threshold)
+
+P = plot(; legend=:bottomright)
+plot!(n -> ecdf(numtrials_bfhack)(n), 0, N; label="Bayes factor hacking")
+plot!(n -> ecdf(numtrials_phack_like_bfhack_exact)(n), 0, N; label="p-hacking like the above (exact)", ls=:dash)
+plot!(n -> ecdf(numtrials_phack_like_bfhack_normal)(n), 0, N; label="p-hacking like the above (normal dist. approx.)", ls=:dashdot)
+title!("ecdf(number of trials),  threshold = $threshold"; titlefontsize=12)
+
+Q = plot(Beta(a, b); label="")
+title!("prior = Beta($a, $b)"; titlefontsize=12)
 
 plot(P, Q; size=(640, 800), layout=(2, 1))
 
