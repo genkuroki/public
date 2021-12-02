@@ -114,3 +114,10 @@ var.u
 @code_warntype Q.main()
 
 # %%
+u = Q.OffsetVector{ComplexF64}(undef, -2:2)
+u
+
+# %%
+typeof(u)
+
+# %%
