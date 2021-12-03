@@ -136,11 +136,41 @@ numtrials_phack_normal = phacking(pvalue_normal, 10^3, 0.5)
 [(n, ecdf(numtrials_phack_normal)(n)) for n in (10, 100, 1000)]
 
 # %%
-plot(; legend=:bottomright)
-plot!(n -> ecdf(numtrials_bhack)(n), 0, 10^3; label="Bayes hacking", xtick=0:100:1000)
-plot!(n -> ecdf(numtrials_phack_exact)(n), 0, 10^3; label="p-hacking (exact p-value)", xtick=0:100:1000, ls=:dash)
-plot!(n -> ecdf(numtrials_phack_normal)(n), 0, 10^3; label="p-hacking (normal dist. approx.)", xtick=0:100:1000, ls=:dashdot)
-title!("ecdf(number of trials)"; titlefontsize=12)
+"""ベイズ信頼区間ハックをプロット"""
+function plot_bhack(; N=10^3, p=0.5, α = 0.05, L = 10^4, a = 1, b = a, kwargs...)
+    numtrials_bhack = bayeshacking(N, p; α, L, a, b)
+    numtrials_phack_exact = phacking(pvalue_exact, N, p; α, L)
+    numtrials_phack_normal = phacking(pvalue_normal, N, p; α, L)
+    
+    P = plot(; legend=:bottomright)
+    plot!(n -> ecdf(numtrials_bhack)(n), 0, N; label="Bayes hacking")
+    plot!(n -> ecdf(numtrials_phack_exact)(n), 0, N; label="p-hacking (exact p-value)", ls=:dash)
+    plot!(n -> ecdf(numtrials_phack_normal)(n), 0,N; label="p-hacking (normal dist. approx.)", ls=:dashdot)
+    title!("ecdf(number of trials),  α = $α"; titlefontsize=12)
+    plot!(; xlabel="n", ylabel="P(number of trials when stopped ≤ n)", guidefontsize=10)
+    plot!(; kwargs...)
+
+    Q = plot(Beta(a, b); ylim=(0, maximum(x -> pdf(Beta(a, b), x), 0.001:0.001:0.999) + 1), label="")
+    plot!(; xtick=0:0.1:1, xlabel="parameter", ylabel="probability density")
+    title!("prior = Beta($a, $b)"; titlefontsize=12)
+
+    plot(P, Q; size=(640, 800), layout=(2, 1), leftmargin=2Plots.mm)
+end
+
+# %%
+plot_bhack(; N=10^3, p=0.5, α = 0.05, a = 1, b = 1, xtick=0:100:1000)
+
+# %%
+plot_bhack(; N=10^3, p=0.5, α = 0.05, a = 0.5, b = 0.5, xtick=0:100:1000)
+
+# %%
+plot_bhack(; N=10^3, p=0.5, α = 0.05, a = 0.1, b = 0.1, xtick=0:100:1000)
+
+# %%
+plot_bhack(; N=10^3, p=0.5, α = 0.05, a = 10, b = 10, xtick=0:100:1000)
+
+# %%
+plot_bhack(; N=10^3, p=0.5, α = 0.05, a = 5, b = 15, xtick=0:100:1000)
 
 # %% [markdown]
 # Stirlingの公式を使った計算によって, $k = np$ のとき, $n\to\infty$ で
@@ -255,11 +285,17 @@ function plot_bfhacking(; N=5000, p=0.5, threshold=10, L=10^4, a=1, b=a)
     plot(P, Q; size=(640, 800), layout=(2, 1), leftmargin=2Plots.mm)
 end
 
+# %% [markdown]
+# threshold = 10 のとき、 Bayes因子 > 10 という条件でデータ取得を止めることに成功する確率は数パーセントのオーダーになっている。これの類似をP値を使ってやっても概ね結果は同じになる。有意水準を
+#
+# $$
+# \alpha_n = \operatorname{ccdf}(\operatorname{Chisq}(1), 2\log(\mathrm{threshold}) + \log n)
+# $$
+#
+# によって $n$ について単調減少するように決めている。
+
 # %%
 plot_bfhacking(; N=5000, p=0.5, threshold=10, a=1, b=1)
-
-# %% [markdown]
-# この場合には threshold = 5 のとき、Bayes因子 > 10 という条件でデータ取得を止めることに成功する確率は数パーセントのオーダーになっている。これの類似をP値を使ってやっても概ね結果は同じになる(有意水準を `α_n = ccdf(Chisq(1), 2log(threshold) + log(n))` によって n について単調減少するように決めている)。
 
 # %%
 plot_bfhacking(; N=5000, p=0.5, threshold=10, a=0.5, b=0.5)
