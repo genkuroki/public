@@ -45,9 +45,7 @@ showimg("image/jpeg", "IMG_2865.jpg"; tag="img width=60%")
 """
 posterior_dist(n, k; a=1, b=a) = Beta(k + a, n - k + b)
 
-"""
-pvalue_bayes(n, p, k; a, b) < α ⇔ p ∉ (ベイズ版100(1-α)%信用区間)
-"""
+"""pvalue_bayes(n, p, k; a, b) < α ⇔ p ∉ (ベイズ版100(1-α)%信用区間)"""
 @memoize function pvalue_bayes(n, p, k; a = 1, b = a)
     posterior = posterior_dist(n, k; a, b)
     v0 = logpdf(posterior, p)
@@ -72,13 +70,13 @@ Bernoulli(p)分布の独立試行をNまで行うとき、
 pがベイズ版信用区間から外れるまでの試行回数をL個計算
 """
 function bayeshacking(N, p; α = 0.05, L = 10^4, a = 1, b = a)
-    numtrials = fill(N + 1, L)
-    Threads.@threads for i in 1:L
+    numtrials = fill(N + 1, L) # N＋１で埋め尽くされた長さLのベクトル
+    Threads.@threads for i in 1:L # 並列のでL回のシミュレーションを実行
         k = 0
-        for n in 1:N
-            k += rand(Bernoulli(p))
-            if pvalue_bayes(n, p, k; a, b) < α
-                numtrials[i] = n
+        for n in 1:N # ベルヌイ試行回数nの最大値はN
+            k += rand(Bernoulli(p)) # kに1または0を足す。1を足す確率はp.
+            if pvalue_bayes(n, p, k; a, b) < α # もしもpの値がベイズ信用区間を外れたら
+                numtrials[i] = n  # n回で目的を達成したことを記録に残す
                 break
             end
         end
@@ -115,13 +113,13 @@ Bernoulli(p)分布の独立試行をNまで行うとき、
 P値がα未満になるまでの試行回数をL個計算
 """
 function phacking(pvalue_func, N, p; α = 0.05, L = 10^4)
-    numtrials = fill(N + 1, L)
-    Threads.@threads for i in 1:L
+    numtrials = fill(N + 1, L) # N＋１で埋め尽くされた長さLのベクトル
+    Threads.@threads for i in 1:L # 並列のでL回のシミュレーションを実行
         k = 0
-        for n in 1:N
-            k += rand(Bernoulli(p))
-            if pvalue_func(n, p, k) < α
-                numtrials[i] = n
+        for n in 1:N # ベルヌイ試行回数nの最大値はN
+            k += rand(Bernoulli(p)) # kに1または0を足す。1を足す確率はp.
+            if pvalue_func(n, p, k) < α # もしもpのP値が有意水準を下回ったら
+                numtrials[i] = n # n回で目的を達成したことを記録に残す
                 break
             end
         end
@@ -144,148 +142,6 @@ plot!(n -> ecdf(numtrials_phack_exact)(n), 0, 10^3; label="p-hacking (exact p-va
 plot!(n -> ecdf(numtrials_phack_normal)(n), 0, 10^3; label="p-hacking (normal dist. approx.)", xtick=0:100:1000, ls=:dashdot)
 title!("ecdf(number of trials)"; titlefontsize=12)
 
-# %%
-"""
-対数周辺尤度比 (χ²分布のスケールに合わせるために2倍しておく)
-Bayes因子 = exp(logmarginallikrat(n, p, k; a, b)/2)
-"""
-@memoize function logmarginallikrat(n, p, k; a=1, b=a)
-    logmarginallik = 2(logbeta(k + a, n - k + b) - logbeta(a, b))
-    logmarginallik0 = 2(safemul(k, log(p)) + safemul(n - k, log(1 - p)))
-    logmarginallik - logmarginallik0
-end
-
-"""
-Bayes因子ハッキングに挑戦
-Bayes因子 > threshold となるまでデータを取得し続ける。
-"""
-function try_bfhacking(N, p; threshold=10, L=10^4, a=1, b=a)
-    numtrials = fill(N + 1, L)
-    Threads.@threads for i in 1:L
-        k = 0
-        for n in 1:N
-            k += rand(Bernoulli(p))
-            if logmarginallikrat(n, p, k; a, b) > 2log(threshold)
-                numtrials[i] = n
-                break
-            end
-        end
-    end
-    numtrials
-end
-
-"""
-Bayes因子ハッキングに類似のpハッキングに挑戦
-"""
-function try_phacking_like_bfhacking(pvalue_func, N, p; threshold=10, L=10^4)
-    numtrials = fill(N + 1, L)
-    Threads.@threads for i in 1:L
-        k = 0
-        for n in 1:N
-            k += rand(Bernoulli(p))
-            α_n = ccdf(Chisq(1), 2log(threshold) + log(n))
-            if pvalue_func(n, p, k) < α_n
-                numtrials[i] = n
-                break
-            end
-        end
-    end
-    numtrials
-end
-
-# %%
-N, threshold = 5000, 10
-a, b = 1, 1
-numtrials_bfhack = try_bfhacking(N, 0.5; threshold, a, b)
-numtrials_phack_like_bfhack_exact = try_phacking_like_bfhacking(pvalue_exact, N, 0.5; threshold)
-numtrials_phack_like_bfhack_normal = try_phacking_like_bfhacking(pvalue_normal, N, 0.5; threshold)
-
-P = plot(; legend=:bottomright)
-plot!(n -> ecdf(numtrials_bfhack)(n), 0, N; label="Bayes factor hacking")
-plot!(n -> ecdf(numtrials_phack_like_bfhack_exact)(n), 0, N; label="p-hacking like the above (exact)", ls=:dash)
-plot!(n -> ecdf(numtrials_phack_like_bfhack_normal)(n), 0, N; label="p-hacking like the above (normal dist. approx.)", ls=:dashdot)
-title!("ecdf(number of trials),  threshold = $threshold"; titlefontsize=12)
-
-Q = plot(Beta(a, b); ylim=(0, 2), label="")
-title!("prior = Beta($a, $b)"; titlefontsize=12)
-
-plot(P, Q; size=(640, 800), layout=(2, 1))
-
-# %% [markdown]
-# この場合には threshold = 5 のとき、Bayes因子 > 10 という条件でデータ取得を止めることに成功する確率は数パーセントのオーダーになっている。これの類似をP値を使ってやっても概ね結果は同じになる(有意水準を `α_n = ccdf(Chisq(1), 2log(threshold) + log(n))` によって n について単調減少するように決めている)。
-
-# %%
-N, threshold = 5000, 10
-a, b = 0.5, 0.5
-numtrials_bfhack = try_bfhacking(N, 0.5; threshold, a, b)
-numtrials_phack_like_bfhack_exact = try_phacking_like_bfhacking(pvalue_exact, N, 0.5; threshold)
-numtrials_phack_like_bfhack_normal = try_phacking_like_bfhacking(pvalue_normal, N, 0.5; threshold)
-
-P = plot(; legend=:bottomright)
-plot!(n -> ecdf(numtrials_bfhack)(n), 0, N; label="Bayes factor hacking")
-plot!(n -> ecdf(numtrials_phack_like_bfhack_exact)(n), 0, N; label="p-hacking like the above (exact)", ls=:dash)
-plot!(n -> ecdf(numtrials_phack_like_bfhack_normal)(n), 0, N; label="p-hacking like the above (normal dist. approx.)", ls=:dashdot)
-title!("ecdf(number of trials),  threshold = $threshold"; titlefontsize=12)
-
-Q = plot(Beta(a, b), 0.001, 0.999; label="")
-title!("prior = Beta($a, $b)"; titlefontsize=12)
-
-plot(P, Q; size=(640, 800), layout=(2, 1))
-
-# %%
-N, threshold = 5000, 10
-a, b = 0.1, 0.1
-numtrials_bfhack = try_bfhacking(N, 0.5; threshold, a, b)
-numtrials_phack_like_bfhack_exact = try_phacking_like_bfhacking(pvalue_exact, N, 0.5; threshold)
-numtrials_phack_like_bfhack_normal = try_phacking_like_bfhacking(pvalue_normal, N, 0.5; threshold)
-
-P = plot(; legend=:bottomright)
-plot!(n -> ecdf(numtrials_bfhack)(n), 0, N; label="Bayes factor hacking")
-plot!(n -> ecdf(numtrials_phack_like_bfhack_exact)(n), 0, N; label="p-hacking like the above (exact)", ls=:dash)
-plot!(n -> ecdf(numtrials_phack_like_bfhack_normal)(n), 0, N; label="p-hacking like the above (normal dist. approx.)", ls=:dashdot)
-title!("ecdf(number of trials),  threshold = $threshold"; titlefontsize=12)
-
-Q = plot(Beta(a, b), 0.001, 0.999; label="")
-title!("prior = Beta($a, $b)"; titlefontsize=12)
-
-plot(P, Q; size=(640, 800), layout=(2, 1))
-
-# %%
-N, threshold = 5000, 10
-a, b = 10, 10
-numtrials_bfhack = try_bfhacking(N, 0.5; threshold, a, b)
-numtrials_phack_like_bfhack_exact = try_phacking_like_bfhacking(pvalue_exact, N, 0.5; threshold)
-numtrials_phack_like_bfhack_normal = try_phacking_like_bfhacking(pvalue_normal, N, 0.5; threshold)
-
-P = plot(; legend=:bottomright)
-plot!(n -> ecdf(numtrials_bfhack)(n), 0, N; label="Bayes factor hacking")
-plot!(n -> ecdf(numtrials_phack_like_bfhack_exact)(n), 0, N; label="p-hacking like the above (exact)", ls=:dash)
-plot!(n -> ecdf(numtrials_phack_like_bfhack_normal)(n), 0, N; label="p-hacking like the above (normal dist. approx.)", ls=:dashdot)
-title!("ecdf(number of trials),  threshold = $threshold"; titlefontsize=12)
-
-Q = plot(Beta(a, b); label="")
-title!("prior = Beta($a, $b)"; titlefontsize=12)
-
-plot(P, Q; size=(640, 800), layout=(2, 1))
-
-# %%
-N, threshold = 5000, 10
-a, b = 5, 15
-numtrials_bfhack = try_bfhacking(N, 0.5; threshold, a, b)
-numtrials_phack_like_bfhack_exact = try_phacking_like_bfhacking(pvalue_exact, N, 0.5; threshold)
-numtrials_phack_like_bfhack_normal = try_phacking_like_bfhacking(pvalue_normal, N, 0.5; threshold)
-
-P = plot(; legend=:bottomright)
-plot!(n -> ecdf(numtrials_bfhack)(n), 0, N; label="Bayes factor hacking")
-plot!(n -> ecdf(numtrials_phack_like_bfhack_exact)(n), 0, N; label="p-hacking like the above (exact)", ls=:dash)
-plot!(n -> ecdf(numtrials_phack_like_bfhack_normal)(n), 0, N; label="p-hacking like the above (normal dist. approx.)", ls=:dashdot)
-title!("ecdf(number of trials),  threshold = $threshold"; titlefontsize=12)
-
-Q = plot(Beta(a, b); label="")
-title!("prior = Beta($a, $b)"; titlefontsize=12)
-
-plot(P, Q; size=(640, 800), layout=(2, 1))
-
 # %% [markdown]
 # Stirlingの公式を使った計算によって, $k = np$ のとき, $n\to\infty$ で
 #
@@ -301,13 +157,30 @@ plot(P, Q; size=(640, 800), layout=(2, 1))
 # 右辺は対数周辺尤度比の漸近挙動であり, $-(1/2)\log n + \mathrm{const.}$ の形をしている. 実際にはχ²分布のスケールに合わせるために２倍してあったことに注意せよ. そのおかげで, `k` が `Binomial(n, p)` 分布に従う確率変数のとき `logmarginallikrat(n, p, k; a, b)` はその最小値(上の２倍)と自由度１のχ²分布に従う確率変数の和に近似的に等しい.
 
 # %%
+"""
+対数周辺尤度比 (χ²分布のスケールに合わせるために2倍しておく)
+Bayes因子 = exp(logmarginallikrat(n, p, k; a, b)/2)
+"""
+@memoize function logmarginallikrat(n, p, k; a=1, b=a)
+    logmarginallik = 2(logbeta(k + a, n - k + b) - logbeta(a, b))
+    logmarginallik0 = 2(safemul(k, log(p)) + safemul(n - k, log(1 - p)))
+    logmarginallik - logmarginallik0
+end
+
+"""`logmarginallikrat(n, p, k; a, b)` の最小値の定数項"""
+lmlr_min_const(n, p; a=1, b=a) = 2(a*log(p) + b*log(1-p) - 1/2*log(p*(1-p)/(2π)) - logbeta(a, b))
+
+"""`logmarginallikrat(n, p, k; a, b)` の最小値の対数項＋定数項"""
+lmlr_min_approx(n, p; a=1, b=a) = -log(n) + lmlr_min_const(n, p; a, b)
+
+"""`logmarginallikrat(n, p, k; a, b)` の分布のプロット"""
 function plot_ecdflmlr(n, p=0.5; L=10^4, a=1, b=a)
     k = rand(Binomial(n, p), L)
     lmlr = @. logmarginallikrat(n, p, k; a, b)
     @show lmlr_min = logmarginallikrat.(n, p, n*p; a, b)
-    @show 2(a*log(p) + b*log(1-p) - 1/2*log(n*p*(1-p)/(2π)) - logbeta(a, b))
+    @show lmlr_min_approx(n, p; a, b)
     @show -log(n)
-    @show 2(a*log(p) + b*log(1-p) - 1/2*log(p*(1-p)/(2π)) - logbeta(a, b))
+    @show lmlr_min_const(n, p; a, b)
     lmlrmmin = lmlr .- lmlr_min
     plot(; legend=:bottomright)
     plot!(x -> ecdf(lmlrmmin)(x), 0, 8; label="ecdf(log marginal likelihood ratios - min)")
@@ -323,5 +196,81 @@ plot_ecdflmlr(100)
 
 # %%
 plot_ecdflmlr(1000)
+
+# %%
+"""
+Bayes因子ハッキングに挑戦
+Bayes因子 > threshold となるまでデータを取得し続ける。
+"""
+function try_bfhacking(N, p; threshold=10, L=10^4, a=1, b=a)
+    numtrials = fill(N + 1, L) # N＋１で埋め尽くされた長さLのベクトル
+    Threads.@threads for i in 1:L # 並列のでL回のシミュレーションを実行
+        k = 0
+        for n in 1:N # ベルヌイ試行回数nの最大値はN
+            k += rand(Bernoulli(p)) # kに1または0を足す。1を足す確率はp.
+            if logmarginallikrat(n, p, k; a, b) > 2log(threshold) # もしもベイズ因子が閾値を超えたら
+                numtrials[i] = n # n回で目的を達成したこ"""logmarginallikrat(n, p, k; a, b)の最小値の定数項
+                break
+            end
+        end
+    end
+    numtrials
+end
+
+"""Bayes因子ハッキングに類似のpハッキングに挑戦"""
+function try_phacking_like_bfhacking(pvalue_func, N, p; threshold=10, L=10^4, a=1, b=a)
+    numtrials = fill(N + 1, L) # N＋１で埋め尽くされた長さLのベクトル
+    Threads.@threads for i in 1:L # 並列のでL回のシミュレーションを実行
+        k = 0
+        for n in 1:N # ベルヌイ試行回数nの最大値はN
+            k += rand(Bernoulli(p)) # kに1または0を足す。1を足す確率はp.
+            chisqthreshold_n = 2log(threshold) + log(n)
+            α_n = ccdf(Chisq(1), chisqthreshold_n) # nごとに有意水準を設定する
+            if pvalue_func(n, p, k) < α_n # もしもpのP値が有意水準を下回ったら
+                numtrials[i] = n # n回で目的を達成したことを記録に残す
+                break
+            end
+        end
+    end
+    numtrials
+end
+
+"""ベイズ因子ハッキングへの挑戦の様子をプロット"""
+function plot_bfhacking(; N=5000, p=0.5, threshold=10, L=10^4, a=1, b=a)
+    numtrials_bfhack = try_bfhacking(N, 0.5; threshold, L, a, b)
+    numtrials_phack_like_bfhack_exact = try_phacking_like_bfhacking(pvalue_exact, N, 0.5; threshold, L, a, b)
+    numtrials_phack_like_bfhack_normal = try_phacking_like_bfhacking(pvalue_normal, N, 0.5; threshold, L, a, b)
+
+    P = plot(; legend=:bottomright)
+    plot!(n -> ecdf(numtrials_bfhack)(n), 0, N; label="Bayes factor hacking")
+    plot!(n -> ecdf(numtrials_phack_like_bfhack_exact)(n), 0, N; label="p-hacking like the above (exact)", ls=:dash)
+    plot!(n -> ecdf(numtrials_phack_like_bfhack_normal)(n), 0, N; label="p-hacking like the above (normal dist. approx.)", ls=:dashdot)
+    title!("ecdf(number of trials),  threshold = $threshold"; titlefontsize=12)
+    plot!(; xlabel="n", ylabel="P(number of trials when stopped ≤ n)", guidefontsize=10)
+
+    Q = plot(Beta(a, b); ylim=(0, maximum(x -> pdf(Beta(a, b), x), 0.001:0.001:0.999) + 1), label="")
+    plot!(; xtick=0:0.1:1, xlabel="parameter", ylabel="probability density")
+    title!("prior = Beta($a, $b)"; titlefontsize=12)
+
+    plot(P, Q; size=(640, 800), layout=(2, 1), leftmargin=2Plots.mm)
+end
+
+# %%
+plot_bfhacking(; N=5000, p=0.5, threshold=10, a=1, b=1)
+
+# %% [markdown]
+# この場合には threshold = 5 のとき、Bayes因子 > 10 という条件でデータ取得を止めることに成功する確率は数パーセントのオーダーになっている。これの類似をP値を使ってやっても概ね結果は同じになる(有意水準を `α_n = ccdf(Chisq(1), 2log(threshold) + log(n))` によって n について単調減少するように決めている)。
+
+# %%
+plot_bfhacking(; N=5000, p=0.5, threshold=10, a=0.5, b=0.5)
+
+# %%
+plot_bfhacking(; N=5000, p=0.5, threshold=10, a=0.1, b=0.1)
+
+# %%
+plot_bfhacking(; N=5000, p=0.5, threshold=10, a=10, b=10)
+
+# %%
+plot_bfhacking(; N=5000, p=0.5, threshold=10, a=5, b=15)
 
 # %%
