@@ -286,4 +286,42 @@ title!("prior = Beta($a, $b)"; titlefontsize=12)
 
 plot(P, Q; size=(640, 800), layout=(2, 1))
 
+# %% [markdown]
+# Stirlingの公式を使った計算によって, $k = np$ のとき, $n\to\infty$ で
+#
+# $$
+# \begin{aligned}
+# \text{log(marginal likelihood ratio)} &=
+# \log B(k+a, n-k+b) - \log B(a, b)) - \log(p^k(1-p)^{n-p}
+# \\ &=
+# a\log p + b\log(1-p) - \frac{1}{2}\log\frac{np(1-p)}{2\pi} - \log B(a, b) + o(1)
+# \end{aligned}
+# $$
+#
+# 右辺は対数周辺尤度比の漸近挙動であり, $-(1/2)\log n + \mathrm{const.}$ の形をしている. 実際にはχ²分布のスケールに合わせるために２倍してあったことに注意せよ. そのおかげで, `k` が `Binomial(n, p)` 分布に従う確率変数のとき `logmarginallikrat(n, p, k; a, b)` はその最小値(上の２倍)と自由度１のχ²分布に従う確率変数の和に近似的に等しい.
+
+# %%
+function plot_ecdflmlr(n, p=0.5; L=10^4, a=1, b=a)
+    k = rand(Binomial(n, p), L)
+    lmlr = @. logmarginallikrat(n, p, k; a, b)
+    @show lmlr_min = logmarginallikrat.(n, p, n*p; a, b)
+    @show 2(a*log(p) + b*log(1-p) - 1/2*log(n*p*(1-p)/(2π)) - logbeta(a, b))
+    @show -log(n)
+    @show 2(a*log(p) + b*log(1-p) - 1/2*log(p*(1-p)/(2π)) - logbeta(a, b))
+    lmlrmmin = lmlr .- lmlr_min
+    plot(; legend=:bottomright)
+    plot!(x -> ecdf(lmlrmmin)(x), 0, 8; label="ecdf(log marginal likelihood ratios - min)")
+    plot!(x -> cdf(Chisq(1), x); label="cdf(Chisq(1), x)")
+    title!("n = $n,  p = $p,  prior = Beta($a, $b)"; titlefontsize=12)
+end
+
+# %%
+plot_ecdflmlr(10)
+
+# %%
+plot_ecdflmlr(100)
+
+# %%
+plot_ecdflmlr(1000)
+
 # %%
