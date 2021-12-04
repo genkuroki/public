@@ -9,9 +9,9 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.10.3
 #   kernelspec:
-#     display_name: Julia 1.6.4
+#     display_name: Julia 1.7.0
 #     language: julia
-#     name: julia-1.6
+#     name: julia-1.7
 # ---
 
 # %% [markdown]
@@ -19,6 +19,11 @@
 #
 # * 黒木玄
 # * 2020-11-05, 2021-11-28
+# * [nbviewer](https://nbviewer.org/github/genkuroki/public/blob/main/0025/%E6%AD%A2%E3%82%81%E6%96%B9%E3%81%A7%E7%B5%90%E6%9E%9C%E3%81%8C%E5%A4%89%E3%82%8F%E3%82%8B%EF%BC%9F.ipynb)
+#
+# 関連ノートブック
+#
+# * [ベイズハッキング](https://nbviewer.org/github/genkuroki/public/blob/main/0025/Bayes%20hacking.ipynb)
 #
 # **元ネタ:**
 #
@@ -80,6 +85,19 @@
 # (2) 固定された $k$ について, ちょうど $k$ 回表が出るまでコインを投げた回数がちょうど $n$ 回というデータが得られたとき, 片側検定のP値は形式的に事前分布を $\operatorname{Beta}(0, 0)$ にした場合の事後分布において帰無仮説が成立している確率に等しい.
 #
 # この意味で $n$ を固定する場合と $k$ を固定する場合の異なるデータの取り方に関するP値の違いは, 対応するBayes統計においては形式的な(improperな)事前分布の取り方の違いにちょうど対応している.
+
+# %%
+using Base64
+showimg(mime, fn; tag="img") = open(fn) do f
+    base64 = base64encode(f)
+    display("text/html", """<$tag src="data:$mime;base64,$base64" />""")
+end
+
+# %%
+showimg("image/jpeg", "IMG_2889.jpg"; tag="img width=70%")
+
+# %%
+showimg("image/jpeg", "IMG_2890.jpg"; tag="img width=70%")
 
 # %% [markdown] toc=true
 # <h1>Table of Contents<span class="tocSkip"></span></h1>

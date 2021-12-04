@@ -14,6 +14,17 @@
 #     name: julia-1.7
 # ---
 
+# %% [markdown]
+# # ベイズハッキング
+#
+# * 黒木玄
+# * 2021-12-04
+# * [nbviewer](https://nbviewer.org/github/genkuroki/public/blob/main/0025/Bayes%20hacking.ipynb)
+#
+# 関連ノートブック
+#
+# * [止め方で結果が変わる？.ipynb](https://nbviewer.org/github/genkuroki/public/blob/main/0025/%E6%AD%A2%E3%82%81%E6%96%B9%E3%81%A7%E7%B5%90%E6%9E%9C%E3%81%8C%E5%A4%89%E3%82%8F%E3%82%8B%EF%BC%9F.ipynb)
+
 # %%
 using Distributions
 using StatsPlots
