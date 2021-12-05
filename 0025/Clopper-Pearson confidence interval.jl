@@ -249,7 +249,7 @@ end
 end
 
 # %%
-# confidence_interval(pvalue_dos, n, k) と confidence_interval(pvalue_dos, n, k) が等しいことの確認
+# confidence_interval(pvalue_dos, n, k) と confidence_interval_dos(n, k) が等しいことの確認
 
 [(k, confidence_interval(pvalue_dos, 10, k) .≈ confidence_interval_dos(10, k)) for k in 0:10]
 
@@ -265,6 +265,38 @@ methods(confidence_interval)
 # 多重ディスパッチによる効率化の確認
 
 @which confidence_interval(pvalue_dos, 10, 1)
+
+# %%
+"""与えられたデータに対するP値函数と信頼区間のプロット"""
+function plot_pvalue_funcs(n, k, α = 0.05)
+    m = k/n
+    s = √(m*(1 - m)/n)
+    a, b = max(0, m - 4s), min(1, m + 4s)
+    θ = range(a, b; length=1000)
+    p_exact = pvalue_exact.(n, k, θ)
+    p_dos   = pvalue_dos.(n, k, θ)
+    
+    ci_exact = confidence_interval(pvalue_exact, n, k, α) |> collect
+    ci_dos   = confidence_interval(pvalue_dos,   n, k, α) |> collect
+    
+    plot(;)
+    plot!(θ, p_exact; label="pvalue_exact")
+    plot!(θ, p_dos; label="pvalue_dos", ls=:dash)
+    plot!(ci_exact, fill(α + 0.005, 2); label="CI for pvalue_exact", c=:blue, lw=2.5)
+    plot!(ci_dos,   fill(α - 0.005, 2); label="CI for pvalue_dos", c=:red, lw=2.5, ls=:dash)
+    plot!(; ytick=0:0.05:1)
+    plot!(; xlabel="θ", ylabel="P-value")
+    title!("n = $n, k = $k, α = $α"; titlefontsize=12)
+end
+
+# %%
+plot_pvalue_funcs(10, 4)
+
+# %%
+plot_pvalue_funcs(100, 40)
+
+# %%
+plot_pvalue_funcs(1000, 400)
 
 # %%
 """有効サポート"""
