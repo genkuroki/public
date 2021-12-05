@@ -51,8 +51,11 @@ using StatsFuns: logistic, logit
 # \end{aligned}
 # $$
 #
-# 前者の公式は二項分布 $\on{Binomial}(n, \theta)$ において $k$ 以下になる確率とimproper共役事前分布 $\on{Beta}(1, 0)$ と「$n$ 回中 $k$ 回成功」というデータから決まるBernoulli分布モデルの事後分布においてパラメータ値が $\theta$ 以上になる確率が等しいことを意味している. 後者の公式は前者から導かれる. これらの公式は片側検定に関する通常のP値がimproper共役事前分布を用いたベイズ統計の事後分布における確率にぴったり等しいことを意味している.
+# 前者の公式の左辺は二項分布 $\on{Binomial}(n, \theta)$ において成功回数が $k$ 以下になる確率であり, 「パラメータの値は $\theta$ 以上である」という帰無仮説の片側検定の $P$ 値とみなされる. 前者の公式の右辺はベイズ統計での対応する場合にimproper共役事前分布 $\on{Beta}(1, 0)$ から得られる事後分布で測ったパラメータの値が $\theta$ 以上になる確率になっている. 後者の公式は前者から導かれる. 
 #
+# これらの公式は片側検定に関する通常のP値とimproper共役事前分布を用いたベイズ統計の事後分布で測った帰無仮説が成立する確率がぴったり等しいことを意味している.
+
+# %% [markdown]
 # 上の結果を使うと二項分布モデルでの片側検定のP値の2倍で定義した両側検定のP値
 #
 # $$
@@ -84,7 +87,7 @@ using StatsFuns: logistic, logit
 # %%
 @memoize function pvalue_dos_naive(n, k, θ)
     bin = Binomial(n, θ)
-    min(1, 2cdf(bin, k), 2ccdf(bin, k-1))
+    min(1, 2sum(pdf(bin, j) for j in 0:k), 2sum(pdf(bin, j) for j in k:n))
 end
 
 @memoize function pvalue_dos(n, k, θ)
@@ -94,7 +97,7 @@ end
 end
 
 # %%
-# ２つのP値函数が一致することの確認
+# 二項分布モデルにおける両側検定の２つのP値函数が一致することの確認
 
 n = 10
 k = 0:n
@@ -106,7 +109,58 @@ p1 = pvalue_dos_naive.(n, k, θ')
 p2 = pvalue_dos.(n, k, θ')
 
 # %%
-p1 - p2
+p1 .≈ p2
+
+# %% [markdown]
+# __注意:__ 上と同様に右辺の部分積分の繰り返しによって次の公式も示すことができる:
+#
+# $$
+# \sum_{m=n}^\infty \binom{m-1}{k-1} \theta^k (1 - \theta)^{m-k} =
+# \frac
+# {\int_\theta^1 t^{k-1} (1 - t)^{(n-k)-1}\, dt}
+# {B(k, n-k)}
+# \quad (n \ge k \ge 1,\ 0 < \theta \le 1).
+# $$
+#
+# 左辺の $\binom{m-1}{k-1} \theta^k (1 - \theta)^{m-k}$ は成功確率を意味するパラメータの値が $\theta$ のBernoulli試行をちょうど $k$ 回成功するまで繰り返したときの試行回数がちょうど $m$ 回になる確率なので, 左辺の和はちょうど $k$ 回の成功するまでの試行回数が $n$ 回以上になる確率になっており, 「パラメータの値は $\theta$ 以上である」という帰無仮説の片側検定の $P$ 値とみなされる.  右辺はベイズ統計での対応する場合にimproper事前分布 $\on{Beta}(0, 0)$ から得られる事後分布で測ったパラメータの値が $\theta$ 以上になる確率になっている.
+#
+# この公式も片側検定に関する通常のP値とimproper共役事前分布を用いたベイズ統計の事後分布で測った帰無仮説が成立する確率がぴったり等しくなっていることを意味している.
+
+# %% [markdown]
+# `Distributions.jl` における負の二項分布の定義は以下の通り:
+#
+# $$
+# \on{pdf}(\on{NegativeBinomial}(r, \theta), k) = \binom{k+r-1}{k} p^r (1 - p)^k \quad (k=0,1,2,\ldots).
+# $$
+#
+# ゆえに
+#
+# $$
+# \on{pdf}(\on{NegativeBinomial}(k, \theta), m-k) =
+# \binom{m-1}{m-k} \theta^k (1 - \theta)^{m-k} =
+# \binom{m-1}{k-1} \theta^k (1 - \theta)^{m-k} \quad (m\ge k).
+# $$
+
+# %%
+@memoize pvalue_negbin_naive(n, k, θ) =
+    1 - sum(pdf(NegativeBinomial(k, θ), m - k) for m in k:n-1)
+
+@memoize pvalue_negbin(n, k, θ) = ccdf(Beta(k, n-k), θ)
+
+# %%
+# 負の二項分布モデルでの片側検定に関する2つのP値函数が一致することの確認
+
+k = 5
+n = k+1:15
+θ = 0.1:0.1:1
+
+p1 = pvalue_negbin_naive.(n, k, θ')
+
+# %%
+p2 = pvalue_negbin.(n, k, θ')
+
+# %%
+p1 .≈ p2
 
 # %% [markdown]
 # 上の片側確率の2倍版と異なる二項分布の両側検定のP値を次のように定めることもできる:
