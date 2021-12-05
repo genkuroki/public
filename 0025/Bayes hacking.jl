@@ -23,7 +23,8 @@
 #
 # 関連ノートブック
 #
-# * [止め方で結果が変わる？.ipynb](https://nbviewer.org/github/genkuroki/public/blob/main/0025/%E6%AD%A2%E3%82%81%E6%96%B9%E3%81%A7%E7%B5%90%E6%9E%9C%E3%81%8C%E5%A4%89%E3%82%8F%E3%82%8B%EF%BC%9F.ipynb)
+# * [止め方で結果が変わる？](https://nbviewer.org/github/genkuroki/public/blob/main/0025/%E6%AD%A2%E3%82%81%E6%96%B9%E3%81%A7%E7%B5%90%E6%9E%9C%E3%81%8C%E5%A4%89%E3%82%8F%E3%82%8B%EF%BC%9F.ipynb)
+# * [Clopper-Pearsonの信頼区間](https://nbviewer.org/github/genkuroki/public/blob/main/0025/Clopper-Pearson%20confidence%20interval.ipynb)
 
 # %%
 using Distributions

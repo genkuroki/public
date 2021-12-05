@@ -24,6 +24,7 @@
 # 関連ノートブック
 #
 # * [ベイズハッキング](https://nbviewer.org/github/genkuroki/public/blob/main/0025/Bayes%20hacking.ipynb)
+# * [Clopper-Pearsonの信頼区間](https://nbviewer.org/github/genkuroki/public/blob/main/0025/Clopper-Pearson%20confidence%20interval.ipynb)
 #
 # **元ネタ:**
 #
