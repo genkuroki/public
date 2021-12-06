@@ -146,7 +146,7 @@ plot!(S12; label="s12", c=3)
 hline!([inv(A)[1,2]]; label="", c=3, ls=:dash)
 
 # %% [markdown]
-# ## φ(x) = a(x - 1)²
+# ## φ(x) = a(x² - 1)²
 
 # %%
 ϕ4(x, a) = a * (x[1]^2 - 1)^2
