@@ -210,94 +210,6 @@ end
 #========================================================================================#
 
 # %%
-# Revised 2
-
-using Plots
-using Random
-using Distributions
-using QuadGK
-
-#============関数定義============================================#
-function action(x)
-    x^2/2
-end
-
-function deriv_action(x)
-    x
-end
-
-function hamiltonian(x,p)
-    action(x) + 0.5*p*p
-end
-
-function HMC_update(x,Nt,dt)
-    #backup
-    x_old = x
-    p     = rand(Normal(0,1))
-    
-    #check
-    H_ini = hamiltonian(x,p)
-    x, p = molecular_dynamics!(x,p,Nt,dt)     # <========== ここ
-    H_fin = hamiltonian(x,p)
-    
-    r  = rand()
-    ΔH = H_fin-H_ini
-    if r < exp(-ΔH)
-        return x,1 #accept
-    else 
-        return x_old,0
-    end  
-end
-
-function molecular_dynamics!(x,p,Nt,dt)
-    p -= deriv_action(x) * dt/2
-    x += p * dt
-    for j in 2:Nt
-        p -= deriv_action(x) * dt
-        x += p * dt
-    end
-    p -= deriv_action(x) * dt/2
-    return x, p                    # <========== ここ
-end
-#============関数終わり============================================#
-
-#============計算=========================================================================#
-  #セットアップ
-    Ntest        = 300000
-    Nt           = 20
-    dt           = 1.0/Nt
-    conf_vec     = zeros(Ntest)
-    accept_count = 0
-    ret          = 0
-    x            = 0.0
-
-    sumxx        = 0.0
-    sumx         = 0.0
-
-  #計算
-    for i=1:Ntest
-        x,ret         = HMC_update(x,Nt,dt)
-        accept_count += ret
-        conf_vec[i]   = x
-    
-        sumx         += x
-        sumxx        += x*x
-    end
-
-    println("P(accept) = $(accept_count/Ntest)")
-    println("<x>       = $(sumx/Ntest)")
-    println("<xx>      = $(sumxx/Ntest)")
-
-#=======確認=============================================================================#
-    xr = range(-2,2,length=1000)
-    f(x) = exp(-action(x))
-    Z,error1 = quadgk(f,-Inf,Inf)
-    g(x) = f(x)/Z
-    histogram(conf_vec,norm=:true,label="data")
-    plot!(xr,g1.(xr),lw=3,label="exp(-action(x))/Z", legend=:outertop)
-#========================================================================================#
-
-# %%
 # Revised 1 - second test
 
 using Plots
@@ -387,6 +299,182 @@ end
     Z,error1 = quadgk(f,-Inf,Inf)
     g(x) = f(x)/Z
     histogram(conf_vec,norm=:true,label="data")
+    plot!(xr,g.(xr),lw=3,label="exp(-action(x))/Z", legend=:outertop)
+#========================================================================================#
+
+# %%
+# Revised 2
+
+using Plots
+using Random
+using Distributions
+using QuadGK
+
+#============関数定義============================================#
+function action(x)
+    x^2/2
+end
+
+function deriv_action(x)
+    x
+end
+
+function hamiltonian(x,p)
+    action(x) + 0.5*p*p
+end
+
+function HMC_update(x,Nt,dt)
+    #backup
+    x_old = x
+    p     = rand(Normal(0,1))
+    
+    #check
+    H_ini = hamiltonian(x,p)
+    x, p = molecular_dynamics!(x,p,Nt,dt)     # <========== ここ
+    H_fin = hamiltonian(x,p)
+    
+    r  = rand()
+    ΔH = H_fin-H_ini
+    if r < exp(-ΔH)
+        return x,1 #accept
+    else 
+        return x_old,0
+    end  
+end
+
+function molecular_dynamics!(x,p,Nt,dt)
+    p -= deriv_action(x) * dt/2
+    x += p * dt
+    for j in 2:Nt
+        p -= deriv_action(x) * dt
+        x += p * dt
+    end
+    p -= deriv_action(x) * dt/2
+    return x, p                    # <========== ここ
+end
+#============関数終わり============================================#
+
+#============計算=========================================================================#
+  #セットアップ
+    Ntest        = 300000
+    Nt           = 20
+    dt           = 1.0/Nt
+    conf_vec     = zeros(Ntest)
+    accept_count = 0
+    ret          = 0
+    x            = 0.0
+
+    sumxx        = 0.0
+    sumx         = 0.0
+
+  #計算
+    for i=1:Ntest
+        x,ret         = HMC_update(x,Nt,dt)
+        accept_count += ret
+        conf_vec[i]   = x
+    
+        sumx         += x
+        sumxx        += x*x
+    end
+
+    println("P(accept) = $(accept_count/Ntest)")
+    println("<x>       = $(sumx/Ntest)")
+    println("<xx>      = $(sumxx/Ntest)")
+
+#=======確認=============================================================================#
+    xr = range(-5,5,length=1000)
+    f(x) = exp(-action(x))
+    Z,error1 = quadgk(f,-Inf,Inf)
+    g(x) = f(x)/Z
+    histogram(conf_vec,norm=:true,label="data",alpha=0.3,bin=100)
+    plot!(xr,g.(xr),lw=3,label="exp(-action(x))/Z", legend=:outertop)
+#========================================================================================#
+
+# %%
+# Revised 2 - second test
+
+using Plots
+using Random
+using Distributions
+using QuadGK
+
+#============関数定義============================================#
+function action(x)
+    3(x^2 - 1)^2
+end
+
+function deriv_action(x)
+    6x*(x^2 - 1)
+end
+
+function hamiltonian(x,p)
+    action(x) + 0.5*p*p
+end
+
+function HMC_update(x,Nt,dt)
+    #backup
+    x_old = x
+    p     = rand(Normal(0,1))
+    
+    #check
+    H_ini = hamiltonian(x,p)
+    x, p = molecular_dynamics!(x,p,Nt,dt)     # <========== ここ
+    H_fin = hamiltonian(x,p)
+    
+    r  = rand()
+    ΔH = H_fin-H_ini
+    if r < exp(-ΔH)
+        return x,1 #accept
+    else 
+        return x_old,0
+    end  
+end
+
+function molecular_dynamics!(x,p,Nt,dt)
+    p -= deriv_action(x) * dt/2
+    x += p * dt
+    for j in 2:Nt
+        p -= deriv_action(x) * dt
+        x += p * dt
+    end
+    p -= deriv_action(x) * dt/2
+    return x, p                    # <========== ここ
+end
+#============関数終わり============================================#
+
+#============計算=========================================================================#
+  #セットアップ
+    Ntest        = 300000
+    Nt           = 20
+    dt           = 1.0/Nt
+    conf_vec     = zeros(Ntest)
+    accept_count = 0
+    ret          = 0
+    x            = 0.0
+
+    sumxx        = 0.0
+    sumx         = 0.0
+
+  #計算
+    for i=1:Ntest
+        x,ret         = HMC_update(x,Nt,dt)
+        accept_count += ret
+        conf_vec[i]   = x
+    
+        sumx         += x
+        sumxx        += x*x
+    end
+
+    println("P(accept) = $(accept_count/Ntest)")
+    println("<x>       = $(sumx/Ntest)")
+    println("<xx>      = $(sumxx/Ntest)")
+
+#=======確認=============================================================================#
+    xr = range(-2,2,length=1000)
+    f(x) = exp(-action(x))
+    Z,error1 = quadgk(f,-Inf,Inf)
+    g(x) = f(x)/Z
+    histogram(conf_vec,norm=:true,label="data",alpha=0.3,bin=100)
     plot!(xr,g.(xr),lw=3,label="exp(-action(x))/Z", legend=:outertop)
 #========================================================================================#
 
