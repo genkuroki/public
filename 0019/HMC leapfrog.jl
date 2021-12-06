@@ -7,9 +7,9 @@
 #       extension: .jl
 #       format_name: hydrogen
 #       format_version: '1.3'
-#       jupytext_version: 1.11.2
+#       jupytext_version: 1.10.3
 #   kernelspec:
-#     display_name: Julia 1.6.2
+#     display_name: Julia 1.6.4
 #     language: julia
 #     name: julia-1.6
 # ---

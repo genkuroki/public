@@ -7,9 +7,9 @@
 #       extension: .jl
 #       format_name: hydrogen
 #       format_version: '1.3'
-#       jupytext_version: 1.11.2
+#       jupytext_version: 1.10.3
 #   kernelspec:
-#     display_name: Julia 1.6.2
+#     display_name: Julia 1.6.4
 #     language: julia
 #     name: julia-1.6
 # ---
@@ -57,8 +57,7 @@ end
     v = SVector{dim}(randn!(rng, vtmp))
     xnew, vnew = solve(lf, x, v, param)
     dH = H(xnew, vnew, param) - H(x, v, param)
-    alpha = min(1, exp(-dH))
-    rand(rng) ≤ alpha ? xnew : x
+    rand(rng) ≤ exp(-dH) ? xnew : x
 end
 
 """Hamiltonian Monte Carlo"""
