@@ -7,11 +7,11 @@
 #       extension: .jl
 #       format_name: hydrogen
 #       format_version: '1.3'
-#       jupytext_version: 1.11.2
+#       jupytext_version: 1.10.3
 #   kernelspec:
-#     display_name: Julia 1.8.0-DEV
+#     display_name: Julia 1.7.0
 #     language: julia
-#     name: julia-1.8
+#     name: julia-1.7
 # ---
 
 # %%
@@ -87,5 +87,61 @@ Q = plot(x -> cdf(mixnormal, x), -5, 15; label="mixnormal")
 plot!(x -> cdf(normal, x), -5, 15; label="normal approx.", ls=:dash)
 title!("cdfs"; legend=:bottomright)
 plot(P, Q; size=(720, 300))
+
+# %%
+model = Normal()
+@show model
+μ, σ² = mean(model), var(model)
+PP = []
+for n in (5, 10, 20, 100)
+    Z = [(mean(rand(model, n)) - μ)/√(σ²/n) for _ in 1:10^5]
+    P = histogram(Z; norm=true, alpha=0.3, bin = -3.5:0.1:6, label="")
+    plot!(x -> pdf(Normal(), x); label="", ls=:dash, lw=1.5)
+    title!("sample size n = $n")
+    push!(PP, P)
+end
+plot(PP...; size=(800, 600), layout=(2, 2), titlefontsize=11)
+
+# %%
+model = Uniform()
+@show model
+μ, σ² = mean(model), var(model)
+PP = []
+for n in (5, 10, 20, 100)
+    Z = [(mean(rand(model, n)) - μ)/√(σ²/n) for _ in 1:10^5]
+    P = histogram(Z; norm=true, alpha=0.3, bin = -3.5:0.1:6, label="")
+    plot!(x -> pdf(Normal(), x); label="", ls=:dash, lw=1.5)
+    title!("sample size n = $n")
+    push!(PP, P)
+end
+plot(PP...; size=(800, 600), layout=(2, 2), titlefontsize=11)
+
+# %%
+model = Exponential()
+@show model
+μ, σ² = mean(model), var(model)
+PP = []
+for n in (5, 10, 20, 100)
+    Z = [(mean(rand(model, n)) - μ)/√(σ²/n) for _ in 1:10^5]
+    P = histogram(Z; norm=true, alpha=0.3, bin = -3.5:0.1:6, label="")
+    plot!(x -> pdf(Normal(), x); label="", ls=:dash, lw=1.5)
+    title!("sample size n = $n")
+    push!(PP, P)
+end
+plot(PP...; size=(800, 600), layout=(2, 2), titlefontsize=11)
+
+# %%
+model = MixtureModel([Normal(), Normal(10, 1)], [0.95, 0.05])
+@show model
+μ, σ² = mean(model), var(model)
+PP = []
+for n in (5, 10, 20, 100)
+    Z = [(mean(rand(model, n)) - μ)/√(σ²/n) for _ in 1:10^5]
+    P = histogram(Z; norm=true, alpha=0.3, bin = -3.5:0.1:6, label="")
+    plot!(x -> pdf(Normal(), x); label="", ls=:dash, lw=1.5)
+    title!("sample size n = $n")
+    push!(PP, P)
+end
+plot(PP...; size=(800, 600), layout=(2, 2), titlefontsize=11)
 
 # %%
