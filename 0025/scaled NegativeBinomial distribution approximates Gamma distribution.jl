@@ -50,6 +50,19 @@ plot_scaled_negbin(N = 10)
 # %%
 plot_scaled_negbin(N = 100)
 
+# %%
+α = 3
+θ = 5
+N = 100
+gamma = Gamma(α, θ)
+negbin = LocationScale(0, 1/N, NegativeBinomial(α, 1/(N*θ)))
+X = rand(negbin, 10^5)
+
+xmax = 60
+stephist(X; norm=true, bin=0:xmax, label="NegativeBinomial(r = α, p = 1/(Nθ)) scaled by 1/N")
+plot!(gamma, 0, xmax; label="Gamma(α = $α, θ = $θ)", ls=:dash)
+title!("sample of scaled NegativeBinomial distribution for N = $N"; titlefontsize=10)
+
 # %% [markdown]
 # 二項分布の確率函数は
 #
