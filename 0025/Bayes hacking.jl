@@ -185,6 +185,39 @@ plot_bhack(; N=10^3, p=0.5, α = 0.05, a = 10, b = 10, xtick=0:100:1000)
 plot_bhack(; N=10^3, p=0.5, α = 0.05, a = 5, b = 15, xtick=0:100:1000)
 
 # %% [markdown]
+# 以下では通常のP値とベイズ版でのP値の類似物がほぼ等しくなることを確認しよう.
+
+# %%
+function pvalue_functions(; n = 20, k = 6, a = 1, b = a)
+    m = k/n
+    s = √(m*(1-m)/n)
+    pmin, pmax = max(0.001, m - 4s), min(0.999, m + 4s)
+    p = range(pmin, pmax; length=1000)
+
+    pval_bayes = pvalue_bayes.(n, p, k; a, b)
+    pval_exact = pvalue_exact.(n, p, k)
+    pval_normal = pvalue_normal.(n, p, k)
+
+    plot(;)
+    plot!(p, pval_bayes; label="pvalue_bayes")
+    plot!(p, pval_exact; label="pvalue_exact", ls=:dash)
+    plot!(p, pval_normal; label="pvalue_normal", ls=:dashdot)
+    title!("n = $n,  k = $k,  prior = Beta($a, $b)"; titlefontsize=12)
+end
+
+# %%
+pvalue_functions(n = 10, k = 3)
+
+# %%
+pvalue_functions(n = 20, k = 6)
+
+# %%
+pvalue_functions(n = 50, k = 15)
+
+# %%
+pvalue_functions(n = 100, k = 30)
+
+# %% [markdown]
 # Stirlingの公式を使った計算によって, $k = np$ のとき, $n\to\infty$ で
 #
 # $$
