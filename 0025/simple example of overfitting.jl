@@ -19,19 +19,41 @@ using LinearAlgebra
 using Distributions
 using Plots
 using Random
+using Optim
 
 # %%
+"""最小二乗法による多項式フィッティング"""
 function polynomialfit(x, y, d)
-    X = x .^ (0:d)'
-    β̂ = X \ y   
+    n = length(y)   # データサイズ
+    X = x .^ (0:d)' # design matrix
+    β̂ = X \ y       # Juliaでは X \ y の一発で最小二乗法が可能
     f(x) = evalpoly(x, β̂)
     ŷ = f.(x)
     r = ŷ - y
-    σ̂ = norm(r)/√length(y)
+    σ̂ = norm(r)/√n  # モデルの標準偏差パラメータの推定
     dist = product_distribution([Normal(μ, σ̂) for μ in ŷ])
-    loglik = logpdf(dist, y)
-    AIC = -2loglik + 2(d + 2)
-    (; x, y, d, X, β̂, f, ŷ, r, σ̂, dist, loglik, AIC)
+    loglik = logpdf(dist, y)  # 最大化された対数尤度
+    AIC = -2loglik + 2(d + 2) # 所謂赤池情報量規準
+    (; x, y, d, β̂, σ̂, f, loglik, AIC)
+end
+
+"""optimize函数を使った最尤法による多項式フィッティング"""
+function polynomialfit_optim(x, y, d)
+    negloglik(w) = begin
+        β = @view w[1:end-1]
+        σ = exp(w[end])
+        n = length(y)
+        dist = product_distribution([Normal(evalpoly(x[i], β), σ) for i in 1:n])
+        -loglikelihood(dist, y)
+    end
+    o = optimize(negloglik, zeros(d+2))
+    ŵ = o.minimizer
+    β̂ = ŵ[1:end-1]
+    σ̂ = exp(ŵ[end])
+    loglik = -o.minimum
+    AIC = 2o.minimum + 2(d + 2)
+    f(x) = evalpoly(x, β̂)
+    (; x, y, d, β̂, σ̂, f, loglik, AIC)
 end
 
 function plotpolyfit(result; legend=:topleft, titlefontsize=10, kwargs...)
@@ -45,10 +67,13 @@ function plotpolyfit(result; legend=:topleft, titlefontsize=10, kwargs...)
 end
 
 # %%
+# データの生成
+
 rng = MersenneTwister(1234567890)
 
 x = range(-1, 1; length=21)
-noise = 0.3randn(rng, length(x))
+σ₀ = 0.3
+noise = σ₀*randn(rng, length(x))
 y = sinpi.(x) + noise
 
 xs = range(extrema(x)...; length=1000)
@@ -56,7 +81,21 @@ P = plot(; legend=:topleft)
 scatter!(x, y; label="data")
 plot!(xs, sinpi.(xs); label="sin(πx)")
 title!("data and true law"; titlefontsize=10)
+plot!(; size=(400, 300))
 
+# %%
+β₀ = [isodd(k) ? (-1)^(k÷2)*π^k/factorial(k) : 0.0 for k in 0:3]
+@show β₀ σ₀;
+
+# %%
+(; β̂, σ̂, loglik, AIC) = polynomialfit(x, y, 3)
+@show β̂ σ̂ loglik AIC;
+
+# %%
+(; β̂, σ̂, loglik, AIC) = polynomialfit_optim(x, y, 3)
+@show β̂ σ̂ loglik AIC;
+
+# %%
 Q = plotpolyfit(polynomialfit(x, y, 3))
 R = plotpolyfit(polynomialfit(x, y, 9))
 S = plotpolyfit(polynomialfit(x, y, 15))
