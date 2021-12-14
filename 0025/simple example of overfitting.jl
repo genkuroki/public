@@ -27,11 +27,11 @@ function polynomialfit(x, y, d)
     f(x) = evalpoly(x, β̂)
     ŷ = f.(x)
     r = ŷ - y
-    σ = norm(r)
-    dist = product_distribution([Normal(μ, σ) for μ in ŷ])
+    σ̂ = norm(r)/√length(y)
+    dist = product_distribution([Normal(μ, σ̂) for μ in ŷ])
     loglik = logpdf(dist, y)
     AIC = -2loglik + 2(d + 2)
-    (; x, y, d, X, β̂, f, ŷ, r, σ, dist, loglik, AIC)
+    (; x, y, d, X, β̂, f, ŷ, r, σ̂, dist, loglik, AIC)
 end
 
 function plotpolyfit(result; legend=:topleft, titlefontsize=10, kwargs...)
