@@ -35,19 +35,26 @@ using Roots
 using StatsFuns: logistic, logit
 
 # %% [markdown]
-# 右辺の部分積分の繰り返しによって以下の公式を示すことができる:
+# ## Clopper-Pearsonの信頼区間のP値函数の様々な表示
+#
+# ### 二項分布とベータ分布の関係
+#
+# 右辺の部分積分の繰り返しによって以下の公式を示すことができる(詳しい計算については「[止め方で結果が変わる？](https://nbviewer.org/github/genkuroki/public/blob/main/0025/%E6%AD%A2%E3%82%81%E6%96%B9%E3%81%A7%E7%B5%90%E6%9E%9C%E3%81%8C%E5%A4%89%E3%82%8F%E3%82%8B%EF%BC%9F.ipynb)」を参照):
 #
 # $$
 # \begin{aligned}
-# \sum_{j=0}^k \binom{n}{j} \theta^j (1 - \theta)^{n-j} &=
+# &
+# \sum_{j=0}^k \binom{n}{j} \theta^j (1 - \theta)^{n-j} =
 # \frac
 # {\int_\theta^1 t^{(k+1)-1} (1 - t)^{(n-k)-1}\,dt}
-# {B(k+1, n-k)},
-# \\
-# \sum_{j=k}^n \binom{n}{j} \theta^j (1 - \theta)^{n-j} &=
+# {B(k+1, n-k)} =
+# \on{ccdf}(\on{Beta}(k+1, n-k), \theta),
+# \\ &
+# \sum_{j=k}^n \binom{n}{j} \theta^j (1 - \theta)^{n-j} =
 # \frac
 # {\int_0^\theta t^{k-1} (1 - t)^{(n-k+1)-1}\,dt}
-# {B(k, n-k+1)}.
+# {B(k, n-k+1)} =
+# \on{cdf}(\on{Beta}(k, n-k+1), \theta).
 # \end{aligned}
 # $$
 #
@@ -56,6 +63,8 @@ using StatsFuns: logistic, logit
 # これらの公式は片側検定に関する通常のP値とimproper共役事前分布を用いたベイズ統計の事後分布で測った帰無仮説が成立する確率がぴったり等しいことを意味している.
 
 # %% [markdown]
+# ### ベータ分布を使ったClopper-Pearsonの信頼区間のP値函数の表示
+#
 # 上の結果を使うと二項分布モデルでの片側検定のP値の2倍で定義した両側検定のP値
 #
 # $$
@@ -70,7 +79,8 @@ using StatsFuns: logistic, logit
 # をベータ分布の $\on{cdf}$, $\on{ccdf}$ で表すことができる:
 #
 # $$
-# \on{pvalue\_dos}(n, k, \theta) =
+# \begin{aligned}
+# \on{pvalue\_dos}(n, k, \theta) &=
 # \min\left\{
 # 1,\;
 # 2\frac
@@ -79,10 +89,83 @@ using StatsFuns: logistic, logit
 # 2\frac
 # {\int_0^\theta t^{k-1} (1 - t)^{(n-k+1)-1}\,dt}
 # {B(k, n-k+1)}
-# \right\}.
+# \right\}
+# \\ &=
+# \min\{
+# 1,\;
+# 2\on{ccdf}(\on{Beta}(k+1, n-k), \theta),\;
+# 2\on{cdf}(\on{Beta}(k, n-k+1), \theta)
+# \}.
+# \end{aligned}
 # $$
 #
-# ここで $\on{dos}$ は doubuled one-side の略である.
+# ここで $\on{dos}$ は doubuled one-side の略である. この $\on{pvalue\_dos}(n, k, \theta)$ は __Clopper-Pearsonの信頼区間__ に対応するP値函数になっている.
+
+# %% [markdown]
+# ### F分布とベータ分布の関係
+#
+# 自由度 $\nu_1, \nu_2$ のF分布の確率密度函数の $dx$ 倍は以下のように書ける:
+#
+# $$
+# \on{pdf}(\on{FDist}(\nu_1, \nu_2), x)\,dx = 
+# \frac{1}{B(\nu_1/2, \nu_2/2)}
+# \left(\frac{\nu_1 x}{\nu_1 x + \nu_2}\right)^{\nu_1/2}
+# \left(1 - \frac{\nu_1 x}{\nu_1 x + \nu_2}\right)^{\nu_2/2}
+# x^{-1}
+# \,dx \quad (x > 0).
+# $$
+#
+# これを
+#
+# $$
+# t = \frac{\nu_1 x}{\nu_1 x + \nu_2}, \quad
+# x = \frac{\nu_2}{\nu_1}\frac{t}{1 - t}, \quad 0 < t < 1
+# $$
+#
+# で変数変換すると,
+#
+# $$
+# \begin{aligned}
+# \on{pdf}(\on{FDist}(\nu_1, \nu_2), x)\,dx &=
+# \frac{1}{B(\nu_1/2, \nu_2/2)}
+# t^{\nu_1/2}
+# (1 - t)^{\nu_2/2}
+# \,\frac{\nu_1}{\nu_2}\frac{1-t}{t}
+# \,\frac{\nu_2}{\nu_1}\frac{dt}{(1-t)^2}
+# \\ &=
+# \frac{1}{B(\nu_1/2, \nu_2/2)} t^{\nu_1/2 - 1} (1 - t)^{\nu_2/2 - 1} \,dt
+# \\ &=
+# \on{pdf}(\on{Beta}(\nu_1/2, \nu_2/2), t)\,dt.
+# \end{aligned}
+# $$
+#
+# これは上の変数変換によって, 自由度 $\nu_1, \nu_2$ のF分布がパラメータ $\nu_1/2, \nu_2/2$ のベータ分布に変換されることを意味している. ゆえに
+#
+# $$
+# \theta = \frac{\alpha x}{\alpha x + \beta}, \quad
+# x = \frac{\beta}{\alpha}\frac{\theta}{1 - \theta}
+# $$
+#
+# とおくと,
+#
+# $$
+# \on{cdf}(\on{Beta}(\alpha, \beta), \theta) = \on{cdf}(\on{FDist}(2\alpha, 2\beta), x), \quad
+# \on{ccdf}(\on{Beta}(\alpha, \beta), \theta) = \on{ccdf}(\on{FDist}(2\alpha, 2\beta), x).
+# $$
+
+# %% [markdown]
+# ### F分布を使ったClopper-Pearsonの信頼区間のP値函数の表示
+#
+# 以上の結果を使えば __Clopper-Pearsonの信頼区間__ に対応するP値函数をF分布を使って計算することもできる:
+#
+# $$
+# \on{pvalue\_dos}(n, k, \theta) =
+# \min\begin{Bmatrix}
+# 1 \\
+# 2\on{ccdf}\left(\on{FDist}(2(k+1), 2(n-k)), \frac{n-k}{k+1}\frac{\theta}{1-\theta}\right) \\
+# 2\on{cdf}\left(\on{FDist}(2k, 2(n-k+1)), \frac{n-k+1}{k}\frac{\theta}{1-\theta}\right)
+# \end{Bmatrix}.
+# $$
 
 # %%
 @memoize function pvalue_dos_naive(n, k, θ)
@@ -96,8 +179,16 @@ end
     min(1, 2ccdf(Beta(k+1, n-k), θ), 2cdf(Beta(k, n-k+1), θ))
 end
 
+@memoize function pvalue_dos_fdist(n, k, θ)
+    k ≤ 0 && return min(1, 2ccdf(FDist(2(k+1), 2(n-k)), (n-k)/(k+1)*θ/(1-θ)))
+    k ≥ n && return min(1, 2cdf(FDist(2k, 2(n-k+1)), (n-k+1)/k*θ/(1-θ)))
+    min(1,
+        2ccdf(FDist(2(k+1), 2(n-k)), (n-k)/(k+1)*θ/(1-θ)),
+        2cdf(FDist(2k, 2(n-k+1)), (n-k+1)/k*θ/(1-θ)))
+end
+
 # %%
-# 二項分布モデルにおける両側検定の２つのP値函数が一致することの確認
+# Clopper-Pearsonの信頼区間に対応する3つのP値函数が一致することの確認
 
 n = 10
 k = 0:n
@@ -111,8 +202,16 @@ p2 = pvalue_dos.(n, k, θ')
 # %%
 p1 .≈ p2
 
+# %%
+p3 = pvalue_dos_fdist.(n, k, θ')
+
+# %%
+p3 .≈ p2
+
 # %% [markdown]
-# __注意:__ 上と同様に右辺の部分積分の繰り返しによって次の公式も示すことができる:
+# ### 負の二項分布とベータ分布の関係
+#
+# 上と同様に右辺の部分積分の繰り返しによって次の公式も示すことができる:
 #
 # $$
 # \sum_{m=n}^\infty \binom{m-1}{k-1} \theta^k (1 - \theta)^{m-k} =
@@ -163,11 +262,13 @@ p2 = pvalue_negbin.(n, k, θ')
 p1 .≈ p2
 
 # %% [markdown]
+# ### もう１つのP値函数
+#
 # 上の片側確率の2倍版と異なる二項分布の両側検定のP値を次のように定めることもできる:
 #
 # $$
 # \on{pvalue\_exact}(n, k, \theta) =
-# \sum_{0\le j\le n,\; P(n,j,\theta)\le P(n,k,\theta)} P(n, k, \theta)
+# \sum_{0\le j\le n,\; P(n,j,\theta)\le P(n,k,\theta)} P(n, k, \theta).
 # $$
 #
 # ここで $
@@ -175,7 +276,7 @@ p1 .≈ p2
 # $.
 
 # %%
-x ⪅ y = x < y || x ≈ y
+x ⪅ y = x < y || x ≈ y # 以下の計算で ≤使うと失敗する
 
 @memoize function pvalue_exact(n, k, θ)
     bin = Binomial(n, θ)
@@ -195,6 +296,10 @@ p2 = pvalue_dos.(n, k', θ)
 p1 - p2
 
 # %% [markdown]
+# ## 信頼区間
+#
+# ### P値函数を用いた一般的な信頼区間の定義の仕方
+#
 # これらのＰ値函数 $\on{pvalue\_func} = \on{pvalue\_dos}, \on{pvalue\_exact}$ から信頼度 $1-\alpha$ の信用区間を次のように定義できる:
 #
 # $$
@@ -219,6 +324,8 @@ end
 [(k, confidence_interval(pvalue_exact, 10, k)) for k in 0:10]
 
 # %% [markdown]
+# ### Clopper-Pearsonの信頼区間のベータ分布やF分布を用いた表示
+#
 # 特に $\on{pvalue\_func} = \on{pvalue\_dos}$ の場合には上に述べたことから, 以下が成立することがわかる:
 #
 # $$
@@ -228,18 +335,42 @@ end
 # ここで
 #
 # $$
+# \begin{aligned}
+# &
+# \on{ccdf}(\on{Beta}(k+1, n-k), \theta_U) =
 # \frac
 # {\int_{\theta_U}^1 t^{(k+1)-1} (1 - t)^{(n-k)-1}\,dt}
 # {B(k+1, n-k)} = \frac{\alpha}{2},
-# \quad
+# \\ &
+# \on{cdf}(\on{Beta}(k, n-k+1), \theta_L) =
 # \frac
 # {\int_0^{\theta_L} t^{k-1} (1 - t)^{(n-k+1)-1}\,dt}
 # {B(k, n-k+1)} = \frac{\alpha}{2}.
+# \end{aligned}
 # $$
 #
-# これらを満たす $\theta_L, \theta_U$ はBeta分布に関する $\on{cquantile}$, $\on{quantile}$ 函数で計算できる.
+# これらを満たす $\theta_L, \theta_U$ はBeta分布に関する $\on{cquantile}$, $\on{quantile}$ 函数で計算できる:
 #
-# $\on{confidence\_interval}(\on{pvalue\_dos}, n, k, \alpha)$ を __Clopper-Pearsonの信頼区間__ と呼ぶらしい.
+# $$
+# \theta_U = \on{cquantile}(\on{Beta}(k+1, n-k), \alpha/2), \quad
+# \theta_L = \on{quantile}(\on{Beta}(k, n-k+1), \alpha/2).
+# $$
+#
+# $\on{confidence\_interval}(\on{pvalue\_dos}, n, k, \alpha)$ を __Clopper-Pearsonの信頼区間__ と呼ぶ.
+
+# %% [markdown]
+# Clopper-Pearsonの信頼区間をF分布を用いて表示することもできる:
+#
+# $$
+# \begin{aligned}
+# &
+# \theta_U = \frac{(k+1)x_U}{(k+1)x_U + (n-k)}, \quad
+# x_U = \on{cquantile}(\on{FDist}(2(k+1), 2(n-k)), \alpha/2),
+# \\ &
+# \theta_L = \frac{k x_L}{k x_L + (n-k+1)}, \quad
+# x_L = \on{quantile}(\on{FDist}(2k, 2(n-k+1)), \alpha/2).
+# \end{aligned}
+# $$
 
 # %%
 @memoize function confidence_interval_dos(n, k, α = 0.05)
@@ -248,10 +379,23 @@ end
     (θ_L, θ_U)
 end
 
+@memoize function confidence_interval_dos_fdist(n, k, α = 0.05)
+    x_U = k ≥ n ? 1.0 : cquantile(FDist(2(k+1), 2(n-k)), α/2)
+    x_L = k ≤ 0 ? 0.0 :  quantile(FDist(2k, 2(n-k+1)), α/2)
+    θ_U = (k+1)*x_U/((k+1)*x_U + (n-k))
+    θ_L = k*x_L/(k*x_L + (n-k+1))
+    (θ_L, θ_U)
+end
+
 # %%
 # confidence_interval(pvalue_dos, n, k) と confidence_interval_dos(n, k) が等しいことの確認
 
 [(k, confidence_interval(pvalue_dos, 10, k) .≈ confidence_interval_dos(10, k)) for k in 0:10]
+
+# %%
+# confidence_interval(pvalue_dos, n, k) と confidence_interval_dos_fdist(n, k) が等しいことの確認
+
+[(k, confidence_interval(pvalue_dos, 10, k) .≈ confidence_interval_dos_fdist(10, k)) for k in 0:10]
 
 # %%
 # 多重ディスパッチで効率化 (`find_zeros` 函数による計算は効率が悪い)
@@ -265,6 +409,11 @@ methods(confidence_interval)
 # 多重ディスパッチによる効率化の確認
 
 @which confidence_interval(pvalue_dos, 10, 1)
+
+# %% [markdown]
+# ## P値函数と信頼区間のプロット
+#
+# ### 与えられたデータに対するP値函数と信頼区間のプロット
 
 # %%
 """与えられたデータに対するP値函数と信頼区間のプロット"""
@@ -297,6 +446,9 @@ plot_pvalue_funcs(100, 40)
 
 # %%
 plot_pvalue_funcs(1000, 400)
+
+# %% [markdown]
+# ### 第一種の過誤が生じる確率
 
 # %%
 """有効サポート"""
@@ -355,6 +507,9 @@ end
 
 # %%
 @time plot_prob_typeIerror(1000, 0.4)
+
+# %% [markdown]
+# ### 信頼区間の被覆確率
 
 # %%
 """区間にθが含まれるかどうかを判定する函数"""
