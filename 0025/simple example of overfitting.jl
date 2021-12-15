@@ -116,21 +116,26 @@ plot(P, Q, R, S; size=(800, 600), layout=(2, 2), titlefontsize=9)
 # 最尤法は「最も尤もらしいパラメータ値」を探す方法ではない！
 
 # %%
-result = polynomialfit.(Ref(x), Ref(y), 0:19)
-d = getproperty.(result, :d)
-loglik = getproperty.(result, :loglik)
-AIC = getproperty.(result, :AIC)
-dbest = d[argmin(AIC)]
+function plot_loglikAIC(x, y)
+    result = polynomialfit.(Ref(x), Ref(y), 0:18)
+    d = getproperty.(result, :d)
+    loglik = getproperty.(result, :loglik)
+    AIC = getproperty.(result, :AIC)
+    dbest = d[argmin(AIC)]
 
-T = plot(d, loglik; label="log likelihood", legend=:topleft)
-plot!(; xtick=d, xlabel="degree", ylabel="log likelihood")
-title!("log likelihoods of polynomial fitting"; titlefontsize=10)
+    T = plot(d, loglik; label="log likelihood", legend=:topleft)
+    plot!(; xtick=d, xlabel="degree", ylabel="log likelihood")
+    title!("log likelihoods of polynomial fitting"; titlefontsize=10)
 
-U = plot(d, AIC; label="AIC", legend=:topright)
-plot!(; xtick=d, xlabel="degree", ylabel="AIC")
-title!("AICs of polynomial fitting (minimized at degree $dbest)"; titlefontsize=10)
+    U = plot(d, AIC; label="AIC", legend=:topright)
+    plot!(; xtick=d, xlabel="degree", ylabel="AIC")
+    title!("AICs of polynomial fitting (minimized at degree $dbest)"; titlefontsize=10)
 
-plot(T, U; size=(800, 300), titlefontsize=9, leftmargin=3Plots.mm, bottommargin=3Plots.mm)
+    plot(T, U; size=(800, 300), titlefontsize=9, leftmargin=3Plots.mm, bottommargin=3Plots.mm)
+end
+
+# %%
+plot_loglikAIC(x, y)
 
 # %%
 function animate_polyfit(x, y, d, f₀, σ₀; gifname="polyfit$d.gif", fps=20, ylim=(-10, 45), ytick=-100:5:100)
@@ -188,5 +193,107 @@ animate_polyfit(x, y, 15, f₀, σ₀)
 # %%
 GE₀ = (1/2)*(log(2π*σ₀^2) + σ₀^2/σ₀^2)
 n * GE₀
+
+# %%
+rng = MersenneTwister(1234567891)
+y = f₀.(x) + σ₀*randn(rng, length(x))
+plot_loglikAIC(x, y)
+
+# %%
+animate_polyfit(x, y, 3, f₀, σ₀; gifname="polyfit3a.gif")
+
+# %%
+animate_polyfit(x, y, 5, f₀, σ₀; gifname="polyfit5a.gif")
+
+# %%
+rng = MersenneTwister(1234567892)
+y = f₀.(x) + σ₀*randn(rng, length(x))
+plot_loglikAIC(x, y)
+
+# %%
+animate_polyfit(x, y, 3, f₀, σ₀; gifname="polyfit3b.gif")
+
+# %%
+animate_polyfit(x, y, 5, f₀, σ₀; gifname="polyfit5b.gif")
+
+# %%
+rng = MersenneTwister(1234567893)
+y = f₀.(x) + σ₀*randn(rng, length(x))
+plot_loglikAIC(x, y)
+
+# %%
+animate_polyfit(x, y, 3, f₀, σ₀; gifname="polyfit3c.gif")
+
+# %%
+animate_polyfit(x, y, 5, f₀, σ₀; gifname="polyfit5c.gif")
+
+# %%
+animate_polyfit(x, y, 9, f₀, σ₀; gifname="polyfit9c.gif")
+
+# %%
+rng = MersenneTwister(1234567894)
+y = f₀.(x) + σ₀*randn(rng, length(x))
+plot_loglikAIC(x, y)
+
+# %%
+animate_polyfit(x, y, 3, f₀, σ₀; gifname="polyfit3d.gif")
+
+# %%
+animate_polyfit(x, y, 5, f₀, σ₀; gifname="polyfit5d.gif")
+
+# %%
+rng = MersenneTwister(1234567895)
+y = f₀.(x) + σ₀*randn(rng, length(x))
+plot_loglikAIC(x, y)
+
+# %%
+animate_polyfit(x, y, 3, f₀, σ₀; gifname="polyfit3e.gif")
+
+# %%
+animate_polyfit(x, y, 5, f₀, σ₀; gifname="polyfit5e.gif")
+
+# %%
+rng = MersenneTwister(1234567896)
+y = f₀.(x) + σ₀*randn(rng, length(x))
+plot_loglikAIC(x, y)
+
+# %%
+animate_polyfit(x, y, 3, f₀, σ₀; gifname="polyfit3f.gif")
+
+# %%
+animate_polyfit(x, y, 5, f₀, σ₀; gifname="polyfit5f.gif")
+
+# %%
+rng = MersenneTwister(1234567897)
+y = f₀.(x) + σ₀*randn(rng, length(x))
+plot_loglikAIC(x, y)
+
+# %%
+animate_polyfit(x, y, 3, f₀, σ₀; gifname="polyfit3g.gif")
+
+# %%
+animate_polyfit(x, y, 5, f₀, σ₀; gifname="polyfit5g.gif")
+
+# %%
+rng = MersenneTwister(1234567898)
+y = f₀.(x) + σ₀*randn(rng, length(x))
+plot_loglikAIC(x, y)
+
+# %%
+animate_polyfit(x, y, 3, f₀, σ₀; gifname="polyfit3h.gif")
+
+# %%
+animate_polyfit(x, y, 5, f₀, σ₀; gifname="polyfit5h.gif")
+
+# %%
+rng = MersenneTwister(1234567899)
+y = f₀.(x) + σ₀*randn(rng, length(x))
+plot_loglikAIC(x, y)
+
+# %%
+animate_polyfit(x, y, 3, f₀, σ₀; gifname="polyfit3i.gif")
+
+# %%
+animate_polyfit(x, y, 5, f₀, σ₀; gifname="polyfit5i.gif")
 
 # %%
