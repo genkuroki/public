@@ -132,7 +132,7 @@ title!("AICs of polynomial fitting (minimized at degree $dbest)"; titlefontsize=
 plot(T, U; size=(800, 300), titlefontsize=9, leftmargin=3Plots.mm, bottommargin=3Plots.mm)
 
 # %%
-function animate_polyfit(x, y, d, f₀, σ₀; gifname="polyfit$d.gif", fps=20)
+function animate_polyfit(x, y, d, f₀, σ₀; gifname="polyfit$d.gif", fps=20, ylim=(-8, 28))
     (; x, y, d, negloglik, o) = polynomialfit_optim(x, y, d)
     a, b = extrema(x)
     n = length(y)
@@ -149,7 +149,7 @@ function animate_polyfit(x, y, d, f₀, σ₀; gifname="polyfit$d.gif", fps=20)
     end
 
     xs = range(extrema(x)...; length=1000)
-    ylim = extrema([-value; ngenerr]) .+ (-1, 1)
+    ylim = isnothing(ylim) ? extrema([-value; ngenerr]) .+ (-1, 1) : ylim
     
     L = length(value)
     tstep = max(1, L ÷ 400)
