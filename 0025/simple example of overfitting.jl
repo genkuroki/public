@@ -21,7 +21,6 @@ using Plots
 using Random
 using Optim
 
-# %%
 """最小二乗法による多項式フィッティング"""
 function polynomialfit(x, y, d)
     n = length(y)   # データサイズ
@@ -46,14 +45,14 @@ function polynomialfit_optim(x, y, d)
         dist = product_distribution([Normal(evalpoly(x[i], β), σ) for i in 1:n])
         -loglikelihood(dist, y)
     end
-    o = optimize(negloglik, zeros(d+2))
+    o = optimize(negloglik, zeros(d+2), Optim.Options(store_trace=true, extended_trace = true, iterations = 10^4))
     ŵ = o.minimizer
     β̂ = ŵ[1:end-1]
     σ̂ = exp(ŵ[end])
     loglik = -o.minimum
     AIC = 2o.minimum + 2(d + 2)
     f(x) = evalpoly(x, β̂)
-    (; x, y, d, β̂, σ̂, f, loglik, AIC)
+    (; x, y, d, β̂, σ̂, f, loglik, AIC, negloglik, o)
 end
 
 function plotpolyfit(result; legend=:topleft, titlefontsize=10, kwargs...)
@@ -129,5 +128,42 @@ plot!(; xtick=d, xlabel="degree", ylabel="AIC")
 title!("AICs of polynomial fitting (minimized at degree $dbest)"; titlefontsize=10)
 
 plot(T, U; size=(800, 300), titlefontsize=9, leftmargin=3Plots.mm, bottommargin=3Plots.mm)
+
+# %%
+function animate_polyfit(x, y, d; gifname="polyfit$d.gif", fps=20)
+    (; x, y, d, negloglik, o) = polynomialfit_optim(x, y, d)
+    value = -getproperty.(o.trace, :value)
+    centroid = getindex.(getproperty.(o.trace, :metadata), "centroid")
+
+    xs = range(extrema(x)...; length=1000)
+
+    L = length(value)
+    tstep = max(1, L ÷ 400)
+    
+    anim = @animate for t in [fill(1, fps); 1:tstep:L; fill(L, fps)]
+        β = centroid[t][1:end-1]
+        f(x) = evalpoly(x, β)
+        P = plot(; legend=false)
+        scatter!(x, y)
+        plot!(xs, f.(xs); ylim=(-1.5, 1.5))
+        title!("degree-$d fitting"; titlefontsize=10)
+
+        Q = plot(; legend=false)
+        plot!(value[1:t]; xlim=extrema(axes(value, 1)).+(-10,10), ylim=extrema(value).+(-1,1))
+        title!("log likelihood"; titlefontsize=10)
+
+        plot(P, Q; size=(800, 300))
+    end
+    gif(anim, gifname; fps)
+end
+
+# %%
+animate_polyfit(x, y, 3)
+
+# %%
+animate_polyfit(x, y, 9)
+
+# %%
+animate_polyfit(x, y, 15)
 
 # %%
