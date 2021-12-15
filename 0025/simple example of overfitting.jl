@@ -133,7 +133,7 @@ title!("AICs of polynomial fitting (minimized at degree $dbest)"; titlefontsize=
 plot(T, U; size=(800, 300), titlefontsize=9, leftmargin=3Plots.mm, bottommargin=3Plots.mm)
 
 # %%
-function animate_polyfit(x, y, d, f₀, σ₀; gifname="polyfit$d.gif", fps=20, ylim=(-8, 28))
+function animate_polyfit(x, y, d, f₀, σ₀; gifname="polyfit$d.gif", fps=20, ylim=(-10, 45), ytick=-100:5:100)
     (; x, y, d, negloglik, o) = polynomialfit_optim(x, y, d)
     a, b = extrema(x)
     n = length(y)
@@ -145,7 +145,7 @@ function animate_polyfit(x, y, d, f₀, σ₀; gifname="polyfit$d.gif", fps=20, 
         β = centroid[t][1:end-1]
         f(x) = evalpoly(x, β)
         σ = exp(centroid[t][end])
-        GE = (1/2)*(log(2π*σ^2) + σ₀^2/σ^2 + 1/(b-a)*quadgk(x -> (f(x) - f₀(x))^2, a, b)[1])
+        GE = (1/2)*(log(2π*σ^2) + σ₀^2/σ^2 + (1/σ^2)*1/(b-a)*quadgk(x -> (f(x) - f₀(x))^2, a, b)[1])
         ngenerr[t] = n*GE
     end
 
@@ -163,13 +163,13 @@ function animate_polyfit(x, y, d, f₀, σ₀; gifname="polyfit$d.gif", fps=20, 
         plot!(xs, f.(xs); ylim=(-1.5, 1.5))
         title!("degree-$d fitting of size-$n data"; titlefontsize=10)
 
-        Q = plot(; legend=:topright)
+        Q = plot(; legend=:topleft)
         plot!(-value[1:t]; label="(-1)×(log likelihood)")
         plot!(ngenerr[1:t]; label="n×(generalization error)")
-        plot!(;xlim=extrema(axes(value, 1)).+(-0.05L, 0.05L), ylim)
+        plot!(;xlim=extrema(axes(value, 1)).+(-0.05L, 0.05L), ylim, ytick)
         title!("t = $t"; titlefontsize=10)
 
-        plot(P, Q; size=(800, 300))    end
+        plot(P, Q; size=(800, 400))    end
     gif(anim, gifname; fps)
 end
 
