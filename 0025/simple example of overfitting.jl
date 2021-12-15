@@ -71,7 +71,8 @@ end
 
 rng = MersenneTwister(1234567890)
 
-x = range(-1, 1; length=21)
+n = 21
+x = range(-1, 1; length=n)
 σ₀ = 0.3
 f₀(x) = sinpi(x)
 noise = σ₀*randn(rng, length(x))
@@ -183,5 +184,9 @@ animate_polyfit(x, y, 9, f₀, σ₀)
 
 # %%
 animate_polyfit(x, y, 15, f₀, σ₀)
+
+# %%
+GE₀ = (1/2)*(log(2π*σ₀^2) + σ₀^2/σ₀^2)
+n * GE₀
 
 # %%
