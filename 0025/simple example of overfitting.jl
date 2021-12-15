@@ -20,6 +20,7 @@ using Distributions
 using Plots
 using Random
 using Optim
+using QuadGK
 
 """最小二乗法による多項式フィッティング"""
 function polynomialfit(x, y, d)
@@ -72,8 +73,9 @@ rng = MersenneTwister(1234567890)
 
 x = range(-1, 1; length=21)
 σ₀ = 0.3
+f₀(x) = sinpi(x)
 noise = σ₀*randn(rng, length(x))
-y = sinpi.(x) + noise
+y = f₀.(x) + noise
 
 xs = range(extrema(x)...; length=1000)
 P = plot(; legend=:topleft)
@@ -130,40 +132,56 @@ title!("AICs of polynomial fitting (minimized at degree $dbest)"; titlefontsize=
 plot(T, U; size=(800, 300), titlefontsize=9, leftmargin=3Plots.mm, bottommargin=3Plots.mm)
 
 # %%
-function animate_polyfit(x, y, d; gifname="polyfit$d.gif", fps=20)
+function animate_polyfit(x, y, d, f₀, σ₀; gifname="polyfit$d.gif", fps=20)
     (; x, y, d, negloglik, o) = polynomialfit_optim(x, y, d)
+    a, b = extrema(x)
+    n = length(y)
     value = -getproperty.(o.trace, :value)
     centroid = getindex.(getproperty.(o.trace, :metadata), "centroid")
+    
+    ngenerr = Vector{Float64}(undef, length(centroid))
+    Threads.@threads for t in keys(centroid)
+        β = centroid[t][1:end-1]
+        f(x) = evalpoly(x, β)
+        σ = exp(centroid[t][end])
+        GE = (1/2)*(log(2π*σ^2) + σ₀^2/σ^2 + 1/(b-a)*quadgk(x -> (f(x) - f₀(x))^2, a, b)[1])
+        ngenerr[t] = n*GE
+    end
 
     xs = range(extrema(x)...; length=1000)
-
+    ylim = extrema([-value; ngenerr]) .+ (-1, 1)
+    
     L = length(value)
     tstep = max(1, L ÷ 400)
-    
-    anim = @animate for t in [fill(1, fps); 1:tstep:L; fill(L, fps)]
+
+    anim = @animate for t in [fill(1, fps); 1:tstep:L; fill(L, 3fps)]
         β = centroid[t][1:end-1]
         f(x) = evalpoly(x, β)
         P = plot(; legend=false)
         scatter!(x, y)
         plot!(xs, f.(xs); ylim=(-1.5, 1.5))
-        title!("degree-$d fitting"; titlefontsize=10)
+        title!("degree-$d fitting of size-$n data"; titlefontsize=10)
 
-        Q = plot(; legend=false)
-        plot!(value[1:t]; xlim=extrema(axes(value, 1)).+(-10,10), ylim=extrema(value).+(-1,1))
-        title!("log likelihood"; titlefontsize=10)
+        Q = plot(; legend=:topright)
+        plot!(-value[1:t]; label="(-1)×(log likelihood)")
+        plot!(ngenerr[1:t]; label="n×(generalization error)")
+        plot!(;xlim=extrema(axes(value, 1)).+(-0.05L, 0.05L), ylim)
+        title!("t = $t"; titlefontsize=10)
 
-        plot(P, Q; size=(800, 300))
-    end
+        plot(P, Q; size=(800, 300))    end
     gif(anim, gifname; fps)
 end
 
 # %%
-animate_polyfit(x, y, 3)
+animate_polyfit(x, y, 1, f₀, σ₀)
 
 # %%
-animate_polyfit(x, y, 9)
+animate_polyfit(x, y, 3, f₀, σ₀)
 
 # %%
-animate_polyfit(x, y, 15)
+animate_polyfit(x, y, 9, f₀, σ₀)
+
+# %%
+animate_polyfit(x, y, 15, f₀, σ₀)
 
 # %%
