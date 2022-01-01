@@ -81,7 +81,7 @@ y = rand(mvn_pred)
 plot(; legend=:outertop)
 plot!(x, y; label="", title="sample of predictive distribution")
 scatter!(X, Y; label = "", c=:red)
-plot!(sin, extrema(X)...; label="", c=:orange)
+plot!(x, sin.(x); label="", c=:orange)
 ```
 
 ```julia
@@ -91,7 +91,7 @@ y = rand(mvn_pred, nsamples)
 plot(; title="$nsamples samples of predictive distribution")
 plot!(x, y; label="", lw=0.3, alpha=0.5)
 scatter!(X, Y; label = "", c=:red)
-plot!(sin, extrema(X)...; label="", c=:orange)
+plot!(x, sin.(x); label="", c=:orange)
 ```
 
 ```julia
@@ -99,7 +99,7 @@ s = diag(Σ)
 plot(; title="μ ± 2σ interval of predictive distribution")
 plot!(x, [μ μ]; label="", fillrange=[μ-2s μ+2s], c=1, fillalpha=0.2)
 scatter!(X, Y; label = "", c=:red)
-plot!(sin, extrema(X)...; label="", c=:orange)
+plot!(x, sin.(x); label="", c=:orange)
 ```
 
 ```julia
