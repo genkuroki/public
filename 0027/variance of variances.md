@@ -13,11 +13,56 @@ jupyter:
     name: julia-1.7
 ---
 
+# 不偏分散の分散と標本分散の平均二乗誤差
+
+* 黒木玄
+* 2022-01-24
+
+$
+\newcommand\var{\operatorname{var}}
+$
+
+$X_1, X_2, \ldots, X_n$ はその各々が分散 $\sigma^2$ と尖度 $\kappa$ (正規分布で0になるようにしたもの, kurtosis)を持つ分布に従う独立同分布確率変数達であるとする。このとき, その標本平均 $\bar{X}$, 不偏分散 $U$ と標本分散 $V$ が次のように定義される:
+
+$$
+\bar{X} = \frac{1}{n}\sum_{i=1}^n X_i, \quad
+U = \frac{1}{n-1}\sum_{i=1}^n (X_i - \bar{X})^2, \quad
+V = \frac{1}{n}\sum_{i=1}^n (X_i - \bar{X})^2 = \frac{n-1}{n}U.
+$$
+
+
+このとき, $\var(\bar{X}) = E[(\bar{X}-\mu)^2] = {\sigma^2}/{n}$ でかつ, 
+
+$$
+E[U] = \sigma^2, \quad
+\var(U) = \sigma^4\left(\frac{\kappa+3}{n} - \frac{n-3}{n(n-1)}\right), \quad
+E\left[\left(V - \sigma^2\right)^2\right] = \left(\frac{n-1}{n}\right)^2 \var(U) + \frac{\sigma^4}{n^2}.
+$$
+
+ゆえに
+
+$$
+\var(U) - E\left[\left(V - \sigma^2\right)^2\right] =
+\frac{\sigma^4}{n^2}
+\left(\left(2 - \frac{1}{n}\right)(\kappa + 3) - \left(3 - \frac{5n-3}{n(n-1)}\right)\right).
+$$
+
+
+これより, $\kappa > -\dfrac{3}{2}$ ならば十分大きな $n$ について $\var(U) > E\left[\left(V - \sigma^2\right)^2\right]$.
+
+
+正規分布の場合には $\kappa = 0$ となるので,
+
+$$
+\var(U) = \frac{2\sigma^4}{n-1}, \quad
+\var(U) - E\left[\left(V - \sigma^2\right)^2\right] = \frac{(3n - 1)\sigma^4}{n^2(n-1)} > 0.
+$$
+
 ```julia
 using Random
 using Distributions
-using Plots
-plot(sin)
+using StatsPlots
+plot(TDist(1), -6, 6; size=(200, 150))
 ```
 
 ```julia
