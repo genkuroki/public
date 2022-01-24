@@ -65,7 +65,7 @@ $$
 帰無仮説 $\theta = \theta_0$, 対立仮説 $\theta \ne \theta_0$ の一様最強力不偏検定の検定函数(データ $x$ に対して帰無仮説 $\theta = \theta_0$ の棄却確率を返す函数)は以下の形で与えられることが知られている:
 
 $$
-\phi(x) =
+\phi(x|\theta_0) =
 \begin{cases}
 1 & (x < a\; \text{or}\; b < x) \\
 r_a & (x = a) \\
@@ -77,8 +77,8 @@ $$
 ここで $a < b$ と $0\le r_a, r_b\le 1$ は次の条件で特徴付けられる:
 
 $$
-E[\phi(X)|\theta_0] = \alpha, \quad
-\left.\frac{\partial}{\partial\theta}\right|_{\theta=\theta_0} E[\phi(X)|\theta] = 0.
+E[\phi(X|\theta_0)|\theta_0] = \alpha, \quad
+\left.\frac{\partial}{\partial\theta}\right|_{\theta=\theta_0} E[\phi(X|\theta_0)|\theta] = 0.
 $$
 
 これらの等式は以下のように書き下される:
@@ -98,7 +98,7 @@ $$
 
 $$
 a P(a|\theta_0) r_a + b P(b|\theta_0) r_b + \sum_{x < a\; \text{or}\; b < x} x P(x|\theta_0) =
-E[X|\theta_0]E[\phi(X)|\theta_0] = \alpha E[X|\theta_0].
+E[X|\theta_0]E[\phi(X|\theta_0)|\theta_0] = \alpha E[X|\theta_0].
 $$
 
 
@@ -498,6 +498,159 @@ plot_bintest_powers(
     test1 = (n, k, p, α) -> umpu(Binomial(n, p), α)(k),           title1 = "umpu",
     test2 = (n, k, p, α) -> pval_eqtailed(Binomial(n, p), k) < α, title2 = "eqtailed",
 )
+```
+
+```julia
+function plot_bintest_phi(ϕ, n; kwargs...)
+    x = 0:n
+    θ = 0.001:0.001:0.999
+    z = ϕ.(x', n, θ)
+    heatmap(x, θ, z; ylim=(0, 1), kwargs...)
+end
+```
+
+```julia
+n = 10
+α = 0.05
+
+P1 = plot_bintest_phi((x, n, θ) -> umpu(Binomial(n, θ), α)(x), n; 
+    size=(400, 400), colorbar=false, c=:CMRmap, xtick=0:n, ytick=0:0.1:1,
+    xlabel="x", ylabel="θ")
+
+P2 = plot_bintest_phi((x, n, θ) -> pval_normal(Binomial(n, θ), x) < α, n; 
+    size=(400, 400), colorbar=false, c=:CMRmap, xtick=0:n, ytick=0:0.1:1,
+    xlabel="x", ylabel="θ")
+
+P3 = plot_bintest_phi((x, n, θ) -> pval_exact(Binomial(n, θ), x) < α, n; 
+    size=(400, 400), colorbar=false, c=:CMRmap, xtick=0:n, ytick=0:0.1:1,
+    xlabel="x", ylabel="θ")
+
+P4 = plot_bintest_phi((x, n, θ) -> pval_eqtailed(Binomial(n, θ), x) < α, n; 
+    size=(400, 400), colorbar=false, c=:CMRmap, xtick=0:n, ytick=0:0.1:1,
+    xlabel="x", ylabel="θ")
+
+plot(P1, P2, P3, P4; size=(640, 640))
+#plot!(; tickfontsize=5)
+```
+
+```julia
+n = 10
+α = 0.05
+
+P1 = plot_bintest_phi((x, n, θ) -> 1 - umpu(Binomial(n, θ), α)(x), n; clim=(0, 1),
+    size=(400, 400), colorbar=false, c=:CMRmap, xtick=0:n, ytick=0:0.1:1,
+    xlabel="x", ylabel="θ")
+
+P2 = plot_bintest_phi((x, n, θ) -> pval_normal(Binomial(n, θ), x), n; clim=(-0.1, 1),
+    size=(400, 400), colorbar=false, c=:CMRmap, xtick=0:n, ytick=0:0.1:1,
+    xlabel="x", ylabel="θ")
+
+P3 = plot_bintest_phi((x, n, θ) -> pval_exact(Binomial(n, θ), x), n; clim=(-0.1, 1),
+    size=(400, 400), colorbar=false, c=:CMRmap, xtick=0:n, ytick=0:0.1:1,
+    xlabel="x", ylabel="θ")
+
+P4 = plot_bintest_phi((x, n, θ) -> pval_eqtailed(Binomial(n, θ), x), n; clim=(-0.1, 1),
+    size=(400, 400), colorbar=false, c=:CMRmap, xtick=0:n, ytick=0:0.1:1,
+    xlabel="x", ylabel="θ")
+
+plot(P1, P2, P3, P4; size=(640, 640))
+#plot!(; tickfontsize=5)
+```
+
+```julia
+n = 20
+α = 0.05
+
+P1 = plot_bintest_phi((x, n, θ) -> umpu(Binomial(n, θ), α)(x), n; 
+    size=(400, 400), colorbar=false, c=:CMRmap, xtick=0:n, ytick=0:0.1:1,
+    xlabel="x", ylabel="θ")
+
+P2 = plot_bintest_phi((x, n, θ) -> pval_normal(Binomial(n, θ), x) < α, n; 
+    size=(400, 400), colorbar=false, c=:CMRmap, xtick=0:n, ytick=0:0.1:1,
+    xlabel="x", ylabel="θ")
+
+P3 = plot_bintest_phi((x, n, θ) -> pval_exact(Binomial(n, θ), x) < α, n; 
+    size=(400, 400), colorbar=false, c=:CMRmap, xtick=0:n, ytick=0:0.1:1,
+    xlabel="x", ylabel="θ")
+
+P4 = plot_bintest_phi((x, n, θ) -> pval_eqtailed(Binomial(n, θ), x) < α, n; 
+    size=(400, 400), colorbar=false, c=:CMRmap, xtick=0:n, ytick=0:0.1:1,
+    xlabel="x", ylabel="θ")
+
+plot(P1, P2, P3, P4; size=(640, 640))
+plot!(; tickfontsize=5)
+```
+
+```julia
+n = 20
+α = 0.05
+
+P1 = plot_bintest_phi((x, n, θ) -> 1 - umpu(Binomial(n, θ), α)(x), n; clim=(0, 1),
+    size=(400, 400), colorbar=false, c=:CMRmap, xtick=0:n, ytick=0:0.1:1,
+    xlabel="x", ylabel="θ")
+
+P2 = plot_bintest_phi((x, n, θ) -> pval_normal(Binomial(n, θ), x), n; clim=(-0.1, 1),
+    size=(400, 400), colorbar=false, c=:CMRmap, xtick=0:n, ytick=0:0.1:1,
+    xlabel="x", ylabel="θ")
+
+P3 = plot_bintest_phi((x, n, θ) -> pval_exact(Binomial(n, θ), x), n; clim=(-0.1, 1),
+    size=(400, 400), colorbar=false, c=:CMRmap, xtick=0:n, ytick=0:0.1:1,
+    xlabel="x", ylabel="θ")
+
+P4 = plot_bintest_phi((x, n, θ) -> pval_eqtailed(Binomial(n, θ), x), n; clim=(-0.1, 1),
+    size=(400, 400), colorbar=false, c=:CMRmap, xtick=0:n, ytick=0:0.1:1,
+    xlabel="x", ylabel="θ")
+
+plot(P1, P2, P3, P4; size=(640, 640))
+plot!(; tickfontsize=5)
+```
+
+```julia
+n = 100
+α = 0.05
+
+P1 = plot_bintest_phi((x, n, θ) -> umpu(Binomial(n, θ), α)(x), n; 
+    size=(400, 400), colorbar=false, c=:CMRmap, ytick=0:0.1:1,
+    xlabel="x", ylabel="θ")
+
+P2 = plot_bintest_phi((x, n, θ) -> pval_normal(Binomial(n, θ), x) < α, n; 
+    size=(400, 400), colorbar=false, c=:CMRmap, ytick=0:0.1:1,
+    xlabel="x", ylabel="θ")
+
+P3 = plot_bintest_phi((x, n, θ) -> pval_exact(Binomial(n, θ), x) < α, n; 
+    size=(400, 400), colorbar=false, c=:CMRmap, ytick=0:0.1:1,
+    xlabel="x", ylabel="θ")
+
+P4 = plot_bintest_phi((x, n, θ) -> pval_eqtailed(Binomial(n, θ), x) < α, n; 
+    size=(400, 400), colorbar=false, c=:CMRmap, ytick=0:0.1:1,
+    xlabel="x", ylabel="θ")
+
+plot(P1, P2, P3, P4; size=(640, 640))
+plot!(; tickfontsize=5)
+```
+
+```julia
+n = 100
+α = 0.05
+
+P1 = plot_bintest_phi((x, n, θ) -> 1 - umpu(Binomial(n, θ), α)(x), n; clim=(0, 1),
+    size=(400, 400), colorbar=false, c=:CMRmap, ytick=0:0.1:1,
+    xlabel="x", ylabel="θ")
+
+P2 = plot_bintest_phi((x, n, θ) -> pval_normal(Binomial(n, θ), x), n; clim=(-0.1, 1),
+    size=(400, 400), colorbar=false, c=:CMRmap, ytick=0:0.1:1,
+    xlabel="x", ylabel="θ")
+
+P3 = plot_bintest_phi((x, n, θ) -> pval_exact(Binomial(n, θ), x), n; clim=(-0.1, 1),
+    size=(400, 400), colorbar=false, c=:CMRmap, ytick=0:0.1:1,
+    xlabel="x", ylabel="θ")
+
+P4 = plot_bintest_phi((x, n, θ) -> pval_eqtailed(Binomial(n, θ), x), n; clim=(-0.1, 1),
+    size=(400, 400), colorbar=false, c=:CMRmap, ytick=0:0.1:1,
+    xlabel="x", ylabel="θ")
+
+plot(P1, P2, P3, P4; size=(640, 640))
+plot!(; tickfontsize=5)
 ```
 
 ```julia
