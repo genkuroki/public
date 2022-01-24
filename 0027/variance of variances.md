@@ -78,5 +78,33 @@ vv =  ((n-1)/n)^2 * vu + σ^4/n^2
 ```
 
 ```julia
+skewness(Normal()), skewness(Gamma(20, 1)), skewness(InverseGamma(20, 1))
+```
+
+```julia
+kurtosis(Normal()), kurtosis(Gamma(20, 1)), kurtosis(InverseGamma(20, 1)), kurtosis(Laplace())
+```
+
+```julia
+kurtosis(TDist(4.0001)), kurtosis(TDist(10)), kurtosis(TDist(20))
+```
+
+```julia
+skewness(Beta(0.1, 9.9)), skewness(Beta(7, 3)), skewness(Beta(7, 3)), skewness(Beta(9.9, 0.1))
+```
+
+```julia
+kurtosis(Beta(0.1, 9.9)), kurtosis(Beta(7, 3)), kurtosis(Beta(7, 3)), kurtosis(Beta(9.9, 0.1))
+```
+
+```julia
+Binomial.(100, [0.01, 0.3, 0.7, 0.99]) .|> skewness
+```
+
+```julia
+Binomial.(100, [0.01, 0.3, 0.7, 0.99]) .|> kurtosis
+```
+
+```julia
 
 ```
