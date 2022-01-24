@@ -119,8 +119,8 @@ $$
 すなわち, 
 
 $$
-r_a = \frac{P(b|\theta)(b y_1 - y_2)}{(b - a)P(a|\theta_0)P(b|\theta_0)}, \quad
-r_b = \frac{P(a|\theta)(y_2 - a y_1)}{(b - a)P(a|\theta_0)P(b|\theta_0)}.
+r_a = \frac{P(b|\theta_0)(b y_1 - y_2)}{(b - a)P(a|\theta_0)P(b|\theta_0)}, \quad
+r_b = \frac{P(a|\theta_0)(y_2 - a y_1)}{(b - a)P(a|\theta_0)P(b|\theta_0)}.
 $$
 
 これらが $0$ 以上 $1$ 以下になる $a < b$ を探せばよい.
@@ -252,15 +252,35 @@ function verify_umpu(dist, α = 0.05)
     EphiX = sum(x -> phi(x)*pdf(dist, x), s)
     EXphiX = sum(x -> x*phi(x)*pdf(dist, x), s)
     
-    println("ϕ(x) = ", phix)
     println("0 ≤ ϕ(x) ≤ 1     is ", all(0 .≤ phix .≤ 1))
     println("E[ϕ(X)]  ≈ α     is ", EphiX ≈ α)
     println("E[Xϕ(X)] ≈ αE[X] is ", EXphiX ≈ α*mean(dist))
+    println()
+    println("ϕ(x)          = ", phix)
+    println("ϕ_normal(x)   = ", float(pval_normal.(dist, support(dist)) .< α))
+    println("ϕ_exact(x)    = ", float(pval_exact.(dist, support(dist)) .< α))
+    println("ϕ_eqtailed(x) = ", float(pval_eqtailed.(dist, support(dist)) .< α))
     println()
     println("ϕ(x) - ϕ_normal(x)   = ", phix - (pval_normal.(dist, s) .< α))
     println("ϕ(x) - ϕ_exact(x)    = ", phix - (pval_exact.(dist, s) .< α))
     println("ϕ(x) - ϕ_eqtailed(x) = ", phix - (pval_eqtailed.(dist, s) .< α))
 end
+```
+
+竹内彰通『現代数理統計学』問8.9
+
+* https://twitter.com/arts_lib/status/1475435871134707714
+
+```julia
+dist = Binomial(4, 1/3)
+α = 0.1
+verify_umpu(dist, α)
+```
+
+```julia
+dist = Binomial(4, 0.2)
+α = 0.1
+verify_umpu(dist, α)
 ```
 
 ```julia
