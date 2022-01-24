@@ -284,6 +284,40 @@ verify_umpu(dist, α)
 ```
 
 ```julia
+dist = Binomial(4, 0.2)
+α = 0.1
+pdf.(dist, 0:4)
+```
+
+```julia
+@show a = 0
+@show b = 2
+@show P_left = sum(pdf.(dist, 0:a-1))
+@show P_right = sum(pdf.(dist, b+1:n))
+@show P0 = P_left + P_right
+@show M0 = sum(x * pdf(dist, x) for x in 3:4)
+@show y1 = α - P0
+@show y2 = mean(dist)*α - M0
+@show d = (b - a)*pdf(dist, a)*pdf(dist, b)
+@show r_a = pdf(dist, b)*(b*y1 - y2)/d
+@show r_b = pdf(dist, a)*(y2 - a*y1)/d;
+```
+
+```julia
+@show a = 0
+@show b = 3
+@show P_left = sum(pdf.(dist, 0:a-1))
+@show P_right = sum(pdf.(dist, b+1:n))
+@show P0 = P_left + P_right
+@show M0 = sum(x * pdf(dist, x) for x in 0:a-1; init=0.0) + sum(x * pdf(dist, x) for x in b+1:n; init=0.0)
+@show y1 = α - P0
+@show y2 = mean(dist)*α - M0
+@show d = (b - a)*pdf(dist, a)*pdf(dist, b)
+@show r_a = pdf(dist, b)*(b*y1 - y2)/d
+@show r_b = pdf(dist, a)*(y2 - a*y1)/d;
+```
+
+```julia
 dist = Binomial(10, 0.05)
 α = 0.05
 verify_umpu(dist, α)
