@@ -135,6 +135,13 @@ var_unbiasedvar(dist, n), var_var(dist, n), diffvarvar(dist, n), var_var(dist, n
 ```
 
 ```julia
+dist = Bernoulli(0.5)
+n = 10
+simvar(dist, n; L = 10^8) |> display
+var_unbiasedvar(dist, n), var_var(dist, n), diffvarvar(dist, n), var_var(dist, n)/var_unbiasedvar(dist, n), var_unbiasedvar(dist, n)/var_var(dist, n), √(var_unbiasedvar(dist, n)/var_var(dist, n))
+```
+
+```julia
 using SymPy
 @vars σ μ₄ n
 
@@ -142,7 +149,11 @@ using SymPy
 μ₄ = 0
 vu = σ^4 * (μ₄/n - (n-3)/(n*(n-1)))
 vv =  ((n-1)/n)^2 * vu + σ^4/n^2
-([vu, vv, vu - vv] .|> simplify) .* -n^2 .|> simplify
+[vu, vv] .|> simplify .|> factor
+```
+
+```julia
+(vu - vv)*(-n^2) |> simplify
 ```
 
 ```julia
@@ -151,7 +162,30 @@ vv =  ((n-1)/n)^2 * vu + σ^4/n^2
 μ₄ = 3 # normal dist. case
 vu = σ^4 * (μ₄/n - (n-3)/(n*(n-1)))
 vv =  ((n-1)/n)^2 * vu + σ^4/n^2
-vv/vu |> simplify |> factor
+[vu, vv, vv/vu] .|> simplify .|> factor
+```
+
+```julia
+@vars σ μ₄ n
+
+μ₄ = 3 # normal dist. case
+vu = σ^4 * (μ₄/n - (n-3)/(n*(n-1)))
+vv =  ((n-1)/n)^2 * vu + σ^4/n^2
+F = vv/vu |> simplify |> factor
+F(n => 10)
+```
+
+```julia
+@vars σ μ₄ n
+
+μ₄ = 1 # Bernoulli(1/2)
+vu = σ^4 * (μ₄/n - (n-3)/(n*(n-1)))
+vv =  ((n-1)/n)^2 * vu + σ^4/n^2
+F = vv/vu |> simplify |> factor
+```
+
+```julia
+F(n => 10)
 ```
 
 ```julia
@@ -172,6 +206,10 @@ skewness(Beta(0.1, 9.9)), skewness(Beta(7, 3)), skewness(Beta(7, 3)), skewness(B
 
 ```julia
 kurtosis(Beta(0.1, 9.9)), kurtosis(Beta(7, 3)), kurtosis(Beta(7, 3)), kurtosis(Beta(9.9, 0.1))
+```
+
+```julia
+kurtosis.(Bernoulli.(0.1:0.1:0.9))
 ```
 
 ```julia
