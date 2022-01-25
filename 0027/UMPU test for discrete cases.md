@@ -134,6 +134,8 @@ ENV["COLUMNS"] = 200
 using Distributions
 using Memoization
 using RCall
+using Roots
+using StatsFuns
 using StatsPlots
 plot(Normal(); size=(300, 200))
 ```
@@ -651,6 +653,50 @@ P4 = plot_bintest_phi((x, n, θ) -> pval_eqtailed(Binomial(n, θ), x), n; clim=(
 
 plot(P1, P2, P3, P4; size=(640, 640))
 plot!(; tickfontsize=5, titlefontsize=10)
+```
+
+```julia
+function ci(pvalfunc, linkfunc, x, α = 0.05)
+    f(t) = pvalfunc(x, linkfunc(t)) - α
+    CI = linkfunc.(find_zeros(f, -1e10, 1e10))
+end
+
+function plot_bin_ci(; pval_func = pval_normal, n = 10, k = 3, α = 0.05, xtick = 0:0.1:1, kwargs...)
+    CI = ci((x, θ) -> pval_func(Binomial(n, θ), x), logistic, k, α)
+    @show CI
+    
+    θ = 0.001:0.001:0.999
+    plot(θ, (θ -> pval_func(Binomial(n, θ), k)).(θ); label="p-value function")
+    plot!(θ, α * (θ -> pval_func(Binomial(n, θ), k) ≥ α).(θ); label="confidence interval")
+    plot!(θ, 1.1α * (θ -> 1 - umpu(Binomial(n, θ), α)(k)).(θ); label="umpu case", ls=:dash)
+    plot!(; xtick, ytick=0:0.05:1)
+    title!("pval_func = $pval_func,  n = $n,  k = $k"; titlefontsize=12)
+    plot!(; kwargs...)
+end
+```
+
+```julia
+plot_bin_ci(; pval_func = pval_normal, n = 10, k = 3, α = 0.05)
+```
+
+```julia
+plot_bin_ci(; pval_func = pval_exact, n = 10, k = 3, α = 0.05)
+```
+
+```julia
+plot_bin_ci(; pval_func = pval_eqtailed, n = 10, k = 3, α = 0.05)
+```
+
+```julia
+plot_bin_ci(; pval_func = pval_exact, n = 20, k = 6, α = 0.05, xtick = 0:0.05:1, xlim = (0, 0.71))
+```
+
+```julia
+plot_bin_ci(; pval_func = pval_exact, n = 100, k = 30, α = 0.05, xtick = 0:0.05:1, xlim = (0.1, 0.51))
+```
+
+```julia
+plot_bin_ci(; pval_func = pval_exact, n = 200, k = 60, α = 0.05, xtick = 0:0.05:1, xlim = (0.15, 0.46))
 ```
 
 ```julia

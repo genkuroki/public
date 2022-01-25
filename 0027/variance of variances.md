@@ -146,6 +146,15 @@ vv =  ((n-1)/n)^2 * vu + σ^4/n^2
 ```
 
 ```julia
+@vars σ μ₄ n
+
+μ₄ = 3 # normal dist. case
+vu = σ^4 * (μ₄/n - (n-3)/(n*(n-1)))
+vv =  ((n-1)/n)^2 * vu + σ^4/n^2
+vv/vu |> simplify |> factor
+```
+
+```julia
 skewness(Normal()), skewness(Gamma(20, 1)), skewness(InverseGamma(20, 1))
 ```
 
