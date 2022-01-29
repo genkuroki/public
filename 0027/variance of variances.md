@@ -142,6 +142,41 @@ var_unbiasedvar(dist, n), var_var(dist, n), diffvarvar(dist, n), var_var(dist, n
 ```
 
 ```julia
+dist = Bernoulli(0.5)
+n = 100
+simvar(dist, n; L = 10^8) |> display
+var_unbiasedvar(dist, n), var_var(dist, n), diffvarvar(dist, n), var_var(dist, n)/var_unbiasedvar(dist, n), var_unbiasedvar(dist, n)/var_var(dist, n), √(var_unbiasedvar(dist, n)/var_var(dist, n))
+```
+
+```julia
+dist = Bernoulli(0.5)
+n = 1000
+simvar(dist, n; L = 10^8) |> display
+var_unbiasedvar(dist, n), var_var(dist, n), diffvarvar(dist, n), var_var(dist, n)/var_unbiasedvar(dist, n), var_unbiasedvar(dist, n)/var_var(dist, n), √(var_unbiasedvar(dist, n)/var_var(dist, n))
+```
+
+```julia
+dist = Bernoulli(0.4)
+n = 10
+simvar(dist, n; L = 10^8) |> display
+var_unbiasedvar(dist, n), var_var(dist, n), diffvarvar(dist, n), var_var(dist, n)/var_unbiasedvar(dist, n), var_unbiasedvar(dist, n)/var_var(dist, n), √(var_unbiasedvar(dist, n)/var_var(dist, n))
+```
+
+```julia
+dist = Bernoulli(0.3)
+n = 10
+simvar(dist, n; L = 10^8) |> display
+var_unbiasedvar(dist, n), var_var(dist, n), diffvarvar(dist, n), var_var(dist, n)/var_unbiasedvar(dist, n), var_unbiasedvar(dist, n)/var_var(dist, n), √(var_unbiasedvar(dist, n)/var_var(dist, n))
+```
+
+```julia
+dist = Bernoulli(0.2)
+n = 10
+simvar(dist, n; L = 10^8) |> display
+var_unbiasedvar(dist, n), var_var(dist, n), diffvarvar(dist, n), var_var(dist, n)/var_unbiasedvar(dist, n), var_unbiasedvar(dist, n)/var_var(dist, n), √(var_unbiasedvar(dist, n)/var_var(dist, n))
+```
+
+```julia
 using SymPy
 @vars σ μ₄ n
 
@@ -186,6 +221,69 @@ F = vv/vu |> simplify |> factor
 
 ```julia
 F(n => 10)
+```
+
+```julia
+@vars σ μ₄ n
+
+μ₄ = 3//2
+vu = σ^4 * (μ₄/n - (n-3)/(n*(n-1)))
+vv =  ((n-1)/n)^2 * vu + σ^4/n^2
+F = vv/vu |> simplify |> factor
+```
+
+```julia
+@vars σ μ₄ n
+
+μ₄ = 0
+vu = σ^4 * (μ₄/n - (n-3)/(n*(n-1)))
+vv =  ((n-1)/n)^2 * vu + σ^4/n^2
+F = vv/vu |> simplify |> factor
+```
+
+```julia
+@vars σ μ₄ n
+
+μ₄ = 1//2
+vu = σ^4 * (μ₄/n - (n-3)/(n*(n-1)))
+vv =  ((n-1)/n)^2 * vu + σ^4/n^2
+F = vv/vu |> simplify |> factor
+```
+
+```julia
+@vars σ μ₄ n
+
+μ₄ = 1
+vu = σ^4 * (μ₄/n - (n-3)/(n*(n-1)))
+vv =  ((n-1)/n)^2 * vu + σ^4/n^2
+F = vv/vu |> simplify |> factor
+```
+
+```julia
+@vars σ μ₄ n
+
+μ₄ = 3//2
+vu = σ^4 * (μ₄/n - (n-3)/(n*(n-1)))
+vv =  ((n-1)/n)^2 * vu + σ^4/n^2
+F = vv/vu |> simplify |> factor
+```
+
+```julia
+@vars σ μ₄ n
+
+μ₄ = 2
+vu = σ^4 * (μ₄/n - (n-3)/(n*(n-1)))
+vv =  ((n-1)/n)^2 * vu + σ^4/n^2
+F = vv/vu |> simplify |> factor
+```
+
+```julia
+@vars σ μ₄ n
+
+μ₄ = 5//2
+vu = σ^4 * (μ₄/n - (n-3)/(n*(n-1)))
+vv =  ((n-1)/n)^2 * vu + σ^4/n^2
+F = vv/vu |> simplify |> factor
 ```
 
 ```julia
