@@ -195,11 +195,23 @@ end
 ```
 
 ```julia
+dist = Normal(1, 2); plot(dist, -7, 9; label="", title=name(dist), titlefontsize=12)
+```
+
+```julia
 plot_samplestats(dist = Normal(1, 2), n = 10)
 ```
 
 ```julia
+dist = Uniform(); plot(dist, -0.2, 1.2; label="", title=name(dist), titlefontsize=12)
+```
+
+```julia
 plot_samplestats(dist = Uniform(), n = 10)
+```
+
+```julia
+dist = Beta(0.2, 0.2); plot(dist, 0.005, 0.995; label="", title=name(dist), titlefontsize=12)
 ```
 
 ```julia
@@ -208,6 +220,11 @@ plot_samplestats(dist = Beta(0.2, 0.2), n = 10)
 
 ```julia
 plot_samplestats(dist = Beta(0.2, 0.2), n = 20)
+```
+
+```julia
+dist = TDist(4.01); plot(dist, -6, 6; label=name(dist))
+plot!(Normal(), -6, 6; label="Normal()", ls=:dash)
 ```
 
 ```julia
@@ -220,6 +237,10 @@ plot_samplestats(dist = TDist(4.01), n = 20)
 
 ```julia
 plot_samplestats(dist = TDist(4.01), n = 40)
+```
+
+```julia
+dist = Exponential(); plot(dist, 0, 6; label="", title=name(dist), titlefontsize=12)
 ```
 
 ```julia
@@ -243,6 +264,10 @@ plot_samplestats(dist = Exponential(), n = 160)
 ```
 
 ```julia
+dist = Gamma(5, 1); plot(dist, 0, 15; label="", title=name(dist), titlefontsize=12)
+```
+
+```julia
 plot_samplestats(dist = Gamma(5, 1), n = 10)
 ```
 
@@ -252,6 +277,11 @@ plot_samplestats(dist = Gamma(5, 1), n = 20)
 
 ```julia
 plot_samplestats(dist = Gamma(5, 1), n = 40)
+```
+
+```julia
+dist = MixtureModel([Normal(), Normal(10,1)], [0.95, 0.05])
+plot(dist, -4, 14; label="", title=name(dist), titlefontsize=12)
 ```
 
 ```julia
@@ -280,6 +310,11 @@ plot_samplestats(dist = MixtureModel([Normal(), Normal(10,1)], [0.95, 0.05]), n 
 
 ```julia
 plot_samplestats(dist = MixtureModel([Normal(), Normal(10,1)], [0.95, 0.05]), n = 640)
+```
+
+```julia
+dist = LogNormal()
+plot(dist, 0, 10; label="", title=name(dist), titlefontsize=12)
 ```
 
 ```julia
