@@ -354,5 +354,17 @@ plot_samplestats(dist = LogNormal(), n = 2560)
 ```
 
 ```julia
+plot_samplestats(dist = LogNormal(), n = 5120)
+```
+
+```julia
+plot_samplestats(dist = LogNormal(), n = 10240)
+```
+
+```julia
+plot_samplestats(dist = LogNormal(), n = 20480)
+```
+
+```julia
 
 ```
