@@ -280,6 +280,26 @@ plot_samplestats(dist = Gamma(5, 1), n = 40)
 ```
 
 ```julia
+plot_samplestats(dist = Gamma(5, 1), n = 80)
+```
+
+```julia
+plot_samplestats(dist = Gamma(5, 1), n = 160)
+```
+
+```julia
+plot_samplestats(dist = Gamma(5, 1), n = 320)
+```
+
+```julia
+plot_samplestats(dist = Gamma(5, 1), n = 640)
+```
+
+```julia
+plot_samplestats(dist = Gamma(5, 1), n = 1280)
+```
+
+```julia
 dist = MixtureModel([Normal(), Normal(10,1)], [0.95, 0.05])
 plot(dist, -4, 14; label="", title=name(dist), titlefontsize=12)
 ```
@@ -358,19 +378,23 @@ plot_samplestats(dist = LogNormal(), n = 5120)
 ```
 
 ```julia
-plot_samplestats(dist = LogNormal(), n = 10240)
+@time plot_samplestats(dist = LogNormal(), n = 10240)
 ```
 
 ```julia
-plot_samplestats(dist = LogNormal(), n = 20480)
+@time plot_samplestats(dist = LogNormal(), n = 20480)
 ```
 
 ```julia
-plot_samplestats(dist = LogNormal(), n = 40960)
+@time plot_samplestats(dist = LogNormal(), n = 40960)
 ```
 
 ```julia
-plot_samplestats(dist = LogNormal(), n = 81920)
+@time plot_samplestats(dist = LogNormal(), n = 81920)
+```
+
+```julia
+@time plot_samplestats(dist = LogNormal(), n = 163840)
 ```
 
 ```julia
