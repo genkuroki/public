@@ -21,6 +21,9 @@ default(fmt=:png)
 using Random
 using QuadGK
 
+tstat(dist, sample) = (mean(sample) - mean(dist))/√(var(sample)/length(sample))
+chisqstat(dist, sample) = (length(sample) - 1) * var(sample)/var(dist)
+
 function plot_tstat(;
         n = 10,
         L = 10^5,
@@ -30,11 +33,10 @@ function plot_tstat(;
         bin = range(extrema(xtick)...; length=51),
         skewnessfunc = skewness
     )
-    tstat(sample) = (mean(sample) - mean(dist))/√(var(sample)/n)
     T = Vector{Float64}(undef, L)
     tmp = [Vector{Float64}(undef, n) for i in 1:Threads.nthreads()]
     Threads.@threads for i in 1:L
-        T[i] = tstat(rand!(dist, tmp[Threads.threadid()]))
+        T[i] = tstat(dist, rand!(dist, tmp[Threads.threadid()]))
     end
     histogram(T; norm=true, alpha=0.3, label="(x - μ)/√(u²/n)", xlim, xtick, bin)
     plot!(TDist(n-1); lw=1.5, label="TDist(n - 1)")
@@ -49,7 +51,11 @@ function plot_chisqstat(;
         dist = Normal(1, 2),
         kurtosisfunc = kurtosis
     )
-    X = (n-1)*[var(rand(dist, n)) for _ in 1:L]/var(dist)
+    X = Vector{Float64}(undef, L)
+    tmp = [Vector{Float64}(undef, n) for i in 1:Threads.nthreads()]
+    Threads.@threads for i in 1:L
+        X[i] = chisqstat(dist, rand!(dist, tmp[Threads.threadid()]))
+    end
     m, s = mean(X), std(X)
     xlim = (max(-1, m - 4s), n + 4s)
     bin = range(0, xlim[2]; length=round(Int, 51/(1 - xlim[1]/xlim[2])))
