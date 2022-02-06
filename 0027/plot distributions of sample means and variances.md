@@ -125,7 +125,9 @@ function plot_samplestats(;
         n = 10,
         L = 10^6,
         scattermax = 10^5,
-        T²tail = 0.75,
+        T²span = (0.75, 0.999),
+        Zspan = (0.001, 0.999), 
+        X²span = (0.001, 0.999), 
         kwargs...
     )
     (; dist, n, Z, X², T, T²) = mcsim(; dist, n, L)
@@ -141,8 +143,8 @@ function plot_samplestats(;
         println("P(|T| > √quantile(FDist(1, $(n-1)), $p) = ", rd(√quantile(fdist, p)), ") = ",  rd(1 - ecdf(T²)(quantile(fdist, p))))
     end
     
-    X²lim = quantile.(Ref(X²), (0.001, 0.999))
-    Zlim = quantile.(Ref(Z), (0.001, 0.999))
+    Zlim = quantile.(Ref(Z), Zspan)
+    X²lim = quantile.(Ref(X²), X²span)
     
     kdeX² = InterpKDE(kde(X²))
     kdeZX² = InterpKDE(kde((Z, X²)))
@@ -178,7 +180,7 @@ function plot_samplestats(;
     vline!([n-1]; label="", ls=:dot, c=:black)
     title!("sample of X² = (n - 1)S²/σ²")
     
-    xlim = quantile.(Ref(T²), (T²tail, 0.999))
+    xlim = quantile.(Ref(T²), T²span)
     bin = range(0, last(xlim), round(Int, 100last(xlim)/(last(xlim) - first(xlim))))
     ymax = maximum(x -> max(pdf(fdist, x), h(x)), range(xlim..., 100))
     ylim = (-0.03ymax, 1.05ymax)
@@ -187,7 +189,7 @@ function plot_samplestats(;
     plot!(fdist, xlim...; label="FDist(1, $(n-1))", lw=1.5)
     vline!([quantile(T², 0.95)]; label="95% line of T²", c=1, ls=:dot)
     vline!([quantile(fdist, 0.95)]; label="95% line of FDist", c=2, ls=:dot)
-    title!("tail (> $(100T²tail)%) of sample of T²")
+    title!("tail (> $(100first(T²span))%) of sample of T²")
     
     plot(P, Q, R, S; size=(800, 600))
     plot!(leftmargin=3Plots.mm, bottommargin=3Plots.mm, kwargs...)
@@ -223,20 +225,87 @@ plot_samplestats(dist = Beta(0.2, 0.2), n = 20)
 ```
 
 ```julia
+dist = Laplace(); plot(dist, -6, 6; label=name(dist))
+plot!(Normal(), -6, 6; label="Normal()", ls=:dash)
+```
+
+```julia
+plot_samplestats(dist = Laplace(), L=10^6)
+```
+
+```julia
 dist = TDist(4.01); plot(dist, -6, 6; label=name(dist))
 plot!(Normal(), -6, 6; label="Normal()", ls=:dash)
 ```
 
 ```julia
-plot_samplestats(dist = TDist(4.01), n = 10)
+plot_samplestats(dist = TDist(4.01), L=10^6, X²span = (0.025, 0.975))
 ```
 
 ```julia
-plot_samplestats(dist = TDist(4.01), n = 20)
+plot_samplestats(dist = TDist(4.01), n = 20, L=10^6, X²span = (0.025, 0.975))
 ```
 
 ```julia
-plot_samplestats(dist = TDist(4.01), n = 40)
+plot_samplestats(dist = TDist(4.01), L=10^6, X²span = (0.025, 0.975))
+```
+
+```julia
+plot_samplestats(dist = TDist(4.01), L=10^6, X²span = (0.025, 0.975))
+```
+
+```julia
+plot_samplestats(dist = TDist(4.01), n = 160, L=10^6, X²span = (0.025, 0.975))
+```
+
+```julia
+plot_samplestats(dist = TDist(4.01), n = 320, L = 10^6, X²span = (0.025, 0.975))
+```
+
+```julia
+dist = TDist(5); plot(dist, -6, 6; label=name(dist))
+plot!(Normal(), -6, 6; label="Normal()", ls=:dash)
+```
+
+```julia
+plot_samplestats(dist = TDist(5), n = 10, L = 10^6, X²span = (0.01, 0.99))
+```
+
+```julia
+dist = TDist(10); plot(dist, -6, 6; label=name(dist))
+plot!(Normal(), -6, 6; label="Normal()", ls=:dash)
+```
+
+```julia
+plot_samplestats(dist = TDist(10), n = 10)
+```
+
+```julia
+plot_samplestats(dist = TDist(10), n = 20)
+```
+
+```julia
+dist = MixtureModel([Normal(), Normal(10, 1)], [0.5, 0.5]); plot(dist, -6, 16; label="", title=name(dist))
+```
+
+```julia
+plot_samplestats(; dist, n = 10, X²span = (0.01, 0.999), T²span = (0.50, 0.99))
+```
+
+```julia
+plot_samplestats(; dist, n = 20, X²span = (0.01, 0.999), T²span = (0.50, 0.99))
+```
+
+```julia
+dist = MixtureModel([Laplace(), Laplace(20, 1)], [0.5, 0.5]); plot(dist, -8, 28; label="", title=name(dist))
+```
+
+```julia
+plot_samplestats(; dist, n = 10, X²span = (0.01, 0.999), T²span = (0.50, 0.99))
+```
+
+```julia
+plot_samplestats(; dist, n = 20, X²span = (0.01, 0.999), T²span = (0.50, 0.99))
 ```
 
 ```julia
