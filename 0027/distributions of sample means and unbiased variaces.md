@@ -306,14 +306,6 @@ end
 ```
 
 ```julia
-λ, v = eigen(Symmetric(Σ))
-```
-
-```julia
-diagm(λ)
-```
-
-```julia
 L = 10^6
 scattermax = 10^5
 
