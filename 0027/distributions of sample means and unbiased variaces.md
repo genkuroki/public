@@ -300,7 +300,7 @@ function conditioned_kde(X, Y; Yspan = (0.001, 0.999), δ = std(Y)/min(25, lengt
     kde((X, Y); weights)
 end
 
-function conditioned_ik(X, Y; Yspan = (0.001, 0.9999), δ = std(Y)/min(25, length(X) ÷ 100))
+function conditioned_ik(X, Y; Yspan = (0.001, 0.999), δ = std(Y)/min(25, length(X) ÷ 100))
     InterpKDE(conditioned_kde(X, Y; Yspan, δ))
 end
 ```
