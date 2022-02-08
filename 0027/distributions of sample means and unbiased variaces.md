@@ -721,6 +721,10 @@ plotalliter(dist = TDist(6))
 ```
 
 ```julia
+plotalliter(dist = TDist(4.05))
+```
+
+```julia
 plotalliter(dist = Gamma(2, 1), n = (10, 20, 40, 80, 160, 320, 640))
 ```
 
