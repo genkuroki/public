@@ -71,8 +71,8 @@ U = quantile(hdist, quantile(beta, 0.975))
 
 # プロット
 plot(h; norm=true, alpha=0.3, label="histogram")
-vline!([median(dist)]; label="true median", ls=:dash, lw=2, c=:blue)
-vline!([median(hdist)]; label="median of histogram", lw=2, c=2)
+vline!([median(dist)]; label="true median", lw=2, c=:blue)
+vline!([median(hdist)]; label="median of histogram", lw=2, c=2, ls=:dash)
 plot!([L, U], zeros(2); label="confidence interval", lw=10, c=2)
 ```
 
