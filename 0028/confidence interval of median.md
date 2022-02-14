@@ -28,6 +28,8 @@ name(dist::UnivariateDistribution) = replace(string(dist), r"{[^{.]*}"=>"")
 ## 中央値の信頼区間はの計算はこれだけでよい
 
 ```julia
+Random.seed!(3734649)
+
 # テストサンプルの生成
 dist = Gamma(2, 3)
 n = 40
