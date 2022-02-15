@@ -213,6 +213,30 @@ $$
 __注意:__ 以上では標本から作られる経験分布を未知の母集団分布の代替物として用いたが, もとの標本がデータが完全に残っていなくても, 例えばヒストグラムのデータが残っていれば, それをもとに標本から作られる経験分布の代替分布を作って $\empirical(X)$ の代わりに使えば, P値や信頼区間を計算することができる.
 
 
+### 二項分布との関係
+
+以上のベータ分布を使う方法と [RのDescToolsのMedianCI](https://github.com/cran/DescTools/blob/d5e096ee9abf4640703dfba45d1ed56b5ab10253/R/StatsAndCIs.r#L3690-L3773) における "SAS-way" な二項分布を使う方法と以上で説明したベータ分布を使う方法の関係について説明しよう.
+
+二項分布の累積分布函数はベータ分布の累積分布函数で書ける. 次が成立している:
+
+$$
+\int_0^\theta \frac{t^{k-1}(1-t)^{n-k}}{B(k, n-k+1)}\,dt =
+\sum_{j=k}^n \binom{n}{j}\theta^j(1 - \theta)^{n-j}.
+$$
+
+```julia
+f(n, k, θ) = cdf(Beta(k, n-k+1), θ)
+g(n, k, θ) = ccdf(Binomial(n, θ), k-1)
+
+n, k = 10, 4
+θ = range(0, 1, 101)
+@show all(f.(n, k, θ) .== g.(n, k, θ))
+
+plot(t -> f(n, k, t), 0, 1; label="f")
+plot!(t -> g(n, k, t), 0, 1; label="g", ls=:dash)
+plot!(; size=(400, 250), legend=:topleft)
+```
+
 ## 中央値の信頼区間はの計算はこれだけでよい
 
 `n += iseven(n)` については[中央値の分布とその近似](https://github.com/genkuroki/public/blob/main/0028/distribution%20of%20median%20and%20its%20approximations%20for%20even%20n%20case.ipynb)を参照せよ.
