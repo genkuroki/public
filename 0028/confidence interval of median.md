@@ -27,6 +27,8 @@ name(dist::UnivariateDistribution) = replace(string(dist), r"{[^{.]*}"=>"")
 
 ## 中央値の信頼区間はの計算はこれだけでよい
 
+`n += iseven(n)` については[中央値の分布とその近似](https://github.com/genkuroki/public/blob/main/0028/distribution%20of%20median%20and%20its%20approximations%20for%20even%20n%20case.ipynb)を参照せよ.
+
 ```julia
 Random.seed!(3734649)
 
@@ -42,6 +44,7 @@ w = values(c) ./ n
 Xdist = DiscreteNonParametric(u, w)
 
 # Xdistとベータ分布のquantileで信頼区間を計算
+n += iseven(n)
 beta = Beta((n+1)/2, (n+1)/2)
 L = quantile(Xdist, quantile(beta, 0.025))
 U = quantile(Xdist, quantile(beta, 0.975))
@@ -66,6 +69,7 @@ p = w / sum(w)
 hdist = MixtureModel(c, p)
 
 # hdistとベータ分布を用いて信頼区間を計算
+n += iseven(n)
 beta = Beta((n+1)/2, (n+1)/2)
 L = quantile(hdist, quantile(beta, 0.025))
 U = quantile(hdist, quantile(beta, 0.975))
@@ -88,13 +92,21 @@ plot!([L, U], zeros(2); label="confidence interval", lw=10, c=2)
 cdf_ordstat(dist, n, k, x) = cdf(Beta(k, n-k+1), cdf(dist, x))
 
 """分布distの標本中央値の分布のcdf"""
-cdf_median(dist, n, x) = cdf_ordstat(dist, n, (n+1)/2, x)
+cdf_median_old(dist, n, x) = cdf_ordstat(dist, n, (n+1)/2, x)
+function cdf_median(dist, n, x)
+    n += iseven(n)
+    cdf_ordstat(dist, n, (n+1)/2, x)
+end
 
 """分布distのサイズnの標本の下からk番目の値の分布のquantle(cdfの逆函数)"""
 quantile_ordstat(dist, n, k, p) = quantile(dist, quantile(Beta(k, n-k+1), p))
 
 """分布distの標本中央値の分布のquantle(cdfの逆函数)"""
-quantile_median(dist, n, p) = quantile_ordstat(dist, n, (n+1)/2, p)
+quantile_median_old(dist, n, p) = quantile_ordstat(dist, n, (n+1)/2, p)
+function quantile_median_old(dist, n, p)
+    n += iseven(n)
+    quantile_ordstat(dist, n, (n+1)/2, p)
+end
 ```
 
 ### 標本の経験分布やヒストグラムの分布
