@@ -15,6 +15,164 @@ jupyter:
 
 # 中央値の信頼区間
 
+* 黒木玄
+* 2022-02-15
+$
+\newcommand\R{\Bbb{R}}
+\newcommand\Beta{\operatorname{Beta}}
+\newcommand\dist{\operatorname{dist}}
+\newcommand\empirical{\operatorname{empirical}}
+\newcommand\pval{\operatorname{pval}}
+\newcommand\median{\operatorname{median}}
+\newcommand\ci{\operatorname{ci}}
+\newcommand\pdf{\operatorname{pdf}}
+\newcommand\cdf{\operatorname{cdf}}
+\newcommand\quantile{\operatorname{quantile}}
+\newcommand\on{\operatorname}
+$
+
+
+## 解説
+
+
+### 順序統計量
+
+この節については, [順序統計量 - Wikipedia](https://ja.wikipedia.org/wiki/%E9%A0%86%E5%BA%8F%E7%B5%B1%E8%A8%88%E9%87%8F)を参照.
+
+$\R$ 上の確率分布 $\dist$ の累積分布函数を $\cdf(\dist,  x) = F(x)$ と書き, その「逆函数」を $\quantile(\dist, p) = F^{-1}(t)$ と書く.
+
+分布 $\dist$ のサイズ $n$ の標本(独立同分布確率変数達)を $X=(X_1,\ldots,X_n)$ と書くとき, その中での下から $k$ 番目の値を $X_{(k)}$ と書き, 標本の第 $k$ __順序統計量__ と呼ぶ:
+
+$$
+X_{(1)} \le X_{(2)} \le \cdots \le X_{(n)}.
+$$
+
+このとき, $X_{(k)}$ が従う分布の累積分布函数 $F_{(k)}(x)$ は
+
+$$
+\begin{aligned}
+F_{(k)}(x) & =
+\cdf(\Beta(k, n-k+1), \cdf(\dist, x))
+\\ & =
+\frac{1}{B(k, n-k+1)}\int_0^{F(x)} t^{k-1}(1-t)^{n-k}\,dt.
+\end{aligned}
+$$
+
+になる. ゆえにこれの「逆函数」は次のように表される:
+
+$$
+F^{-1}_{(k)}(t) = \quantile(\dist, \quantile(\Beta(k, n-k+1), t)).
+$$
+
+<!-- #region -->
+### 標本中央値の分布
+
+未知の母集団分布 $\dist$ のサイズ $n$ の標本が得られたとし, その順序統計量を $X_{(k)}$ と書く.
+
+このとき, 標本サイズが奇数で $n=2m-1$ のとき, $X_{(m)}$ を標本中央値と呼び, $n$ が偶数で $n=2m$ のとき $(X_{(m)} + X_{(m+1)})/2$ を標本中央値と呼ぶ. 標本 $X=(X_1,\ldots,X_n)$ の中央値を $\median(X)$ と書くことにする.
+
+母集団分布 $\dist$ が連続的な分布ならば, 分布の中央値 $\median(\dist)$ が一意的に定まる. $\median(\dist)$ を母集団中央値と呼ぶことにする. 標本中央値 $\median(X)$ は母集団中央値の点推定量とみなされる.
+
+
+標本サイズ $n$ が奇数の場合の標本中央値 $A=\median(X)$ の分布の累積分布函数は次のように書ける:
+
+$$
+\cdf_{\median}(\dist, n, a) =
+\cdf\left(\Beta\left(\frac{n+1}{2}, \frac{n+1}{2}\right), \cdf(\dist, a)\right)
+\quad\text{if $n$ is odd}.
+$$
+
+これのコンピュータ上での実装は易しい.
+
+$n$ が偶数の場合には, 標本中央値 $\median(X)$ の累積分布函数は, $X_{(m)}$ と $X_{(m+1)}$ の同時分布(Dirichlet分布を使って書ける)の積分で書ける.　しかし, これをコンピュータ上で実装するのは少し面倒である.
+
+そこで, $n$ が偶数の場合には上の公式で近似すれば良さそうに思うかもしれない. しかし, 驚くべきことに, $n$ が偶数の場合には1を足して奇数にしてからこの公式を適用するという処方箋を使う方が近似の精度がよくなる. ([中央値の分布とその近似](https://github.com/genkuroki/public/blob/main/0028/distribution%20of%20median%20and%20its%20approximations%20for%20even%20n%20case.ipynb)を参照せよ.) 以下ではその近似を使うことにする. すなわち, $n$ が奇数のとき $n'=n$ とし, $n$ が偶数のとき $n'=n+1$ とし, $\cdf_{\median'}(\dist, n, x)$ を以下のように定める:
+
+$$
+\cdf_{\median'}(\dist, n, a) =
+\cdf\left(\Beta\left(\frac{n'+1}{2}, \frac{n'+1}{2}\right), \cdf(\dist, a)\right).
+$$
+
+$\cdf_{\median'}(\dist, n, a)$ の $a$ の函数としての「逆函数」を
+
+$$
+\quantile_{\median'}(\dist, n, t) =
+\quantile\left(\dist, \quantile\left(\Beta\left(\frac{n'+1}{2}, \frac{n'+1}{2}\right), t\right)\right).
+$$
+
+と書くことにする.
+<!-- #endregion -->
+
+### 標本から作られる経験分布
+
+標本 $X=(X_1,\ldots,X_n)$ について, $X_i$ 達の値に重複がないとき, 値が $X_i$ になる確率が $1/n$ となる確率分布を $\empirical(X)$ と書き, 標本の __経験分布__ と呼ぶ. 重複がある場合には重複に応じた重み付けで確率を定めて経験分布を定義する.
+
+
+### ブートストラップ法による中央値の仮説に関するＰ値函数の構成
+
+「中央値は $a$ である」という仮説を考える.
+
+分布 $\dist$ のサイズ $n$ の標本の中央値が分布の真の中央値 $\median(\dist)$ から仮説の値 $a$ 以上に離れる確率としてP値を次のように定義する(正確にはP値を片側確率の2倍として定義し, さらにP値を1以下になるように定義してあるので, 確率そのものではない):
+
+$$
+\pval_{\median'}(\dist, n, a) =
+\max\left(\begin{array}{l}
+ 1 \\
+ 2\cdf_{\median'}(\dist, n, a) \\
+ 2(1 - \cdf_{\median'}(\dist, n, a)) \\
+\end{array}\right).
+$$
+
+$n$ が奇数のとき $n'=n$ とし, $n$ が偶数のとき $n'=n+1$ とすると,
+
+$$
+\cdf_{\median'}(\dist, n, a) =
+\cdf\left(\Beta\left(\frac{n'+1}{2}, \frac{n'+1}{2}\right), \cdf(\dist, a)\right).
+$$
+
+であることを使えば, 上のP値函数をコンピュータ上で容易に実装できる.
+
+仮に分布 $\dist$ として母集団分布を使用できるならば, 「中央値は $a$ である」という仮説の疑わしさを評価するための正確な指標として上のP値を利用できる(P値が小さい場合には仮説は疑わしいと考える).  しかし, 母集団分布は実践的な状況では未知であるから使えない.
+
+そこで, 標本 $X=(X_1,\ldots,X_n)$ の経験分布 $\empirical(X)$ を母集団分布の近似的代替物として用い, 標本 $X$ だけから計算できる上の仮説のP値を次のように定義する:
+
+$$
+\pval_{\median'}(X, a) = \pval_{\median'}(\empirical(X), n, a).
+$$
+
+標本サイズ $n$ が十分大きい場合には標本の経験分布 $\empirical(X)$ は母集団分布 $\dist$ をよく近似したものになるだろうが, $n$ が十分に大きくない場合には近似の誤差を気にする必要がある.
+
+
+### ブートストラップ法による中央値の信頼区間の構成
+
+有意水準 $0<\alpha<1$ と標本 $X=(X_1,\ldots,X_n)$ が与えられたとき, 信頼係数 $1-\alpha$ の中央値の信頼区間 $\ci_{\median',\alpha}(X)$ をP値 $\pval_{\median'}(X, a)$ が $\alpha$ 以上になる $a$ 全体の集合として定義できる(一般にP値函数が与えられたとき, 常に信頼区間をこのように定義できる).  その結果は次のようになる:
+
+$$
+\ci_{\median',\alpha}(X) = [L, R].
+$$
+
+ここで,
+
+$$
+\begin{aligned}
+&
+L = \quantile_{\median'}(\empirical(X), n, \alpha/2),
+\\ &
+U = \quantile_{\median'}(\empirical(X), n, 1-\alpha/2).
+\end{aligned}
+$$
+
+$n$ が奇数のとき $n'=n$ とし, $n$ が偶数のとき $n'=n+1$ とすると,
+
+$$
+\quantile_{\median'}(\dist, n, t) =
+\quantile\left(\dist, \quantile\left(\Beta\left(\frac{n'+1}{2}, \frac{n'+1}{2}\right), t\right)\right).
+$$
+
+であることを使えば, 上の信頼区間函数を容易に実装できる.
+
+__注意:__ 以上では標本から作られる経験分布を未知の母集団分布の代替物として用いたが, もとの標本がデータが完全に残っていなくても, 例えばヒストグラムのデータが残っていれば, それをもとに標本から作られる経験分布の代替分布を作って $\empirical(X)$ の代わりに使えば, P値や信頼区間を計算することができる.
+
 ```julia
 using Distributions
 using StatsPlots
