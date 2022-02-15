@@ -31,6 +31,17 @@ $
 \newcommand\on{\operatorname}
 $
 
+```julia
+using Distributions
+using StatsPlots
+default(titlefontsize=10, fmt=:png)
+using Random
+using StatsBase
+using QuadGK
+using StaticArrays
+
+name(dist::UnivariateDistribution) = replace(string(dist), r"{[^{.]*}"=>"")
+```
 
 ## 解説
 
@@ -103,6 +114,34 @@ $$
 と書くことにする.
 <!-- #endregion -->
 
+__[中央値の分布とその近似](https://github.com/genkuroki/public/blob/main/0028/distribution%20of%20median%20and%20its%20approximations%20for%20even%20n%20case.ipynb)より:__ $n$ が偶数の場合には $n$ をそのまま使わずに $n+1$ を使った方が一様分布の標本中央値の真の分布をよく近似するようになる.
+
+```julia
+function pdf_median_true(n, z)
+    0 < z < 1 || return 0.0
+    m = n / 2
+    p(x, y) = pdf(Dirichlet(SVector(m, 1, m)), SVector(x, y-x, 1-y))
+    2quadgk(x -> p(x, 2z - x), 0, z)[1]
+end
+
+function plot_mediandists(n; kwargs...)
+    plot(x -> pdf_median_true(n, x), 0, 1; label="true dist")
+    plot!(x -> pdf(Beta((n+1)/2, (n+1)/2), x), 0, 1; ls=:dash, label="n")
+    plot!(x -> pdf(Beta((n+2)/2, (n+2)/2), x), 0, 1; ls=:dashdot, label="n+1")
+    title!("dist of median and approx: n = $n")
+    plot!(; kwargs...)
+end
+
+PP = []
+P = plot_mediandists(2; legend=:bottom)
+push!(PP, P)
+for n in 4:2:12
+P = plot_mediandists(n; legend=false)
+    push!(PP, P)
+end
+plot(PP...; size=(720, 720), layout=(3, 2))
+```
+
 ### 標本から作られる経験分布
 
 標本 $X=(X_1,\ldots,X_n)$ について, $X_i$ 達の値に重複がないとき, 値が $X_i$ になる確率が $1/n$ となる確率分布を $\empirical(X)$ と書き, 標本の __経験分布__ と呼ぶ. 重複がある場合には重複に応じた重み付けで確率を定めて経験分布を定義する.
@@ -173,15 +212,6 @@ $$
 
 __注意:__ 以上では標本から作られる経験分布を未知の母集団分布の代替物として用いたが, もとの標本がデータが完全に残っていなくても, 例えばヒストグラムのデータが残っていれば, それをもとに標本から作られる経験分布の代替分布を作って $\empirical(X)$ の代わりに使えば, P値や信頼区間を計算することができる.
 
-```julia
-using Distributions
-using StatsPlots
-default(titlefontsize=12, fmt=:png)
-using Random
-using StatsBase
-
-name(dist::UnivariateDistribution) = replace(string(dist), r"{[^{.]*}"=>"")
-```
 
 ## 中央値の信頼区間はの計算はこれだけでよい
 
@@ -261,7 +291,7 @@ quantile_ordstat(dist, n, k, p) = quantile(dist, quantile(Beta(k, n-k+1), p))
 
 """分布distの標本中央値の分布のquantle(cdfの逆函数)"""
 quantile_median_old(dist, n, p) = quantile_ordstat(dist, n, (n+1)/2, p)
-function quantile_median_old(dist, n, p)
+function quantile_median(dist, n, p)
     n += iseven(n)
     quantile_ordstat(dist, n, (n+1)/2, p)
 end
@@ -331,16 +361,28 @@ function pval_ordstat(h::Histogram, n, k, a)
 end
 
 """分布の標本中央値のP値"""
-pval_median(dist, n, a) = pval_ordstat(dist, n, (n+1)/2, a)
+pval_median_old(dist, n, a) = pval_ordstat(dist, n, (n+1)/2, a)
+function pval_median(dist, n, a)
+    n += iseven(n)
+    pval_ordstat(dist, n, (n+1)/2, a)
+end
 
 """標本の分布の標本(bootstrap)の中央値のP値"""
-pval_median(X::AbstractVector, n, a; empiricaldist_func = empiricaldist_allowrep) =
+pval_median_old(X::AbstractVector, n, a; empiricaldist_func = empiricaldist_allowrep) =
     pval_ordstat(X, n, (n+1)/2, a; empiricaldist_func)
+function pval_median(X::AbstractVector, n, a; empiricaldist_func = empiricaldist_allowrep)
+    n += iseven(n)
+    pval_ordstat(X, n, (n+1)/2, a; empiricaldist_func)
+end
 pval_median(X::AbstractVector, a; empiricaldist_func = empiricaldist_allowrep) =
     pval_median(X, length(X), a; empiricaldist_func)
 
 """ヒストグラムの分布の標本の中央値のP値"""
-pval_median(h::Histogram, n, a) = pval_ordstat(h, n, (n+1)/2, a)
+pval_median_old(h::Histogram, n, a) = pval_ordstat(h, n, (n+1)/2, a)
+function pval_median(h::Histogram, n, a)
+    n += iseven(n)
+    pval_ordstat(h, n, (n+1)/2, a)
+end
 ```
 
 ```julia
@@ -359,14 +401,26 @@ ci_ordstat(X::AbstractVector, k; α = 0.05) = ci_ordstat(X, length(X), k; α)
 ci_ordstat(h::Histogram, n, k; α = 0.05) = ci_ordstat(histogramdist(h), n, k; α)
 
 """分布の中央値の信頼区間"""
-ci_median(dist, n, k; α = 0.05) = ci_ordstat(dist, n, (n+1)/2; α)
+ci_median_old(dist, n, k; α = 0.05) = ci_ordstat(dist, n, (n+1)/2; α)
+function ci_median(dist, n, k; α = 0.05)
+    n += iseven(n)
+    ci_ordstat(dist, n, (n+1)/2; α)
+end
 
 """標本の分布の中央値の信頼区間"""
-ci_median(X::AbstractVector, n; α = 0.05) = ci_ordstat(X, n, (n+1)/2; α)
+ci_median_old(X::AbstractVector, n; α = 0.05) = ci_ordstat(X, n, (n+1)/2; α)
+function ci_median(X::AbstractVector, n; α = 0.05)
+    n += iseven(n)
+    ci_ordstat(X, n, (n+1)/2; α)
+end
 ci_median(X::AbstractVector; α = 0.05) = ci_median(X, length(X); α)
 
 """ヒストグラムの分布の中央値の信頼区間"""
-ci_median(h::Histogram, n; α = 0.05) = ci_ordstat(h, n, (n+1)/2; α)
+ci_median_old(h::Histogram, n; α = 0.05) = ci_ordstat(h, n, (n+1)/2; α)
+function ci_median(h::Histogram, n; α = 0.05)
+    n += iseven(n)
+    ci_ordstat(h, n, (n+1)/2; α)
+end
 ```
 
 ## 計算例
@@ -411,7 +465,7 @@ plot(x -> pval_median(X, x; empiricaldist_func = empiricaldist), 2, 10; label="P
 vline!([median(dist)]; label="true median", ls=:dash, lw=2, c=:blue)
 vline!([median(dist)]; label="true median", lw=2, c=:blue)
 vline!([median(X)]; label="median of data", lw=2, c=2, ls=:dash)
-plot!([L, U], zeros(2); label="confidence interval", lw=10, c=2)
+plot!([L, U], fill(0.05, 2); label="confidence interval", lw=4, c=2)
 plot!(; xtick=0:20, ytick=0:0.05:1)
 ```
 
@@ -424,7 +478,7 @@ L, U = ci_median(X)
 plot(x -> pval_median(X, x; empiricaldist_func = empiricaldist), 2, 10; label="P-value")
 vline!([median(dist)]; label="true median", lw=2, c=:blue)
 vline!([median(X)]; label="median of data", lw=2, c=2, ls=:dash)
-plot!([L, U], zeros(2); label="confidence interval", lw=10, c=2)
+plot!([L, U], fill(0.05, 2); label="confidence interval", lw=4, c=2)
 plot!(; xtick=0:20, ytick=0:0.05:1)
 ```
 
@@ -437,7 +491,7 @@ L, U = ci_median(X)
 plot(x -> pval_median(X, x; empiricaldist_func = empiricaldist), 2, 10; label="P-value")
 vline!([median(dist)]; label="true median", lw=2, c=:blue)
 vline!([median(X)]; label="median of data", lw=2, c=2, ls=:dash)
-plot!([L, U], zeros(2); label="confidence interval", lw=10, c=2)
+plot!([L, U], fill(0.05, 2); label="confidence interval", lw=4, c=2)
 plot!(; xtick=0:20, ytick=0:0.05:1)
 ```
 
@@ -459,8 +513,25 @@ function sim_mediantest(; n = 40, dists = [Normal(2, 3), Gamma(2, 3), Exponentia
     pval
 end
 
-function plot_mediantest(; n = 40, dists = [Normal(2, 3), Gamma(2, 3), Exponential(2), LogNormal()], L = 10^5)
-    pval = sim_mediantest(; n, dists, L)
+function sim_mediantest_exact(; n = 40, dists = [Normal(2, 3), Gamma(2, 3), Exponential(2), LogNormal()], L = 10^5)
+    pval = Matrix{Float64}(undef, L, length(dists))
+    tmp = [Vector{Float64}(undef, n) for _ in 1:Threads.nthreads()]
+    Threads.@threads for i in 1:L
+        for (j, dist) in enumerate(dists)
+            X = rand!(dist, tmp[Threads.threadid()])
+            pval[i, j] = pval_median(dist, n, median(X))
+        end
+    end
+    pval
+end
+
+function plot_mediantest(;
+        n = 40,
+        dists = [Normal(2, 3), Gamma(2, 3), Exponential(2), LogNormal()],
+        L = 10^5,
+        sim_mediantest_func = sim_mediantest
+    )
+    pval = sim_mediantest_func(; n, dists, L)
     PP = []
     for (j, dist) in enumerate(dists)
         m = median(dist)
@@ -497,15 +568,49 @@ plot_mediantest(; n = 50)
 ```
 
 ```julia
-plot_mediantest(; n = 100)
+plot_mediantest(; n = 60)
 ```
 
 ```julia
-plot_mediantest(; n = 200)
+plot_mediantest(; n = 70)
 ```
 
 ```julia
-plot_mediantest(; n = 400)
+plot_mediantest(; n = 80)
+```
+
+```julia
+plot_mediantest(; n = 160)
+```
+
+```julia
+plot_mediantest(; n = 320)
+```
+
+```julia
+plot_mediantest(; n = 640)
+```
+
+以下は理論的にはほぼ完全に45度線に乗るはずの場合.
+
+```julia
+plot_mediantest(; n = 10, sim_mediantest_func = sim_mediantest_exact)
+```
+
+```julia
+plot_mediantest(; n = 20, sim_mediantest_func = sim_mediantest_exact)
+```
+
+```julia
+plot_mediantest(; n = 40, sim_mediantest_func = sim_mediantest_exact)
+```
+
+```julia
+plot_mediantest(; n = 80, sim_mediantest_func = sim_mediantest_exact)
+```
+
+```julia
+plot_mediantest(; n = 160, sim_mediantest_func = sim_mediantest_exact)
 ```
 
 ```julia
