@@ -116,7 +116,7 @@ $$
 
 $$
 \pval_{\median'}(\dist, n, a) =
-\max\left(\begin{array}{l}
+\min\left(\begin{array}{l}
  1 \\
  2\cdf_{\median'}(\dist, n, a) \\
  2(1 - \cdf_{\median'}(\dist, n, a)) \\
