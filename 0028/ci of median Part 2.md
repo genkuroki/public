@@ -422,6 +422,7 @@ end
 
 ```julia
 Hdist = histogramdist(H)
+@show Hdist
 plot(x -> pdf(Hdist, x), -1, 22; label="histogram dist")
 ```
 
