@@ -31,6 +31,8 @@ $
 \newcommand\on{\operatorname}
 $
 
+Part2: [中央値の信頼区間2](https://github.com/genkuroki/public/blob/main/0028/ci%20of%20median%20Part%202.ipynb)
+
 ```julia
 using Distributions
 using StatsPlots
