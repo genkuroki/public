@@ -328,6 +328,71 @@ for n in (10, 20, 40, 80, 160, 320, 640)
 end
 ```
 
+## 2つのP値の平均
+
+```julia
+pval_median_averaged(X, a) = (pval_median_bootstrap(X, a) + pval_median_binomial(X, a)) / 2
+
+function sim_pval_median3(; dist = Gamma(2, 3), n = 40, L = 10^5)
+    a = median(dist)
+    pval_bst = Vector{Float64}(undef, L)
+    pval_bin = Vector{Float64}(undef, L)
+    pval_ave = Vector{Float64}(undef, L)
+    tmp = [Vector{Float64}(undef, n) for _ in 1:Threads.nthreads()]
+    Threads.@threads for i in 1:L
+        X = rand!(dist, tmp[Threads.threadid()])
+        pval_bst[i] = pval_median_bootstrap(X, a)
+        pval_bin[i] = pval_median_binomial(X, a)
+        pval_ave[i] = (pval_bst[i] + pval_bin[i])/2
+    end
+    pval_bst, pval_bin, pval_ave
+end
+
+function plot_probtype1error3(; dist = Gamma(2, 3), n = 40, L = 10^5)
+    pval_bst, pval_bin, pval_ave = sim_pval_median3(; dist, n, L)
+    ecdf_bst = ecdf(pval_bst)
+    ecdf_bin = ecdf(pval_bin)
+    ecdf_ave = ecdf(pval_ave)
+    
+    α = range(0, 1, 401)
+    P1 = plot(; legend=:bottomright)
+    plot!(α, α -> ecdf_bst(α); label="bootstrap")
+    plot!(α, α -> ecdf_bin(α); label="binomial", ls=:dash)
+    plot!(α, α -> ecdf_ave(α); label="average", ls=:dot, lw=2)
+    plot!([0, 1], [0, 1]; label="", ls=:dot, c=:black)
+    plot!(; xtick=0:0.1:1, ytick=0:0.1:1)
+    title!("$(name(dist)), n=$n")
+    plot!(; xlabel="nominal significance level α", ylabel = "probability of type I error")
+
+    α = range(0, 0.1, 401)
+    P2 = plot(; legend=:bottomright)
+    plot!(α, α -> ecdf_bst(α); label="bootstrap")
+    plot!(α, α -> ecdf_bin(α); label="binomial", ls=:dash)
+    plot!(α, α -> ecdf_ave(α); label="average", ls=:dot, lw=2)
+    plot!([0, 0.1], [0, 0.1]; label="", ls=:dot, c=:black)
+    plot!(; xtick=0:0.01:1, ytick=0:0.01:1)
+    title!("$(name(dist)), n=$n")
+    plot!(; xlabel="nominal significance level α", ylabel = "probability of type I error")
+    
+    plot(P1, P2; size=(800, 400), leftmargin=3Plots.mm, bottommargin=3Plots.mm)
+end
+```
+
+```julia
+for dist in (Normal(2, 3), Gamma(2, 3), Exponential(), LogNormal())
+    plot_probtype1error3(; dist, n = 20) |> display
+    println(); flush(stdout)
+end
+```
+
+```julia
+dist = Uniform()
+for n in (10, 20, 40, 80, 160, 320, 640)
+    plot_probtype1error3(; dist, n) |> display
+    println(); flush(stdout)
+end
+```
+
 ```julia
 
 ```
