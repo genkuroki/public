@@ -123,20 +123,19 @@ function beta_median(n)
     Beta((n+1)/2, (n+1)/2)
 end
 
-function ci_median_bootstrap(X; α = 0.05)
+function ci_median_bootstrap(X::AbstractVector; α = 0.05)
     beta = beta_median(length(X))
     L = quantile(X, quantile(beta, α/2))
     U = quantile(X, quantile(beta, 1 - α/2))
     L, U
 end
 
-function cdf_median_bootstrap(X, a)
+function cdf_median_bootstrap(X::AbstractVector, a)
     beta = beta_median(length(X))
     cdf(beta, ecdf(X)(a))
 end
 
 function pval_median_bootstrap(X, a)
-    beta = beta_median(length(X))
     c = cdf_median_bootstrap(X, a)
     min(1, 2c, 2(1 - c))
 end
@@ -214,7 +213,7 @@ P値函数と信頼区間の対応は, 与えられたデータについて, P�
 ```julia
 bin_median(n) = Binomial(n, 1/2)
 
-function ci_median_binomial(X; α = 0.05)
+function ci_median_binomial(X::AbstractVector; α = 0.05)
     bin = bin_median(length(X))
     Xord = sort(X)
     L = Xord[quantile(bin, α/2)]
@@ -222,7 +221,7 @@ function ci_median_binomial(X; α = 0.05)
     L, U
 end
 
-function pval_median_binomial(X, a)
+function pval_median_binomial(X::AbstractVector, a)
     bin = bin_median(length(X))
     k = count(≤(a), X)
     l = count(<(a), X)
@@ -263,7 +262,7 @@ plot(P2, P3; size=(800, 300))
 ```julia
 plot(x -> pval_median_bootstrap(X, x), 3, 10; label="bootstrap P-value")
 plot!(x -> pval_median_binomial(X, x), 3, 10; label="binomial P-value")
-plot!(; ytick=[0:0.05:0.1; 0.2:0.1:1])
+plot!(; xtick=-1:21, ytick=[0:0.05:0.1; 0.2:0.1:1])
 ```
 
 ## 第一種の過誤の確率の比較
@@ -391,6 +390,128 @@ for n in (10, 20, 40, 80, 160, 320, 640)
     plot_probtype1error3(; dist, n) |> display
     println(); flush(stdout)
 end
+```
+
+## ヒストグラムの中央値の信頼区間
+
+
+### ヒストグラムデータ
+
+```julia
+Random.seed!(4649373)
+
+dist, n = Gamma(2, 3), 40
+X = rand(dist, n)
+bin = -0.5:21.5
+H = fit(Histogram, X, bin)
+@show H
+plot(H; alpha=0.3, label="size-100 sample")
+```
+
+### ヒストグラム分布
+
+```julia
+function histogramdist(h::Histogram)
+    e = h.edges[1]
+    w = h.weights
+    u = [Uniform(e[i], e[i+1]) for i in eachindex(e)[1:end-1]]
+    p = w/sum(w)
+    MixtureModel(u, p)
+end
+```
+
+```julia
+Hdist = histogramdist(H)
+plot(x -> pdf(Hdist, x), -1, 22; label="histogram dist")
+```
+
+### ブートストラップ法
+
+```julia
+function ci_median_bootstrap(H::Histogram; α = 0.05)
+    Hdist = histogramdist(H)
+    beta = beta_median(sum(H.weights))
+    L = quantile(Hdist, quantile(beta, α/2))
+    U = quantile(Hdist, quantile(beta, 1 - α/2))
+    L, U
+end
+
+function cdf_median_bootstrap(H::Histogram, a)
+    Hdist = histogramdist(H)
+    n = sum(H.weights)
+    beta = beta_median(n)
+    cdf(beta, cdf(Hdist, a))
+end
+```
+
+```julia
+ci_median_bootstrap(H)
+```
+
+```julia
+pval_median_bootstrap(H, 3.8)
+```
+
+### 二項分布に帰着
+
+```julia
+function ci_median_binomial(H::Histogram; α = 0.05)
+    Hdist = histogramdist(H)
+    n = sum(H.weights)
+    bin = bin_median(n)
+    L = quantile(Hdist, quantile(bin, α/2)/n)
+    U = quantile(Hdist, quantile(bin, 1-α/2)/n)
+    L, U
+end
+
+function pval_median_binomial(H::Histogram, a)
+    Hdist = histogramdist(H)
+    n = sum(H.weights)
+    bin = bin_median(n)
+    c = cdf(Hdist, a)
+    k = floor(Int, n*c)
+    l = ceil(Int, n*c) - 1
+    min(1, 2cdf(bin, k), 2ccdf(bin, l))
+end
+```
+
+```julia
+ci_median_binomial(H)
+```
+
+```julia
+pval_median_binomial(H, 3.8)
+```
+
+### 比較
+
+```julia
+# 信頼区間の計算
+@show ci_bst = ci_median_bootstrap(H; α = 0.05)
+@show ci_bin = ci_median_binomial(H; α = 0.05)
+
+# プロット
+P2 = plot(x -> pval_median_bootstrap(H, x), 2, 12; label="bootstrap P-value")
+vline!([median(Hdist)]; label="median of histogram", lw=1.5, c=2, ls=:dash)
+plot!(collect(ci_bst), fill(0.05, 2); label="bootstrap ci", lw=4, c=2)
+vline!([median(dist)]; label="true median", lw=1.5, c=:blue, ls=:dashdot)
+title!("$(name(dist)), n=$n")
+plot!(; ytick=[0:0.05:0.1; 0.2:0.1:1])
+
+P3 = plot(x -> pval_median_binomial(H, x), 2, 12; label="binomial P-value")
+vline!([median(Hdist)]; label="median of histogram", lw=1.5, c=2, ls=:dash)
+plot!(collect(ci_bin), fill(0.05, 2); label="binomial ci", lw=4, c=2)
+vline!([median(dist)]; label="true median", lw=1.5, c=:blue, ls=:dashdot)
+title!("$(name(dist)), n=$n")
+plot!(; ytick=[0:0.05:0.1; 0.2:0.1:1])
+
+plot(P2, P3; size=(800, 300))
+```
+
+```julia
+plot(x -> pval_median_bootstrap(H, x), 2, 7; label="bootstrap P-value")
+plot!(x -> pval_median_binomial(H, x), 2, 7; label="binomial P-value")
+plot!(; xtick=-1:21, ytick=[0:0.05:0.1; 0.2:0.1:1])
 ```
 
 ```julia
