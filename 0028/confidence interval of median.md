@@ -344,9 +344,9 @@ end
 function histogramdist(h::Histogram)
     e = h.edges[1]
     w = h.weights
-    c = [Uniform(e[i], e[i+1]) for i in eachindex(e)[1:end-1]]
+    u = [Uniform(e[i], e[i+1]) for i in eachindex(e)[1:end-1]]
     p = w/sum(w)
-    MixtureModel(c, p)
+    MixtureModel(u, p)
 end
 ```
 
