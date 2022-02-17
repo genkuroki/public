@@ -500,10 +500,6 @@ end
 ```
 
 ```julia
-
-```
-
-```julia
 Hdist = histogramdist(H)
 @show Hdist
 plot(x -> pdf(Hdist, x), (extrema(Hdist) .+ (-1, 1))...; label="histogram dist")
