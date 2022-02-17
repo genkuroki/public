@@ -195,12 +195,12 @@ $$
 \begin{array}{l}
 1 \\
 2\cdf(\on{bin}, k) \\
-2(1 - \cdf(\on{bin}, l)) \\
+2(1 - \cdf(\on{bin}, k')) \\
 \end{array}
 \right).
 $$
 
-ここで $k$ は $a$ 以下の $X_i$ の個数であり, $l$ は $a$ 未満の $X_i$ の個数である.
+ここで $k$ は $a$ 以下の $X_i$ の個数であり, $k'$ は $a$ 未満の $X_i$ の個数である.
 
 信頼区間とP値の概念は表裏一体である(竹内啓『数理統計学』 p.103, 竹村彰通『現代数理統計学』 p.202, 久保川達也『現代数理統計学の基礎』 p.169).
 P値函数と信頼区間の対応は, 与えられたデータについて, P値函数の値がα以上になるパラメータの範囲が信頼区間に一致するという条件で与えられる.
@@ -223,9 +223,9 @@ end
 
 function pval_median_binomial(X::AbstractVector, a)
     bin = bin_median(length(X))
-    k = count(≤(a), X)
-    l = count(<(a), X)
-    min(1, 2cdf(bin, k), 2ccdf(bin, l))
+    k  = count(≤(a), X)
+    k′ = count(<(a), X)
+    min(1, 2cdf(bin, k), 2ccdf(bin, k′))
 end
 ```
 
@@ -263,6 +263,48 @@ plot(P2, P3; size=(800, 300))
 plot(x -> pval_median_bootstrap(X, x), 3, 10; label="bootstrap P-value")
 plot!(x -> pval_median_binomial(X, x), 3, 10; label="binomial P-value")
 plot!(; xtick=-1:21, ytick=[0:0.05:0.1; 0.2:0.1:1])
+```
+
+## 二項分布とベータ分布の関係
+
+二項分布 $\Beta(n, p)$ における累積分布函数はベータ分布の累積分布函数で記述できる:
+
+$$
+\begin{aligned}
+&
+\sum_{j=0}^k \binom{n}{j} p^j(1-p)^{n-j} = \int_p^1 \frac{t^k(1-k)^{n-k-1}}{B(k+1, n-k)}\,dt,
+\\ &
+\sum_{j=k}^n \binom{n}{j} p^j(1-p)^{n-j} = \int_0^p \frac{t^{k-1}(1-k)^{n-k}}{B(k, n-k+1)}\,dt.
+\end{aligned}
+$$
+
+すなわち,
+
+$$
+\begin{aligned}
+&
+\cdf(\Binomial(n, p), k) = 1 - \cdf(\Beta(k+1, n-k), p), 
+\\ &
+1 - \cdf(\Binomial(n, p), k-1) = \cdf(\Beta(k, n-k+1), p).
+\end{aligned}
+$$
+
+以下のセルに数値的な確認がある. 証明は両辺を $p$ で微分しても得られるし, 右辺の積分で部分積分を繰り返しても得られる.
+
+この関係を使うと, 二項分布による記述をベータ分布による記述に書き換えたり, パラメータが整数のベータ分布による記述を二項分布による記述に書き換えたりできる. 以上の中央値の区間推定や検定の記述はこの書き換えによって見かけ上異なる記述が得られる. 例えば, 
+
+* 奥村晴彦, [ヒストグラムから中央値・分位数とその信頼区間を求める](https://oku.edu.mie-u.ac.jp/~okumura/python/hist-median.html)
+
+に書いてある中央値の区間推定と検定の式を見るときには注意が必要である.
+
+```julia
+n, p = 10, 0.4
+@show [cdf(Binomial(n, p), k) for k in 0:n-1] .== [ccdf(Beta(k+1, n-k), p) for k in 0:n-1]
+@show [ccdf(Binomial(n, p), k-1) for k in 1:n] .== [cdf(Beta(k, n-k+1), p) for k in 1:n]
+
+plot(; legend=:bottomright)
+plot!(0:n-1, [cdf(Binomial(n, p), k) for k in 0:n-1]; label="cdf(Binomial(n, p), k)")
+plot!(0:n-1, [ccdf(Beta(k+1, n-k), p) for k in 0:n-1]; label="ccdf(Beta(k+1, n-k), p)", ls=:dash)
 ```
 
 ## 第一種の過誤の確率の比較
