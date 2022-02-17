@@ -80,31 +80,48 @@ $n$ が10以上の偶数の場合には, 一様分布 $\on{Uniform}(0, 1)$ の�
 plot_mediandist_approx()
 ```
 
+$n$ が偶数の場合にはさらにもとの標本 $X=(X_1,\ldots,X_n)$ を小さな順に
+
+$$
+X(1) \le X(2) \le \cdots \le X(n)
+$$
+
+と並べ直して, 
+
+$$
+X' = \left(X(1), \frac{X(1)+X(2)}{2}, \frac{X(2)+X(3)}{2}, \ldots, \frac{X(n-1)+X(n)}{2}, X(n)\right)
+$$
+
+に置き換えた方が精度が上がると考えられる. $X'$ の中には $X$ の中央値 $(X(n/2)+X(n/2+1))/2$ が含まれることに注意せよ. 両端も調節した方がよいかもしれないが, 調節によって母集団分布に含まれない値が追加される危険性を考慮し, 両端を調節しないことにした.
+
+
 $n$ が奇数のときは $n'=n$ とおき, $n$ が偶数のときには $n'=n+1$ とおいて, 標本サイズ $n$ に対して, 
 
 $$
 \on{beta}=\Beta((n'+1)/2, (n'+1)/2)
 $$
 
-と定める(左右対称なベータ分布). このとき, 信頼係数 $1-\alpha$ の中央値の信頼区間 $[L, U]$ を次のように構成できる(ブートストラップ法):
+と定め(左右対称なベータ分布), $n$ が奇数のときには $X'=X$ とおき, $n$ が偶数のときには上のように $X'$ を定める.
+
+このとき, 信頼係数 $1-\alpha$ の中央値の信頼区間 $[L, U]$ を次のように構成できる(ブートストラップ法):
 
 $$
 \begin{aligned}
 &
-L = \quantile(X, \quantile(\on{beta}, \alpha/2)),
+L = \quantile(X', \quantile(\on{beta}, \alpha/2)),
 \\ &
-U = \quantile(X, \quantile(\on{beta}, 1-\alpha/2)).
+U = \quantile(X', \quantile(\on{beta}, 1-\alpha/2)).
 \end{aligned}
 $$
 
 対応するP値函数は次のように書ける:
 
 $$
-\pval_{\on{bootstrap}}(X, a) = \min\left(
+\pval_{\on{bootstrap}}(X', a) = \min\left(
 \begin{array}{l}
 1 \\
-2\cdf(\on{beta}, \ecdf(X)(a)) \\
-2(1 - \cdf(\on{beta}, \ecdf(X)(a))) \\
+2\cdf(\on{beta}, \ecdf(X')(a)) \\
+2(1 - \cdf(\on{beta}, \ecdf(X')(a))) \\
 \end{array}
 \right).
 $$
@@ -123,15 +140,35 @@ function beta_median(n)
     Beta((n+1)/2, (n+1)/2)
 end
 
-function ci_median_bootstrap(X::AbstractVector; α = 0.05)
+function sample_beta_median!(X)
+    isodd(length(X)) && return X
+    sort!(X)
+    [X[1]; (@view(X[1:end-1]) .+ @view(X[2:end])) ./ 2; X[end]] 
+end
+
+function ci_median_bootstrap_old(X::AbstractVector; α = 0.05)
     beta = beta_median(length(X))
     L = quantile(X, quantile(beta, α/2))
     U = quantile(X, quantile(beta, 1 - α/2))
     L, U
 end
 
+function ci_median_bootstrap(X::AbstractVector; α = 0.05)
+    beta = beta_median(length(X))
+    X = sample_beta_median!(X)
+    L = quantile(X, quantile(beta, α/2))
+    U = quantile(X, quantile(beta, 1 - α/2))
+    L, U
+end
+
+function cdf_median_bootstrap_old(X::AbstractVector, a)
+    beta = beta_median(length(X))
+    cdf(beta, ecdf(X)(a))
+end
+
 function cdf_median_bootstrap(X::AbstractVector, a)
     beta = beta_median(length(X))
+    X = sample_beta_median!(X)
     cdf(beta, ecdf(X)(a))
 end
 
@@ -139,6 +176,10 @@ function pval_median_bootstrap(X, a)
     c = cdf_median_bootstrap(X, a)
     min(1, 2c, 2(1 - c))
 end
+```
+
+```julia
+@show sample_beta_median!([8, 7, 6, 5, 4, 3, 2, 1]);
 ```
 
 ```julia
@@ -175,16 +216,26 @@ plot(P1, P2; size=(800, 300))
 
 標本 $X=(X_1,\ldots,X_n)$ を小さな順に並べたもの(sortしたもの)を $X(1)\le\cdots\le X(n)$ と書く.
 
-$\on{bin} = \Binomial(n, 1/2)$ (試行回数 $n$ の二項分布)とおく.
+$n$ が奇数の場合には $X'$ を
+
+$$
+X' = \left(X(1), \frac{X(1)+X(2)}{2}, \frac{X(2)+X(3)}{2}, \ldots, \frac{X(n-1)+X(n)}{2}, X(n)\right)
+$$
+
+と定める. $n$ が偶数の場合には $X' = (X(1),\ldots,X(n)))$ とおく. $X'$ の第 $i$ 成分を $X'(i)$ と書く.
+
+以下では $n$ が偶数のとき $n'=n$ とおき, $n$ が奇数のとき $n'=n+1$ とおく.
+
+$\on{bin} = \Binomial(n', 1/2)$ (試行回数 $n'$ の二項分布)とおく.
 
 信頼係数 $1-\alpha$ の中央値の信頼区間 $[L, U]$ を次のようにも構成できる:
 
 $$
 \begin{aligned}
 &
-L = X(\quantile(\on{bin}, \alpha/2)),
+L = X'(\quantile(\on{bin}, \alpha/2)),
 \\ &
-U = X(\quantile(\on{bin}, 1 - \alpha/2)).
+U = X'(\quantile(\on{bin}, 1 - \alpha/2)).
 \end{aligned}
 $$
 
@@ -194,13 +245,13 @@ $$
 \pval_{\on{binomial}}(X, a) = \min\left(
 \begin{array}{l}
 1 \\
-2\cdf(\on{bin}, k) \\
-2(1 - \cdf(\on{bin}, k')) \\
+\cdf(\on{bin}, k) + \cdf(\on{bin}, k')\\
+2 - (\cdf(\on{bin}, k) + \cdf(\on{bin}, k')) \\
 \end{array}
 \right).
 $$
 
-ここで $k$ は $a$ 以下の $X_i$ の個数であり, $k'$ は $a$ 未満の $X_i$ の個数である.
+ここで $k$ は $a$ 以下の $X'(i)$ の個数であり, $k'$ は $a$ 未満の $X'(i)$ の個数である.
 
 信頼区間とP値の概念は表裏一体である(竹内啓『数理統計学』 p.103, 竹村彰通『現代数理統計学』 p.202, 久保川達也『現代数理統計学の基礎』 p.169).
 P値函数と信頼区間の対応は, 与えられたデータについて, P値函数の値がα以上になるパラメータの範囲が信頼区間に一致するという条件で与えられる.
@@ -211,21 +262,50 @@ P値函数と信頼区間の対応は, 与えられたデータについて, P�
 異なる方法で構成された信頼区間を比較するには, 対応するP値函数を比較すればよい.
 
 ```julia
-bin_median(n) = Binomial(n, 1/2)
+bin_median_old(n) = Binomial(n, 1/2)
+
+function bin_median(n)
+    n += isodd(n)
+    Binomial(n, 1/2)
+end
+
+function sample_bin_median!(X)
+    iseven(length(X)) && return sort!(X)
+    sort!(X)
+    [X[1]; (@view(X[1:end-1]) .+ @view(X[2:end])) ./ 2; X[end]] 
+end
+
+function ci_median_binomial_old(X::AbstractVector; α = 0.05)
+    bin = bin_median_old(length(X))
+    X′ = sort(X)
+    L = X′[quantile(bin, α/2)]
+    U = X′[quantile(bin, 1 - α/2)]
+    L, U
+end
 
 function ci_median_binomial(X::AbstractVector; α = 0.05)
     bin = bin_median(length(X))
-    Xord = sort(X)
-    L = Xord[quantile(bin, α/2)]
-    U = Xord[quantile(bin, 1 - α/2)]
+    X′ = sample_bin_median!(X)
+    L = X′[quantile(bin, α/2)]
+    U = X′[quantile(bin, 1 - α/2)]
     L, U
+end
+
+function pval_median_binomial_old(X::AbstractVector, a)
+    bin = bin_median(length(X))
+    k  = count(≤(a), X)
+    k′ = count(<(a), X)
+    c = cdf(bin, k) + cdf(bin, k′)
+    min(1, c, 2 - c)
 end
 
 function pval_median_binomial(X::AbstractVector, a)
     bin = bin_median(length(X))
-    k  = count(≤(a), X)
-    k′ = count(<(a), X)
-    min(1, 2cdf(bin, k), 2ccdf(bin, k′))
+    X′ = sample_bin_median!(X)
+    k  = count(≤(a), X′)
+    k′ = count(<(a), X′)
+    c = cdf(bin, k) + cdf(bin, k′)
+    min(1, c, 2 - c)
 end
 ```
 
@@ -235,6 +315,42 @@ Random.seed!(3734649)
 # テストサンプルの生成
 dist = Gamma(2, 3)
 n = 40
+X = rand(dist, n)
+
+# 信頼区間の計算
+@show ci_bst = ci_median_bootstrap(X; α = 0.05)
+@show ci_bin = ci_median_binomial(X; α = 0.05)
+
+# プロット
+P2 = plot(x -> pval_median_bootstrap(X, x), -1, 21; label="bootstrap P-value")
+vline!([median(X)]; label="median of data", lw=1.5, c=2, ls=:dash)
+plot!(collect(ci_bst), fill(0.05, 2); label="bootstrap ci", lw=4, c=2)
+vline!([median(dist)]; label="true median", lw=1.5, c=:blue, ls=:dashdot)
+title!("$(name(dist)), n=$n")
+plot!(; ytick=[0:0.05:0.1; 0.2:0.1:1])
+
+P3 = plot(x -> pval_median_binomial(X, x), -1, 21; label="binomial P-value")
+vline!([median(X)]; label="median of data", lw=1.5, c=2, ls=:dash)
+plot!(collect(ci_bin), fill(0.05, 2); label="binomial ci", lw=4, c=2)
+vline!([median(dist)]; label="true median", lw=1.5, c=:blue, ls=:dashdot)
+title!("$(name(dist)), n=$n")
+plot!(; ytick=[0:0.05:0.1; 0.2:0.1:1])
+
+plot(P2, P3; size=(800, 300))
+```
+
+```julia
+plot(x -> pval_median_bootstrap(X, x), 3, 10; label="bootstrap P-value")
+plot!(x -> pval_median_binomial(X, x), 3, 10; label="binomial P-value")
+plot!(; xtick=-1:21, ytick=[0:0.05:0.1; 0.2:0.1:1])
+```
+
+```julia
+Random.seed!(3734649)
+
+# テストサンプルの生成
+dist = Gamma(2, 3)
+n = 41
 X = rand(dist, n)
 
 # 信頼区間の計算
@@ -281,20 +397,23 @@ $$
 以下のセルに数値的な確認がある. 証明は両辺を $p$ で微分しても得られるし, 右辺の積分で部分積分を繰り返しても得られる. もしくはより確率論的に, 一様分布 $\on{Uniform}(0,1)$ のサイズ $n$ の標本中の $p$ 以下の数値の個数が $k$ 以上になる確率を2通りに記述することによって, 後者の公式の直観的な説明を得ることもできる. 右辺のベータ分布における確率は, 一様分布 $\on{Uniform}(0,1)$ のサイズ $n$ の標本中の下から $k$ 番目に小さな値が $p$ 以下になる確率として得られる.  一様分布 $\on{Uniform}(0,1)$ のサイズ $n$ の標本中の下から $k$ 番目に小さな値が $p$ 以下になる確率の密度と $dt$ の積は, $n$ 個を $k-1$ 個, $1$ 個, $n-k$ 個に分割する方法の個数と $k-1$ 個が $t$ 以下になる確率と $1$ 個が $t$ を含む微小区間に含まれる確率 $dt$ と $n-k$ 個が $t$ より大きくなる確率の積
 
 $$
-\frac{n!}{(k-1)!1!(n-k)!} t^{k-1}\,dt\,(1-t)^{n-k} =
-\frac{t^{k-1}(1-k)^{n-k}}{B(k, n-k+1)}\,dt
+\begin{aligned}
+\frac{n!}{(k-1)!1!(n-k)!}\, t^{k-1}\,dt\,(1-t)^{n-k} &=
+\frac{\Gamma(n+1)}{\Gamma(k)\Gamma(n-k+1)}\, t^{k-1}\,dt\,(1-t)^{n-k} \\ &=
+\frac{1}{B(k, n-k+1)}\,t^{k-1}(1-k)^{n-k}\,dt
+\end{aligned}
 $$
 
 になる. これを $t$ について $0$ から $p$ まで積分したものが, 上の後者の公式の右辺になる. 以上の説明は, 一様分布 $\on{Uniform}(0,1)$ のサイズ $n$ の標本の順序統計量(標本中の $k$ 番目に小さな値)の分布がベータ分布で表されることの説明にもなっている.
 
-コンピュータでの実装では以下の等式に注意すればよい:
+コンピュータの実装での対応する公式は以下のようになる:
 
 $$
 \begin{aligned}
 &
-\cdf(\Binomial(n, p), k) = 1 - \cdf(\Beta(k+1, n-k), p), 
+\cdf(\Binomial(n, p), k) = \on{ccdf}(\Beta(k+1, n-k), p), 
 \\ &
-1 - \cdf(\Binomial(n, p), k-1) = \cdf(\Beta(k, n-k+1), p).
+\on{ccdf}(\Binomial(n, p), k-1) = \cdf(\Beta(k, n-k+1), p).
 \end{aligned}
 $$
 
@@ -366,11 +485,27 @@ for dist in (Normal(2, 3), Gamma(2, 3), Exponential(), LogNormal())
 end
 ```
 
+```julia
+for dist in (Normal(2, 3), Gamma(2, 3), Exponential(), LogNormal())
+    plot_probtype1error(; dist, n = 21) |> display
+    println(); flush(stdout)
+end
+```
+
 第一種の過誤の確率は名目有意水準に近い方がよい. この点に関して2つの方法の優劣は付け難い.
 
 ```julia
 dist = Uniform()
 for n in (10, 20, 40, 80, 160, 320, 640)
+    plot_probtype1error(; dist, n) |> display
+    println(); flush(stdout)
+end
+```
+
+```julia
+dist = Uniform()
+for n in (10, 20, 40, 80, 160, 320, 640)
+    n += 1
     plot_probtype1error(; dist, n) |> display
     println(); flush(stdout)
 end
@@ -403,20 +538,20 @@ function plot_probtype1error3(; dist = Gamma(2, 3), n = 40, L = 10^5)
     ecdf_ave = ecdf(pval_ave)
     
     α = range(0, 1, 401)
-    P1 = plot(; legend=:bottomright)
+    P1 = plot(; legend=:topleft)
     plot!(α, α -> ecdf_bst(α); label="bootstrap")
     plot!(α, α -> ecdf_bin(α); label="binomial", ls=:dash)
-    plot!(α, α -> ecdf_ave(α); label="average", ls=:dot, lw=2)
+    plot!(α, α -> ecdf_ave(α); label="averaged P-value", ls=:dot, lw=2)
     plot!([0, 1], [0, 1]; label="", ls=:dot, c=:black)
     plot!(; xtick=0:0.1:1, ytick=0:0.1:1)
     title!("$(name(dist)), n=$n")
     plot!(; xlabel="nominal significance level α", ylabel = "probability of type I error")
 
     α = range(0, 0.1, 401)
-    P2 = plot(; legend=:bottomright)
+    P2 = plot(; legend=:topleft)
     plot!(α, α -> ecdf_bst(α); label="bootstrap")
     plot!(α, α -> ecdf_bin(α); label="binomial", ls=:dash)
-    plot!(α, α -> ecdf_ave(α); label="average", ls=:dot, lw=2)
+    plot!(α, α -> ecdf_ave(α); label="averaged P-value", ls=:dot, lw=2)
     plot!([0, 0.1], [0, 0.1]; label="", ls=:dot, c=:black)
     plot!(; xtick=0:0.01:1, ytick=0:0.01:1)
     title!("$(name(dist)), n=$n")
@@ -434,8 +569,24 @@ end
 ```
 
 ```julia
+for dist in (Normal(2, 3), Gamma(2, 3), Exponential(), LogNormal())
+    plot_probtype1error3(; dist, n = 21) |> display
+    println(); flush(stdout)
+end
+```
+
+```julia
 dist = Uniform()
 for n in (10, 20, 40, 80, 160, 320, 640)
+    plot_probtype1error3(; dist, n) |> display
+    println(); flush(stdout)
+end
+```
+
+```julia
+dist = Uniform()
+for n in (10, 20, 40, 80, 160, 320, 640)
+    n += 1
     plot_probtype1error3(; dist, n) |> display
     println(); flush(stdout)
 end
@@ -457,7 +608,9 @@ H = fit(Histogram, X, bin)
 plot(H; alpha=0.3, label="size-100 sample")
 ```
 
-### ヒストグラム分布
+### ヒストグラムから作られる分布
+
+ヒストグラムから各ビンごとに一様分布に従う確率分布を作ることができる.
 
 ```julia
 function histogramdist(h::Histogram)
@@ -473,6 +626,15 @@ end
 Hdist = histogramdist(H)
 @show Hdist
 plot(x -> pdf(Hdist, x), -1, 22; label="histogram dist")
+```
+
+ヒストグラムから作られた確率分布 $\on{Hdist}$ から平均や分散や中央値などを計算できる.
+
+```julia
+@show mean(Hdist)
+@show var(Hdist)
+@show median(Hdist)
+@show quantile.(Hdist, (0.25, 0.50, 0.75));
 ```
 
 ### ブートストラップ法
@@ -498,6 +660,8 @@ end
 ci_median_bootstrap(H)
 ```
 
+`pval_ian_bootstrap` メソッドは `cdf_median_bootstrap` メソッドが実装されれば自動的に使えるようになる.
+
 ```julia
 pval_median_bootstrap(H, 3.8)
 ```
@@ -514,7 +678,7 @@ function ci_median_binomial(H::Histogram; α = 0.05)
     L, U
 end
 
-function pval_median_binomial(H::Histogram, a)
+function pval_median_binomial_old(H::Histogram, a)
     Hdist = histogramdist(H)
     n = sum(H.weights)
     bin = bin_median(n)
@@ -522,6 +686,14 @@ function pval_median_binomial(H::Histogram, a)
     k = floor(Int, n*c)
     l = ceil(Int, n*c) - 1
     min(1, 2cdf(bin, k), 2ccdf(bin, l))
+end
+
+function pval_median_binomial(H::Histogram, a)
+    Hdist = histogramdist(H)
+    n = sum(H.weights)
+    bin = bin_median(n)
+    c = cdf(Hdist, a)
+    min(1, 2cdf(bin, n*c), 2ccdf(bin, n*c))
 end
 ```
 
