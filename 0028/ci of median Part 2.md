@@ -248,7 +248,7 @@ end
 ```
 
 ```julia
-#Random.seed!(3734649)
+Random.seed!(3734649)
 
 # テストサンプルの生成
 dist = Gamma(2, 3)
@@ -278,7 +278,14 @@ plot(Q3, Q4; size=(800, 300))
 ```
 
 ```julia
+@show ci_bst = ci_median_bootstrap(X; α = 0.05)
+@show ci_bin = ci_median_binomial(X; α = 0.05)
+println()
+flush(stdout)
+
 plot(Q2, Q4; size=(800, 300)) |> display
+println()
+flush(stdout)
 
 x = range(2, 10, 401)
 plot(x, x -> pval_median_bootstrap(X, x); label="bootstrap P-value")
@@ -286,10 +293,11 @@ plot!(x, x -> pval_median_binomial(X, x); label="binomial P-value")
 plot!(collect(ci_bst), fill(0.056, 2); label="bootstrap ci", lw=4, c=1)
 plot!(collect(ci_bin), fill(0.044, 2); label="binomial ci", lw=4, c=2)
 plot!(; xtick=-1:21, ytick=[0:0.05:0.1; 0.2:0.1:1])
+title!("$(name(dist)), n=$n")
 ```
 
 ```julia
-#Random.seed!(3734649)
+Random.seed!(3734649)
 
 # テストサンプルの生成
 dist = Gamma(2, 3)
@@ -299,6 +307,8 @@ X = rand(dist, n)
 # 信頼区間の計算
 @show ci_bst = ci_median_bootstrap(X; α = 0.05)
 @show ci_bin = ci_median_binomial(X; α = 0.05)
+println()
+flush(stdout)
 
 # プロット
 R2 = plot(x -> pval_median_bootstrap(X, x), -1, 21; label="bootstrap P-value")
@@ -316,6 +326,8 @@ title!("$(name(dist)), n=$n")
 plot!(; ytick=[0:0.05:0.1; 0.2:0.1:1])
 
 plot(R2, R4; size=(800, 300)) |> display
+println()
+flush(stdout)
 
 x = range(2, 10, 401)
 plot(x, x -> pval_median_bootstrap(X, x); label="bootstrap P-value")
@@ -323,6 +335,7 @@ plot!(x, x -> pval_median_binomial(X, x); label="binomial P-value")
 plot!(collect(ci_bst), fill(0.056, 2); label="bootstrap ci", lw=4, c=1)
 plot!(collect(ci_bin), fill(0.044, 2); label="binomial ci", lw=4, c=2)
 plot!(; xtick=-1:21, ytick=[0:0.05:0.1; 0.2:0.1:1])
+title!("$(name(dist)), n=$n")
 ```
 
 ## 二項分布とベータ分布の関係
@@ -487,6 +500,10 @@ end
 ```
 
 ```julia
+
+```
+
+```julia
 Hdist = histogramdist(H)
 @show Hdist
 plot(x -> pdf(Hdist, x), (extrema(Hdist) .+ (-1, 1))...; label="histogram dist")
@@ -571,6 +588,8 @@ pval_median_binomial(H, 3.8)
 # 信頼区間の計算
 @show ci_bst = ci_median_bootstrap(H; α = 0.05)
 @show ci_bin = ci_median_binomial(H; α = 0.05)
+println()
+flush(stdout)
 
 # プロット
 P2 = plot(x -> pval_median_bootstrap(H, x), 2, 15; label="bootstrap P-value")
@@ -587,10 +606,10 @@ vline!([median(dist)]; label="true median", lw=1.5, c=:blue, ls=:dashdot)
 title!("$(name(dist)), n=$n")
 plot!(; ytick=[0:0.05:0.1; 0.2:0.1:1])
 
-plot(P2, P3; size=(800, 300))
-```
+plot(P2, P3; size=(800, 300)) |> display
+println()
+flush(stdout)
 
-```julia
 x = range(2, 9, 401)
 plot(x, x -> pval_median_bootstrap(H, x); label="bootstrap P-value")
 plot!(x, x -> pval_median_binomial(H, x); label="binomial P-value")
@@ -618,6 +637,8 @@ Hdist = histogramdist(H)
 # 信頼区間の計算
 @show ci_bst = ci_median_bootstrap(H; α = 0.05)
 @show ci_bin = ci_median_binomial(H; α = 0.05)
+println()
+flush(stdout)
 
 # プロット
 P2 = plot(x -> pval_median_bootstrap(H, x), 2, 15; label="bootstrap P-value")
@@ -634,17 +655,17 @@ vline!([median(dist)]; label="true median", lw=1.5, c=:blue, ls=:dashdot)
 title!("$(name(dist)), n=$n")
 plot!(; ytick=[0:0.05:0.1; 0.2:0.1:1])
 
-plot(P2, P3; size=(800, 300))
-```
+plot(P2, P3; size=(800, 300)) |> display
+println()
+flush(stdout)
 
-```julia
 x = range(2, 9, 401)
 plot(x, x -> pval_median_bootstrap(H, x); label="bootstrap P-value")
 plot!(x, x -> pval_median_binomial(H, x); label="binomial P-value")
 plot!(collect(ci_bst), fill(0.056, 2); label="bootstrap ci", lw=4, c=1)
 plot!(collect(ci_bin), fill(0.044, 2); label="binomial ci", lw=4, c=2)
 plot!(; xtick=-1:21, ytick=[0:0.05:0.1; 0.2:0.1:1])
-title!("$(name(dist)), n=$n")
+title!("$(name(dist)), n=$n, bin=$bin")
 ```
 
 ### ヒストグラムを経由した場合の第一種の過誤の確率
@@ -705,11 +726,11 @@ end
 ```
 
 ```julia
-uniform = Uniform(0, √(12 * 18))
+uniform = Uniform(0, round(√(12 * 18); digits=3))
 normal = Normal(2, √18)
 gamma = Gamma(2, 3)
-exponential = Exponential(√18)
-lognormal = LogNormal(0, √log((1 + √(1+4*18))/2))
+exponential = Exponential(round(√18; digits=3))
+lognormal = LogNormal(0, round(√log((1 + √(1+4*18))/2); digits=3))
 
 @show var(uniform)
 @show var(normal)
