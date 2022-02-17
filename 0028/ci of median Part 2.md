@@ -62,75 +62,64 @@ function plot_mediandist_approx()
     PP = []
     P = plot_mediandists(2; legend=:bottom)
     push!(PP, P)
-    for n in 4:2:12
+    for n in 4:2:18
     P = plot_mediandists(n; legend=false)
         push!(PP, P)
     end
-    plot(PP...; size=(900, 540), layout=(2, 3))
+    plot(PP...; size=(900, 810), layout=(3, 3))
 end
 ```
 
 ## ブートストラップ法
 
-$n$ が奇数のとき, 一様分布 $\on{Uniform}(0, 1)$ のサイズ $n$ の標本の中央値の真の分布は $\Beta((n+1)/2, (n+1)/2)$ になる([順序統計量 - Wikipedia](https://ja.wikipedia.org/wiki/%E9%A0%86%E5%BA%8F%E7%B5%B1%E8%A8%88%E9%87%8F) を参照せよ).
+$n$ が奇数のとき, 一様分布 $\on{Uniform}(0, 1)$ のサイズ $n$ の標本の中央値の真の分布は $\Beta((n+1)/2, (n+1)/2)$ になる(下の方にある[二項分布とベータ分布の関係](#二項分布とベータ分布の関係)の節または[順序統計量 - Wikipedia](https://ja.wikipedia.org/wiki/%E9%A0%86%E5%BA%8F%E7%B5%B1%E8%A8%88%E9%87%8F) を参照せよ).
 
-$n$ が10以上の偶数の場合には, 一様分布 $\on{Uniform}(0, 1)$ のサイズ $n$ の標本の中央値の真の分布の良い近似として, $n' = n+1$ とおいて, $\Beta((n'+1)/2, (n'+1)/2)$ を採用できる. 以下のセルを見よ.
+$n$ が10以上の偶数の場合には, 一様分布 $\on{Uniform}(0, 1)$ のサイズ $n$ の標本の中央値の真の分布(Dirichlet分布の積分で構成できる)の良い近似として, $n' = n+1$ のときの $\Beta((n'+1)/2, (n'+1)/2)$ を採用できる. $n$ が奇数の場合と違ってベータ分布中で使う $n$ を1増やしていることに注意せよ.  実際に良い近似になっていることについては以下のセルのグラフを見よ. グラフを見れば $n'=n+1$ を使った方が真の分布をよく近似しており, $n\ge 10$ で近似の精度が十分に高そうなことがわかる. 
 
 ```julia
 plot_mediandist_approx()
 ```
 
-$n$ が偶数の場合にはさらにもとの標本 $X=(X_1,\ldots,X_n)$ を小さな順に
-
-$$
-X(1) \le X(2) \le \cdots \le X(n)
-$$
-
-と並べ直して, 
-
-$$
-X' = \left(X(1), \frac{X(1)+X(2)}{2}, \frac{X(2)+X(3)}{2}, \ldots, \frac{X(n-1)+X(n)}{2}, X(n)\right)
-$$
-
-に置き換えた方が精度が上がると考えられる. $X'$ の中には $X$ の中央値 $(X(n/2)+X(n/2+1))/2$ が含まれることに注意せよ. 両端も調節した方がよいかもしれないが, 調節によって母集団分布に含まれない値が追加される危険性を考慮し, 両端を調節しないことにした.
-
-
-$n$ が奇数のときは $n'=n$ とおき, $n$ が偶数のときには $n'=n+1$ とおいて, 標本サイズ $n$ に対して, 
+$n$ が奇数のときは $n'=n$ とおき, $n$ が偶数のときには $n'=n+1$ とおいて, 標本サイズ $n$ に対して, ベータ分布 $\on{beta}$ を次のように定める:
 
 $$
 \on{beta}=\Beta((n'+1)/2, (n'+1)/2)
 $$
-
-と定め(左右対称なベータ分布), $n$ が奇数のときには $X'=X$ とおき, $n$ が偶数のときには上のように $X'$ を定める.
 
 このとき, 信頼係数 $1-\alpha$ の中央値の信頼区間 $[L, U]$ を次のように構成できる(ブートストラップ法):
 
 $$
 \begin{aligned}
 &
-L = \quantile(X', \quantile(\on{beta}, \alpha/2)),
+L = \quantile(X, \quantile(\on{beta}, \alpha/2)),
 \\ &
-U = \quantile(X', \quantile(\on{beta}, 1-\alpha/2)).
+U = \quantile(X, \quantile(\on{beta}, 1-\alpha/2)).
 \end{aligned}
 $$
 
 対応するP値函数は次のように書ける:
 
 $$
-\pval_{\on{bootstrap}}(X', a) = \min\left(
+\pval_{\on{bootstrap}}(X, a) = \min\left(
 \begin{array}{l}
 1 \\
-2\cdf(\on{beta}, \ecdf(X')(a)) \\
-2(1 - \cdf(\on{beta}, \ecdf(X')(a))) \\
+2\cdf(\on{beta}, \ecdf(X)(a)) \\
+2(1 - \cdf(\on{beta}, \ecdf(X)(a))) \\
 \end{array}
 \right).
 $$
 
-信頼区間とP値の概念は表裏一体である(竹内啓『数理統計学』 p.103, 竹村彰通『現代数理統計学』 p.202, 久保川達也『現代数理統計学の基礎』 p.169).
-P値函数と信頼区間の対応は, 与えられたデータについて, P値函数の値がα以上になるパラメータの範囲が信頼区間に一致するという条件で与えられる.
+この方法で定義されたP値函数では第一種の過誤の確率が名目有意水準よりも大きくなってしまう場合が出て来ることに注意する必要がある.
 
-データが与えられたとき, 横軸をパラメータとするP値函数のグラフを描いたとき, 
-そのグラフを高さ $\alpha$ で切断して得られる区間が信頼係数 $1-\alpha$ の信頼区間になる.
+信頼区間とP値の概念は表裏一体である. このことについては
+
+* 竹内啓『数理統計学』 p.103
+* 竹村彰通『現代数理統計学』 p.202
+* 久保川達也『現代数理統計学の基礎』 p.169
+
+などの教科書を参照せよ. P値函数と信頼区間の対応は, 与えられたデータについて, P値函数の値がα以上になるパラメータの範囲が信頼区間に一致するという条件で与えられる.
+
+データが与えられたとき, 横軸をパラメータとするP値函数のグラフを描いたとき, そのグラフを高さ $\alpha$ で切断して得られる区間が信頼係数 $1-\alpha$ の信頼区間になる.
 
 異なる方法で構成された信頼区間を比較するには, 対応するP値函数を比較すればよい.
 
@@ -140,50 +129,25 @@ function beta_median(n)
     Beta((n+1)/2, (n+1)/2)
 end
 
-function sample_beta_median!(X)
-    isodd(length(X)) && return X
-    sort!(X)
-    [X[1]; (@view(X[1:end-1]) .+ @view(X[2:end])) ./ 2; X[end]] 
-end
-
-function ci_median_bootstrap_old(X::AbstractVector; α = 0.05)
-    beta = beta_median(length(X))
-    L = quantile(X, quantile(beta, α/2))
-    U = quantile(X, quantile(beta, 1 - α/2))
-    L, U
-end
-
 function ci_median_bootstrap(X::AbstractVector; α = 0.05)
     beta = beta_median(length(X))
-    X = sample_beta_median!(X)
     L = quantile(X, quantile(beta, α/2))
     U = quantile(X, quantile(beta, 1 - α/2))
     L, U
-end
-
-function cdf_median_bootstrap_old(X::AbstractVector, a)
-    beta = beta_median(length(X))
-    cdf(beta, ecdf(X)(a))
 end
 
 function cdf_median_bootstrap(X::AbstractVector, a)
     beta = beta_median(length(X))
-    X = sample_beta_median!(X)
     cdf(beta, ecdf(X)(a))
 end
 
+"""
+`pval_median_bootstrap(X, a)` は `X` が何であっても `cdf_median_bootstrap(X, a)` が実装されていれば自動的に使えるようになる.
+"""
 function pval_median_bootstrap(X, a)
     c = cdf_median_bootstrap(X, a)
     min(1, 2c, 2(1 - c))
 end
-```
-
-```julia
-quantile(0:10, 0.25), quantile(0:10, 0.75)
-```
-
-```julia
-@show sample_beta_median!([8, 7, 6, 5, 4, 3, 2, 1]);
 ```
 
 ```julia
@@ -216,32 +180,26 @@ plot!(; ytick=[0:0.05:0.1; 0.2:0.1:1])
 plot(Q1, Q2; size=(800, 300))
 ```
 
-## 二項分布に帰着
+## 二項分布を用いた確率の正確な計算に帰着する方法
+
+連続的母集団分布の中央値(真の中央値)を $a$ と書くとき, その母集団分布のサイズ $n$ の標本中の値で $a$ 以下のものがちょうど $k$ 個になる確率は二項分布 $\Binomial(n, 1/2)$ で値 $k$ が生じる確率に等しい.  この事実を使えば二項検定の場合と同様にして, 信頼区間とP値函数を定義できる. 
 
 標本 $X=(X_1,\ldots,X_n)$ を小さな順に並べたもの(sortしたもの)を $X(1)\le\cdots\le X(n)$ と書く.
 
-$a$ が連続的母集団分布の中央値(真の中央値)ならばその母集団分布のサイズ $n$ の標本 $X=(X_1,\ldots,X_n)$ の中での $a$ 以下の値の個数が $k$ になる確率は二項分布 $\Binomial(n, 1/2)$ で $k$ が生じる確率になる. このことを使っても中央値の信頼区間やP値を構成することができる.
+二項分布 $\on{bin}$ を　$\on{bin} = \Binomial(n, 1/2)$ と定める.
 
-以下では $n$ が偶数のとき $n'=n$ とおき, $n$ が奇数のとき $n'=n+1$ とおく. さらに, $n$ が偶数のとき $X' = (X(1),\ldots,X(n)))$ とおき, $n$ が奇数のとき $X'$ を
-
-$$
-X' = \left(X(1), \frac{X(1)+X(2)}{2}, \frac{X(2)+X(3)}{2}, \ldots, \frac{X(n-1)+X(n)}{2}, X(n)\right)
-$$
-
-と定め, $X'$ の第 $i$ 成分を $X'(i)$ と書く. $X'$ の成分の個数は $n'$ になる.
-
-$\on{bin} = \Binomial(n', 1/2)$ (試行回数 $n'$ の二項分布)とおく.
-
-このとき, 信頼係数 $1-\alpha$ の中央値の信頼区間 $[L, U]$ を次のようにも構成できる:
+このとき, 信頼係数 $1-\alpha$ の中央値の信頼区間 $[L, U]$ を次のように構成できる:
 
 $$
 \begin{aligned}
 &
-L = X'(\quantile(\on{bin}, \alpha/2)),
+L = X(\quantile(\on{bin}, \alpha/2)),
 \\ &
-U = X'(\quantile(\on{bin}, 1 - \alpha/2)).
+U = X(\quantile(\on{bin}, 1 - \alpha/2) + 1).
 \end{aligned}
 $$
+
+ここで $\quantile(\on{bin}, p)$ は二項分布 $\on{bin}$ の累積分布函数 $\cdf(\on{bin}, j)$ の値が $p$ 以下になる最大の $j$ になり, $X(i)$ は上で定義したように標本中の値で下から $i$ 番目に小さなものである.
 
 対応するP値函数は次のように書ける:
 
@@ -250,69 +208,47 @@ $$
 \begin{array}{l}
 1 \\
 2\cdf(\on{bin}, k) \\
-2(1 - (\cdf(\on{bin}, k)) \\
+2(1 - \cdf(\on{bin}, k-1)) \\
 \end{array}
 \right).
 $$
 
-ここで $k$ は $a$ 以下の $X'(i)$ の個数である.
+ここで $k$ は標本中の値で $a$ 以下のものの個数である. すなわち $k$ は $X(i) \le a$ となる最大の $i$ に等しい.
 
-信頼区間とP値の概念は表裏一体である(竹内啓『数理統計学』 p.103, 竹村彰通『現代数理統計学』 p.202, 久保川達也『現代数理統計学の基礎』 p.169).
-P値函数と信頼区間の対応は, 与えられたデータについて, P値函数の値がα以上になるパラメータの範囲が信頼区間に一致するという条件で与えられる.
+この方法で定義されたP値函数では第一種の過誤の確率を確実に名目有意水準以下にできる. しかし, その分だけ検出力は落ちてしまう可能性がある.
 
-データが与えられたとき, 横軸をパラメータとするP値函数のグラフを描いたとき, 
-そのグラフを高さ $\alpha$ で切断して得られる区間が信頼係数 $1-\alpha$ の信頼区間になる.
+信頼区間とP値の概念は表裏一体である. このことについては
+
+* 竹内啓『数理統計学』 p.103
+* 竹村彰通『現代数理統計学』 p.202
+* 久保川達也『現代数理統計学の基礎』 p.169
+
+などの教科書を参照せよ. P値函数と信頼区間の対応は, 与えられたデータについて, P値函数の値がα以上になるパラメータの範囲が信頼区間に一致するという条件で与えられる.
+
+データが与えられたとき, 横軸をパラメータとするP値函数のグラフを描いたとき, そのグラフを高さ $\alpha$ で切断して得られる区間が信頼係数 $1-\alpha$ の信頼区間になる.
 
 異なる方法で構成された信頼区間を比較するには, 対応するP値函数を比較すればよい.
 
 ```julia
-bin_median_old(n) = Binomial(n, 1/2)
-
-function bin_median(n)
-    n += isodd(n)
-    Binomial(n, 1/2)
-end
-
-function sample_bin_median!(X)
-    iseven(length(X)) && return sort!(X)
-    sort!(X)
-    [X[1]; (@view(X[1:end-1]) .+ @view(X[2:end])) ./ 2; X[end]] 
-end
-
-function ci_median_binomial_old(X::AbstractVector; α = 0.05)
-    bin = bin_median_old(length(X))
-    X′ = sort(X)
-    L = X′[quantile(bin, α/2)]
-    U = X′[quantile(bin, 1 - α/2)+1]
-    L, U
-end
+bin_median(n) = Binomial(n, 1/2)
 
 function ci_median_binomial(X::AbstractVector; α = 0.05)
     bin = bin_median(length(X))
-    X′ = sample_bin_median!(X)
+    X′ = sort(X)
     L = X′[quantile(bin, α/2)]
-    U = X′[quantile(bin, 1 - α/2)+1]
+    U = X′[quantile(bin, 1 - α/2) + 1]
     L, U
-end
-
-function pval_median_binomial_old(X::AbstractVector, a)
-    bin = bin_median(length(X))
-    k  = count(≤(a), X)
-    c = cdf(bin, k)
-    min(1, 2cdf(bin, k), 2ccdf(bin, k-1))
 end
 
 function pval_median_binomial(X::AbstractVector, a)
     bin = bin_median(length(X))
-    X′ = sample_bin_median!(X)
-    k  = count(≤(a), X′)
-    c = cdf(bin, k)
-    min(1, 2c, 2(1 - c))
+    k  = count(≤(a), X)
+    min(1, 2cdf(bin, k), 2ccdf(bin, k-1))
 end
 ```
 
 ```julia
-Random.seed!(3734649)
+#Random.seed!(3734649)
 
 # テストサンプルの生成
 dist = Gamma(2, 3)
@@ -344,15 +280,16 @@ plot(Q3, Q4; size=(800, 300))
 ```julia
 plot(Q2, Q4; size=(800, 300)) |> display
 
-plot(x -> pval_median_bootstrap(X, x), 3, 10; label="bootstrap P-value")
-plot!(x -> pval_median_binomial(X, x), 3, 10; label="binomial P-value")
+x = range(2, 10, 401)
+plot(x, x -> pval_median_bootstrap(X, x); label="bootstrap P-value")
+plot!(x, x -> pval_median_binomial(X, x); label="binomial P-value")
 plot!(collect(ci_bst), fill(0.056, 2); label="bootstrap ci", lw=4, c=1)
 plot!(collect(ci_bin), fill(0.044, 2); label="binomial ci", lw=4, c=2)
 plot!(; xtick=-1:21, ytick=[0:0.05:0.1; 0.2:0.1:1])
 ```
 
 ```julia
-Random.seed!(3734649)
+#Random.seed!(3734649)
 
 # テストサンプルの生成
 dist = Gamma(2, 3)
@@ -380,8 +317,9 @@ plot!(; ytick=[0:0.05:0.1; 0.2:0.1:1])
 
 plot(R2, R4; size=(800, 300)) |> display
 
-plot(x -> pval_median_bootstrap(X, x), 2, 10; label="bootstrap P-value")
-plot!(x -> pval_median_binomial(X, x), 2, 10; label="binomial P-value")
+x = range(2, 10, 401)
+plot(x, x -> pval_median_bootstrap(X, x); label="bootstrap P-value")
+plot!(x, x -> pval_median_binomial(X, x); label="binomial P-value")
 plot!(collect(ci_bst), fill(0.056, 2); label="bootstrap ci", lw=4, c=1)
 plot!(collect(ci_bin), fill(0.044, 2); label="binomial ci", lw=4, c=2)
 plot!(; xtick=-1:21, ytick=[0:0.05:0.1; 0.2:0.1:1])
@@ -517,87 +455,6 @@ for n in (10, 20, 40, 80, 160, 320, 640)
 end
 ```
 
-## 2つのP値の平均
-
-```julia
-pval_median_averaged(X, a) = (pval_median_bootstrap(X, a) + pval_median_binomial(X, a)) / 2
-
-function sim_pval_median3(; dist = Gamma(2, 3), n = 40, L = 10^5)
-    a = median(dist)
-    pval_bst = Vector{Float64}(undef, L)
-    pval_bin = Vector{Float64}(undef, L)
-    pval_ave = Vector{Float64}(undef, L)
-    tmp = [Vector{Float64}(undef, n) for _ in 1:Threads.nthreads()]
-    Threads.@threads for i in 1:L
-        X = rand!(dist, tmp[Threads.threadid()])
-        pval_bst[i] = pval_median_bootstrap(X, a)
-        pval_bin[i] = pval_median_binomial(X, a)
-        pval_ave[i] = (pval_bst[i] + pval_bin[i])/2
-    end
-    pval_bst, pval_bin, pval_ave
-end
-
-function plot_probtype1error3(; dist = Gamma(2, 3), n = 40, L = 10^5)
-    pval_bst, pval_bin, pval_ave = sim_pval_median3(; dist, n, L)
-    ecdf_bst = ecdf(pval_bst)
-    ecdf_bin = ecdf(pval_bin)
-    ecdf_ave = ecdf(pval_ave)
-    
-    α = range(0, 1, 401)
-    P1 = plot(; legend=:topleft)
-    plot!(α, α -> ecdf_bst(α); label="bootstrap")
-    plot!(α, α -> ecdf_bin(α); label="binomial", ls=:dash)
-    plot!(α, α -> ecdf_ave(α); label="averaged P-value", ls=:dot, lw=2)
-    plot!([0, 1], [0, 1]; label="", ls=:dot, c=:black)
-    plot!(; xtick=0:0.1:1, ytick=0:0.1:1)
-    title!("$(name(dist)), n=$n")
-    plot!(; xlabel="nominal significance level α", ylabel = "probability of type I error")
-
-    α = range(0, 0.1, 401)
-    P2 = plot(; legend=:topleft)
-    plot!(α, α -> ecdf_bst(α); label="bootstrap")
-    plot!(α, α -> ecdf_bin(α); label="binomial", ls=:dash)
-    plot!(α, α -> ecdf_ave(α); label="averaged P-value", ls=:dot, lw=2)
-    plot!([0, 0.1], [0, 0.1]; label="", ls=:dot, c=:black)
-    plot!(; xtick=0:0.01:1, ytick=0:0.01:1)
-    title!("$(name(dist)), n=$n")
-    plot!(; xlabel="nominal significance level α", ylabel = "probability of type I error")
-    
-    plot(P1, P2; size=(800, 400), leftmargin=3Plots.mm, bottommargin=3Plots.mm)
-end
-```
-
-```julia
-for dist in (Normal(2, 3), Gamma(2, 3), Exponential(), LogNormal())
-    plot_probtype1error3(; dist, n = 20) |> display
-    println(); flush(stdout)
-end
-```
-
-```julia
-for dist in (Normal(2, 3), Gamma(2, 3), Exponential(), LogNormal())
-    plot_probtype1error3(; dist, n = 21) |> display
-    println(); flush(stdout)
-end
-```
-
-```julia
-dist = Uniform()
-for n in (10, 20, 40, 80, 160, 320, 640)
-    plot_probtype1error3(; dist, n) |> display
-    println(); flush(stdout)
-end
-```
-
-```julia
-dist = Uniform()
-for n in (10, 20, 40, 80, 160, 320, 640)
-    n += 1
-    plot_probtype1error3(; dist, n) |> display
-    println(); flush(stdout)
-end
-```
-
 ## ヒストグラムの中央値の信頼区間
 
 
@@ -608,7 +465,7 @@ Random.seed!(3734649)
 
 dist, n = Gamma(2, 3), 40
 X = rand(dist, n)
-bin = -0.5:25.5
+bin = floor(minimum(X)):ceil(maximum(X))
 H = fit(Histogram, X, bin)
 @show H
 @show H.weights
@@ -632,7 +489,7 @@ end
 ```julia
 Hdist = histogramdist(H)
 @show Hdist
-plot(x -> pdf(Hdist, x), -1, 26; label="histogram dist")
+plot(x -> pdf(Hdist, x), (extrema(Hdist) .+ (-1, 1))...; label="histogram dist")
 ```
 
 ヒストグラムから作られた確率分布 $\on{Hdist}$ から平均や分散や中央値などを計算できる.
@@ -678,40 +535,21 @@ pval_median_bootstrap(H, 3.8)
 $n$ が奇数の場合には $n$ を1増やしておかないとブートストラップ法とのずれが大きくなる.
 
 ```julia
-function ci_median_binomial_old(H::Histogram; α = 0.05)
-    Hdist = histogramdist(H)
-    n = sum(H.weights)
-    bin = bin_median(n)
-    L = quantile(Hdist, quantile(bin, α/2)/n)
-    U = quantile(Hdist, quantile(bin, 1-α/2)/n)
-    L, U
-end
-
 function ci_median_binomial(H::Histogram; α = 0.05)
     Hdist = histogramdist(H)
     n = sum(H.weights)
     bin = bin_median(n)
-    n += isodd(n)
-    L = quantile(Hdist, quantile(bin, α/2)/n)
-    U = quantile(Hdist, quantile(bin, 1-α/2)/n)
+    L = quantile(Hdist, (quantile(bin,   α/2) - 0.5)/n)
+    U = quantile(Hdist, (quantile(bin, 1-α/2) + 0.5)/n)
     L, U
-end
-
-function pval_median_binomial_old(H::Histogram, a)
-    Hdist = histogramdist(H)
-    n = sum(H.weights)
-    bin = bin_median(n)
-    c = cdf(Hdist, a)
-    min(1, 2cdf(bin, n*c), 2ccdf(bin, n*c))
 end
 
 function pval_median_binomial(H::Histogram, a)
     Hdist = histogramdist(H)
     n = sum(H.weights)
     bin = bin_median(n)
-    n += isodd(n)
     c = cdf(Hdist, a)
-    min(1, 2cdf(bin, n*c), 2ccdf(bin, n*c))
+    min(1, 2cdf(bin, n*c + 0.5), 2ccdf(bin, n*c - 0.5))
 end
 ```
 
@@ -753,12 +591,13 @@ plot(P2, P3; size=(800, 300))
 ```
 
 ```julia
-plot(x -> pval_median_bootstrap(H, x), 2, 9; label="bootstrap P-value")
-plot!(x -> pval_median_binomial(H, x), 2, 9; label="binomial P-value")
+x = range(2, 9, 401)
+plot(x, x -> pval_median_bootstrap(H, x); label="bootstrap P-value")
+plot!(x, x -> pval_median_binomial(H, x); label="binomial P-value")
 plot!(collect(ci_bst), fill(0.056, 2); label="bootstrap ci", lw=4, c=1)
 plot!(collect(ci_bin), fill(0.044, 2); label="binomial ci", lw=4, c=2)
 plot!(; xtick=-1:21, ytick=[0:0.05:0.1; 0.2:0.1:1])
-title!("$(name(dist)), n=$n")
+title!("$(name(dist)), n=$n, bin=$bin")
 ```
 
 ```julia
@@ -766,7 +605,7 @@ Random.seed!(3734649)
 
 dist, n = Gamma(2, 3), 41
 X = rand(dist, n)
-bin = -0.5:25.5
+bin = floor(minimum(X)):ceil(maximum(X))
 H = fit(Histogram, X, bin)
 @show H
 @show H.weights
@@ -799,12 +638,111 @@ plot(P2, P3; size=(800, 300))
 ```
 
 ```julia
-plot(x -> pval_median_bootstrap(H, x), 2, 9; label="bootstrap P-value")
-plot!(x -> pval_median_binomial(H, x), 2, 9; label="binomial P-value")
+x = range(2, 9, 401)
+plot(x, x -> pval_median_bootstrap(H, x); label="bootstrap P-value")
+plot!(x, x -> pval_median_binomial(H, x); label="binomial P-value")
 plot!(collect(ci_bst), fill(0.056, 2); label="bootstrap ci", lw=4, c=1)
 plot!(collect(ci_bin), fill(0.044, 2); label="binomial ci", lw=4, c=2)
 plot!(; xtick=-1:21, ytick=[0:0.05:0.1; 0.2:0.1:1])
 title!("$(name(dist)), n=$n")
+```
+
+### ヒストグラムを経由した場合の第一種の過誤の確率
+
+```julia
+function sim_pval_median_hist(; dist = Gamma(2, 3), n = 40, L = 10^5)
+    a = median(dist)
+    pval_bst = Vector{Float64}(undef, L)
+    pval_bin = Vector{Float64}(undef, L)
+    tmp = [Vector{Float64}(undef, n) for _ in 1:Threads.nthreads()]
+    Threads.@threads for i in 1:L
+        X = rand!(dist, tmp[Threads.threadid()])
+        bin = floor(minimum(X)):ceil(maximum(X))
+        H = fit(Histogram, X, bin)
+        pval_bst[i] = pval_median_bootstrap(H, a)
+        pval_bin[i] = pval_median_binomial(H, a)
+    end
+    pval_bst, pval_bin
+end
+
+function plot_probtype1error_hist(; dist = Gamma(2, 3), n = 40, L = 10^5)
+    pval_bst, pval_bin = sim_pval_median_hist(; dist, n, L)
+    ecdf_bst = ecdf(pval_bst)
+    ecdf_bin = ecdf(pval_bin)
+    
+    α = range(0, 1, 401)
+    P1 = plot(; legend=:bottomright)
+    plot!(α, α -> ecdf_bst(α); label="bootstrap")
+    plot!(α, α -> ecdf_bin(α); label="binomial", ls=:dash)
+    plot!([0, 1], [0, 1]; label="", ls=:dot, c=:black)
+    plot!(; xtick=0:0.1:1, ytick=0:0.1:1)
+    title!("$(name(dist)), n=$n")
+    plot!(; xlabel="nominal significance level α", ylabel = "probability of type I error")
+
+    α = range(0, 0.1, 401)
+    P2 = plot(; legend=:bottomright)
+    plot!(α, α -> ecdf_bst(α); label="bootstrap")
+    plot!(α, α -> ecdf_bin(α); label="binomial", ls=:dash)
+    plot!([0, 0.1], [0, 0.1]; label="", ls=:dot, c=:black)
+    plot!(; xtick=0:0.01:1, ytick=0:0.01:1)
+    title!("$(name(dist)), n=$n")
+    plot!(; xlabel="nominal significance level α", ylabel = "probability of type I error")
+    
+    plot(P1, P2; size=(800, 400), leftmargin=3Plots.mm, bottommargin=3Plots.mm)
+end
+
+function plot_probtype1error_hist_iter(; dist = Uniform(0, √(12 * 18)))
+    for n in (10, 20, 40, 80, 160, 320, 640)
+        plot_probtype1error_hist(; dist, n) |> display
+        println(); flush(stdout)
+    end
+    for n in (10, 20, 40, 80, 160, 320, 640)
+        n += 1
+        plot_probtype1error_hist(; dist, n) |> display
+        println(); flush(stdout)
+    end
+end
+```
+
+```julia
+uniform = Uniform(0, √(12 * 18))
+normal = Normal(2, √18)
+gamma = Gamma(2, 3)
+exponential = Exponential(√18)
+lognormal = LogNormal(0, √log((1 + √(1+4*18))/2))
+
+@show var(uniform)
+@show var(normal)
+@show var(gamma)
+@show var(exponential)
+@show var(lognormal);
+```
+
+```julia
+for dist in (uniform, normal, gamma, exponential, lognormal)
+    plot_probtype1error_hist(; dist, n = 21) |> display
+    println(); flush(stdout)
+end
+```
+
+```julia
+plot_probtype1error_hist_iter(; dist = uniform)
+```
+
+```julia
+plot_probtype1error_hist_iter(; dist = normal)
+```
+
+```julia
+plot_probtype1error_hist_iter(; dist = gamma)
+```
+
+```julia
+plot_probtype1error_hist_iter(; dist = exponential)
+```
+
+```julia
+plot_probtype1error_hist_iter(; dist = lognormal)
 ```
 
 ```julia
