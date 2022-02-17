@@ -182,9 +182,9 @@ $\on{bin} = \Binomial(n, 1/2)$ (試行回数 $n$ の二項分布)とおく.
 $$
 \begin{aligned}
 &
-L = X(\quantile(\on{bin}), \alpha/2)),
+L = X(\quantile(\on{bin}, \alpha/2)),
 \\ &
-U = X(\quantile(\on{bin}), 1 - \alpha/2)).
+U = X(\quantile(\on{bin}, 1 - \alpha/2)).
 \end{aligned}
 $$
 
