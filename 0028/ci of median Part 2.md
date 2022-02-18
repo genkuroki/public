@@ -124,11 +124,13 @@ $$
 異なる方法で構成された信頼区間を比較するには, 対応するP値函数を比較すればよい.
 
 ```julia
+"""(0,1)区間の一様分布のサイズnの標本の中央値の分布の近似ベータ分布(nが奇数ならばexact)."""
 function beta_median(n)
     n += iseven(n)
     Beta((n+1)/2, (n+1)/2)
 end
 
+"""ブートストラップ法による中央値の信頼区間"""
 function ci_median_bootstrap(X::AbstractVector; α = 0.05)
     beta = beta_median(length(X))
     L = quantile(X, quantile(beta, α/2))
@@ -136,14 +138,13 @@ function ci_median_bootstrap(X::AbstractVector; α = 0.05)
     L, U
 end
 
+"""ブートストラップ法で使う標本の経験分布の標本の中央値の累積分布函数"""
 function cdf_median_bootstrap(X::AbstractVector, a)
     beta = beta_median(length(X))
     cdf(beta, ecdf(X)(a))
 end
 
-"""
-`pval_median_bootstrap(X, a)` は `X` が何であっても `cdf_median_bootstrap(X, a)` が実装されていれば自動的に使えるようになる.
-"""
+"""`pval_median_bootstrap(X, a)` は `X` が何であっても `cdf_median_bootstrap(X, a)` が実装されていれば自動的に使えるようになる."""
 function pval_median_bootstrap(X, a)
     c = cdf_median_bootstrap(X, a)
     min(1, 2c, 2(1 - c))
@@ -230,8 +231,10 @@ $$
 異なる方法で構成された信頼区間を比較するには, 対応するP値函数を比較すればよい.
 
 ```julia
+"""サイズnの標本中の連続的母集団分布の中央値以下になる値の個数の分布"""
 bin_median(n) = Binomial(n, 1/2)
 
+"""二項分布に帰着して作った中央値の信頼区間"""
 function ci_median_binomial(X::AbstractVector; α = 0.05)
     bin = bin_median(length(X))
     X′ = sort(X)
@@ -240,6 +243,7 @@ function ci_median_binomial(X::AbstractVector; α = 0.05)
     L, U
 end
 
+"""正確二項検定のP値に帰着して作った中央値のP値"""
 function pval_median_binomial(X::AbstractVector, a)
     bin = bin_median(length(X))
     k  = count(≤(a), X)
@@ -514,14 +518,51 @@ plot(x -> pdf(Hdist, x), (extrema(Hdist) .+ (-1, 1))...; label="histogram dist")
 @show quantile.(Hdist, (0.25, 0.50, 0.75));
 ```
 
+しかし, 対称性に問題がある.
+
+```julia
+hX1 = fit(Histogram, [1, 2, 4, 5], 0.5:5.5)
+@show hX1dist = histogramdist(hX1)
+@show mhX1 = median(hX1dist)
+plot(hX1; alpha=0.3, label="", title="hX1", size=(400, 250))
+vline!([mhX1]; label="", lw=3)
+```
+
+```julia
+hX2 = fit(Histogram, [1, 3, 4, 5], 0.5:5.5)
+@show hX2dist = histogramdist(hX2)
+@show qhX2 = quantile(hX2dist, 0.25)
+plot(hX2; alpha=0.3, label="", title="hX1", size=(400, 250))
+vline!([qhX2]; label="", lw=3)
+```
+
+そこで, `prevfloat(p)` と `nextfloat(p)` での `quantile` の平均を取ることにする.
+
+```julia
+myquantile(X, p) = (p ≤ 0 || 1 ≤ p) ? quantile(X, p) : (quantile(X, prevfloat(p)) + quantile(X, nextfloat(p)))/2
+mymedian(X) = myquantile(X, 0.5)
+```
+
+```julia
+@show mymhX1 = mymedian(hX1dist)
+plot(hX1; alpha=0.3, label="", title="hX1", size=(400, 250))
+vline!([mymhX1]; label="", lw=3)
+```
+
+```julia
+@show myqhX2 = myquantile(hX2dist, 0.25)
+plot(hX2; alpha=0.3, label="", title="hX2", size=(400, 250))
+vline!([myqhX2]; label="", lw=3)
+```
+
 ### ブートストラップ法
 
 ```julia
 function ci_median_bootstrap(H::Histogram; α = 0.05)
     Hdist = histogramdist(H)
     beta = beta_median(sum(H.weights))
-    L = quantile(Hdist, quantile(beta, α/2))
-    U = quantile(Hdist, quantile(beta, 1 - α/2))
+    L = myquantile(Hdist, quantile(beta, α/2))
+    U = myquantile(Hdist, quantile(beta, 1 - α/2))
     L, U
 end
 
@@ -552,8 +593,8 @@ function ci_median_binomial(H::Histogram; α = 0.05)
     Hdist = histogramdist(H)
     n = sum(H.weights)
     bin = bin_median(n)
-    L = quantile(Hdist, (quantile(bin,   α/2) - 0.5)/n)
-    U = quantile(Hdist, (quantile(bin, 1-α/2) + 0.5)/n)
+    L = myquantile(Hdist, (quantile(bin,   α/2) - 0.5)/n)
+    U = myquantile(Hdist, (quantile(bin, 1-α/2) + 0.5)/n)
     L, U
 end
 
