@@ -40,9 +40,12 @@ using Random
 using StatsBase
 using QuadGK
 using StaticArrays
+using DataFrames
 
 name(dist::UnivariateDistribution) = replace(string(dist), r"{[^{.]*}"=>"")
+```
 
+```julia
 function pdf_median_true(n, z)
     0 < z < 1 || return 0.0
     m = n / 2
@@ -541,6 +544,7 @@ vline!([qhX2]; label="", lw=3)
 ```julia
 myquantile(X, p) = (p ≤ 0 || 1 ≤ p) ? quantile(X, p) : (quantile(X, prevfloat(p)) + quantile(X, nextfloat(p)))/2
 mymedian(X) = myquantile(X, 0.5)
+myquantile(H::Histogram, p) = myquantile(histogramdist(H), p)
 ```
 
 ```julia
@@ -591,7 +595,7 @@ $n$ が奇数の場合には $n$ を1増やしておかないとブートスト�
 ```julia
 function ci_median_binomial(H::Histogram; α = 0.05)
     Hdist = histogramdist(H)
-    n = sum(H.weights)
+    n = round(Int, sum(H.weights))
     bin = bin_median(n)
     L = myquantile(Hdist, (quantile(bin,   α/2) - 0.5)/n)
     U = myquantile(Hdist, (quantile(bin, 1-α/2) + 0.5)/n)
@@ -600,7 +604,7 @@ end
 
 function pval_median_binomial(H::Histogram, a)
     Hdist = histogramdist(H)
-    n = sum(H.weights)
+    n = round(Int, sum(H.weights))
     bin = bin_median(n)
     c = cdf(Hdist, a)
     min(1, 2cdf(bin, n*c + 0.5), 2ccdf(bin, n*c - 0.5))
@@ -801,6 +805,94 @@ plot_probtype1error_hist_iter(; dist = exponential)
 
 ```julia
 plot_probtype1error_hist_iter(; dist = lognormal)
+```
+
+### SARS-CoV-2の変異株B.1.1.529系統（オミクロン株）の潜伏期間の推定：暫定報告
+
+* [SARS-CoV-2の変異株B.1.1.529系統（オミクロン株）の潜伏期間の推定：暫定報告](https://www.niid.go.jp/niid/ja/2019-ncov/2551-cepr/10903-b11529-period.html)
+
+より:
+
+>データ２では、アルファ株症例1118例、オミクロン株症例113例が解析の対象となった。アルファ株症例の潜伏期間の中央値は3.4日（95％信頼区間：3.3-3.6）、オミクロン株症例は2.9日（95％信頼区間：2.5-3.2）であった。感染曝露から95％、99％が発症するまでの日数は、アルファ株症例ではそれぞれ8.7日、11.9日、オミクロン株症例ではそれぞれ7.1日、9.7日であった。
+
+![omi_per_f2.png](attachment:f864c323-614d-41c3-9814-395c0536c555.png)
+
+![2022-02-19.png](attachment:89b17ce7-f2b2-45da-9121-7fca37a3bfcc.png)
+
+```julia
+data = [
+1 6.29 8.55
+2 23.1 30.41
+3 42.42 53.05
+4 59.46 70.69
+5 72.67 82.65
+6 82.16 90.12
+7 88.63 94.53
+8 92.90 97.04
+9 95.63 98.43
+10 97.35 99.18
+11 98.41 99.57
+12 99.05 99.78
+13 99.44 99.89
+14 99.67 99.94
+]
+
+df = DataFrame(data, ["days after exposure", "Alpha cdf", "Omicron cdf"])
+```
+
+「$n$ 日目に発症」を「暴露されてから $n-1$ 日目の終了後から $n$ 日目の終わりまでのあいだに発症」と解釈してヒストグラムに変換し, 中央値と中央値の信頼区間を計算してみる.
+
+```julia
+bin = 0:14
+
+n_Alpha = 1118
+cdf_Alpha = df[!, "Alpha cdf"]
+pmf_Alpha = [cdf_Alpha[1]; cdf_Alpha[2:end] - cdf_Alpha[1:end-1]] / 100
+hist_Alpha = Histogram((bin,), n_Alpha * pmf_Alpha, :right, false)
+
+n_Omicron = 113
+cdf_Omicron = df[!, "Omicron cdf"]
+pmf_Omicron = [cdf_Omicron[1]; cdf_Omicron[2:end] - cdf_Omicron[1:end-1]] / 100
+n_Omicron * pmf_Omicron
+hist_Omicron = Histogram((bin,), n_Omicron * pmf_Omicron, :right, false)
+
+@show ci_Alpha = ci_median_binomial(hist_Alpha; α=0.05)
+@show ci_Omicron = ci_median_binomial(hist_Omicron; α=0.05)
+println()
+
+P1 = plot(hist_Alpha; alpha=0.3, label="")
+plot!(; xlim=(-0.5, 14), xtick=0:14)
+plot!(collect(ci_Alpha), fill(-0.01*maximum(hist_Alpha.weights), 2); lw=5, c=:blue, label="95% CI of median")
+vline!([mymedian(hist_Alpha)]; c=:blue, label="median, 95%, 99%", lw=1.5, ls=:dash)
+vline!([myquantile(hist_Alpha, 0.95)]; c=:blue, label="", ls=:dash)
+vline!([myquantile(hist_Alpha, 0.99)]; c=:blue, label="", ls=:dash)
+title!("Alpha n = $n_Alpha")
+
+P2 = plot(hist_Omicron; alpha=0.3, label="", c=2)
+plot!(; xlim=(-0.5, 14), xtick=0:14)
+plot!(collect(ci_Omicron), fill(-0.01*maximum(hist_Omicron.weights), 2); lw=5, c=:red, label="95% CI of median")
+vline!([mymedian(hist_Omicron)]; c=:red, label="median, 95%, 99%", lw=1.5, ls=:dash)
+vline!([myquantile(hist_Omicron, 0.95)]; c=:red, label="", ls=:dash)
+vline!([myquantile(hist_Omicron, 0.99)]; c=:red, label="", ls=:dash)
+title!("Omicron n = $n_Omicron")
+
+plot(P1, P2; size=(800, 300))
+```
+
+中央値の信頼区間だけを計算しても面白くないのだが, このノート内では一般のquantileの信頼区間は実装していないのでプロットしなかった. 原理的には一般のquantileの信頼区間の実装は易しい.
+
+```julia
+@show median_Alpha = mymedian(hist_Alpha)
+@show ci_median_bootstrap(hist_Alpha; α=0.05)
+@show ci_median_binomial(hist_Alpha; α=0.05)
+@show ci_median_bootstrap(hist_Alpha; α=0.01)
+@show ci_median_binomial(hist_Alpha; α=0.01)
+println()
+@show median_Alpha = mymedian(hist_Omicron)
+@show ci_median_bootstrap(hist_Omicron; α=0.05)
+@show ci_median_binomial(hist_Omicron; α=0.05)
+@show ci_median_bootstrap(hist_Omicron; α=0.01)
+@show ci_median_binomial(hist_Omicron; α=0.01);
 ```
 
 ```julia
