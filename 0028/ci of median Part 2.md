@@ -33,6 +33,8 @@ $
 $
 
 ```julia
+ENV["COLUMNS"] = 200
+
 using Distributions
 using StatsPlots
 default(titlefontsize=10, fmt=:png)
@@ -807,7 +809,7 @@ plot_probtype1error_hist_iter(; dist = exponential)
 plot_probtype1error_hist_iter(; dist = lognormal)
 ```
 
-### SARS-CoV-2の変異株B.1.1.529系統（オミクロン株）の潜伏期間の推定：暫定報告
+## SARS-CoV-2の変異株B.1.1.529系統（オミクロン株）の潜伏期間の推定：暫定報告
 
 * [SARS-CoV-2の変異株B.1.1.529系統（オミクロン株）の潜伏期間の推定：暫定報告](https://www.niid.go.jp/niid/ja/2019-ncov/2551-cepr/10903-b11529-period.html)
 
@@ -815,12 +817,123 @@ plot_probtype1error_hist_iter(; dist = lognormal)
 
 >データ２では、アルファ株症例1118例、オミクロン株症例113例が解析の対象となった。アルファ株症例の潜伏期間の中央値は3.4日（95％信頼区間：3.3-3.6）、オミクロン株症例は2.9日（95％信頼区間：2.5-3.2）であった。感染曝露から95％、99％が発症するまでの日数は、アルファ株症例ではそれぞれ8.7日、11.9日、オミクロン株症例ではそれぞれ7.1日、9.7日であった。
 
-![omi_per_f2.png](attachment:f864c323-614d-41c3-9814-395c0536c555.png)
+<img src="attachment:aa6ab8fc-8392-4251-9e02-b9bbc404fa27.png" width="500">!
 
-![2022-02-19.png](attachment:89b17ce7-f2b2-45da-9121-7fca37a3bfcc.png)
+>感染曝露からの経過日数ごとの累積発症確率を表１に示す。アルファ株では10日目までに97.35％が発症するのに対して、オミクロン株では99.18%が発症すると推定された。
+
+<img src="attachment:89b17ce7-f2b2-45da-9121-7fca37a3bfcc.png" width="500">
+
+
+以下はグラフから読み取った症例数.
 
 ```julia
 data = [
+     1 184 19
+     2 177 28
+     3 231 31
+     4 183 16
+     5 131 11
+     6  64  5
+     7  71  2
+     8  19  1
+     9  32  0
+    10  13  0
+    11   6  0
+    12   4  0
+    13   1  0
+    14   2  0
+]
+
+df = DataFrame(data, ["days after exposure", "Alpha n", "Omicron n"])
+```
+
+「$n$ 日目に発症」を「暴露されてから $n-0.5$ 日目の始めから $n+0.5$ 日目の直前までのあいだに発症」と解釈してヒストグラムに変換し, 中央値と中央値の信頼区間を計算してみる.
+
+```julia
+bin = 0.5:14.5
+@show hist_Alpha = Histogram((bin,), df[!, "Alpha n"], :right, false)
+@show hist_Omicron = Histogram((bin,), df[!, "Omicron n"], :right, false);
+```
+
+```julia
+@show size_Alpha = sum(df[!, "Alpha n"])
+@show median_Alpha = mymedian(hist_Alpha)
+@show ci_median_bootstrap(hist_Alpha; α=0.05)
+@show ci_median_binomial(hist_Alpha; α=0.05)
+@show ci_median_bootstrap(hist_Alpha; α=0.01)
+@show ci_median_binomial(hist_Alpha; α=0.01)
+println()
+@show size_Omicron = sum(df[!, "Omicron n"])
+@show median_Alpha = mymedian(hist_Omicron)
+@show ci_median_bootstrap(hist_Omicron; α=0.05)
+@show ci_median_binomial(hist_Omicron; α=0.05)
+@show ci_median_bootstrap(hist_Omicron; α=0.01)
+@show ci_median_binomial(hist_Omicron; α=0.01);
+
+println("\n"*"-"^78*"\n")
+
+@show ci_Alpha = ci_median_binomial(hist_Alpha; α=0.05)
+@show ci_Omicron = ci_median_binomial(hist_Omicron; α=0.05)
+println()
+
+P1 = plot(hist_Alpha; alpha=0.3, label="")
+plot!(; xlim=(-0.5, 14.5), xtick=0:14)
+plot!(collect(ci_Alpha), fill(-0.01*maximum(hist_Alpha.weights), 2); lw=5, c=:blue, label="95% CI of median")
+vline!([mymedian(hist_Alpha)]; c=:blue, label="median, 95%, 99%", ls=:dash)
+vline!([myquantile(hist_Alpha, 0.95)]; c=:blue, label="", ls=:dash)
+vline!([myquantile(hist_Alpha, 0.99)]; c=:blue, label="", ls=:dash)
+title!("Alpha n = $size_Alpha")
+
+P2 = plot(hist_Omicron; alpha=0.3, label="", c=2)
+plot!(; xlim=(-0.5, 14.5), xtick=0:14)
+plot!(collect(ci_Omicron), fill(-0.01*maximum(hist_Omicron.weights), 2); lw=5, c=:red, label="95% CI of median")
+vline!([mymedian(hist_Omicron)]; c=:red, label="median, 95%, 99%", ls=:dash)
+vline!([myquantile(hist_Omicron, 0.95)]; c=:red, label="", ls=:dash)
+vline!([myquantile(hist_Omicron, 0.99)]; c=:red, label="", ls=:dash)
+title!("Omicron n = $size_Omicron")
+
+plot(P1, P2; size=(800, 220))
+```
+
+中央値の信頼区間だけを計算しても面白くないのだが, このノート内では一般のquantileの信頼区間は実装していないのでプロットしなかった. 原理的には一般のquantileの信頼区間の実装も易しい.
+
+
+[SARS-CoV-2の変異株B.1.1.529系統（オミクロン株）の潜伏期間の推定：暫定報告](https://www.niid.go.jp/niid/ja/2019-ncov/2551-cepr/10903-b11529-period.html)にあった以下のグラフに近いものが得られた. ただし, 以上のプロットはガンマ分布モデルでフィッティングせずに, ヒストグラムのデータから直接計算した結果である.
+
+<img src="attachment:059a3ff2-fbb0-4bf8-b97e-4f98e4d384df.png" width="500">
+
+
+ガンマ分布などでフィッティングしたバージョンも作ってみよう.
+
+```julia
+sample_Alpha = foldl(vcat, (fill(i, df[i, "Alpha n"]) for i in 1:14))
+sample_Omicron = foldl(vcat, (fill(i, df[i, "Omicron n"]) for i in 1:14))
+
+gamma_Alpha = fit_mle(Gamma, sample_Alpha)
+gamma_Omicron = fit_mle(Gamma, sample_Omicron)
+
+P1 = plot(hist_Alpha; alpha=0.3, label="")
+plot!(; xlim=(-0.5, 14.5), xtick=0:14)
+vline!([mymedian(gamma_Alpha)]; c=:blue, label="median, 95%, 99%", ls=:dash)
+vline!([myquantile(gamma_Alpha, 0.95)]; c=:blue, label="", ls=:dash)
+vline!([myquantile(gamma_Alpha, 0.99)]; c=:blue, label="", ls=:dash)
+title!("Alpha n = $size_Alpha / Gamma fitting")
+plot!(x -> size_Alpha * pdf(gamma_Alpha, x); label="", c=:blue, ls=:dot, lw=1.5)
+
+P2 = plot(hist_Omicron; alpha=0.3, label="", c=2)
+plot!(; xlim=(-0.5, 14.5), xtick=0:14)
+vline!([mymedian(gamma_Omicron)]; c=:red, label="median, 95%, 99%", ls=:dash)
+vline!([myquantile(gamma_Omicron, 0.95)]; c=:red, label="", ls=:dash)
+vline!([myquantile(gamma_Omicron, 0.99)]; c=:red, label="", ls=:dash)
+title!("Omicron n = $size_Omicron / Gamma fitting")
+plot!(x -> size_Omicron * pdf(gamma_Omicron, x); label="", c=:red, ls=:dot, lw=1.5)
+
+plot(P1, P2; size=(800, 220))
+```
+
+```julia
+"""https://www.niid.go.jp/niid/ja/2019-ncov/2551-cepr/10903-b11529-period.html"""
+data_gamma_orig = [
 1 6.29 8.55
 2 23.1 30.41
 3 42.42 53.05
@@ -837,62 +950,69 @@ data = [
 14 99.67 99.94
 ]
 
-df = DataFrame(data, ["days after exposure", "Alpha cdf", "Omicron cdf"])
+df[!, "Alpha cdf orig"] = data_gamma_orig[:, 2]
+df[!, "Alpha cdf"] = round.(100cdf.(gamma_Alpha, 1:14); digits=2)
+df[!, "Omicron cdf orig"] = data_gamma_orig[:, 3]
+df[!, "Omicron cdf"] = round.(100cdf.(gamma_Omicron, 1:14); digits=2)
+df
 ```
 
-「$n$ 日目に発症」を「暴露されてから $n-1$ 日目の終了後から $n$ 日目の終わりまでのあいだに発症」と解釈してヒストグラムに変換し, 中央値と中央値の信頼区間を計算してみる.
-
 ```julia
-bin = 0:14
+sample_Alpha = foldl(vcat, (fill(i, df[i, "Alpha n"]) for i in 1:14))
+sample_Omicron = foldl(vcat, (fill(i, df[i, "Omicron n"]) for i in 1:14))
 
-n_Alpha = 1118
-cdf_Alpha = df[!, "Alpha cdf"]
-pmf_Alpha = [cdf_Alpha[1]; cdf_Alpha[2:end] - cdf_Alpha[1:end-1]] / 100
-hist_Alpha = Histogram((bin,), n_Alpha * pmf_Alpha, :right, false)
+lognormal_Alpha = fit_mle(LogNormal, sample_Alpha)
+lognormal_Omicron = fit_mle(LogNormal, sample_Omicron)
 
-n_Omicron = 113
-cdf_Omicron = df[!, "Omicron cdf"]
-pmf_Omicron = [cdf_Omicron[1]; cdf_Omicron[2:end] - cdf_Omicron[1:end-1]] / 100
-n_Omicron * pmf_Omicron
-hist_Omicron = Histogram((bin,), n_Omicron * pmf_Omicron, :right, false)
-
-@show ci_Alpha = ci_median_binomial(hist_Alpha; α=0.05)
-@show ci_Omicron = ci_median_binomial(hist_Omicron; α=0.05)
-println()
+size_Alpha = sum(df[!, "Alpha n"])
+size_Omicron = sum(df[!, "Omicron n"])
 
 P1 = plot(hist_Alpha; alpha=0.3, label="")
-plot!(; xlim=(-0.5, 14), xtick=0:14)
-plot!(collect(ci_Alpha), fill(-0.01*maximum(hist_Alpha.weights), 2); lw=5, c=:blue, label="95% CI of median")
-vline!([mymedian(hist_Alpha)]; c=:blue, label="median, 95%, 99%", lw=1.5, ls=:dash)
-vline!([myquantile(hist_Alpha, 0.95)]; c=:blue, label="", ls=:dash)
-vline!([myquantile(hist_Alpha, 0.99)]; c=:blue, label="", ls=:dash)
-title!("Alpha n = $n_Alpha")
+plot!(; xlim=(-0.5, 14.5), xtick=0:14)
+vline!([mymedian(lognormal_Alpha)]; c=:blue, label="median, 95%, 99%", ls=:dash)
+vline!([myquantile(lognormal_Alpha, 0.95)]; c=:blue, label="", ls=:dash)
+vline!([myquantile(lognormal_Alpha, 0.99)]; c=:blue, label="", ls=:dash)
+title!("Alpha n = $size_Alpha / LogNormal fitting")
+plot!(x -> size_Alpha * pdf(lognormal_Alpha, x); label="", c=:blue, ls=:dot, lw=1.5)
 
 P2 = plot(hist_Omicron; alpha=0.3, label="", c=2)
-plot!(; xlim=(-0.5, 14), xtick=0:14)
-plot!(collect(ci_Omicron), fill(-0.01*maximum(hist_Omicron.weights), 2); lw=5, c=:red, label="95% CI of median")
-vline!([mymedian(hist_Omicron)]; c=:red, label="median, 95%, 99%", lw=1.5, ls=:dash)
-vline!([myquantile(hist_Omicron, 0.95)]; c=:red, label="", ls=:dash)
-vline!([myquantile(hist_Omicron, 0.99)]; c=:red, label="", ls=:dash)
-title!("Omicron n = $n_Omicron")
+plot!(; xlim=(-0.5, 14.5), xtick=0:14)
+vline!([mymedian(lognormal_Omicron)]; c=:red, label="median, 95%, 99%", ls=:dash)
+vline!([myquantile(lognormal_Omicron, 0.95)]; c=:red, label="", ls=:dash)
+vline!([myquantile(lognormal_Omicron, 0.99)]; c=:red, label="", ls=:dash)
+title!("Omicron n = $size_Omicron / LogNormal fitting")
+plot!(x -> size_Omicron * pdf(lognormal_Omicron, x); label="", c=:red, ls=:dot, lw=1.5)
 
-plot(P1, P2; size=(800, 300))
+plot(P1, P2; size=(800, 220))
 ```
 
-中央値の信頼区間だけを計算しても面白くないのだが, このノート内では一般のquantileの信頼区間は実装していないのでプロットしなかった. 原理的には一般のquantileの信頼区間の実装は易しい.
-
 ```julia
-@show median_Alpha = mymedian(hist_Alpha)
-@show ci_median_bootstrap(hist_Alpha; α=0.05)
-@show ci_median_binomial(hist_Alpha; α=0.05)
-@show ci_median_bootstrap(hist_Alpha; α=0.01)
-@show ci_median_binomial(hist_Alpha; α=0.01)
-println()
-@show median_Alpha = mymedian(hist_Omicron)
-@show ci_median_bootstrap(hist_Omicron; α=0.05)
-@show ci_median_binomial(hist_Omicron; α=0.05)
-@show ci_median_bootstrap(hist_Omicron; α=0.01)
-@show ci_median_binomial(hist_Omicron; α=0.01);
+sample_Alpha = foldl(vcat, (fill(i, df[i, "Alpha n"]) for i in 1:14))
+sample_Omicron = foldl(vcat, (fill(i, df[i, "Omicron n"]) for i in 1:14))
+
+weibull_Alpha = fit_mle(Weibull, sample_Alpha)
+weibull_Omicron = fit_mle(Weibull, sample_Omicron)
+
+size_Alpha = sum(df[!, "Alpha n"])
+size_Omicron = sum(df[!, "Omicron n"])
+
+P1 = plot(hist_Alpha; alpha=0.3, label="")
+plot!(; xlim=(-0.5, 14.5), xtick=0:14)
+vline!([mymedian(weibull_Alpha)]; c=:blue, label="median, 95%, 99%", ls=:dash)
+vline!([myquantile(weibull_Alpha, 0.95)]; c=:blue, label="", ls=:dash)
+vline!([myquantile(weibull_Alpha, 0.99)]; c=:blue, label="", ls=:dash)
+title!("Alpha n = $size_Alpha / Weibull fitting")
+plot!(x -> size_Alpha * pdf(weibull_Alpha, x); label="", c=:blue, ls=:dot, lw=1.5)
+
+P2 = plot(hist_Omicron; alpha=0.3, label="", c=2)
+plot!(; xlim=(-0.5, 14.5), xtick=0:14)
+vline!([mymedian(weibull_Omicron)]; c=:red, label="median, 95%, 99%", ls=:dash)
+vline!([myquantile(weibull_Omicron, 0.95)]; c=:red, label="", ls=:dash)
+vline!([myquantile(weibull_Omicron, 0.99)]; c=:red, label="", ls=:dash)
+title!("Omicron n = $size_Omicron / Weibull fitting")
+plot!(x -> size_Omicron * pdf(weibull_Omicron, x); label="", c=:red, ls=:dot, lw=1.5)
+
+plot(P1, P2; size=(800, 220))
 ```
 
 ```julia
