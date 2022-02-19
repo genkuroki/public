@@ -824,6 +824,8 @@ plot_probtype1error_hist_iter(; dist = lognormal)
 <img src="attachment:89b17ce7-f2b2-45da-9121-7fca37a3bfcc.png" width="500">
 
 
+### ヒストグラムから症例数を目で読み取る.
+
 以下はグラフから読み取った症例数.
 
 ```julia
@@ -846,6 +848,9 @@ data = [
 
 df = DataFrame(data, ["days after exposure", "Alpha n", "Omicron n"])
 ```
+
+### ヒストグラムデータの中央値の信頼区間などを計算
+
 
 「$n$ 日目に発症」を「暴露されてから $n-0.5$ 日目の始めから $n+0.5$ 日目の直前までのあいだに発症」と解釈してヒストグラムに変換し, 中央値と中央値の信頼区間を計算してみる.
 
@@ -903,14 +908,16 @@ plot(P1, P2; size=(800, 220))
 <img src="attachment:059a3ff2-fbb0-4bf8-b97e-4f98e4d384df.png" width="500">
 
 
-ガンマ分布などでフィッティングしたバージョンも作ってみよう.
+### ガンマ分布, 対数正規分布, Weibull分布でフィッティング
+
+ガンマ分布, 対数正規分布, Weibull分布などでフィッティングしたバージョンも作ってみよう.
 
 ```julia
 sample_Alpha = foldl(vcat, (fill(i, df[i, "Alpha n"]) for i in 1:14))
 sample_Omicron = foldl(vcat, (fill(i, df[i, "Omicron n"]) for i in 1:14))
 
-gamma_Alpha = fit_mle(Gamma, sample_Alpha)
-gamma_Omicron = fit_mle(Gamma, sample_Omicron)
+@show gamma_Alpha = fit_mle(Gamma, sample_Alpha)
+@show gamma_Omicron = fit_mle(Gamma, sample_Omicron)
 
 P1 = plot(hist_Alpha; alpha=0.3, label="")
 plot!(; xlim=(-0.5, 14.5), xtick=0:14)
@@ -1014,6 +1021,18 @@ plot!(x -> size_Omicron * pdf(weibull_Omicron, x); label="", c=:red, ls=:dot, lw
 
 plot(P1, P2; size=(800, 220))
 ```
+
+```julia
+@show aic_gamma_Alpha = -2loglikelihood(gamma_Alpha, sample_Alpha) + 4
+@show aic_lognormal_Alpha = -2loglikelihood(lognormal_Alpha, sample_Alpha) + 4
+@show aic_weibull_Alpha = -2loglikelihood(weibull_Alpha, sample_Alpha) + 4
+println()
+@show aic_gamma_Omicron = -2loglikelihood(gamma_Omicron, sample_Omicron) + 4
+@show aic_lognormal_Omicron = -2loglikelihood(lognormal_Omicron, sample_Omicron) + 4
+@show aic_weibull_Omicron = -2loglikelihood(weibull_Omicron, sample_Omicron) + 4;
+```
+
+確かに, ガンマ分布モデル, 対数正規分布モデル, Weibull分布モデルの3つの中ではガンマ分布モデルのAICの値が一番小さい.
 
 ```julia
 
