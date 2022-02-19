@@ -1042,6 +1042,66 @@ println()
 
 確かに, ガンマ分布モデル, 対数正規分布モデル, Weibull分布モデルの3つの中ではガンマ分布モデルのAICの値が一番小さい.
 
+
+以下ではモーメント法でのガンマ分布によるフィッティングもやってみよう.
+
+```julia
+sample_Alpha = foldl(vcat, (fill(i, df[i, "Alpha n"]) for i in 1:14))
+sample_Omicron = foldl(vcat, (fill(i, df[i, "Omicron n"]) for i in 1:14))
+
+@show gamma_Alpha = fit_mle(Gamma, sample_Alpha)
+@show gamma_Omicron = fit_mle(Gamma, sample_Omicron)
+
+P1 = plot(hist_Alpha; alpha=0.3, label="")
+plot!(; xlim=(-0.5, 14.5), xtick=0:14)
+vline!([mymedian(gamma_Alpha)]; c=:blue, label="median, 95%, 99%", ls=:dash)
+vline!([myquantile(gamma_Alpha, 0.95)]; c=:blue, label="", ls=:dash)
+vline!([myquantile(gamma_Alpha, 0.99)]; c=:blue, label="", ls=:dash)
+title!("Alpha n = $size_Alpha / Gamma fitting by mle")
+plot!(x -> size_Alpha * pdf(gamma_Alpha, x); label="", c=:blue, ls=:dot, lw=1.5)
+
+P2 = plot(hist_Omicron; alpha=0.3, label="", c=2)
+plot!(; xlim=(-0.5, 14.5), xtick=0:14)
+vline!([mymedian(gamma_Omicron)]; c=:red, label="median, 95%, 99%", ls=:dash)
+vline!([myquantile(gamma_Omicron, 0.95)]; c=:red, label="", ls=:dash)
+vline!([myquantile(gamma_Omicron, 0.99)]; c=:red, label="", ls=:dash)
+title!("Omicron n = $size_Omicron / Gamma fitting by mle")
+plot!(x -> size_Omicron * pdf(gamma_Omicron, x); label="", c=:red, ls=:dot, lw=1.5)
+
+function fit_moment_Gamma(sample)
+    μ, σ² = mean(sample), var(sample)
+    α, θ = μ^2/σ², σ²/μ 
+    Gamma(α, θ)
+end
+
+@show gamma_moment_Alpha = fit_moment_Gamma(sample_Alpha)
+@show gamma_moment_Omicron = fit_moment_Gamma(sample_Omicron)
+
+P3 = plot(hist_Alpha; alpha=0.3, label="")
+plot!(; xlim=(-0.5, 14.5), xtick=0:14)
+vline!([mymedian(gamma_moment_Alpha)]; c=:blue, label="median, 95%, 99%", ls=:dash)
+vline!([myquantile(gamma_moment_Alpha, 0.95)]; c=:blue, label="", ls=:dash)
+vline!([myquantile(gamma_moment_Alpha, 0.99)]; c=:blue, label="", ls=:dash)
+title!("Alpha n = $size_Alpha / Gamma fitting by moments")
+plot!(x -> size_Alpha * pdf(gamma_moment_Alpha, x); label="", c=:blue, ls=:dot, lw=1.5)
+
+P4 = plot(hist_Omicron; alpha=0.3, label="", c=2)
+plot!(; xlim=(-0.5, 14.5), xtick=0:14)
+vline!([mymedian(gamma_moment_Omicron)]; c=:red, label="median, 95%, 99%", ls=:dash)
+vline!([myquantile(gamma_moment_Omicron, 0.95)]; c=:red, label="", ls=:dash)
+vline!([myquantile(gamma_moment_Omicron, 0.99)]; c=:red, label="", ls=:dash)
+title!("Omicron n = $size_Omicron / Gamma fitting by moments")
+plot!(x -> size_Omicron * pdf(gamma_moment_Omicron, x); label="", c=:red, ls=:dot, lw=1.5)
+
+plot(P1, P2, P3, P4; size=(1000, 440), layout=(2,2))
+```
+
+オリジナルはこれ↓
+
+<img src="omi_per_f2.png" width="500">
+
+これと一致しない理由を知りたい.
+
 ```julia
 
 ```
