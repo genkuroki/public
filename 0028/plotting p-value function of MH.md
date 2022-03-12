@@ -27,6 +27,7 @@ jupyter:
 ```julia
 using Distributions
 using StatsPlots
+default(fmt = :png)
 ```
 
 ```julia
@@ -43,17 +44,6 @@ function ORMH(TBL; conf_level = 0.95)
     ORU = exp(log(OR) + quantile(Normal(), 1 - (1 - conf_level)/2)*SElnOR)
     (estimate = OR, conf_int = (ORL, ORU), conf_level = conf_level)
 end
-```
-
-```julia
-TBL = reshape(1:40, 10, 4) |> Matrix
-TT = sum.(eachrow(TBL))
-GG = @. TBL[:,1] * TBL[:,4] / TT
-HH = @. TBL[:,2] * TBL[:,3] / TT
-OR = sum(GG) / sum(HH)
-PP = @. (TBL[:,1] + TBL[:,4]) / TT
-QQ = @. (TBL[:,2] + TBL[:,3]) / TT
-VARlnOR = sum(@. GG*PP)/(2sum(GG)^2) + sum(@. GG*QQ+HH*PP)/(2sum(GG)*sum(HH)) + sum(@. HH*QQ)/(2sum(HH)^2)
 ```
 
 ```julia
