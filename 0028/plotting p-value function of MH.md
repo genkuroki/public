@@ -22,7 +22,7 @@ jupyter:
 
 のFigure 8-4の部分のほぼ忠実なJulia版.
 
-<img src="attachment:23309050-3606-4802-89c7-56cd23bd1ba6.jpg" width=500>
+![ELD8C0CU0AARmsx.jpg](attachment:a5e621ab-8f11-49e5-8658-6f4d88f80ba3.jpg)
 
 ```julia
 using Distributions
