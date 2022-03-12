@@ -69,6 +69,10 @@ plot_score(; loss_func = (x, v) -> (x - v)^2)
 ```
 
 ```julia
+@time plot_score(; loss_func = (x, v) -> (x - v)^2, L = 10^8)
+```
+
+```julia
 plot_score(; loss_func = (x, v) -> abs(√x - √v))
 ```
 
