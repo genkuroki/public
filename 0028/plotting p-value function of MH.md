@@ -97,10 +97,12 @@ end
 plot(; title="Figuere 8-4")
 pvpORMH!(TenStudies; label="ten studies")
 pvpORMH!(ElevenStudies; label="eleven studies", ls=:dash)
-plot!([1, 1], [0, 1]; label="", c=:black, ls=:dot)
+plot!([1, 1], [0, 1]; label="", c=:black, lw=0.5)
 plot!(; xtick = 0.6:0.05:1.2, ytick = 0:0.05:1)
 plot!(; xlabel="OR", ylabel="p-value")
 ```
+
+## P値函数を直接定義
 
 以上では「信頼区間を大量に計算することによってP値函数をプロットする」という実装になっているが, 以下ではP値函数を直接定義することによって同一のグラフをプロットしてみる.
 
@@ -117,7 +119,7 @@ function logOR_and_SE_normalapprox(TBL)
     (logOR = log(OR), SE = SElnOR)
 end
 
-function pval_ORMH_normalapprox(TBL, or)
+function pval_ORMH_normalapprox(TBL, or = 1.0)
     (; logOR, SE) = logOR_and_SE_normalapprox(TBL)
     normal = Normal(logOR, SE)
     min(1, 2cdf(normal, log(or)), 2ccdf(normal, log(or)))
@@ -129,7 +131,7 @@ or = range(0.6, 1.2, 1000)
 plot(; title="Figuere 8-4")
 plot!(or, or -> pval_ORMH_normalapprox(TenStudies, or); label="ten studies")
 plot!(or, or -> pval_ORMH_normalapprox(ElevenStudies, or); label="eleven studies", ls=:dash)
-plot!([1, 1], [0, 1]; label="", c=:black, ls=:dot)
+plot!([1, 1], [0, 1]; label="", c=:black, lw=0.5)
 plot!(; xtick = range(extrema(or)...; step=0.05), ytick = 0:0.05:1)
 plot!(; xlabel="OR", ylabel="p-value")
 ```
@@ -137,15 +139,212 @@ plot!(; xlabel="OR", ylabel="p-value")
 __比較:__ 以下のように2つの方法によるプロットはぴったり一致している.
 
 ```julia
+or = range(0.6, 1.2, 1000)
 plot()
-pvpORMH!(TenStudies; label="ten studies 1")
+pvpORMH!(TenStudies; label="ten studies 1", xlim=extrema(or))
 plot!(or, or -> pval_ORMH_normalapprox(TenStudies, or); label="ten studies 2", ls=:dash)
 ```
 
 ```julia
+or = range(0.6, 1.2, 1000)
 plot()
-pvpORMH!(ElevenStudies; label="eleven studies 1")
+pvpORMH!(TenStudies; label="ten studies 1", xlim=extrema(or))
 plot!(or, or -> pval_ORMH_normalapprox(ElevenStudies, or); label="eleven studies 2", ls=:dash)
+```
+
+## オッズ比が1以外の場合に拡張されたMantel-Haenszel検定のP値函数
+
+オッズ比が1以外の場合に拡張されたMantel-Haenszel検定のP値函数は以下のようにして構成可能である(導出は独自).
+
+「共通のオッズ比は $\omega$ である」という仮説のP値函数を構成しよう.
+
+$i = 1,2,\ldots,r$ について, $i$ 番目の2×2の分割表を
+
+$$
+\begin{bmatrix}
+a_i & b_i \\
+c_i & d_i \\
+\end{bmatrix}
+$$
+
+と書き,
+
+$$
+N_i = a_i + b_i + c_i + d_i
+$$
+
+とおく.  共通のオッズ比を $\omega > 0$ と書く.
+
+(1) 統計量 $\delta_i$ を
+
+$$
+\frac{(a_i - \delta_i)(d_i - \delta_i)}{(b_i + \delta_i)(c_i + \delta_i)} = \omega, \quad
+-\min(b,c) < \delta_i < \min(a,d)
+$$
+
+という条件によって $\delta_i$ を定める. すなわち
+
+$$
+A_i = 1 - \omega, \quad
+B_i = a_i + d_i + \omega(b_i + c_i), \quad
+C_i = a_i d_i - \omega b_i c_i
+$$
+
+とおくと,
+
+$$
+\delta_i = \frac{2C_i}{B_i + \sqrt{B_i^2 - 4A_i C_i}}.
+$$
+
+これは2次方程式 $A_i x^2 - B_i x + C_i = 0$ の解の1つである.  例えば, $\omega = 1$ のとき
+
+$$
+\delta_i = a_i - \frac{(a_i+b_i)(a_i+c_i)}{N_i} = \frac{a_i d_i - b_i c_i}{N_i}
+$$
+
+(2) 統計量 $v_i$ を
+
+$$
+v_i = 
+\frac{N_i-1}{N_i}
+\left(\frac{1}{a_i-\delta_i} + \frac{1}{b_i+\delta_i} + \frac{1}{c_i+\delta_i} + \frac{1}{d_i-\delta_i}\right)^{-1}
+$$
+
+と定める.  例えば, $\omega = 1$ のとき, $v_i$ は超幾何分布の分散に一致する:
+
+$$
+v_i = \frac{(a_i+b_i)(c_i+d_i)(a_i+c_i)(b_i+d_i)}{N_i^2(N_i - 1)}.
+$$
+
+(3) 統計量 $Z^2$ を次のように定める:
+
+$$
+Z^2 = \frac{\left(\sum_{i=1}^r \delta_i\right)^2}{\sum_{i=1}^r v_i}
+$$
+
+例えば, $\omega = 1$ のとき, これは次のようにMantel-Haenszelのχ²統計量に一致する:
+
+$$
+Z^2 = \frac
+{\left(\sum_{i=1}^r (a_i - (a_i+b_i)(a_i+c_i)/N_i)\right)^2}
+{\sum_{i=1}^r (a_i+b_i)(c_i+d_i)(a_i+c_i)(b_i+d_i)/(N_i^2(N_i-1))}.
+$$
+
+さらに $r=1$ とすると, 
+
+$$
+Z^2 = \frac{(N_1 - 1)(a_1 d_1 - b_1 c_1)^2}{(a_1+b_1)(c_1+d_1)(a_1+c_1)(b_1+d_1)}.
+$$
+
+これは単独の2×2の分割表の独立性検定のPearsonのχ²統計量の $(N_1 - 1)/N_1$ 倍に一致する.
+
+(4) P値を自由度 $1$ のχ²分布で $Z^2$ 以上になる確率と定める.
+
+```julia
+using Roots
+
+safediv(x, y) = x == 0 ? x/one(y) : x/y
+safesqrt(x) = √max(0, x)
+
+function delta_or(a, b, c, d, ω = 1.0)
+    A = 1 - ω
+    B = a + d + ω*(b + c)
+    C = a*d - ω*b*c
+    # solution of Ax² - Bx + C = 0 with −min(b,c) < x < min(a,d)
+    safediv(2C, B + safesqrt(B^2 - 4*A*C))
+end
+
+function mhvar_or(a, b, c, d, ω)
+    N = a + b + c + d
+    δ = delta_or(a, b, c, d, ω)
+    (N - 1)/N/(1/(a - δ) + 1/(b + δ) + 1/(c + δ) + 1/(d - δ))
+end
+
+function zsq_stat_or(a, b, c, d, ω = 1.0)
+    safediv(
+        sum(((a, b, c, d),) -> delta_or(a, b, c, d, ω), zip(a, b, c, d))^2, 
+        sum(((a, b, c, d),) -> mhvar_or(a, b, c, d, ω), zip(a, b, c, d))
+    )
+end
+
+function zsq_stat_or(tbl, ω = 1.0)
+    @views a, b, c, d = tbl[:,1], tbl[:,2], tbl[:,3], tbl[:,4]
+    zsq_stat_or(a, b, c, d, ω)
+end
+
+function pval_mantelhaenszel_or(tbl, ω = 1.0)
+    Z² = zsq_stat_or(tbl, ω)
+    ccdf(Chisq(1), Z²)
+end
+
+function ci_mantelhaenszel_or(tbl, α = 0.05)
+    f(t) = pval_mantelhaenszel_or(tbl, exp(t)) - α
+    logci = find_zeros(f, -1e1, 1e1)
+    exp(logci[begin]), exp(logci[end])
+end
+```
+
+```julia
+@show pval_ORMH_normalapprox(TenStudies)
+@show pval_mantelhaenszel_or(TenStudies)
+@show pval_ORMH_normalapprox(ElevenStudies)
+@show pval_mantelhaenszel_or(ElevenStudies);
+```
+
+```julia
+@show ORMH(TenStudies).conf_int
+@show ci_mantelhaenszel_or(TenStudies)
+@show ORMH(ElevenStudies).conf_int
+@show ci_mantelhaenszel_or(ElevenStudies);
+```
+
+```julia
+or = range(0.6, 1.2, 1000)
+plot(; title="Figuere 8-4")
+plot!(or, or -> pval_mantelhaenszel_or(TenStudies, or); label="ten studies")
+plot!(or, or -> pval_mantelhaenszel_or(ElevenStudies, or); label="eleven studies", ls=:dash)
+plot!([1, 1], [0, 1]; label="", c=:black, lw=0.5)
+plot!(; xtick = range(extrema(or)...; step=0.05), ytick = 0:0.05:1)
+plot!(; xlabel="OR", ylabel="p-value")
+```
+
+__比較:__ 以下のように正規分布近似によるP値函数とスコア検定のP値函数はこの場合にはよく一致している.
+
+```julia
+or = range(0.6, 1.2, 1000)
+plot()
+pvpORMH!(TenStudies; label="ten studies 1", xlim=extrema(or))
+plot!(or, or -> pval_mantelhaenszel_or(TenStudies, or); label="ten studies 3", ls=:dashdot)
+```
+
+```julia
+or = range(0.6, 1.2, 1000)
+plot()
+pvpORMH!(ElevenStudies; label="eleven studies 1", xlim=extrema(or))
+plot!(or, or -> pval_mantelhaenszel_or(ElevenStudies, or); label="eleven studies 3", ls=:dashdot)
+```
+
+```julia
+or = range(0.99, 1.07, 1000)
+plot()
+pvpORMH!(ElevenStudies; label="eleven studies 1", xlim=extrema(or), ylim=(-0.001, 0.06))
+plot!(or, or -> pval_mantelhaenszel_or(ElevenStudies, or); label="eleven studies 3", ls=:dashdot)
+```
+
+__比較:__ 以下のように、標本サイズを10分の1にした場合でも, 正規分布近似によるP値函数とスコア検定のP値函数はこの場合にはよく一致している.
+
+```julia
+or = range(0.3, 2, 1000)
+plot()
+pvpORMH!(ElevenStudies/10; label="eleven studies 1", xlim=extrema(or))
+plot!(or, or -> pval_mantelhaenszel_or(ElevenStudies/10, or); label="eleven studies 3", ls=:dashdot)
+```
+
+```julia
+or = range(1.28, 1.7, 1000)
+plot()
+pvpORMH!(ElevenStudies/10; label="eleven studies 1", xlim=extrema(or), ylim=(-0.001, 0.06))
+plot!(or, or -> pval_mantelhaenszel_or(ElevenStudies/10, or); label="eleven studies 3", ls=:dashdot)
 ```
 
 ```julia
