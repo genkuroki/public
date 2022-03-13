@@ -206,7 +206,7 @@ $$
 
 $$
 v_i = 
-\frac{N_i-1}{N_i}
+\frac{N_i}{N_i-1}
 \left(\frac{1}{a_i-\delta_i} + \frac{1}{b_i+\delta_i} + \frac{1}{c_i+\delta_i} + \frac{1}{d_i-\delta_i}\right)^{-1}
 $$
 
@@ -257,7 +257,7 @@ end
 function mhvar_or(a, b, c, d, ω)
     N = a + b + c + d
     δ = delta_or(a, b, c, d, ω)
-    (N - 1)/N/(1/(a - δ) + 1/(b + δ) + 1/(c + δ) + 1/(d - δ))
+    N/(N - 1)/(1/(a - δ) + 1/(b + δ) + 1/(c + δ) + 1/(d - δ))
 end
 
 function zsq_stat_or(a, b, c, d, ω = 1.0)
