@@ -271,6 +271,10 @@ plot_samplemeanstd(dist, 40)
 ```
 
 ```julia
+plot_samplemeanstd(Normal(1, √20), 40; xlim=(-1.65, 3.5), ylim=(-25, 65))
+```
+
+```julia
 plot_samplemeanstd(dist, 80)
 ```
 
@@ -280,6 +284,10 @@ plot_samplemeanstd(dist, 160)
 
 ```julia
 plot_samplemeanstd(dist, 320)
+```
+
+```julia
+plot_samplemeanstd(Normal(1, √20), 320; xlim=(0.1, 2.1), ylim=(4, 32.5))
 ```
 
 ```julia
