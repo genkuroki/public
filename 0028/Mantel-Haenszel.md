@@ -19,6 +19,8 @@ $
 \newcommand\ds{\displaystyle}
 $
 
+* https://twitter.com/genkuroki/status/1502560933553766406
+
 ```julia
 using Distributions
 using StatsPlots
