@@ -13,7 +13,7 @@ jupyter:
     name: julia-1.8
 ---
 
-# 共通オッズ比に関するMantel-Haenszelの推定量と最尤推定量の関係
+# 共通オッズ比のMantel-Haenszelの推定量と最尤推定量の関係
 
 * 黒木玄
 * 2022-03-29
@@ -23,11 +23,11 @@ $
 
 ## 文献紹介
 
-共通オッズ比に関するMantel-Haenszelの推定量と最尤推定量の関係については次の文献に書いてある:
+共通オッズ比のMantel-Haenszelの推定量と最尤推定量の関係については次の文献に書いてある:
 
 * Yanagimoto, Yakemi and Eiji Yamamoto, Eiji. Simple linear approximations to the likelihood equation for combining evidence in multiple 2×2 tables: A critique of conventional procedures. Ann. Inst. Statist. Math., Vol. 37, 1985, 37-49. \[[link](https://link.springer.com/article/10.1007/BF02481079https://link.springer.com/article/10.1007/BF02481079)\] \[[pdf](https://www.ism.ac.jp/editsec/aism/pdf/037_1_0037.pdf)\]
 
-この文献ではMantel-Haenszel以外の共通オッズ比の推定量も扱っている.  共通オッズ比に関するMantel-Haenszelの推定量の対数の分散に関するRobins-Breslow-Greenlandの推定量の解説が次の文献に書いてある:
+この文献ではMantel-Haenszel以外の共通オッズ比の推定量も扱っている.  共通オッズ比のMantel-Haenszelの推定量の対数の分散のRobins-Breslow-Greenlandの推定量の解説が次の文献に書いてある:
 
 * Silcocks, Paul.  An easy approach to the Robins-Breslow-Greenland variance estimator. Epidemiol Perspect Innov. 2005. \[[link](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1270683/https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1270683/)\] \[[pdf](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1270683/pdf/1742-5573-2-9.pdfhttps://www.ncbi.nlm.nih.gov/pmc/articles/PMC1270683/pdf/1742-5573-2-9.pdf)\]
 
@@ -89,7 +89,7 @@ $$
 この仮定のもとで以上で扱っている統計モデルの独立なパラメータは $q_1,\ldots,q_K, \omega$ の $K+1$ 個になる.
 
 
-## 共通オッズ比に関するMantel-Haenszelの推定量
+## 共通オッズ比のMantel-Haenszelの推定量
 
 共通オッズ比の __Mantel-Haenszelの推定量__ $\hat\omega_{\op{MH}}$ を次のように定める:
 
@@ -168,7 +168,7 @@ $$
 
 になることを簡単な計算で示せる. これは分散の逆数を重みとする荷重平均になっている.  分散が小さな $X_k$ の方が共通平均の真の値に近くなる傾向があるので, そのような $X_k$ を大きな重みで足し上げた方が良い推定量になりそうである.  この荷重平均は実際にそのようになっている.  (この荷重平均は $\sigma_1^2 = \cdots = \sigma_K^2 = \sigma^2$ の場合の標本平均 $\bar{X}=\frac{1}{K}\sum_{k=1}^K X_k$ の一般化になっている.) 
 
-上で示した共通オッズ比が $1$ の場合 ($\omega_k = \omega = 1$) に関するMantel-Haenszelの推定量 $\hat\omega_{\op{MH}}$ に関する結果は, 共通オッズ比が $1$ の場合にはMantel-Haenszelの推定量 $\hat\omega_{\op{MH}}$ が近似的に漸近的な最尤推定量 $\hat\mu$ の形をしていることを意味している.
+上で示した共通オッズ比が $1$ の場合 ($\omega_k = \omega = 1$) におけるMantel-Haenszelの推定量 $\hat\omega_{\op{MH}}$ に関する結果は, 共通オッズ比が $1$ の特殊な場合には, Mantel-Haenszelの推定量 $\hat\omega_{\op{MH}}$ が $\mu=\omega=1$, $\sigma_k^2=v_k$ の場合の 漸近的最尤推定量 $\hat\mu$ を近似していることを意味している.
 
 ただし, これは共通のオッズ比が $1$ の特殊な場合におけるMantel-Haenszelの推定量 $\hat\omega_{\op{MH}}$ と最尤推定量の関係に過ぎない.
 
@@ -276,6 +276,9 @@ $$
 $$
 
 に一致する.  このようにMantel-Haenszel推定量は最尤方程式($*$)を線形近似最尤方程式($**$)で近似することによって得られる.
+
+
+## 数値的な例
 
 ```julia
 using Distributions
