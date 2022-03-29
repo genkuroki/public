@@ -116,10 +116,14 @@ $$
 \hat{w}_k = \frac{b_k c_k}{N_k}
 $$
 
-大数の法則より, $m_k, n_k$ 達が十分大きなとき, 近似
+大数の法則より, $m_k, n_k$ 達が大きなとき, 近似
 
 $$
-\hat\omega_k \approx \omega_k = \omega, \quad
+\hat\omega_k =
+\frac{(a_k/m_k)(d_k/n_k)}{(b_k/m_k)(c_k/n_k)}\approx
+\frac{p_k(1-q_k)}{(1-p_k)q_k} =
+\omega_k = 
+\omega
 $$
 
 が成立しているので, 近似
@@ -131,13 +135,13 @@ $$
 {\sum_{k=1}^K \hat{w}_k} = \omega.
 $$
 
-が成立している.  すなわち Mantel-Haenszelの推定量 $\hat\omega_{\op{MH}}$ は共通オッズ比 $\omega$ を近似している.
+が成立する.  すなわち大数の法則による近似が有効な場合にはMantel-Haenszelの推定量 $\hat\omega_{\op{MH}}$ は共通オッズ比 $\omega$ を近似している.
 
 これはMantel-Haenszelの推定量 $\hat\omega_{\op{MH}}$ が共通オッズ比 $\omega$ の一致推定量になっていることを意味している.
 
 共通オッズ比が $1$ の特殊な場合 ($\omega = 1$ の場合)にはさらに良いことを言える.
 
-大数の法則より, 
+大数の法則より, 近似
 
 $$
 \frac{1}{\hat{w}_k} = \frac{m_k + n_k}{b_k c_k} =
@@ -145,19 +149,17 @@ $$
 \frac{1}{p_k (1 - q_k)}\left(\frac{1}{m_k} + \frac{1}{n_k}\right)
 $$
 
-なので $\omega_k = \omega = 1$ (すなわち $p_k = q_k$) ならば,
+が成立しているので,  $\omega_k = \omega = 1$ (すなわち $p_k = q_k$) ならば,
 
 $$
-\begin{aligned}
-\frac{1}{\hat{w}_k} &\approx
-\frac{1}{p_k (1 - p_k)}\left(\frac{1}{m_k} + \frac{1}{n_k}\right) \\ &= 
+\frac{1}{\hat{w}_k} \approx
+\frac{1}{p_k (1 - p_k)}\left(\frac{1}{m_k} + \frac{1}{n_k}\right) = 
 \omega^2\left(\frac{1}{m_k p_k (1 - p_k)} + \frac{1}{n_k q_k (1 - q_k)}\right) = v_k.
-\end{aligned}
 $$
 
 すなわち $\hat{w}_k$ の逆数は $\hat\omega_k = (a_k d_k)/(b_k c_k)$ の漸近的な分散 $v_k$ を近似する.
 
-一般に, 与えられた $\sigma_1^2,\ldots,\sigma_K^2 > 0$ について,  統計モデルが共通の平均 $\mu$ と分散 $\sigma_k^2$ を持つ $K$ 個の正規分布の積であるとき, 標本 $X_1,\ldots,X_n$ に関する共通の平均 $\mu$ の最尤推定量が
+一般に, 正の実数達 $\sigma_1^2,\ldots,\sigma_K^2 > 0$ が与えられていて,  統計モデルが共通平均 $\mu$ と既知の分散 $\sigma_k^2$ を持つ $K$ 個の正規分布の積であるとき, 共通平均 $\mu$ の共通平均 $\mu$ の標本 $X_1,\ldots,X_n$ に対する最尤推定量が
 
 $$
 \hat\mu =
@@ -166,14 +168,14 @@ $$
 {\sum_{k=1}^K 1/\sigma_k^2}
 $$
 
-になることを簡単な計算で示せる. これは分散の逆数を重みとする荷重平均になっている.  分散が小さな $X_k$ の方が共通平均の真の値に近くなる傾向があるので, そのような $X_k$ を大きな重みで足し上げた方が良い推定量になりそうである.  この荷重平均は実際にそのようになっている.  (この荷重平均は $\sigma_1^2 = \cdots = \sigma_K^2 = \sigma^2$ の場合の標本平均 $\bar{X}=\frac{1}{K}\sum_{k=1}^K X_k$ の一般化になっている.) 
+になることを簡単な計算で示せる. これは分散の逆数を重みとする荷重平均になっている.  分散が小さな $X_k$ の方が確率的に共通平均の真の値に近くなる傾向があるはずなので, そのような $X_k$ を大きな重みで足し上げた方が共通平均の良い推定量になりそうである.  この荷重平均は実際にそのようになっている.  (この荷重平均は $\sigma_1^2 = \cdots = \sigma_K^2 = \sigma^2$ の場合の標本平均 $\bar{X}=\frac{1}{K}\sum_{k=1}^K X_k$ の一般化になっている.) 
 
 上で示した共通オッズ比が $1$ の場合 ($\omega_k = \omega = 1$) におけるMantel-Haenszelの推定量 $\hat\omega_{\op{MH}}$ に関する結果は, 共通オッズ比が $1$ の特殊な場合には, Mantel-Haenszelの推定量 $\hat\omega_{\op{MH}}$ が $\mu=\omega=1$, $\sigma_k^2=v_k$ の場合の 漸近的最尤推定量 $\hat\mu$ を近似していることを意味している.
 
 ただし, これは共通のオッズ比が $1$ の特殊な場合におけるMantel-Haenszelの推定量 $\hat\omega_{\op{MH}}$ と最尤推定量の関係に過ぎない.
 
 
-## 最尤推定量
+## 共通オッズ比の最尤推定量
 
 $K$ 個の独立な2×2の分割表の各々が2つの二項分布の積分布に従っているという統計モデルのパラメータ空間を共通オッズ比 $\omega$ を持つ場合に制限して得られる統計モデルを考えている. 独立なパラメータは $q_1,\ldots,q_K,\omega$ の $K+1$ 個になる.  (ロジスティックモデルで書き直すこともできる.)
 
@@ -187,7 +189,7 @@ c_k & d_k \\
 \quad (k = 1,\ldots,K)
 $$
 
-の最尤推定量 $\hat{q}_1, \ldots, \hat{q}_K, \hat\omega$ を以下のようにして計算できることを示せる. (対数尤度函数を偏微分したものが $0$ になるという方程式を整理すればよい.)
+の統計モデルのパラメータ達の最尤推定量 $\hat{q}_1, \ldots, \hat{q}_K, \hat\omega$ を以下のようにして計算できることを示せる. (対数尤度函数を偏微分したものが $0$ になるという方程式を整理すればよい.)
 
 (1) 次の条件を満たす $\delta_k = \delta_k(\omega)$ を求める:
 
@@ -229,7 +231,7 @@ $$
 \tag{$*$}
 $$
 
-さらに
+これを共通オッズ比の __最尤方程式__ と呼ぶことにする. さらに
 
 $$
 \begin{bmatrix}
@@ -244,10 +246,8 @@ $$
 
 とおき, $\hat{q}_k = \hat{c}_k/n_k$ と定める.  このとき, $p_k$ の最尤推定量は $\hat{p}_k = \hat{a}_k/m_k$ になる.
 
-以上における方程式($*$)を __最尤方程式__ と呼ぶことにする.
 
-
-## 最尤方程式の線形近似とMantel-Haenszel推定量
+## 最尤方程式の線形近似とMantel-Haenszel推定量の関係
 
 この節の内容は上で引用した Yamagimoto-Yamamoto (1985) の Proposition 1 の紹介である.
 
@@ -259,14 +259,16 @@ y =
 -\frac{b_k c_k}{N_k}x + \frac{a_k d_k}{N_k}
 $$
 
-で $y = \delta_k(x)$ を近似することにしよう(これはかなり大胆な近似である).  このとき最尤方程式 ($*$) を次の1次方程式 ($**$) で近似することになる:
+で $y = \delta_k(x)$ を近似することにしよう(これはかなり大胆な近似である).
+
+この近似を採用すると, 最尤方程式 ($*$) を次の一次方程式 ($**$) で近似することになる:
 
 $$
 -\left(\sum_{k=1}^K \frac{b_k c_k}{N_k}\right)x + \sum_{k=1}^K \frac{a_k d_k}{N_k} = 0.
 \tag{$**$}
 $$
 
-これを __線形近似最尤方程式__ と呼ぶことにする. この線形近似最尤方程式の解はMantel-Haenszel推定量
+これを共通オッズ比の __線形近似最尤方程式__ と呼ぶことにする. この線形近似最尤方程式の解はMantel-Haenszel推定量
 
 $$
 \hat\omega_{\op{MH}} =
@@ -275,66 +277,355 @@ $$
 {\sum_{k=1}^K b_k c_k/N_k}.
 $$
 
-に一致する.  このようにMantel-Haenszel推定量は最尤方程式($*$)を線形近似最尤方程式($**$)で近似することによって得られる.
+に一致する.  このように共通オッズ比のMantel-Haenszel推定量は最尤方程式($*$)を線形近似最尤方程式($**$)で近似することによって得られる.
 
 
-## 数値的な例
+## 数値例
 
 ```julia
+using RCall
 using Distributions
 using StatsPlots
 default(fmt = :png)
+using Roots
 ```
 
 ```julia
-oddsratio(a, b, c, d) = a*d/(b*c)
-oddsratio(A) = oddsratio(A...)
+safediv(x, y) = x == 0 ? x/one(y) : x/y
+safesqrt(x) = √max(0, x)
+
+oddsratio(a, b, c, d) = safediv(a*d, b*c)
+oddsratio(A::AbstractVecOrMat) = oddsratio(A...)
 
 function delta(a, b, c, d, ω)
-    ω == 1 && return (a*d - b*c)/(a+b+c+d)
     A, B, C = 1 - ω, a + d + ω*(b + c), a*d - ω*b*c
-    2C/(B + √(B^2 - 4A*C))
+    safediv(2C, B + safesqrt(B^2 - 4A*C))
 end
-
 delta(A, ω) = delta(A..., ω)
 
-function linapprox(a, b, c, d, ω)
+function linear_approx_delta(a, b, c, d, ω)
     N = a + b + c + d
     -(b*c/N)*ω + a*d/N
 end
+linear_approx_delta(A::AbstractVecOrMat, ω) = linear_approx_delta(A..., ω)
 
-linapprox(A, ω) = linapprox(A..., ω)
+eachmatrix(A::AbstractArray{<:Any, 3}) = eachslice(A; dims=3)
+
+function maximum_likelihood_equation(A::AbstractArray{<:Any, 3}, x)
+    sum(A -> delta(A, x), eachmatrix(A))
+end
+
+function linear_approx_maximum_likelihood_equation(A::AbstractArray{<:Any, 3}, x)
+    sum(A -> linear_approx_delta(A, x), eachmatrix(A))
+end
+
+function mantel_haenszel_estimator(A::AbstractArray{<:Any, 3})
+    num = sum(A -> A[1,1]*A[2,2]/sum(A), eachmatrix(A))
+    den = sum(A -> A[1,2]*A[2,1]/sum(A), eachmatrix(A))
+    num/den
+end
+
+function maximum_linkelihood_estimator(A::AbstractArray{<:Any, 3})
+    f(t) = maximum_likelihood_equation(A, exp(t))
+    logomegahat = find_zero(f, 0.0, Order2())
+    omegahat = exp(logomegahat)
+end
+```
+
+以下の2つのセルの内容については
+
+* https://github.com/genkuroki/public/blob/main/0028/Mantel-Haenszel.ipynb
+
+を参照.
+
+```julia
+function vardelta(a, b, c, d, ω)
+    N = a + b + c + d
+    δ = delta(a, b, c, d, ω)
+    (N - 1)/N/(1/(a - δ) + 1/(b + δ) + 1/(c + δ) + 1/(d - δ))
+end
+vardelta(A::AbstractVecOrMat, ω) = vardelta(A..., ω)
+
+function chisq_mantel_haenszel(A::AbstractArray{<:Any, 3}, ω = 1.0)
+    num = sum(A -> delta(A, ω), eachmatrix(A))^2
+    den = sum(A -> vardelta(A, ω), eachmatrix(A))
+    num/den
+end
+
+function pvalue_chisq(A::AbstractArray{<:Any, 3}, ω = 1.0)
+    chisq = chisq_mantel_haenszel(A, ω)
+    ccdf(Chisq(1), chisq)
+end
+
+function ci_chisq(A::AbstractArray{<:Any, 3}, α = 0.05)
+    f(t) = pvalue_chisq(A, exp(t)) - α
+    logci = find_zeros(f, -1e1, 1e1)
+    exp(first(logci)), exp(last(logci))
+end
+
+function mh_chisq(A::AbstractArray{<:Any, 3}; ω₀ = 1.0, α = 0.05)
+    common_odds_ratio = maximum_linkelihood_estimator(A)
+    chisq = chisq_mantel_haenszel(A, ω₀)
+    df = 1
+    p_value = ccdf(Chisq(df), chisq)
+    conf_int = ci_chisq(A, α)
+    (; common_odds_ratio, ω₀, p_value, α, conf_int, chisq, df)
+end
 ```
 
 ```julia
-A = [
-     5 10
-    10  5
+function mantel_haenszel_robins_breslow_greenland(A::AbstractArray{<:Any, 3})
+    @views a, b, c, d  = A[1,1,:], A[1,2,:], A[2,1,:], A[2,2,:]
+    abcd = zip(a, b, c, d)
+    AD = sum(((a, b, c, d),) -> a*d/(a+b+c+d), abcd)
+    BC = sum(((a, b, c, d),) -> b*c/(a+b+c+d), abcd)
+    logOR = log(AD) - log(BC)
+    ADAD = sum(((a, b, c, d),) -> a*d*(a+d)/(a+b+c+d)^2, abcd)
+    ADBC = sum(((a, b, c, d),) -> (a*d*(b+c) + b*c*(a+d))/(a+b+c+d)^2, abcd)
+    BCBC = sum(((a, b, c, d),) -> b*c*(b+c)/(a+b+c+d)^2, abcd)
+    SE² = ADAD/(2AD^2) + ADBC/(2(AD*BC)) + BCBC/(2BC^2)
+    SE = √SE²
+    (; logOR, SE)
+end
+
+function pvalue_mhrbg(A::AbstractArray{<:Any, 3}, ω = 1.0)
+    (; logOR, SE) = mantel_haenszel_robins_breslow_greenland(A)
+    normal = Normal(logOR, SE)
+    min(1, 2cdf(normal, log(ω)), 2ccdf(normal, log(ω)))
+end
+
+function ci_mhrbg(A::AbstractArray{<:Any, 3}, α = 0.05)
+    (; logOR, SE) = mantel_haenszel_robins_breslow_greenland(A)
+    normal = Normal(logOR, SE)
+    exp.(quantile.(normal, (α/2, 1 - α/2)))
+end
+
+function mh_rbg(A::AbstractArray{<:Any, 3}; ω₀ = 1.0, α = 0.05)
+    (; logOR, SE) = mantel_haenszel_robins_breslow_greenland(A)
+    common_odds_ratio = exp(logOR)
+    normal = Normal(logOR, SE)
+    p_value = min(1, 2cdf(normal, log(ω₀)), 2ccdf(normal, log(ω₀)))
+    conf_int = exp.(quantile.(normal, (α/2, 1 - α/2)))
+    (; common_odds_ratio, ω₀, p_value, α, conf_int)
+end
+```
+
+### 例1
+
+* https://twitter.com/mph_for_doctors/status/1226714150853849090
+
+```julia
+R"""
+library(tidyverse)
+
+df.forMH <- tribble(
+  ~X, ~L, ~Y, ~n,
+  0, 0, 0, 325,
+  0, 0, 1, 273,
+  0, 1, 0, 324,
+  0, 1, 1, 363,
+  1, 0, 0, 292,
+  1, 0, 1, 321,
+  1, 1, 0, 278,
+  1, 1, 1, 323
+)
+
+df.MH1 <- uncount(df.forMH, weights = n)
+"""
+
+R"""
+library(samplesizeCMH)
+
+partial_tables <- table(df.MH1[,c("X","Y","L")])
+partial_tables
+"""
+```
+
+```julia
+R"""
+result_mh <- mantelhaen.test(partial_tables)
+"""
+```
+
+```julia
+R"""
+mantelhaen.test(partial_tables)
+
+library(jtools)
+log.model <- glm(Y ~ X + L, data=df.MH1, family = binomial)
+result_logistic <- summ(log.model, exp=T, digits=5)
+"""
+```
+
+```julia
+R"df_MH1 <- df.MH1"
+@rget df_MH1
+@rget partial_tables
+```
+
+```julia
+A = partial_tables
+@show A
+@show mh_chisq(A)
+@show mh_rbg(A)
+
+f(x) = maximum_likelihood_equation(A, x)
+g(x) = linear_approx_maximum_likelihood_equation(A, x)
+plot(f, 0.5, 2; label="maximum likelihood equation")
+plot!(g; label="Mantel-Haenszel linear approx.", ls=:dash)
+hline!([0]; label="", c=:black, lw=0.5, ls=:dot)
+plot!(; xlabel="common odds ratio", ylabel="score")
+plot!(; xtick=0.1:0.1:3)
+```
+
+このグラフのMantel-Haenszel linear approx.が線形近似最尤方程式であり, その零点が共通オッズ比のMantel-Haenszel推定量になる.  最尤方程式(maximum likelihood equation)の零点が(unconditionalな場合の)最尤法で求めた共通オッズ比の推定量になる.
+
+```julia
+plot(title="P-value functions")
+plot!(ω -> pvalue_chisq(A, ω), 0.7, 1.7; label="Mantel-Haenszel χ²")
+plot!(ω -> pvalue_mhrbg(A, ω); label="Robins-Breslow-Greenland", ls=:dash)
+plot!(; xtick=0.1:0.1:3, ytick=0:0.05:1)
+vline!([1]; label="", c=:black, lw=0.5)
+```
+
+この場合に, 最尤法の場合のスコア検定のP値函数(上のグラフのMantel-Haenszel χ²)と共通オッズ比のMantel-Haenszel推定量の対数の分散のRobins-Breslow-Greenlandの推定量を使った正規分布近似で作ったP値函数(上のグラフのRobins-Breslow-Greenland)はほぼぴったり一致している.
+
+
+### 例2
+
+* https://twitter.com/MinatoNakazawa/status/1202358323409850369
+    * http://minato.sip21c.org/im3r/20191204.html
+        * http://minato.sip21c.org/epispecial/codes-for-Chapter8.R
+
+```julia
+TenStudies = [
+    215 229 311-215 306-229
+     38  33  59-38   51-33
+    161 174 293-161 293-174
+     76  88 164-76  163-88
+    103 105 129-103 133-105
+     65  67 120-65  125-67
+     81  75 113-81  110-75
+     48  63 160-48  159-63
+     22  21  60-22  62-21
+     56  51 137-56  140-51
 ]
 
-ω = range(0, 2, 1000)
-plot(ω, ω -> delta(A, ω))
-plot!(ω, ω -> linapprox(A, ω))
-```
-
-```julia
-A = [
-    100   50
-     50  100
+ElevenStudies = [
+    TenStudies
+    468 480 229 205
 ]
-
-ω = range(0, 6, 1000)
-plot(ω, ω -> delta(A, ω))
-plot!(ω, ω -> linapprox(A, ω))
 ```
 
 ```julia
-delta(A, 1), delta(A, oddsratio(A))
+oddsratio.(eachrow(ElevenStudies))
 ```
 
 ```julia
-linapprox(A, 1), linapprox(A, oddsratio(A))
+A = reshape(ElevenStudies', 2, 2, :) |> collect
+
+@show A
+@show mh_chisq(A)
+@show mh_rbg(A)
+
+f(x) = maximum_likelihood_equation(A, x)
+g(x) = linear_approx_maximum_likelihood_equation(A, x)
+plot(f, 0.5, 1.5; label="maximum likelihood equation")
+plot!(g; label="Mantel-Haenszel linear approx.", ls=:dash)
+hline!([0]; label="", c=:black, lw=0.5, ls=:dot)
+plot!(; xlabel="common odds ratio", ylabel="score")
+plot!(; xtick=0.1:0.1:3)
 ```
+
+```julia
+plot(title="P-value functions")
+plot!(ω -> pvalue_chisq(A, ω), 0.7, 1.1; label="Mantel-Haenszel χ²")
+plot!(ω -> pvalue_mhrbg(A, ω); label="Robins-Breslow-Greenland", ls=:dash)
+plot!(; xtick=0.1:0.05:3, ytick=0:0.05:1)
+vline!([1]; label="", c=:black, lw=0.5)
+```
+
+### 例3
+
+```julia
+data = [
+    10 20 50 100
+    150 50 50 20
+    50 50 50 50
+    200 160 150 180
+]
+```
+
+```julia
+oddsratio.(eachrow(data))
+```
+
+```julia
+A = reshape(data', 2, 2, :) |> collect
+
+@show A
+@show mh_chisq(A)
+@show mh_rbg(A)
+
+f(x) = maximum_likelihood_equation(A, x)
+g(x) = linear_approx_maximum_likelihood_equation(A, x)
+plot(f, 0.5, 2.2; label="maximum likelihood equation")
+plot!(g; label="Mantel-Haenszel linear approx.", ls=:dash)
+hline!([0]; label="", c=:black, lw=0.5, ls=:dot)
+plot!(; xlabel="common odds ratio", ylabel="score")
+plot!(; xtick=0.1:0.1:3)
+```
+
+```julia
+plot(title="P-value functions")
+plot!(ω -> pvalue_chisq(A, ω), 0.7, 2; label="Mantel-Haenszel χ²")
+plot!(ω -> pvalue_mhrbg(A, ω); label="Robins-Breslow-Greenland", ls=:dash)
+plot!(; xtick=0.1:0.1:3, ytick=0:0.05:1)
+vline!([1]; label="", c=:black, lw=0.5)
+```
+
+### 例4
+
+```julia
+data = [
+    10 5 5 10
+    10 5 10 20
+    10 10 5 10
+    10 20 5 10
+]
+```
+
+```julia
+oddsratio.(eachrow(data))
+```
+
+```julia
+A = reshape(data', 2, 2, :) |> collect
+
+@show A
+@show mh_chisq(A)
+@show mh_rbg(A)
+
+f(x) = maximum_likelihood_equation(A, x)
+g(x) = linear_approx_maximum_likelihood_equation(A, x)
+plot(f, 0.8, 3.6; label="maximum likelihood equation")
+plot!(g; label="Mantel-Haenszel linear approx.", ls=:dash)
+hline!([0]; label="", c=:black, lw=0.5, ls=:dot)
+plot!(; xlabel="common odds ratio", ylabel="score")
+plot!(; xtick=0.2:0.2:5)
+```
+
+このグラフのMantel-Haenszel linear approx.が線形近似最尤方程式であり, その零点が共通オッズ比のMantel-Haenszel推定量になる.  最尤方程式(maximum likelihood equation)の零点が(unconditionalな場合の)最尤法で求めた共通オッズ比の推定量になる. この場合にそれらは互いに少しずれている.
+
+```julia
+plot(title="P-value functions")
+plot!(ω -> pvalue_chisq(A, ω), 0.5, 7; label="Mantel-Haenszel χ²")
+plot!(ω -> pvalue_mhrbg(A, ω); label="Robins-Breslow-Greenland", ls=:dash)
+plot!(; xtick=0.5:0.5:10, ytick=0:0.05:1)
+vline!([1]; label="", c=:black, lw=0.5)
+```
+
+この場合には, 最尤法の場合のスコア検定のP値函数(上のグラフのMantel-Haenszel χ²)と共通オッズ比のMantel-Haenszel推定量の対数の分散のRobins-Breslow-Greenlandの推定量を使った正規分布近似で作ったP値函数(上のグラフのRobins-Breslow-Greenland)は互いに少しずれている.
 
 ```julia
 
