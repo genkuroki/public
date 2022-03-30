@@ -29,7 +29,7 @@ $
 
 この文献ではMantel-Haenszel以外の共通オッズ比の推定量も扱っている.  共通オッズ比のMantel-Haenszelの推定量の対数の分散のRobins-Breslow-Greenlandの推定量の解説が次の文献に書いてある:
 
-* Silcocks, Paul.  An easy approach to the Robins-Breslow-Greenland variance estimator. Epidemiol Perspect Innov. 2005. \[[link](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1270683/https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1270683/)\] \[[pdf](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1270683/pdf/1742-5573-2-9.pdfhttps://www.ncbi.nlm.nih.gov/pmc/articles/PMC1270683/pdf/1742-5573-2-9.pdf)\]
+* Silcocks, Paul.  An easy approach to the Robins-Breslow-Greenland variance estimator. Epidemiol Perspect Innov. 2005. \[[link](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1270683/https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1270683/)\] \[[pdf](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1270683/pdf/1742-5573-2-9.pdf)\]
 
 
 ## 統計モデル
