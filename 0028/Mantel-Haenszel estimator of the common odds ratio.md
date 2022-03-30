@@ -496,6 +496,8 @@ vline!([1]; label="", c=:black, lw=0.5)
 * https://twitter.com/MinatoNakazawa/status/1202358323409850369
     * http://minato.sip21c.org/im3r/20191204.html
         * http://minato.sip21c.org/epispecial/codes-for-Chapter8.R
+            * Ten Studies: https://www.thelancet.com/journals/lancet/article/PIIS0140-6736(95)92163-X/fulltext Figure 2B
+            * Eleventh Study: https://www.nejm.org/doi/full/10.1056/NEJM199810083391504 Table 3
 
 ```julia
 TenStudies = [
@@ -513,11 +515,96 @@ TenStudies = [
 
 ElevenStudies = [
     TenStudies
-    468 480 229 205
+    468 480 697-468 685-480
 ]
 ```
 
+```julia tags=[]
+oddsratio.(eachrow(ElevenStudies))
+```
+
 ```julia
+A = A10 = reshape(TenStudies', 2, 2, :) |> collect
+
+@show A
+@show mh_chisq(A)
+@show mh_rbg(A)
+
+f(x) = maximum_likelihood_equation(A, x)
+g(x) = linear_approx_maximum_likelihood_equation(A, x)
+plot(f, 0.5, 1.5; label="maximum likelihood equation")
+plot!(g; label="Mantel-Haenszel linear approx.", ls=:dash)
+hline!([0]; label="", c=:black, lw=0.5, ls=:dot)
+plot!(; xlabel="common odds ratio", ylabel="score")
+plot!(; xtick=0.1:0.1:3)
+```
+
+```julia
+plot(title="P-value functions of Ten Studies")
+plot!(ω -> pvalue_chisq(A10, ω), 0.7, 1.1; label="Mantel-Haenszel χ²")
+plot!(ω -> pvalue_mhrbg(A10, ω); label="Robins-Breslow-Greenland", ls=:dash)
+plot!(; xtick=0.1:0.05:3, ytick=0:0.05:1)
+vline!([1]; label="", c=:black, lw=0.5)
+plot!(; xlabel="common odds ratio", ylabel="P-value")
+```
+
+```julia
+A = A11 = reshape(ElevenStudies', 2, 2, :) |> collect
+
+@show A
+@show mh_chisq(A)
+@show mh_rbg(A)
+
+f(x) = maximum_likelihood_equation(A, x)
+g(x) = linear_approx_maximum_likelihood_equation(A, x)
+plot(f, 0.5, 1.5; label="maximum likelihood equation")
+plot!(g; label="Mantel-Haenszel linear approx.", ls=:dash)
+hline!([0]; label="", c=:black, lw=0.5, ls=:dot)
+plot!(; xlabel="common odds ratio", ylabel="score")
+plot!(; xtick=0.1:0.1:3)
+```
+
+```julia
+plot(title="P-value functions")
+plot!(ω -> pvalue_chisq(A11, ω), 0.7, 1.1; label="Mantel-Haenszel χ²")
+plot!(ω -> pvalue_mhrbg(A11, ω); label="Robins-Breslow-Greenland", ls=:dash)
+plot!(; xtick=0.1:0.05:3, ytick=0:0.05:1)
+vline!([1]; label="", c=:black, lw=0.5)
+plot!(; xlabel="common odds ratio", ylabel="P-value")
+```
+
+```julia
+plot(title="P-value functions")
+plot!(ω -> pvalue_chisq(A10, ω), 0.7, 1.1; label="Ten Studies")
+plot!(ω -> pvalue_chisq(A11, ω); label="Eleven Studies", ls=:dash)
+plot!(; xtick=0.1:0.05:3, ytick=0:0.05:1)
+vline!([1]; label="", c=:black, lw=0.5)
+plot!(; xlabel="common odds ratio", ylabel="P-value")
+```
+
+* https://www.thelancet.com/journals/lancet/article/PIIS0140-6736(00)02163-2/fulltext
+
+```julia
+TenStudies = [
+    274 276 311-274 306-276
+     45  39  59-45   51-39
+    215 222 293-215 293-222
+    134 139 164-134 163-139
+    119 127 129-119 133-127
+     86  92 120-86  125-92
+     81  75 113-81  110-75
+     95  92 168-95  162-92
+     51  54  60-54   62-54
+     56  51 137-56  140-51
+]
+
+ElevenStudies = [
+    TenStudies
+    468 480 698-468 687-480
+]
+```
+
+```julia tags=[]
 oddsratio.(eachrow(ElevenStudies))
 ```
 
@@ -539,10 +626,11 @@ plot!(; xtick=0.1:0.1:3)
 
 ```julia
 plot(title="P-value functions")
-plot!(ω -> pvalue_chisq(A, ω), 0.7, 1.1; label="Mantel-Haenszel χ²")
+plot!(ω -> pvalue_chisq(A, ω), 0.7, 1.2; label="Mantel-Haenszel χ²")
 plot!(ω -> pvalue_mhrbg(A, ω); label="Robins-Breslow-Greenland", ls=:dash)
 plot!(; xtick=0.1:0.05:3, ytick=0:0.05:1)
 vline!([1]; label="", c=:black, lw=0.5)
+plot!(; xlabel="common odds ratio", ylabel="P-value")
 ```
 
 ### 例3
@@ -582,6 +670,7 @@ plot!(ω -> pvalue_chisq(A, ω), 0.7, 2; label="Mantel-Haenszel χ²")
 plot!(ω -> pvalue_mhrbg(A, ω); label="Robins-Breslow-Greenland", ls=:dash)
 plot!(; xtick=0.1:0.1:3, ytick=0:0.05:1)
 vline!([1]; label="", c=:black, lw=0.5)
+plot!(; xlabel="common odds ratio", ylabel="P-value")
 ```
 
 ### 例4
@@ -623,6 +712,7 @@ plot!(ω -> pvalue_chisq(A, ω), 0.5, 7; label="Mantel-Haenszel χ²")
 plot!(ω -> pvalue_mhrbg(A, ω); label="Robins-Breslow-Greenland", ls=:dash)
 plot!(; xtick=0.5:0.5:10, ytick=0:0.05:1)
 vline!([1]; label="", c=:black, lw=0.5)
+plot!(; xlabel="common odds ratio", ylabel="P-value")
 ```
 
 この場合には, 最尤法の場合のスコア検定のP値函数(上のグラフのMantel-Haenszel χ²)と共通オッズ比のMantel-Haenszel推定量の対数の分散のRobins-Breslow-Greenlandの推定量を使った正規分布近似で作ったP値函数(上のグラフのRobins-Breslow-Greenland)は互いに少しずれている.
