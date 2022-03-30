@@ -717,6 +717,47 @@ plot!(; xlabel="common odds ratio", ylabel="P-value")
 
 この場合には, 最尤法の場合のスコア検定のP値函数(上のグラフのMantel-Haenszel χ²)と共通オッズ比のMantel-Haenszel推定量の対数の分散のRobins-Breslow-Greenlandの推定量を使った正規分布近似で作ったP値函数(上のグラフのRobins-Breslow-Greenland)は互いに少しずれている.
 
+
+### 例5
+
+* Rothman-Greenland-Lash, Modern Epideomology, 3rd edition, 2008, p.331, Table 15-5 
+
+```julia
+data = [
+    3 9 104 1059
+    1 3   5   86
+]
+```
+
+```julia
+oddsratio.(eachrow(data))
+```
+
+```julia
+A = reshape(data', 2, 2, :) |> collect
+
+@show A
+@show mh_chisq(A)
+@show mh_rbg(A)
+
+f(x) = maximum_likelihood_equation(A, x)
+g(x) = linear_approx_maximum_likelihood_equation(A, x)
+plot(f, 0.8, 5; label="maximum likelihood equation")
+plot!(g; label="Mantel-Haenszel linear approx.", ls=:dash)
+hline!([0]; label="", c=:black, lw=0.5, ls=:dot)
+plot!(; xlabel="common odds ratio", ylabel="score")
+plot!(; xtick=0.2:0.2:10)
+```
+
+```julia
+plot(title="P-value functions")
+plot!(ω -> pvalue_chisq(A, ω), 0.5, 16; label="Mantel-Haenszel χ²")
+plot!(ω -> pvalue_mhrbg(A, ω); label="Robins-Breslow-Greenland", ls=:dash)
+plot!(; xtick=0:30, ytick=0:0.05:1)
+vline!([1]; label="", c=:black, lw=0.5)
+plot!(; xlabel="common odds ratio", ylabel="P-value")
+```
+
 ```julia
 
 ```
