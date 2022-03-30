@@ -145,7 +145,7 @@ $$
 
 $$
 \frac{1}{\hat{w}_k} = \frac{m_k + n_k}{b_k c_k} =
-\frac{1}{(m_k b_k)(n_k c_k)}\left(\frac{1}{m_k} + \frac{1}{n_k}\right) \approx
+\frac{1}{(b_k/m_k)(c_k/n_k)}\left(\frac{1}{m_k} + \frac{1}{n_k}\right) \approx
 \frac{1}{p_k (1 - q_k)}\left(\frac{1}{m_k} + \frac{1}{n_k}\right)
 $$
 
