@@ -16,7 +16,7 @@ jupyter:
 # 共通オッズ比のMantel-Haenszelの推定量と最尤推定量の関係
 
 * 黒木玄
-* 2022-03-29
+* 2022-03-29～2022-03-31
 $
 \newcommand\op{\operatorname}
 $
@@ -32,7 +32,10 @@ $
 * Silcocks, Paul.  An easy approach to the Robins-Breslow-Greenland variance estimator. Epidemiol Perspect Innov. 2005. \[[link](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1270683/https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1270683/)\] \[[pdf](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1270683/pdf/1742-5573-2-9.pdf)\]
 
 
-## 統計モデル
+## 最尤法とMantel-Haenszelの共通オッズ比の推定量の関係
+
+
+### 統計モデル
 
 簡単のため $K$ 個の独立な2×2の分割表の各々は2つの二項分布の積分布に従っているという統計モデルを考える.  $k$ 番目の分割表を行列
 
@@ -82,14 +85,14 @@ v_k &= \omega^2\left(
 \end{aligned}
 $$
 
-の正規分布に近似的に従うことを示せる. (二項分布に関する中心極限定理と所謂デルタ法=1次までのTaylor展開の簡単な応用で示せる.)
+の正規分布に近似的に従うことを示せる. (二項分布に関する中心極限定理と所謂デルタ法(1次までのTaylor展開)の簡単な応用で示せる.)
 
 以下では $\omega_1 = \cdots = \omega_K = \omega$ が成立していると仮定する.  $\omega$ を __共通オッズ比__ と呼ぶ.
 
 この仮定のもとで以上で扱っている統計モデルの独立なパラメータは $q_1,\ldots,q_K, \omega$ の $K+1$ 個になる.
 
 
-## 共通オッズ比のMantel-Haenszelの推定量
+### 共通オッズ比のMantel-Haenszelの推定量
 
 共通オッズ比の __Mantel-Haenszelの推定量__ $\hat\omega_{\op{MH}}$ を次のように定める:
 
@@ -175,7 +178,7 @@ $$
 ただし, これは共通のオッズ比が $1$ の特殊な場合におけるMantel-Haenszelの推定量 $\hat\omega_{\op{MH}}$ と最尤推定量の関係に過ぎない.
 
 
-## 共通オッズ比の最尤推定量
+### 共通オッズ比の最尤推定量
 
 $K$ 個の独立な2×2の分割表の各々が2つの二項分布の積分布に従っているという統計モデルのパラメータ空間を共通オッズ比 $\omega$ を持つ場合に制限して得られる統計モデルを考えている. 独立なパラメータは $q_1,\ldots,q_K,\omega$ の $K+1$ 個になる.  (ロジスティックモデルで書き直すこともできる.)
 
@@ -250,7 +253,7 @@ $$
 ![IMG_4660.PNG](attachment:30191889-742c-468d-bb7d-179086c2e979.PNG)
 
 
-## 最尤方程式の線形近似とMantel-Haenszel推定量の関係
+### 最尤方程式の線形近似とMantel-Haenszel推定量の関係
 
 この節の内容は上で引用した Yamagimoto-Yamamoto (1985) の Proposition 1 の紹介である.
 
@@ -284,6 +287,149 @@ $$
 
 
 ![IMG_4659.PNG](attachment:6526d398-c43a-4063-bcc9-6561e3b84311.PNG)
+
+
+### Mantel-Haenszelの推定量の対数の分散のRobins-Breslow-Greenlandの推定量
+
+この節の内容は上で引用した Silcocks (2005) の紹介になっている.
+
+Mantel-Haenszelの推定量は次のように表される:
+
+$$
+\hat\omega_{\op{MH}} =
+\frac{\sum_{k=1}^K a_k d_k/N_k}{\sum_{k=1}^K b_k c_k/N_k} =
+\frac{\sum_{k=1}^K \hat{w}_k \hat\omega_k}{\sum_{k=1}^K \hat{w}_k}, \quad
+\hat\omega_k = \frac{a_k d_k}{b_k c_k}, \quad
+\hat{w}_k = \frac{b_k c_k}{N_k}
+$$
+
+デルタ法(対数の一次近似)によって,
+
+$$
+\op{var}(\log \hat\omega_{\op{MH}}) \approx
+\frac{\op{var}(\hat\omega_{\op{MH}})}{\hat\omega_{\op{MH}}^2}.
+$$
+
+
+$k$ 番目の分割表のオッズ比の最尤推定量 $\hat\omega_k$ は近似的に平均が共通オッズ比 $\omega$ で分散が
+
+$$
+\op{var}(\hat\omega_k) \approx
+\omega^2\left(
+\frac{1}{m_k p_k} +
+\frac{1}{m_k (1 - p_k)} +
+\frac{1}{n_k q_k} +
+\frac{1}{n_k (1 - q_k)}
+\right)
+$$
+
+の正規分布に近似的に従うことを示せるのであった. さらに, 
+
+$$
+\op{var}(\hat\omega_k) \approx \hat\omega_{\op{MH}}^2\left(\frac{1}{a_k}+\frac{1}{b_k}+\frac{1}{c_k}+\frac{1}{d_k}\right)
+$$
+
+という近似も使えると仮定し, 重み達 $\hat{w}_k$ が定数であるかのような近似が成立していると仮定する.  このとき,
+
+$$
+\op{var}(\hat\omega_{\op{MH}}) \approx
+\frac{\sum_{k=1}^K \hat{w}_k^2 \op{var}(\hat\omega_k)}{\left(\sum_{k=1}^K \hat{w}_k\right)^2}.
+$$
+
+以上の近似をまとめると次の近似が得られる:
+
+$$
+\op{var}(\log\hat\omega_{\op{MH}}) \approx
+\frac{\op{var}(\hat\omega_{\op{MH}})}{\hat\omega_{\op{MH}}^2} \approx
+\frac
+{\sum_{k=1}^K \hat{w}_k^2\left(\frac{1}{a_k}+\frac{1}{b_k}+\frac{1}{c_k}+\frac{1}{d_k}\right)}
+{\left(\sum_{k=1}^K \hat{w}_k\right)^2}.
+$$
+
+
+さらに, $\hat\omega_{\op{MH}} \approx (a_k d_k)/(b_k c_k)$ という近似も使えると仮定する. このとき
+
+$$
+\frac{1}{a_k}+\frac{1}{b_k}+\frac{1}{c_k}+\frac{1}{d_k} =
+\frac{a_k + d_k}{a_k d_k}+\frac{b_k + c_k}{b_k c_k} \approx
+\frac{1}{b_k c_k}\left(\frac{a_k + d_k}{\hat\omega_{\op{MH}}}+ b_k + c_k\right).
+$$
+
+これと $\hat{w}_k = b_k c_k/N_k$ を使うと, 上で示した近似式より,
+
+$$
+\op{var}(\log\hat\omega_{\op{MH}}) \approx
+\frac
+{\sum_{k=1}^K b_k c_k (\hat\omega_{\op{MH}}^{-1}(a_k + d_k)+ b_k + c_k) / N_k^2}
+{\left(\sum_{k=1}^K b_k c_k/N_k\right)^2} =
+\frac
+{\sum_{k=1}^K \hat\omega_{\op{MH}}^{-1} b_k c_k (a_k + d_k + \hat\omega_{\op{MH}}(b_k + c_k)) / N_k^2}
+{\left(\sum_{k=1}^K b_k c_k/N_k\right)^2}.
+$$
+
+$(a_k, b_k)$ と $(c_k, d_k)$ を交換すると, $\hat\omega_{\op{MH}}$ は逆数になり,  $\log\hat\omega_{\op{MH}}$ は $-1$ 倍になって分散は変わらないので,
+
+$$
+\op{var}(\log\hat\omega_{\op{MH}}) \approx
+\frac
+{\sum_{k=1}^K a_k d_k (\hat\omega_{\op{MH}}(b_k + c_k) + a_k + d_k) / N_k^2}
+{\left(\sum_{k=1}^K a_k d_k/N_k \right)^2}.
+$$
+
+
+記号の簡単のため, ここで次のようにおく:
+
+$$
+P_k = \frac{a_k + d_k}{N_k}, \quad
+Q_k = \frac{b_k + c_k}{N_k}, \quad
+R_k = \frac{a_k d_k}{N_k}, \quad
+S_k = \frac{b_k c_k}{N_k}, \quad
+R = \sum_{k=1}^K R_k, \quad
+S = \sum_{k=1}^K S_k.
+$$
+
+このとき, 上で示した2つの近似式の平均を取ると,
+
+$$
+\begin{aligned}
+\op{var}(\log\hat\omega_{\op{MH}}) & \approx
+\frac
+{\sum_{k=1}^K (R^2\hat\omega_{\op{MH}}^{-1} b_k c_k + S^2 a_k d_k)
+(a_k + d_k + \hat\omega_{\op{MH}}(b_k + c_k)) / N_k^2}
+{2 R^2 S^2}
+\\ & =
+\frac
+{\sum_{k=1}^K (R^2\hat\omega_{\op{MH}}^{-1} S_k + S^2 R_k)
+(P_k + \hat\omega_{\op{MH}}Q_k)}
+{2 R^2 S^2}
+\end{aligned}
+$$
+
+
+さらに分子分母を $S^2$ で割って, $\hat\omega_{\op{MH}} = R/S$ を使うと, 
+
+$$
+\begin{aligned}
+\op{var}(\log\hat\omega_{\op{MH}}) & \approx
+\frac
+{\sum_{k=1}^K (\hat\omega_{\op{MH}} S_k + R_k) (P_k + \hat\omega_{\op{MH}}Q_k)}
+{2 R^2}
+\\ & =
+\frac
+{\sum_{k=1}^K (P_k R_k + \hat\omega_{\op{MH}}(P_k S_k + Q_k R_k) + \hat\omega_{\op{MH}}^2 Q_k S_k)}
+{2 R^2}
+\\ & =
+\frac{\sum_{k=1}^K P_k R_k}{2R^2} +
+\frac{\sum_{k=1}^K (P_k S_k + Q_k R_k)}{2RS} +
+\frac{\sum_{k=1}^K Q_k S_k}{2S^2}.
+\end{aligned}
+$$
+
+この最後の量を __Mantel-Haenszelの推定量の対数の分散のRobins-Breslow-Greenlandの推定量__ と呼び, $V_{\op{RBG}}$ と書くことにする.
+
+Mantel-Haenszelの推定量の対数 $\log\hat\omega_{\op{MH}}$ は平均 $\log \omega$ (共通オッズ比の対数), 分散 $V_{\op{RBG}}$ の正規分布に近似的に従う.
+
+この事実を使って共通オッズ比に関するP値函数や信頼区間を構成することができる.
 
 
 ## 数値例
@@ -342,7 +488,7 @@ end
 
 * https://github.com/genkuroki/public/blob/main/0028/Mantel-Haenszel.ipynb
 
-を参照.
+も参照せよ.
 
 ```julia
 function vardelta(a, b, c, d, ω)
@@ -383,13 +529,13 @@ end
 function mantel_haenszel_robins_breslow_greenland(A::AbstractArray{<:Any, 3})
     @views a, b, c, d  = A[1,1,:], A[1,2,:], A[2,1,:], A[2,2,:]
     abcd = zip(a, b, c, d)
-    AD = sum(((a, b, c, d),) -> a*d/(a+b+c+d), abcd)
-    BC = sum(((a, b, c, d),) -> b*c/(a+b+c+d), abcd)
-    logOR = log(AD) - log(BC)
-    ADAD = sum(((a, b, c, d),) -> a*d*(a+d)/(a+b+c+d)^2, abcd)
-    ADBC = sum(((a, b, c, d),) -> (a*d*(b+c) + b*c*(a+d))/(a+b+c+d)^2, abcd)
-    BCBC = sum(((a, b, c, d),) -> b*c*(b+c)/(a+b+c+d)^2, abcd)
-    SE² = ADAD/(2AD^2) + ADBC/(2(AD*BC)) + BCBC/(2BC^2)
+    R = sum(((a, b, c, d),) -> a*d/(a+b+c+d), abcd)
+    S = sum(((a, b, c, d),) -> b*c/(a+b+c+d), abcd)
+    logOR = log(R) - log(S)
+    sumPR = sum(((a, b, c, d),) -> (a+d)*a*d/(a+b+c+d)^2, abcd)
+    sumPSplusQR = sum(((a, b, c, d),) -> ((a+d)*b*c + (b+c)*a*d)/(a+b+c+d)^2, abcd)
+    sumQS = sum(((a, b, c, d),) -> (b+c)*b*c/(a+b+c+d)^2, abcd)
+    SE² = sumPR/(2R^2) + sumPSplusQR/(2(R*S)) + sumQS/(2S^2)
     SE = √SE²
     (; logOR, SE)
 end
