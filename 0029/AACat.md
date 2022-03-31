@@ -143,6 +143,20 @@ DC[1, 1, 1, 1] = 99
 ```
 
 ```julia
+using RecursiveArrayTools
+
+V = [rand(0:9, 2, 3) for _ in 1:4]
+VC = VectorOfArray(V)
+```
+
+```julia
+[
+    VC[1,1,1] VC[1,2,1] VC[1,3,1]
+    VC[2,1,1] VC[2,2,1] VC[2,3,1]
+]
+```
+
+```julia
 using BenchmarkTools
 
 V = [rand(2, 3) for _ in 1:1000]
@@ -167,8 +181,13 @@ C7 = @btime combinedimsview($V)
 s7 = @btime sum($C7)
 @show s7
 
+println("---------- RecursiveArrayTools.VectorOfArray")
+C8 = @btime VectorOfArray($V)
+s8 = @btime sum($C8)
+@show s8
+
 println("----------")
-@show s3 ≈ s5 ≈ s6 ≈ s7;
+@show s3 ≈ s5 ≈ s6 ≈ s7 ≈ s8;
 ```
 
 ```julia
@@ -196,8 +215,13 @@ C7 = @btime combinedimsview($V)
 s7 = @btime sum($C7)
 @show s7
 
+println("---------- RecursiveArrayTools.VectorOfArray")
+C8 = @btime VectorOfArray($V)
+s8 = @btime sum($C8)
+@show s8
+
 println("----------")
-@show s3 ≈ s5 ≈ s6 ≈ s7;
+@show s3 ≈ s5 ≈ s6 ≈ s7 ≈ s8;
 ```
 
 ```julia
