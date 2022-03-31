@@ -247,6 +247,9 @@ $$
 とおき, $\hat{q}_k = \hat{c}_k/n_k$ と定める.  このとき, $p_k$ の最尤推定量は $\hat{p}_k = \hat{a}_k/m_k$ になる.
 
 
+![IMG_4660.PNG](attachment:30191889-742c-468d-bb7d-179086c2e979.PNG)
+
+
 ## 最尤方程式の線形近似とMantel-Haenszel推定量の関係
 
 この節の内容は上で引用した Yamagimoto-Yamamoto (1985) の Proposition 1 の紹介である.
