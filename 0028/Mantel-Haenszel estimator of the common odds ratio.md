@@ -23,13 +23,18 @@ $
 
 ## 文献紹介
 
+* Mantel, Nathan and Haenszel, William. Statistical Aspects of the Analysis of Data From Retrospective Studies of Disease. Journal of the National Cancer Institute, Volume 22, Issue 4, April 1959, Pages 719–748. \[[link](https://doi.org/10.1093/jnci/22.4.719)\] \[[pdf](http://www.medicine.mcgill.ca/epidemiology/hanley/c634/stratified/Mantel_Haenszel_1.pdf)\]
+
+* Robins, J., S Greenland, S., and Breslow, N. E. A general estimator for the variance of the Mantel-Haenszel odds ratio. Am. J. Epidemiol
+. 1986 Nov; 124(5):719-23. \[[link](https://doi.org/10.1093/oxfordjournals.aje.a114447)\] \[[pdf](https://cdn1.sph.harvard.edu/wp-content/uploads/sites/343/2013/03/a-general-estimator-for-the-varience-of-the-Mantel-Haenszel-odds-ratio.pdf)\]
+
 共通オッズ比のMantel-Haenszelの推定量と最尤推定量の関係については次の文献に書いてある:
 
 * Yanagimoto, Yakemi and Eiji Yamamoto, Eiji. Simple linear approximations to the likelihood equation for combining evidence in multiple 2×2 tables: A critique of conventional procedures. Ann. Inst. Statist. Math., Vol. 37, 1985, 37-49. \[[link](https://link.springer.com/article/10.1007/BF02481079)\] \[[pdf](https://www.ism.ac.jp/editsec/aism/pdf/037_1_0037.pdf)\]
 
 この文献ではMantel-Haenszel以外の共通オッズ比の推定量も扱っている.  共通オッズ比のMantel-Haenszelの推定量の対数の分散のRobins-Breslow-Greenlandの推定量の解説が次の文献に書いてある:
 
-* Silcocks, Paul.  An easy approach to the Robins-Breslow-Greenland variance estimator. Epidemiol Perspect Innov. 2005. \[[link](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1270683/https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1270683/)\] \[[pdf](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1270683/pdf/1742-5573-2-9.pdf)\]
+* Silcocks, Paul.  An easy approach to the Robins-Breslow-Greenland variance estimator. Epidemiol Perspect Innov. 2005. \[[link](https://dx.doi.org/10.1186%2F1742-5573-2-9)\] \[[pdf](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1270683/pdf/1742-5573-2-9.pdf)\]
 
 
 ## 最尤法とMantel-Haenszelの共通オッズ比の推定量の関係
