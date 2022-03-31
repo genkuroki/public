@@ -89,6 +89,10 @@ BC = O.AACat(B)
 ```
 
 ```julia
+BC[1, 1, :, :]
+```
+
+```julia
 BC[:, :, 1, 1]
 ```
 
@@ -98,19 +102,73 @@ BC[:, :, 1, 1]
 ```
 
 ```julia
+using SplitApplyCombine
+
+c = [OffsetArray(rand(0:9, 2, 3), 0:1, 0:2) for _ in Iterators.product(1:3, 1:2)]
+C = OffsetArray(c, 0:2, 0:1)
+
+CC = combinedims(C)
+```
+
+```julia
+CC[1, 1, :, :]
+```
+
+```julia
+CC[:, :, 1, 1]
+```
+
+```julia
+CC[1, 1, 1, 1] = 99
+CC[:, :, 1, 1]
+```
+
+```julia
+d = [OffsetArray(rand(0:9, 2, 3), 0:1, 0:2) for _ in Iterators.product(1:3, 1:2)]
+D = OffsetArray(c, 0:2, 0:1)
+
+DC = combinedimsview(D)
+```
+
+```julia
+DC[1, 1, :, :]
+```
+
+```julia
+DC[:, :, 1, 1]
+```
+
+```julia
+DC[1, 1, 1, 1] = 99
+```
+
+```julia
 using BenchmarkTools
 
 V = [rand(2, 3) for _ in 1:1000]
 
+println("---------- O.aacat")
 C3 = @btime O.aacat($V)
 s3 = @btime sum($C3)
 @show s3
 
+println("---------- O.AACat")
 C5 = @btime O.AACat($V)
 s5 = @btime sum($C5)
 @show s5
 
-@show s3 ≈ s5;
+println("---------- SplitApplyCombine.combinedims")
+C6 = @btime combinedims($V)
+s6 = @btime sum($C6)
+@show s6
+
+println("---------- SplitApplyCombine.combinedimsview")
+C7 = @btime combinedimsview($V)
+s7 = @btime sum($C7)
+@show s7
+
+println("----------")
+@show s3 ≈ s5 ≈ s6 ≈ s7;
 ```
 
 ```julia
@@ -118,15 +176,28 @@ using BenchmarkTools
 
 V = [rand(2, 3) for _ in 1:10^6]
 
+println("---------- O.aacat")
 C3 = @btime O.aacat($V)
 s3 = @btime sum($C3)
 @show s3
 
+println("---------- O.AACat")
 C5 = @btime O.AACat($V)
 s5 = @btime sum($C5)
 @show s5
 
-@show s3 ≈ s5;
+println("---------- SplitApplyCombine.combinedims")
+C6 = @btime combinedims($V)
+s6 = @btime sum($C6)
+@show s6
+
+println("---------- SplitApplyCombine.combinedimsview")
+C7 = @btime combinedimsview($V)
+s7 = @btime sum($C7)
+@show s7
+
+println("----------")
+@show s3 ≈ s5 ≈ s6 ≈ s7;
 ```
 
 ```julia
