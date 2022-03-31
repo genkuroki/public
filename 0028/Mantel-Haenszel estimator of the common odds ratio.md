@@ -425,11 +425,13 @@ $$
 \end{aligned}
 $$
 
-この最後の量を __Mantel-Haenszelの推定量の対数の分散のRobins-Breslow-Greenlandの推定量__ と呼び, $V_{\op{RBG}}$ と書くことにする.
+この最後の量を __Mantel-Haenszelの推定量の対数の分散のRobins-Breslow-Greenlandの推定量__ と呼び, $V_{\op{RBG}}$ と書くことにする. 
 
 Mantel-Haenszelの推定量の対数 $\log\hat\omega_{\op{MH}}$ は平均 $\log \omega$ (共通オッズ比の対数), 分散 $V_{\op{RBG}}$ の正規分布に近似的に従う.
 
 この事実を使って共通オッズ比に関するP値函数や信頼区間を構成することができる.
+
+以下の数値例を見ればわかるように, このRBG公式は非常に良い公式であり, 最尤法(スコア検定)によって構成したP値函数をRBG公式を使って構成したP値函数は近似的によく一致する.
 
 
 ## 数値例
