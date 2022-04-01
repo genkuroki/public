@@ -450,23 +450,30 @@ using Roots
 ```
 
 ```julia
+# A = [
+#     a b
+#     c d
+# ]
+#
+# 以下の函数たちは b と c の交換で不変.
+
 safediv(x, y) = x == 0 ? x/one(y) : x/y
 safesqrt(x) = √max(0, x)
 
 oddsratio(a, b, c, d) = safediv(a*d, b*c)
-oddsratio(A::AbstractVecOrMat) = oddsratio(A...)
+oddsratio(A::AbstractVecOrMat) = oddsratio(A'...)
 
 function delta(a, b, c, d, ω)
     A, B, C = 1 - ω, a + d + ω*(b + c), a*d - ω*b*c
     safediv(2C, B + safesqrt(B^2 - 4A*C))
 end
-delta(A, ω) = delta(A..., ω)
+delta(A, ω) = delta(A'..., ω)
 
 function linear_approx_delta(a, b, c, d, ω)
     N = a + b + c + d
     -(b*c/N)*ω + a*d/N
 end
-linear_approx_delta(A::AbstractVecOrMat, ω) = linear_approx_delta(A..., ω)
+linear_approx_delta(A::AbstractVecOrMat, ω) = linear_approx_delta(A'..., ω)
 
 eachmatrix(A::AbstractArray{<:Any, 3}) = eachslice(A; dims=3)
 
@@ -479,8 +486,8 @@ function linear_approx_maximum_likelihood_equation(A::AbstractArray{<:Any, 3}, x
 end
 
 function mantel_haenszel_estimator(A::AbstractArray{<:Any, 3})
-    num = sum(A -> A[1,1]*A[2,2]/sum(A), eachmatrix(A))
-    den = sum(A -> A[1,2]*A[2,1]/sum(A), eachmatrix(A))
+    num = sum(A -> ((a, b, c, d) = A'; a*d/(a+b+c+d)), eachmatrix(A))
+    den = sum(A -> ((a, b, c, d) = A'; b*c/(a+b+c+d)), eachmatrix(A))
     num/den
 end
 
@@ -503,7 +510,7 @@ function vardelta(a, b, c, d, ω)
     δ = delta(a, b, c, d, ω)
     (N - 1)/N/(1/(a - δ) + 1/(b + δ) + 1/(c + δ) + 1/(d - δ))
 end
-vardelta(A::AbstractVecOrMat, ω) = vardelta(A..., ω)
+vardelta(A::AbstractVecOrMat, ω) = vardelta(A'..., ω)
 
 function chisq_mantel_haenszel(A::AbstractArray{<:Any, 3}, ω = 1.0)
     num = sum(A -> delta(A, ω), eachmatrix(A))^2
@@ -645,6 +652,7 @@ plot!(ω -> pvalue_chisq(A, ω), 0.7, 1.7; label="Mantel-Haenszel χ²")
 plot!(ω -> pvalue_mhrbg(A, ω); label="Robins-Breslow-Greenland", ls=:dash)
 plot!(; xtick=0.1:0.1:3, ytick=0:0.05:1)
 vline!([1]; label="", c=:black, lw=0.5)
+plot!(; xlabel="common odds ratio", ylabel="P-value")
 ```
 
 この場合に, 最尤法の場合のスコア検定のP値函数(上のグラフのMantel-Haenszel χ²)と共通オッズ比のMantel-Haenszel推定量の対数の分散のRobins-Breslow-Greenlandの推定量を使った正規分布近似で作ったP値函数(上のグラフのRobins-Breslow-Greenland)はほぼぴったり一致している.
