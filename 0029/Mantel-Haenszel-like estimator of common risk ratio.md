@@ -226,16 +226,16 @@ function varDelta(a, b, c, d, ρ)
     Δ = Delta(a, b, c, d, ρ)
     1/(1/(a - Δ) - 1/(a + b - Δ) + 1/(c + Δ) - 1/(c + d + Δ))
 end
-varDelta(A::AbstractVecOrMat, ω) = varDelta(A'..., ω)
+varDelta(A::AbstractVecOrMat, ρ) = varDelta(A'..., ρ)
 
-function chisq_score(A::AbstractArray{<:Any, 3}, ω = 1.0)
-    num = sum(A -> Delta(A, ω), eachmatrix(A))^2
-    den = sum(A -> varDelta(A, ω), eachmatrix(A))
+function chisq_score(A::AbstractArray{<:Any, 3}, ρ = 1.0)
+    num = sum(A -> Delta(A, ρ), eachmatrix(A))^2
+    den = sum(A -> varDelta(A, ρ), eachmatrix(A))
     num/den
 end
 
-function pvalue_score(A::AbstractArray{<:Any, 3}, ω = 1.0)
-    chisq = chisq_score(A, ω)
+function pvalue_score(A::AbstractArray{<:Any, 3}, ρ = 1.0)
+    chisq = chisq_score(A, ρ)
     ccdf(Chisq(1), chisq)
 end
 
