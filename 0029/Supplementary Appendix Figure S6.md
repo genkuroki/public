@@ -31,22 +31,46 @@ default(fmt = :png, titlefontsize=12)
 using KernelDensity
 using Printf
 using Roots
+using QuadGK
 ```
 
 ## Supplementary Appendix Figure S6 の再現
 
 * Supplementary Appendix \[[pdf](https://www.nejm.org/doi/suppl/10.1056/NEJMoa2115869/suppl_file/nejmoa2115869_appendix.pdf)\]
 
-のp.15のFigure S6の再現
+のp.15のFigure S6の再現. データは[論文](https://www.nejm.org/doi/full/10.1056/NEJMoa2115869)のTable 2より.
 
 ```julia
 # Ivermectin  a b
 # Placebo     c d
 
+function pdfRR(beta1, beta2, ρ)
+    f(q) = exp(logpdf(beta1, ρ*q) + log(q) + logpdf(beta2, q)) 
+    if 0 < ρ ≤ 1
+        quadgk(f, 0, 1)[1]
+    elseif ρ > 1
+        quadgk(f, 0, 1/ρ)[1]
+    else
+        zero(ρ)
+    end
+end
+
+function cdfRR(beta1, beta2, ρ)
+    if 0 < ρ ≤ 1
+        f(p) = exp(logpdf(beta1, p) + logccdf(beta2, p/ρ))
+        quadgk(f, 0, ρ)[1]
+    elseif ρ > 1
+        g(q) = exp(logpdf(beta2, q) + logccdf(beta1, ρ*q))
+        1 - quadgk(g, 0, 1/ρ)[1]
+    else
+        zero(ρ)
+    end
+end
+
 function bayesian_binomial(A;
         α = 1.0, β = 1.0,
-        nsims = 10^6,
         alpha = 0.05,
+        nsims = 10^6,
         title = "",
         ERlim = (0.1, 0.25),
         RRlim = (0.5, 2.5),
@@ -57,17 +81,25 @@ function bayesian_binomial(A;
     beta1 = Beta(α + a, β + b)
     beta2 = Beta(α + c, β + d)
     
-    R1 = rand(beta1, nsims)
-    R2 = rand(beta2, nsims)
-    RR = R1 ./ R2
-    L, M, U = quantile.(Ref(RR), (alpha/2, 0.5, 1 - alpha/2))
+    if nsims == 0
+        lw = 1
+        L = find_zero(ρ -> cdfRR(beta1, beta2, ρ) - alpha/2, 1.0)
+        M = find_zero(ρ -> cdfRR(beta1, beta2, ρ) - 0.5, 1.0)
+        U = find_zero(ρ -> cdfRR(beta1, beta2, ρ) - (1 - alpha/2), 1.0)
+        f = ρ -> pdfRR(beta1, beta2, ρ)
+    else
+        lw = 2
+        R1, R2 = rand(beta1, nsims), rand(beta2, nsims)
+        RR = R1 ./ R2
+        L, M, U = quantile.(Ref(RR), (alpha/2, 0.5, 1 - alpha/2))
+        ik = InterpKDE(kde(RR))
+        f = ρ -> pdf(ik, ρ)
+    end
     Lstr = @sprintf "%.2f" L
     Mstr = @sprintf "%.2f" M
     Ustr = @sprintf "%.2f" U
     BCIstr = "RR [BCI]: $Mstr [$Lstr, $Ustr]"
-    ik = InterpKDE(kde(RR))
-    f(x) = pdf(ik, x)
-    
+     
     P1 = plot(; title)
     plot!(x -> pdf(beta1, x), ERlim...; c=:red, label="Ivermectin")
     plot!(x -> pdf(beta2, x), ERlim...; c=:blue, label="Placebo")
@@ -75,9 +107,9 @@ function bayesian_binomial(A;
     plot!(; xtick = ERtick)
     
     P2 = plot(; title = "$BCIstr")
-    plot!(f, L, U; c=:black, lw=2, label="", fillrange=0, fillcolor=:cyan)
-    plot!(f, first(RRlim), L; c=:black, lw=2, label="", fillrange=0, fillcolor=:red)
-    plot!(f, U, last(RRlim);  c=:black, lw=2, label="", fillrange=0, fillcolor=:red)
+    plot!(f, L, U; c=:black, lw, label="", fillrange=0, fillcolor=:cyan)
+    plot!(f, first(RRlim), L; c=:black, lw, label="", fillrange=0, fillcolor=:red)
+    plot!(f, U, last(RRlim);  c=:black, lw, label="", fillrange=0, fillcolor=:red)
     plot!(; xlabel="Relative risk", ylabel="Posterior Density")
     plot!(; xtick = RRtick)
     
@@ -87,17 +119,38 @@ end
 ```
 
 ```julia
-bayesian_binomial([100 679-100; 111 679-111];
+nsims = 0
+
+bayesian_binomial([100 679-100; 111 679-111]; nsims,
     title = "Intention-to-treat analysis",
     ERlim = (0.105, 0.215), RRlim = (0.50, 1.70),
 ) |> display
 
-bayesian_binomial([95 674-95; 107 675-107];
+bayesian_binomial([95 674-95; 107 675-107]; nsims,
     title = "Modified intention-to-treat analysis",
     ERlim = (0.105, 0.21), RRlim = (0.50, 1.70),
 ) |> display
 
-bayesian_binomial([82 624-82; 40 288-40];
+bayesian_binomial([82 624-82; 40 288-40]; nsims,
+    title = "Per-protocol analysis",
+    ERlim = (0.08, 0.22), RRlim = (0.40, 2.60), ERtick = 0:0.03:1,
+) |> display
+```
+
+```julia
+nsims = 10^6
+
+bayesian_binomial([100 679-100; 111 679-111]; nsims,
+    title = "Intention-to-treat analysis",
+    ERlim = (0.105, 0.215), RRlim = (0.50, 1.70),
+) |> display
+
+bayesian_binomial([95 674-95; 107 675-107]; nsims,
+    title = "Modified intention-to-treat analysis",
+    ERlim = (0.105, 0.21), RRlim = (0.50, 1.70),
+) |> display
+
+bayesian_binomial([82 624-82; 40 288-40]; nsims,
     title = "Per-protocol analysis",
     ERlim = (0.08, 0.22), RRlim = (0.40, 2.60), ERtick = 0:0.03:1,
 ) |> display
