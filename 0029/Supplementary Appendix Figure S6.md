@@ -13,16 +13,17 @@ jupyter:
     name: julia-1.8
 ---
 
-<!-- #region -->
 # イベルメクチン論文の図の再現
 
 * 黒木玄
 * 2022-04-02
 
+$
+\newcommand\op{\operatorname}
+$
 
 * Gilmar Reis, M.D., Ph.D., Eduardo A.S.M. Silva, M.D., Ph.D., Daniela C.M. Silva, M.D., Ph.D., Lehana Thabane, Ph.D., Aline C. Milagres, R.N., Thiago S. Ferreira, M.D., Castilho V.Q. dos Santos, Vitoria H.S. Campos, Ana M.R. Nogueira, M.D., Ana P.F.G. de Almeida, M.D., Eduardo D. Callegari, M.D., Adhemar D.F. Neto, M.D., Ph.D., et al., for the TOGETHER Investigators. Effect of Early Treatment with Ivermectin among Patients with Covid-19. New England Journal of Medicine, March 30, 2022
 DOI: 10.1056/NEJMoa2115869 \[[html](https://www.nejm.org/doi/full/10.1056/NEJMoa2115869)\] \[[pdf](https://www.nejm.org/doi/pdf/10.1056/NEJMoa2115869?articleTools=true)\]
-<!-- #endregion -->
 
 ```julia
 using Distributions
@@ -295,6 +296,115 @@ plot_chisq_test([82 624-82; 40 288-40]; pvalue_bin,
     ERlim = (0.08, 0.22), RRlim = (0.40, 2.60), ERtick = 0:0.03:1,
 ) |> display
 ```
+
+## 二項分布モデルでの事後分布とP値の関係
+
+各々が $[0,1]$ 区間上の一様分布に同分布確率変数達 $T_1, T_2, \ldots, T_n$ を考える. 
+
+$T_1, T_2, \ldots, T_n$ の中で $k$ 番目に大きな値を $T_{(k)}$ と書く(順序統計量).  このとき, $T_{(k)}$ も確率変数になり,
+
+$$
+T_{(1)} \le T_{(2)} \le \cdots \le T_{(n)}
+$$
+
+を満たしている.  $T_{(k)}$ の累積確率函数と確率密度函数を求めよう.  $0\le p\le 1$ であると仮定する.
+
+### 累積確率函数
+
+$T_{(k)}\le p$ となる確率は $T_1,\ldots,T_n$ の中で $p$ 以下のものが $k$ 個以上である確率である.
+
+$T_1,\ldots,T_n$ の中で $p$ 以下のものがちょうど $j$ 個である確率は $\binom{n}{j} p^j (1 - p)^{n-j}$ になるので, 
+
+$$
+P(T_{(k)} \le p) = \sum_{j=k}^n \binom{n}{j} p^j (1 - p)^{n-j}.
+$$
+
+ゆえに $B_{n,p}$ を試行回数 $n$, 成功確率 $p$ の二項分布に従う確率変数だとすると,
+
+$$
+P(T_{(k)} \le p) = P(B_{n,p} \ge k)
+$$
+
+これより, 以下も得られる:
+
+$$
+P(T_{(k+1)} \le p) = P(B_{n,p} \ge k+1), \quad
+P(T_{(k+1)} \ge p) = P(B_{n,p} \le k), \quad
+$$
+
+### 確率密度函数
+
+$T_{(k)} \in [t, t+dt]$ となる確率は近似的に
+
+$$
+\begin{aligned}
+p_k(t)\,dt &=
+\frac{n!}{(k-1)!1!(n-k)!} t^{k-1}\, dt\, (1 - t)^{n-k}
+\\ &=
+\frac{\Gamma(n+1)}{\Gamma(k)\Gamma(n-k+1)} t^{k-1}(1 - t)^{n-k}\,dt =
+\frac{t^{k-1}(1 - t)^{n-k}}{B(k, n-k+1)}\,dt
+\end{aligned}
+$$
+
+$n!/((k-1)!1!(n-k)!)$ は $1,2,\dots,n$ を $k-1$ 個, $1$ 個, $n-k$ 個のグループに分ける方法の個数(多項係数の特別な場合)である.  $T_{(k)} \approx t$ となるとき, $k-1$ 個の $T_i$ は $p$ 未満になり, $n-k$ 個の $T_i$ は $p$ より大きいと考えてよい.  
+
+この結果は $T_{(k)}$ がパラメータ $(k, n-k+1)$ のベータ分布に従うことを意味している.
+
+### 二項分布とベータ分布の関係
+
+$P(T_{(k)} \le p) = P(B_{n,p} \ge k)$ は, パラメータが $(k, n-k+1)$ のベータ分布で $p$ 以下になる確率が, 試行回数 $n$, 成功確率 $p$ の二項分布で $k$ 以上になる確率に一致していることを意味している.
+
+$P(T_{(k+1)} \ge p) = P(B_{n,p} \le k)$ は, パラメータ $(k+1, n-k)$ のベータ分布で $p$ 以上になる確率が, 試行回数 $n$, 成功確率 $p$ の二項分布で $k$ 以下になる確率に一致していることを意味している.
+
+以上の結果を積分と和で書くと,
+
+$$
+\begin{aligned}
+&
+\int_0^p \frac{t^{k-1}(1 - t)^{n-k}}{B(k, n-k+1)}\,dt =
+\sum_{j=k}^n \binom{n}{j} p^j (1 - p)^{n-j},
+\\ &
+\int_p^1 \frac{t^k(1 - t)^{n-k-1}}{B(k+1, n-k)}\,dt =
+\sum_{j=0}^k \binom{n}{j} p^j (1 - p)^{n-j}.
+\end{aligned}
+$$
+
+このような二項分布とベータ分布の関係は二項検定に付随するClopper-Pearsonの信頼区間の効率的な計算で使われている.
+
+### 二項分布モデルのベイズ統計とP値の関係
+
+ベータ分布 $\op{Beta}(k, n-k+1)$ は二項分布モデルのベイズ統計におけるimproper共役事前分布 $\op{Beta}(0, 1)$ の事後分布に等しい. 
+
+そして, 前節の結果より, その事後分布 $\op{Beta}(k, n-k+1)$ で生成される成功確率が $p$ 以下になる確率は, 二項分布 $\op{Binomial}(n, p)$ で生成される成功回数が $k$ 以上になる確率に一致する.
+
+二項分布 $\op{Binomial}(n, p)$ で生成される成功回数が $k$ 以上になる確率は「成功確率は $p$ 以下である」という帰無仮説の片側検定のP値に等しい.
+
+以上によって, ベイズ統計側で事前分布としてimproper共役事前分布 $\op{Beta}(0, 1)$ を採用すれば, 事後分布において「成功確率は $p$ 以下である」という仮説が成立する確率と「成功確率は $p$ 以下である」という帰無仮説の片側検定のP値がぴったり等しくなることがわかった.
+
+以下の議論は以上の議論の繰り返しである.
+ 
+ベータ分布 $\op{Beta}(k+1, n-k)$ は二項分布モデルのベイズ統計におけるimproper共役事前分布 $\op{Beta}(1, 0)$ の事後分布に等しい. 
+
+そして, 前節の結果より, その事後分布 $\op{Beta}(k+1, n-k)$ で生成される成功確率が $p$ 以上になる確率は, 二項分布 $\op{Binomial}(n, p)$ で生成される成功回数が $k$ 以下になる確率に一致する.
+
+二項分布 $\op{Binomial}(n, p)$ で生成される成功回数が $k$ 以下になる確率は「成功確率は $p$ 以上である」という帰無仮説の片側検定のP値に等しい.
+
+以上によって, ベイズ統計側で事前分布としてimproper共役事前分布 $\op{Beta}(1, 0)$ を採用すれば, 事後分布において「成功確率は $p$ 以上である」という仮説が成立する確率と「成功確率は $p$ 以上である」という帰無仮説の片側検定のP値がぴったり等しくなることがわかった.
+
+まとめ:
+
+* (improper共役事前分布 $\op{Beta}(0, 1)$ の事後分布において「成功確率は $p$ 以下である」という仮説が成立する確率) = (「成功確率は $p$ 以下である」という帰無仮説の片側検定の $P$ 値)
+* (improper共役事前分布 $\op{Beta}(1, 0)$ の事後分布において「成功確率は $p$ 以上である」という仮説が成立する確率) = (「成功確率は $p$ 以上である」という帰無仮説の片側検定の $P$ 値)
+
+これらの公式はぴったり誤差無しで成立している.
+
+任意の共役事前分布 $\op{Beta}(\alpha, \beta)$ の事後分布 $\op{Beta}(\alpha + k, \beta + n-k)$ は $n$ と $k$ が十分に大きければ以上で登場した $\op{Beta}(k, n-k+1)$ や $\op{Beta}(k+1, n-k)$ との違いは小さくなる.  その違いは $(\alpha, \beta)$ が $(0, 1)$ や $(1, 0)$ に近い方が小さくなる.
+
+一様事前分布は $\op{Beta}(\alpha, \beta) = \op{Beta}(1, 1)$ の場合であり, $(\alpha, \beta)=(1,1)$ は $(0,1)$, $(1,0)$ に近い.  だから, $k$, $n$ を非常に大きくしなくても, 共役事前分布 $\op{Beta}(\alpha, \beta)$ の事後分布 $\op{Beta}(\alpha + k, \beta + n-k)$ は $\op{Beta}(k, n-k+1)$ や $\op{Beta}(k+1, n-k)$ に近い分布になる.
+
+両側検定のP値は片側検定のP値を2倍したり2つ足し合わせたものになると考えてよい. このことから, 両側検定のP値も事後分布における確率で近似的に表現できることがわかる.
+
+このように二項分布モデルのシンプルなベイズ統計とP値を使う方法の違いは非常に小さい.
 
 ```julia
 
