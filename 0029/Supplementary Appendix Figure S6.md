@@ -20,7 +20,8 @@ jupyter:
 * 2022-04-02
 
 
-* Gilmar Reis, M.D., Ph.D., Eduardo A.S.M. Silva, M.D., Ph.D., Daniela C.M. Silva, M.D., Ph.D., Lehana Thabane, Ph.D., Aline C. Milagres, R.N., Thiago S. Ferreira, M.D., Castilho V.Q. dos Santos, Vitoria H.S. Campos, Ana M.R. Nogueira, M.D., Ana P.F.G. de Almeida, M.D., Eduardo D. Callegari, M.D., Adhemar D.F. Neto, M.D., Ph.D., et al., for the TOGETHER Investigators. Effect of Early Treatment with Ivermectin among Patients with Covid-19. \[[html](https://www.nejm.org/doi/full/10.1056/NEJMoa2115869)\]
+* Gilmar Reis, M.D., Ph.D., Eduardo A.S.M. Silva, M.D., Ph.D., Daniela C.M. Silva, M.D., Ph.D., Lehana Thabane, Ph.D., Aline C. Milagres, R.N., Thiago S. Ferreira, M.D., Castilho V.Q. dos Santos, Vitoria H.S. Campos, Ana M.R. Nogueira, M.D., Ana P.F.G. de Almeida, M.D., Eduardo D. Callegari, M.D., Adhemar D.F. Neto, M.D., Ph.D., et al., for the TOGETHER Investigators. Effect of Early Treatment with Ivermectin among Patients with Covid-19. New England Journal of Medicine, March 30, 2022
+DOI: 10.1056/NEJMoa2115869 \[[html](https://www.nejm.org/doi/full/10.1056/NEJMoa2115869)\] \[[pdf](https://www.nejm.org/doi/pdf/10.1056/NEJMoa2115869?articleTools=true)\]
 <!-- #endregion -->
 
 ```julia
@@ -34,7 +35,7 @@ using Roots
 
 ## Supplementary Appendix Figure S6 の再現
 
-* [Supplementary Appendix](https://www.nejm.org/doi/suppl/10.1056/NEJMoa2115869/suppl_file/nejmoa2115869_appendix.pdf)
+* Supplementary Appendix \[[pdf](https://www.nejm.org/doi/suppl/10.1056/NEJMoa2115869/suppl_file/nejmoa2115869_appendix.pdf)\]
 
 のp.15のFigure S6の再現
 
@@ -88,21 +89,17 @@ end
 ```julia
 bayesian_binomial([100 679-100; 111 679-111];
     title = "Intention-to-treat analysis",
-    ERlim = (0.105, 0.215),
-    RRlim = (0.50, 1.70)
+    ERlim = (0.105, 0.215), RRlim = (0.50, 1.70),
 ) |> display
 
 bayesian_binomial([95 674-95; 107 675-107];
     title = "Modified intention-to-treat analysis",
-    ERlim = (0.105, 0.21),
-    RRlim = (0.50, 1.70)
+    ERlim = (0.105, 0.21), RRlim = (0.50, 1.70),
 ) |> display
 
 bayesian_binomial([82 624-82; 40 288-40];
     title = "Per-protocol analysis",
-    ERlim = (0.08, 0.22),
-    RRlim = (0.40, 2.60),
-    ERtick = 0:0.03:1
+    ERlim = (0.08, 0.22), RRlim = (0.40, 2.60), ERtick = 0:0.03:1,
 ) |> display
 ```
 
@@ -118,6 +115,9 @@ safesqrt(x) = √max(0, x)
 riskratio(a, b, c, d) = safediv(a*(c+d), (a+b)*c)
 riskratio(A) = riskratio(A'...)
 
+"""
+Δ = Delta(a, b, c, d, ρ) is characterized by ((a - Δ)(c + Δ + d))/((a - Δ + b)(c + Δ)) = ρ.
+"""
 function Delta(a, b, c, d, ρ)
     m, n = a + b, c + d
     A, B, C = 1 - ρ, n - a + ρ*(m - c), -a*n + ρ*m*c
@@ -125,31 +125,44 @@ function Delta(a, b, c, d, ρ)
 end
 Delta(A, ρ) = Delta(A'..., ρ)
 
+"""estimator of var(Δ)"""
 function varDelta(a, b, c, d, ρ)
     Δ = Delta(a, b, c, d, ρ)
     1/(1/(a - Δ) - 1/(a + b - Δ) + 1/(c + Δ) - 1/(c + d + Δ))
 end
 varDelta(A::AbstractVecOrMat, ρ) = varDelta(A'..., ρ)
 
-chisqstat(A, ρ = 1.0) = safediv(Delta(A, ρ)^2, varDelta(A, ρ))
-pvalue_chisq(A, ρ = 1.0) = ccdf(Chisq(1), chisqstat(A, ρ))
-function ci_chisq(A, α = 0.05)
-    f(t) = pvalue_chisq(A, exp(t)) - α
+chisq_RR(A, ρ = 1.0) = safediv(Delta(A, ρ)^2, varDelta(A, ρ))
+
+"""chi-squared P-value function of relatice risk"""
+pvalue_chisq_RR(A, ρ = 1.0) = ccdf(Chisq(1), chisq_RR(A, ρ))
+
+"""chi-squared confidence interval of relatice risk"""
+function ci_chisq_RR(A, α = 0.05)
+    f(t) = pvalue_chisq_RR(A, exp(t)) - α
     logci = find_zeros(f, -1e1, 1e1)
     exp(first(logci)), exp(last(logci))
 end
 
-function pvalue_bin(a, b, p)
+"""Clopper-Pearson P-value function of binomial distribution model"""
+function pvalue_clopper_pearson(a, b, p)
     bin = Binomial(a + b, p)
     min(1, 2cdf(bin, a), 2ccdf(bin, a-1))
 end
 
-function chisq_test(A; RR₀ = 1.0, alpha = 0.05)
+"""chi-squared P-value function of binomial distribution model"""
+function pvalue_chisq_bin(a, b, p)
+    m = a + b
+    chisq = safediv((a - m*p)^2, m*p*(1 - p))
+    ccdf(Chisq(1), chisq)
+end
+
+function chisq_test_RR(A; RR₀ = 1.0, alpha = 0.05)
     RR = riskratio(A)
-    chisq = chisqstat(A, RR₀)
+    chisq = chisq_RR(A, RR₀)
     df = 1
     p_value = ccdf(Chisq(df), chisq)
-    conf_int = ci_chisq(A, alpha)
+    conf_int = ci_chisq_RR(A, alpha)
     (; RR, RR₀, p_value, alpha, conf_int, chisq, df)
 end
 
@@ -159,14 +172,15 @@ function plot_chisq_test(A; RR₀ = 1.0, alpha = 0.05,
         RRlim = (0.5, 2.5),
         ERtick = 0:0.025:1,
         RRtick = 0:0.25:10,
+        pvalue_bin = pvalue_chisq_bin,
     )
-    (; RR, RR₀, p_value, alpha, conf_int, chisq, df) = chisq_test(A; RR₀, alpha)
+    (; RR, RR₀, p_value, alpha, conf_int, chisq, df) = chisq_test_RR(A; RR₀, alpha)
     a, b, c, d = A'
     
     f(p) = pvalue_bin(a, b, p)
     g(q) = pvalue_bin(c, d, q)
     
-    h(RR) = pvalue_chisq(A, RR)
+    h(RR) = pvalue_chisq_RR(A, RR)
     L, U = conf_int
     Lstr = @sprintf "%.2f" L
     RRstr = @sprintf "%.2f" RR
@@ -192,23 +206,40 @@ end
 ```
 
 ```julia
-plot_chisq_test([100 679-100; 111 679-111];
+pvalue_bin = pvalue_chisq_bin
+
+plot_chisq_test([100 679-100; 111 679-111]; pvalue_bin,
     title = "Intention-to-treat analysis",
-    ERlim = (0.105, 0.215),
-    RRlim = (0.50, 1.70)
+    ERlim = (0.105, 0.215), RRlim = (0.50, 1.70),
 ) |> display
 
-plot_chisq_test([95 674-95; 107 675-107];
+plot_chisq_test([95 674-95; 107 675-107]; pvalue_bin,
     title = "Modified intention-to-treat analysis",
-    ERlim = (0.105, 0.21),
-    RRlim = (0.50, 1.70)
+    ERlim = (0.105, 0.21), RRlim = (0.50, 1.70),
 ) |> display
 
-plot_chisq_test([82 624-82; 40 288-40];
+plot_chisq_test([82 624-82; 40 288-40]; pvalue_bin,
     title = "Per-protocol analysis",
-    ERlim = (0.08, 0.22),
-    RRlim = (0.40, 2.60),
-    ERtick = 0:0.03:1
+    ERlim = (0.08, 0.22), RRlim = (0.40, 2.60), ERtick = 0:0.03:1,
+) |> display
+```
+
+```julia
+pvalue_bin = pvalue_clopper_pearson
+
+plot_chisq_test([100 679-100; 111 679-111]; pvalue_bin,
+    title = "Intention-to-treat analysis",
+    ERlim = (0.105, 0.215), RRlim = (0.50, 1.70),
+) |> display
+
+plot_chisq_test([95 674-95; 107 675-107]; pvalue_bin,
+    title = "Modified intention-to-treat analysis",
+    ERlim = (0.105, 0.21), RRlim = (0.50, 1.70),
+) |> display
+
+plot_chisq_test([82 624-82; 40 288-40]; pvalue_bin,
+    title = "Per-protocol analysis",
+    ERlim = (0.08, 0.22), RRlim = (0.40, 2.60), ERtick = 0:0.03:1,
 ) |> display
 ```
 
