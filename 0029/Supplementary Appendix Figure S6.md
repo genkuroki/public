@@ -68,7 +68,7 @@ function cdfRR(beta1, beta2, ρ)
     end
 end
 
-function bayesian_binomial(A;
+function plot_posteriors(A;
         α = 1.0, β = 1.0,
         alpha = 0.05,
         nsims = 10^6,
@@ -122,17 +122,17 @@ end
 ```julia
 nsims = 0
 
-bayesian_binomial([100 679-100; 111 679-111]; nsims,
+plot_posteriors([100 679-100; 111 679-111]; nsims,
     title = "Intention-to-treat analysis",
     ERlim = (0.105, 0.215), RRlim = (0.50, 1.70),
 ) |> display
 
-bayesian_binomial([95 674-95; 107 675-107]; nsims,
+plot_posteriors([95 674-95; 107 675-107]; nsims,
     title = "Modified intention-to-treat analysis",
     ERlim = (0.105, 0.21), RRlim = (0.50, 1.70),
 ) |> display
 
-bayesian_binomial([82 624-82; 40 288-40]; nsims,
+plot_posteriors([82 624-82; 40 288-40]; nsims,
     title = "Per-protocol analysis",
     ERlim = (0.08, 0.22), RRlim = (0.40, 2.60), ERtick = 0:0.03:1,
 ) |> display
@@ -141,17 +141,17 @@ bayesian_binomial([82 624-82; 40 288-40]; nsims,
 ```julia
 nsims = 10^6
 
-bayesian_binomial([100 679-100; 111 679-111]; nsims,
+plot_posteriors([100 679-100; 111 679-111]; nsims,
     title = "Intention-to-treat analysis",
     ERlim = (0.105, 0.215), RRlim = (0.50, 1.70),
 ) |> display
 
-bayesian_binomial([95 674-95; 107 675-107]; nsims,
+plot_posteriors([95 674-95; 107 675-107]; nsims,
     title = "Modified intention-to-treat analysis",
     ERlim = (0.105, 0.21), RRlim = (0.50, 1.70),
 ) |> display
 
-bayesian_binomial([82 624-82; 40 288-40]; nsims,
+plot_posteriors([82 624-82; 40 288-40]; nsims,
     title = "Per-protocol analysis",
     ERlim = (0.08, 0.22), RRlim = (0.40, 2.60), ERtick = 0:0.03:1,
 ) |> display
@@ -211,7 +211,8 @@ function pvalue_chisq_bin(a, b, p)
     ccdf(Chisq(1), chisq)
 end
 
-function chisq_test_RR(A; RR₀ = 1.0, alpha = 0.05)
+"""chi-squared P-value and confidence interval of relative risk"""
+function pvalue_ci_chisq_RR(A, RR₀ = 1.0, alpha = 0.05)
     RR = riskratio(A)
     chisq = chisq_RR(A, RR₀)
     df = 1
@@ -220,21 +221,24 @@ function chisq_test_RR(A; RR₀ = 1.0, alpha = 0.05)
     (; RR, RR₀, p_value, alpha, conf_int, chisq, df)
 end
 
-function plot_chisq_test(A; RR₀ = 1.0, alpha = 0.05,
+function plot_pvalue_functions(A; RR₀ = 1.0, alpha = 0.05,
         title = "",
         ERlim = (0.1, 0.25),
         RRlim = (0.5, 2.5),
         ERtick = 0:0.025:1,
         RRtick = 0:0.25:10,
         pvalue_bin = pvalue_chisq_bin,
+        pvalue_RR = pvalue_chisq_RR,
+        pvalue_ci_RR = pvalue_ci_chisq_RR,
+        ylabel = "P-value",
     )
-    (; RR, RR₀, p_value, alpha, conf_int, chisq, df) = chisq_test_RR(A; RR₀, alpha)
+    (; RR, conf_int) = pvalue_ci_RR(A, RR₀, alpha)
     a, b, c, d = A'
     
     f(p) = pvalue_bin(a, b, p)
     g(q) = pvalue_bin(c, d, q)
     
-    h(RR) = pvalue_chisq_RR(A, RR)
+    h(RR) = pvalue_RR(A, RR)
     L, U = conf_int
     Lstr = @sprintf "%.2f" L
     RRstr = @sprintf "%.2f" RR
@@ -244,35 +248,34 @@ function plot_chisq_test(A; RR₀ = 1.0, alpha = 0.05,
     P1 = plot(; title)
     plot!(f, ERlim...; c=:red, label="Ivermectin")
     plot!(g, ERlim...; c=:blue, label="Placebo")
-    plot!(; xlabel="Event rate", ylabel="P-value")
+    plot!(; xlabel="Event rate", ylabel)
     plot!(; xtick = ERtick, ytick=0:0.1:1)
     
     P2 = plot(; title = "$CIstr")
     plot!(h, RRlim...; c=:black, label="")
     plot!([L, U], [alpha, alpha]; c=:red, lw=4, label="")
-    plot!(; xlabel="Relative risk", ylabel="P-value")
+    plot!(; xlabel="Relative risk", ylabel)
     plot!(; xtick = RRtick, ytick=0:0.1:1)
     
     plot(P1, P2; size=(1000, 300))
     plot!(; leftmargin=5Plots.mm, bottommargin=5Plots.mm)
 end
-
 ```
 
 ```julia
 pvalue_bin = pvalue_chisq_bin
 
-plot_chisq_test([100 679-100; 111 679-111]; pvalue_bin,
+plot_pvalue_functions([100 679-100; 111 679-111]; pvalue_bin,
     title = "Intention-to-treat analysis",
     ERlim = (0.105, 0.215), RRlim = (0.50, 1.70),
 ) |> display
 
-plot_chisq_test([95 674-95; 107 675-107]; pvalue_bin,
+plot_pvalue_functions([95 674-95; 107 675-107]; pvalue_bin,
     title = "Modified intention-to-treat analysis",
     ERlim = (0.105, 0.21), RRlim = (0.50, 1.70),
 ) |> display
 
-plot_chisq_test([82 624-82; 40 288-40]; pvalue_bin,
+plot_pvalue_functions([82 624-82; 40 288-40]; pvalue_bin,
     title = "Per-protocol analysis",
     ERlim = (0.08, 0.22), RRlim = (0.40, 2.60), ERtick = 0:0.03:1,
 ) |> display
@@ -281,17 +284,17 @@ plot_chisq_test([82 624-82; 40 288-40]; pvalue_bin,
 ```julia
 pvalue_bin = pvalue_clopper_pearson
 
-plot_chisq_test([100 679-100; 111 679-111]; pvalue_bin,
+plot_pvalue_functions([100 679-100; 111 679-111]; pvalue_bin,
     title = "Intention-to-treat analysis",
     ERlim = (0.105, 0.215), RRlim = (0.50, 1.70),
 ) |> display
 
-plot_chisq_test([95 674-95; 107 675-107]; pvalue_bin,
+plot_pvalue_functions([95 674-95; 107 675-107]; pvalue_bin,
     title = "Modified intention-to-treat analysis",
     ERlim = (0.105, 0.21), RRlim = (0.50, 1.70),
 ) |> display
 
-plot_chisq_test([82 624-82; 40 288-40]; pvalue_bin,
+plot_pvalue_functions([82 624-82; 40 288-40]; pvalue_bin,
     title = "Per-protocol analysis",
     ERlim = (0.08, 0.22), RRlim = (0.40, 2.60), ERtick = 0:0.03:1,
 ) |> display
@@ -405,6 +408,176 @@ $$
 両側検定のP値は片側検定のP値を2倍したり2つ足し合わせたものになると考えてよい. このことから, 両側検定のP値も事後分布における確率で近似的に表現できることがわかる.
 
 このように二項分布モデルのようなシンプルなベイズ統計とP値を使う方法の違いは非常に小さい.
+
+
+## ベイズ版のP値函数
+
+パラメータ $\theta$ に関する事後分布が得られているとき, 仮説 $\theta = \theta_0$ の(両側検定の)P値を, 事後分布において $\theta\le\theta_0$ が成立する確率と $\theta\ge\theta_0$ が成立する確率の小さい方の2倍で定義することができる. (これはClopper-Pearsonの信頼区間に対応するP値の類似であり, 別のスタイルによる定義もある.)
+
+以下ではそのようにして定義されたベイズ版のP値と上の方で使用した通常のP値を比較する.
+
+```julia
+"""Bayesian P-value function of posterior"""
+function pvalue_clopper_pearson(cdf_posterior, θ₀)
+    c = cdf_posterior(θ₀)
+    min(1, 2c, 2(1 - c))
+end
+
+"""Baysian P-value function of binomial distribution model"""
+function pvalue_bayesian_bin(a, b, p; α = 1.0, β = 1.0)
+    beta = Beta(α + a, β + b)
+    cdf_posterior(p) = cdf(beta, p)
+    pvalue_clopper_pearson(cdf_posterior, p)
+end
+
+"""Baysian P-value function of relative risk"""
+function pvalue_bayesian_RR(A, ρ; α = 1.0, β = 1.0)
+    a, b, c, d = A'
+    beta1 = Beta(α + a, β + b)
+    beta2 = Beta(α + c, β + d)
+    cdf_posterior(ρ) = cdfRR(beta1, beta2, ρ)
+    pvalue_clopper_pearson(cdf_posterior, ρ)
+end
+
+"""Bayesian P-value and confidence interval of relative risk"""
+function pvalue_ci_bayesian_RR(A, RR₀ = 1.0, alpha = 0.05; α = 1.0, β = 1.0)
+    a, b, c, d = A'
+    beta1 = Beta(α + a, β + b)
+    beta2 = Beta(α + c, β + d)
+    p_value = cdfRR(beta1, beta2, RR₀)
+    RR = find_zero(ρ -> cdfRR(beta1, beta2, ρ) - 0.5, 1.0)
+    L = find_zero(ρ -> cdfRR(beta1, beta2, ρ) - alpha/2, 1.0)
+    U = find_zero(ρ -> cdfRR(beta1, beta2, ρ) - (1 - alpha/2), 1.0)
+    conf_int = (L, U)
+    (; RR, RR₀, p_value, alpha, conf_int)
+end
+```
+
+```julia
+pvalue_bin = pvalue_chisq_bin
+pvalue_ci_RR = pvalue_ci_chisq_RR
+ylabel = "ordinary P-value"
+
+plot_pvalue_functions([100 679-100; 111 679-111]; pvalue_bin, pvalue_ci_RR, ylabel,
+    title = "Intention-to-treat analysis",
+    ERlim = (0.105, 0.215), RRlim = (0.50, 1.70),
+) |> display
+
+plot_pvalue_functions([95 674-95; 107 675-107]; pvalue_bin, pvalue_ci_RR, ylabel,
+    title = "Modified intention-to-treat analysis",
+    ERlim = (0.105, 0.21), RRlim = (0.50, 1.70),
+) |> display
+
+plot_pvalue_functions([82 624-82; 40 288-40]; pvalue_bin, pvalue_ci_RR, ylabel,
+    title = "Per-protocol analysis",
+    ERlim = (0.08, 0.22), RRlim = (0.40, 2.60), ERtick = 0:0.03:1,
+) |> display
+```
+
+```julia
+pvalue_bin = pvalue_bayesian_bin
+pvalue_RR = pvalue_bayesian_RR
+pvalue_ci_RR = pvalue_ci_bayesian_RR
+ylabel = "Bayesian P-value"
+
+plot_pvalue_functions([100 679-100; 111 679-111]; pvalue_bin, pvalue_RR, pvalue_ci_RR, ylabel,
+    title = "Intention-to-treat analysis",
+    ERlim = (0.105, 0.215), RRlim = (0.50, 1.70),
+) |> display
+
+plot_pvalue_functions([95 674-95; 107 675-107]; pvalue_bin, pvalue_RR, pvalue_ci_RR, ylabel,
+    title = "Modified intention-to-treat analysis",
+    ERlim = (0.105, 0.21), RRlim = (0.50, 1.70),
+) |> display
+
+plot_pvalue_functions([82 624-82; 40 288-40]; pvalue_bin, pvalue_RR, pvalue_ci_RR, ylabel,
+    title = "Per-protocol analysis",
+    ERlim = (0.08, 0.22), RRlim = (0.40, 2.60), ERtick = 0:0.03:1,
+) |> display
+```
+
+```julia
+function plot_both_pvalue_functions(A; RR₀ = 1.0, alpha = 0.05,
+        title = "",
+        ERlim = (0.1, 0.25),
+        RRlim = (0.5, 2.5),
+        ERtick = 0:0.025:1,
+        RRtick = 0:0.25:10,
+        pvalue_bin1 = pvalue_chisq_bin,
+        pvalue_RR1 = pvalue_chisq_RR,
+        pvalue_ci_RR1 = pvalue_ci_chisq_RR,
+        pvalue_bin2 = pvalue_bayesian_bin,
+        pvalue_RR2 = pvalue_bayesian_RR,
+        pvalue_ci_RR2 = pvalue_ci_bayesian_RR,
+        ylabel = "P-value",
+    )
+    (; RR, conf_int) = pvalue_ci_RR1(A, RR₀, alpha)
+    RR1, conf_int1 = RR, conf_int
+    (; RR, conf_int) = pvalue_ci_RR2(A, RR₀, alpha)
+    RR2, conf_int2 = RR, conf_int
+    a, b, c, d = A'
+    
+    f1(p) = pvalue_bin1(a, b, p)
+    g1(q) = pvalue_bin1(c, d, q)
+    f2(p) = pvalue_bin2(a, b, p)
+    g2(q) = pvalue_bin2(c, d, q)
+    
+    h1(RR) = pvalue_RR1(A, RR)
+    L1, U1 = conf_int1
+    Lstr1 = @sprintf "%.2f" L1
+    RRstr1 = @sprintf "%.2f" RR1
+    Ustr1 = @sprintf "%.2f" U1
+    CIstr1 = "RR [CI]: $RRstr1 [$Lstr1, $Ustr1]"
+
+    h2(RR) = pvalue_RR2(A, RR)
+    L2, U2 = conf_int2
+    Lstr2 = @sprintf "%.2f" L2
+    RRstr2 = @sprintf "%.2f" RR2
+    Ustr2 = @sprintf "%.2f" U2
+    CIstr2 = "RR [CI]: $RRstr2 [$Lstr2, $Ustr2]"
+
+    P1 = plot(; title)
+    plot!(f1, ERlim...; c=:red,    label="ordinary I")
+    plot!(g1, ERlim...; c=:blue,   label="ordinary P")
+    plot!(f2, ERlim...; c=:orange, label="Bayesian I", ls=:dash)
+    plot!(g2, ERlim...; c=:cyan,   label="Bayesian P", ls=:dash)
+    plot!(; xlabel="Event rate", ylabel)
+    plot!(; xtick = ERtick, ytick=0:0.1:1)
+    
+    P2 = plot(; title)
+    plot!(h1, RRlim...; c=:blue, label="ordinary")
+    plot!(h2, RRlim...; c=:cyan, label="Bayesian", ls=:dash)
+    plot!([L1, U1], [1.15alpha, 1.15alpha]; c=:red,    lw=4, label="$CIstr1")
+    plot!([L2, U2], [0.85alpha, 0.85alpha]; c=:orange, lw=4, label="$CIstr2")
+    plot!(; xlabel="Relative risk", ylabel)
+    plot!(; xtick = RRtick, ytick=0:0.1:1)
+    
+    plot(P1, P2; size=(1000, 300))
+    plot!(; leftmargin=5Plots.mm, bottommargin=5Plots.mm)
+end
+```
+
+```julia
+plot_both_pvalue_functions([100 679-100; 111 679-111];
+    title = "Intention-to-treat analysis",
+    #ERlim = (0.105, 0.215), RRlim = (0.50, 1.70),
+    ERlim = (0.105, 0.215), RRlim = (0.50, 1.60),
+) |> display
+
+plot_both_pvalue_functions([95 674-95; 107 675-107];
+    title = "Modified intention-to-treat analysis",
+    #ERlim = (0.105, 0.21), RRlim = (0.50, 1.70),
+    ERlim = (0.105, 0.21), RRlim = (0.50, 1.60),
+) |> display
+
+plot_both_pvalue_functions([82 624-82; 40 288-40];
+    title = "Per-protocol analysis",
+    #ERlim = (0.08, 0.22), RRlim = (0.40, 2.60), ERtick = 0:0.03:1,
+    ERlim = (0.085, 0.205), RRlim = (0.50, 1.60),
+) |> display
+```
+
+ordinaryは通常のP値函数を意味し, Bayesianは平坦事前分布に関する事後分布から作ったP値函数の類似物を意味する.
 
 ```julia
 
