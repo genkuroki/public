@@ -581,6 +581,30 @@ plot_both_pvalue_functions([82 624-82; 40 288-40];
 
 ordinaryは通常のP値函数を意味し, Bayesianは平坦事前分布に関する事後分布から作ったP値函数の類似物を使って得た結果を意味する. この場合には「パラメータ $\theta$ の事後分布において $\theta\le\theta_0$ が成立する確率と $\theta\ge\theta_0$ が成立する確率の小さい方の2倍」を「仮説 $\theta = \theta_0$ のP値のBayesian類似」の定義として採用した. CIは通常の95%信頼区間を意味し, BCIはベイズ版の95%信用区間を意味する.
 
+
+## 10分でFigure S6にあるリスク比の区間推定を再現可能
+
+```julia
+using Distributions
+N = 10^6
+a,m,c,n = 100,679,111,679
+X = rand(Beta(1+a, 1+m-a), N) ./ rand(Beta(1+c, 1+n-c), N)
+quantile.(Ref(X), (0.5, 0.025, 0.975))
+```
+
+```julia
+using Distributions
+
+N = 10^6
+for A in ([100 679-100; 111 679-111], [95 674-95; 107 675-107], [82 624-82; 40 288-40])
+    a, b, c, d = A'
+    R1, R2 = rand(Beta(1 + a, 1 + b), N), rand(Beta(1 + c, 1 + d), N)
+    RR = R1 ./ R2
+    RiskRatio, L, U = round.(quantile.(Ref(RR), (0.5, 0.025, 0.975)); digits=2)
+    @show RiskRatio, L, U
+end
+```
+
 ```julia
 
 ```
