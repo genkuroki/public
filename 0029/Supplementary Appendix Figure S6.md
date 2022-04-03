@@ -579,7 +579,7 @@ plot_both_pvalue_functions([82 624-82; 40 288-40];
 ) |> display
 ```
 
-ordinaryは通常のP値函数を意味し, Bayesianは平坦事前分布に関する事後分布から作ったP値函数の類似物を意味する. この場合には「パラメータ $\theta$ の事後分布において $\theta\le\theta_0$ が成立する確率と $\theta\ge\theta_0$ が成立する確率の小さい方の2倍」を「仮説 $\theta = \theta_0$ のP値のBayesian類似」の定義として採用した. CIは通常の95%信頼区間を意味し, BCIはベイズ版の95%信用区間を意味する.
+ordinaryは通常のP値函数を意味し, Bayesianは平坦事前分布に関する事後分布から作ったP値函数の類似物を使って得た結果を意味する. この場合には「パラメータ $\theta$ の事後分布において $\theta\le\theta_0$ が成立する確率と $\theta\ge\theta_0$ が成立する確率の小さい方の2倍」を「仮説 $\theta = \theta_0$ のP値のBayesian類似」の定義として採用した. CIは通常の95%信頼区間を意味し, BCIはベイズ版の95%信用区間を意味する.
 
 ```julia
 
