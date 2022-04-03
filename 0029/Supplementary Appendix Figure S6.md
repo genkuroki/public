@@ -525,16 +525,16 @@ function plot_both_pvalue_functions(A; RR₀ = 1.0, alpha = 0.05,
     h1(RR) = pvalue_RR1(A, RR)
     L1, U1 = conf_int1
     Lstr1 = @sprintf "%.2f" L1
-    RRstr1 = @sprintf "%.2f" RR1
     Ustr1 = @sprintf "%.2f" U1
-    CIstr1 = "RR [CI]: $RRstr1 [$Lstr1, $Ustr1]"
+    CIstr1 = "CI:   [$Lstr1, $Ustr1]"
+    RRstr1 = @sprintf "ordinary RR: %.2f" RR1
 
     h2(RR) = pvalue_RR2(A, RR)
     L2, U2 = conf_int2
     Lstr2 = @sprintf "%.2f" L2
-    RRstr2 = @sprintf "%.2f" RR2
     Ustr2 = @sprintf "%.2f" U2
-    CIstr2 = "RR [CI]: $RRstr2 [$Lstr2, $Ustr2]"
+    CIstr2 = "BCI: [$Lstr2, $Ustr2]"
+    RRstr2 = @sprintf "Bayesian RR: %.2f" RR2
 
     P1 = plot(; title)
     plot!(f1, ERlim...; c=:red,    label="ordinary I")
@@ -545,10 +545,12 @@ function plot_both_pvalue_functions(A; RR₀ = 1.0, alpha = 0.05,
     plot!(; xtick = ERtick, ytick=0:0.1:1)
     
     P2 = plot(; title)
-    plot!(h1, RRlim...; c=:blue, label="ordinary")
-    plot!(h2, RRlim...; c=:cyan, label="Bayesian", ls=:dash)
+    plot!(h1, RRlim...; c=:blue, label="ordinary P-value")
+    plot!(h2, RRlim...; c=:cyan, label="Bayesian P-value", ls=:dash)
     plot!([L1, U1], [1.15alpha, 1.15alpha]; c=:red,    lw=4, label="$CIstr1")
     plot!([L2, U2], [0.85alpha, 0.85alpha]; c=:orange, lw=4, label="$CIstr2")
+    plot!([RR1, RR1], [1.0alpha, 1.3alpha]; c=:black,  lw=4, label="$RRstr1")
+    plot!([RR2, RR2], [0.7alpha, 1.0alpha]; c=:grey,   lw=4, label="$RRstr2")
     plot!(; xlabel="Relative risk", ylabel)
     plot!(; xtick = RRtick, ytick=0:0.1:1)
     
@@ -577,7 +579,7 @@ plot_both_pvalue_functions([82 624-82; 40 288-40];
 ) |> display
 ```
 
-ordinaryは通常のP値函数を意味し, Bayesianは平坦事前分布に関する事後分布から作ったP値函数の類似物を意味する. この場合には「パラメータ $\theta$ の事後分布において $\theta\le\theta_0$ が成立する確率と $\theta\ge\theta_0$ が成立する確率の小さい方の2倍」を「仮説 $\theta = \theta_0$ のP値のBayesian類似」の定義として採用した.
+ordinaryは通常のP値函数を意味し, Bayesianは平坦事前分布に関する事後分布から作ったP値函数の類似物を意味する. この場合には「パラメータ $\theta$ の事後分布において $\theta\le\theta_0$ が成立する確率と $\theta\ge\theta_0$ が成立する確率の小さい方の2倍」を「仮説 $\theta = \theta_0$ のP値のBayesian類似」の定義として採用した. CIは通常の95%信頼区間を意味し, BCIはベイズ版の95%信用区間を意味する.
 
 ```julia
 
