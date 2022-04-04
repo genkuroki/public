@@ -8,7 +8,7 @@ jupyter:
       format_version: '1.3'
       jupytext_version: 1.10.3
   kernelspec:
-    display_name: Julia 1.8.0-beta1
+    display_name: Julia 1.8.0-beta3
     language: julia
     name: julia-1.8
 ---
