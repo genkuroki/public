@@ -51,8 +51,8 @@ $$
 $y = \Delta_k(x)$ を $\Delta_k(\infty)=-c_k$, $\Delta_k(0)=a_k$ を満たす単調減少函数として定める(2次方程式の解として計算可能):
 
 $$
-\Delta_k(x) = \frac{2C}{-B - \sqrt{B^2 - 4A*C}}, \quad
-A = 1 - x, \quad B = n - a + (m - c)x, \quad C = -(na - mcx).
+\Delta_k(x) = \frac{2C_k}{-B_k - \sqrt{B_k^2 - 4A_k C_k}}, \quad
+A_k = 1 - x, \quad B_k = n_k - a_k + (m_k - c_k)x, \quad C_k = -(n_k a_k - m_k c_k x).
 $$
 
 共通リスク比の最尤推定量 $\hat\rho$ は次の $x$ に関する方程式の解:
@@ -74,7 +74,7 @@ Z^2 = \frac
 \right)^{-1}}.
 $$
 
-これの分母の各項は $\Delta_{k,0}$ の分散の推定量になっている:
+これの分母の各項は互いに独立な確率変数 $\Delta_{k,0}$ の分散の推定量になっている:
 
 $$
 \op{var}\left(\Delta_{k,0}\right) \approx
