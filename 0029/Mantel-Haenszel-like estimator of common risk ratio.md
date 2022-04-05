@@ -163,7 +163,7 @@ $$
 \frac{\sum_{k=1}^K n_k a_k / (m_k + n_k)}{\sum_{k=1}^N m_k c_k / (m_k + n_k)}
 $$
 
-$\hat\rho_{\op{MH}}$ との違いは $b_k + d_k$ と $m_k + n_k$ の違いに過ぎない.
+これと $\hat\rho_{\op{MH}}$ との違いは $b_k + d_k$ と $m_k + n_k$ の違いに過ぎない.  この重みの付け方の違いによって, 上記のRothmanさん達の本に書いてある $\hat\rho_{\op{Nurminen}}$ よりも前節の $\hat\rho_{\op{MH}}$ の方が最尤推定量に近くなる. 
 
 Nurminenの推定量の分散の推定量:
 
@@ -182,8 +182,8 @@ P'_k = \frac{n_k - a_k}{m_k + n_k}, \quad
 Q'_k = \frac{m_k - c_k}{m_k + n_k}, \quad
 R'_k = \frac{n_k a_k}{m_k + n_k}, \quad
 S'_k = \frac{m_k c_k}{m_k + n_k}, \quad
-R' = \sum_{k=1}^K R_k, \quad
-S' = \sum_{k=1}^K S_k.
+R' = \sum_{k=1}^K R'_k, \quad
+S' = \sum_{k=1}^K S'_k.
 $$
 
 これらを使うと共通リスク比 $\rho$ に関するP値や信頼区間を構成できる.
