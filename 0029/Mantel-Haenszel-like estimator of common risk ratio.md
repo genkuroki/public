@@ -69,6 +69,18 @@ Z^2 = \frac
 \right)^{-1}}.
 $$
 
+これの分母の各項は $\Delta_{k,0}$ の分散の推定量になっている:
+
+$$
+\op{var}\left(\Delta_{k,0}\right) \approx
+\left(
+\frac{1}{a_k - \Delta_{k,0}} -
+\frac{1}{m_k - \Delta_{k,0}} +
+\frac{1}{c_k + \Delta_{k,0}} -
+\frac{1}{n_k + \Delta_{k,0}}
+\right)^{-1}.
+$$
+
 これらを使うと共通リスク比 $\rho$ に関するP値や信頼区間を構成できる.
 
 
@@ -119,6 +131,19 @@ $$
 
 これらを使うと共通リスク比 $\rho$ に関するP値や信頼区間を構成できる.
 
+__注意:__ $K=1$ のとき, $\hat\rho_{\op{Nurminen}} = \hat\rho_1 = (n_1 a_1)/(m_1 c_1)$ でかつ,
+
+$$
+\begin{aligned}
+\op{var}(\log\hat\rho_{\op{MH}}) &\approx
+\frac{(n_1 - a_1)n_1 a_1}{2 (n_1 a_1)^2} +
+\frac{(n_1 - a_1)m_1 c_1 + (m_1 - c_1)n_1 a_1}{2 n_1 a_1 m_1 c_1} +
+\frac{(m_1 - c_1)m_1 c_1}{2 (m_1 c_1)^2} 
+\\ &=
+\left(\frac{1}{a_1} - \frac{1}{m_1} + \frac{1}{c_1} - \frac{1}{n_1}\right)^{-1}.
+\end{aligned}
+$$
+
 
 ### 共通リスク比のNurminen (1981)の推定量
 
@@ -138,13 +163,33 @@ $\hat\rho_{\op{MH}}$ との違いは $b_k + d_k$ と $m_k + n_k$ の違いに過
 Nurminenの推定量の分散の推定量:
 
 $$
-\op{var}(\log\hat\rho_{\op{Nurminen}}) =
+\op{var}(\log\hat\rho_{\op{Nurminen}}) \approx
 \frac
 {\sum_{k=1}^K\left((a_k + c_k)m_k n_k/(m_k+n_k)^2 - a_k c_k/(m_k+n_k)\right)}
-{\left(\sum_{k=1}^K n_k a_k / (m_k + n_k)\right)\left(\sum_{k=1}^N m_k c_k / (m_k + n_k)\right)}.
+{\left(\sum_{k=1}^K n_k a_k / (m_k + n_k)\right)\left(\sum_{k=1}^N m_k c_k / (m_k + n_k)\right)} =
+\frac{\sum_{k=1}^K (P'_k S'_k + Q'_k R'_k)}{R'S'}.
+$$
+
+ここで,
+
+$$
+P'_k = \frac{n_k - a_k}{m_k + n_k}, \quad
+Q'_k = \frac{m_k - c_k}{m_k + n_k}, \quad
+R'_k = \frac{n_k a_k}{m_k + n_k}, \quad
+S'_k = \frac{m_k c_k}{m_k + n_k}, \quad
+R' = \sum_{k=1}^K R_k, \quad
+S' = \sum_{k=1}^K S_k.
 $$
 
 これらを使うと共通リスク比 $\rho$ に関するP値や信頼区間を構成できる.
+
+__注意:__ $K=1$ のとき, $\hat\rho_{\op{Nurminen}} = \hat\rho_1 = (n_1 a_1)/(m_1 c_1)$ でかつ,
+
+$$
+\op{var}(\log\hat\rho_{\op{Nurminen}}) \approx
+\frac{(n_1 - a_1)m_1 c_1 + (m_1 - c_1)n_1 a_1}{n_1 a_1 m_1 c_1} =
+\left(\frac{1}{a_1} - \frac{1}{m_1} + \frac{1}{c_1} - \frac{1}{n_1}\right)^{-1}.
+$$
 
 
 ## 数値例
@@ -299,8 +344,9 @@ function _nurminen(A::AbstractArray{<:Any, 3})
     R = sum(((a, b, c, d),) -> a*(c+d)/(a+b+c+d), abcd)
     S = sum(((a, b, c, d),) -> (a+b)*c/(a+b+c+d), abcd)
     logRR = log(R) - log(S)
-    num = sum(((a, b, c, d),) -> (a+c)*(a+b)*(c+d)/(a+b+c+d)^2 - a*c/(a+b+c+d), abcd)
-    SE² = num/(R*S)
+    #sumPSplusQR = sum(((a, b, c, d),) -> (a+c)*(a+b)*(c+d)/(a+b+c+d)^2 - a*c/(a+b+c+d), abcd)
+    sumPSplusQR = sum(((a, b, c, d),) -> ((c+d-a)*(a+b)*c + (a+b-c)*a*(c+d))/(a+b+c+d)^2, abcd)
+    SE² = sumPSplusQR/(R*S)
     SE = √SE²
     (; logRR, SE)
 end
@@ -490,7 +536,7 @@ hline!([0]; label="", c=:black, lw=0.5, ls=:dot)
 plot!(; xlabel="common risk ratio", ylabel="score")
 plot!(; xtick=0:0.2:10)
 
-Q = plot(f, 0.8, 1.1; label="maximum likelihood equation")
+Q = plot(f, 0.87, 1.05; label="maximum likelihood equation")
 plot!(g; label="MH-like linear approx.", ls=:dash)
 plot!(h; label="Nurminen linear approx.", ls=:dashdot)
 hline!([0]; label="", c=:black, lw=0.5, ls=:dot)
