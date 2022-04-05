@@ -1,0 +1,70 @@
+---
+jupyter:
+  jupytext:
+    formats: ipynb,Rmd
+    text_representation:
+      extension: .Rmd
+      format_name: rmarkdown
+      format_version: '1.2'
+      jupytext_version: 1.10.3
+  kernelspec:
+    display_name: R 4.1.2
+    language: R
+    name: ir
+---
+
+See Table 2 of https://www.nejm.org/doi/full/10.1056/NEJMoa2115869, Bayesian credible intervals of relative risks:
+
+* ITT: 0.90 (0.70–1.16)
+* MITT: 0.89 (0.69–1.15)
+* PP: 0.94 (0.67–1.35)
+
+```{r}
+library(epiR)
+```
+
+```{r}
+data_ITT = matrix(c(100, 679-100, 111, 679-111), nrow=2, byrow=T)
+ITT = epi.2by2(data_ITT)
+ITT
+```
+
+```{r}
+data_MITT = matrix(c(95, 674-95, 107, 675-107), nrow=2, byrow=T)
+MITT = epi.2by2(data_MITT)
+MITT
+```
+
+```{r}
+data_PP = matrix(c(82, 624-82, 40, 288-40), nrow=2, byrow=T)
+PP = epi.2by2(data_PP)
+PP
+```
+
+```{r}
+print("ITT")
+print(ITT$massoc.detail$RR.strata.wald)
+print("MITT")
+print(MITT$massoc.detail$RR.strata.wald)
+print("PPS")
+print(PP$massoc.detail$RR.strata.wald)
+```
+
+```{r}
+print("ITT")
+print(ITT$massoc.detail$RR.strata.score)
+print("MITT")
+print(MITT$massoc.detail$RR.strata.score)
+print("PPS")
+print(PP$massoc.detail$RR.strata.score)
+```
+
+See Table 2 of https://www.nejm.org/doi/full/10.1056/NEJMoa2115869, Bayesian credible intervals of relative risks:
+
+* ITT: 0.90 (0.70–1.16)
+* MITT: 0.89 (0.69–1.15)
+* PP: 0.94 (0.67–1.35)
+
+```{r}
+
+```
