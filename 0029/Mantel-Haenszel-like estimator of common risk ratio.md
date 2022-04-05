@@ -8,7 +8,7 @@ jupyter:
       format_version: '1.3'
       jupytext_version: 1.10.3
   kernelspec:
-    display_name: Julia 1.8.0-beta1
+    display_name: Julia 1.8.0-beta3
     language: julia
     name: julia-1.8
 ---
@@ -552,6 +552,196 @@ plot!(ρ -> pvalue_score(A, ρ), 0.9, 1.3; label="score test")
 plot!(ρ -> pvalue_mhrbglike(A, ρ); label="MHRBG-like", ls=:dash)
 plot!(ρ -> pvalue_nurminen(A, ρ); label="Nurminen", ls=:dashdot)
 plot!(; xtick=0:0.05:20, ytick=0:0.05:1)
+vline!([1]; label="", c=:black, lw=0.5)
+plot!(; xlabel="common risk ratio", ylabel="P-value")
+```
+
+https://sphweb.bumc.bu.edu/otlt/mph-modules/bs/bs704-ep713_confounding-em/BS704-EP713_Confounding-EM7.html
+
+```julia
+A = [
+    10  90
+    35 465
+    ;;;
+    36 164
+    25 175
+]
+
+@show A
+@show riskratio.(eachmatrix(A))
+@show maximum_linkelihood_estimator(A)
+@show mhlike_estimator(A)
+@show nurminen_estimator(A)
+@show scoretest(A)
+@show mhrbglike(A)
+@show nurminen(A)
+flush(stdout)
+
+f(x) = maximum_likelihood_equation(A, x)
+g(x) = mhlike_approx_maximum_likelihood_equation(A, x)
+h(x) = nurminen_approx_maximum_likelihood_equation(A, x)
+
+P = plot(f, 0, 3; label="maximum likelihood equation")
+plot!(g; label="MH-like linear approx.", ls=:dash)
+plot!(h; label="Nurminen linear approx.", ls=:dashdot)
+hline!([0]; label="", c=:black, lw=0.5, ls=:dot)
+plot!(; xlabel="common risk ratio", ylabel="score")
+plot!(; xtick=0:0.2:10)
+
+Q = plot(f, 1.2, 1.6; label="maximum likelihood equation")
+plot!(g; label="MH-like linear approx.", ls=:dash)
+plot!(h; label="Nurminen linear approx.", ls=:dashdot)
+hline!([0]; label="", c=:black, lw=0.5, ls=:dot)
+plot!(; xlabel="common risk ratio", ylabel="score")
+plot!(; xtick=0:0.05:10)
+
+plot(P, Q; size=(1000, 350), leftmargin=5Plots.mm, bottommargin=5Plots.mm) |> display
+
+plot(title="P-value functions")
+plot!(ρ -> pvalue_score(A, ρ), 0.8, 2.5; label="score test")
+plot!(ρ -> pvalue_mhrbglike(A, ρ); label="MHRBG-like", ls=:dash)
+plot!(ρ -> pvalue_nurminen(A, ρ); label="Nurminen", ls=:dashdot)
+plot!(; xtick=0:0.1:20, ytick=0:0.05:1)
+vline!([1]; label="", c=:black, lw=0.5)
+plot!(; xlabel="common risk ratio", ylabel="P-value")
+```
+
+https://www.nejm.org/doi/full/10.1056/NEJMoa2115869
+
+```julia
+A = [
+    100 679-100
+    111 679-111
+    ;;;
+]
+
+@show A
+@show riskratio.(eachmatrix(A))
+@show maximum_linkelihood_estimator(A)
+@show mhlike_estimator(A)
+@show nurminen_estimator(A)
+@show scoretest(A)
+@show mhrbglike(A)
+@show nurminen(A)
+flush(stdout)
+
+f(x) = maximum_likelihood_equation(A, x)
+g(x) = mhlike_approx_maximum_likelihood_equation(A, x)
+h(x) = nurminen_approx_maximum_likelihood_equation(A, x)
+
+P = plot(f, 0, 1.8; label="maximum likelihood equation")
+plot!(g; label="MH-like linear approx.", ls=:dash)
+plot!(h; label="Nurminen linear approx.", ls=:dashdot)
+hline!([0]; label="", c=:black, lw=0.5, ls=:dot)
+plot!(; xlabel="common risk ratio", ylabel="score")
+plot!(; xtick=0:0.2:10)
+
+Q = plot(f, 0.7, 1.1; label="maximum likelihood equation")
+plot!(g; label="MH-like linear approx.", ls=:dash)
+plot!(h; label="Nurminen linear approx.", ls=:dashdot)
+hline!([0]; label="", c=:black, lw=0.5, ls=:dot)
+plot!(; xlabel="common risk ratio", ylabel="score")
+plot!(; xtick=0:0.05:10)
+
+plot(P, Q; size=(1000, 350), leftmargin=5Plots.mm, bottommargin=5Plots.mm) |> display
+
+plot(title="P-value functions")
+plot!(ρ -> pvalue_score(A, ρ), 0.5, 1.6; label="score test")
+plot!(ρ -> pvalue_mhrbglike(A, ρ); label="MHRBG-like", ls=:dash)
+plot!(ρ -> pvalue_nurminen(A, ρ); label="Nurminen", ls=:dashdot)
+plot!(; xtick=0:0.1:20, ytick=0:0.05:1)
+vline!([1]; label="", c=:black, lw=0.5)
+plot!(; xlabel="common risk ratio", ylabel="P-value")
+```
+
+```julia
+A = [
+    95 674-95
+    107 675-107
+    ;;;
+]
+
+@show A
+@show riskratio.(eachmatrix(A))
+@show maximum_linkelihood_estimator(A)
+@show mhlike_estimator(A)
+@show nurminen_estimator(A)
+@show scoretest(A)
+@show mhrbglike(A)
+@show nurminen(A)
+flush(stdout)
+
+f(x) = maximum_likelihood_equation(A, x)
+g(x) = mhlike_approx_maximum_likelihood_equation(A, x)
+h(x) = nurminen_approx_maximum_likelihood_equation(A, x)
+
+P = plot(f, 0, 1.8; label="maximum likelihood equation")
+plot!(g; label="MH-like linear approx.", ls=:dash)
+plot!(h; label="Nurminen linear approx.", ls=:dashdot)
+hline!([0]; label="", c=:black, lw=0.5, ls=:dot)
+plot!(; xlabel="common risk ratio", ylabel="score")
+plot!(; xtick=0:0.2:10)
+
+Q = plot(f, 0.7, 1.1; label="maximum likelihood equation")
+plot!(g; label="MH-like linear approx.", ls=:dash)
+plot!(h; label="Nurminen linear approx.", ls=:dashdot)
+hline!([0]; label="", c=:black, lw=0.5, ls=:dot)
+plot!(; xlabel="common risk ratio", ylabel="score")
+plot!(; xtick=0:0.05:10)
+
+plot(P, Q; size=(1000, 350), leftmargin=5Plots.mm, bottommargin=5Plots.mm) |> display
+
+plot(title="P-value functions")
+plot!(ρ -> pvalue_score(A, ρ), 0.5, 1.6; label="score test")
+plot!(ρ -> pvalue_mhrbglike(A, ρ); label="MHRBG-like", ls=:dash)
+plot!(ρ -> pvalue_nurminen(A, ρ); label="Nurminen", ls=:dashdot)
+plot!(; xtick=0:0.1:20, ytick=0:0.05:1)
+vline!([1]; label="", c=:black, lw=0.5)
+plot!(; xlabel="common risk ratio", ylabel="P-value")
+```
+
+```julia
+A = [
+    82 624-82
+    40 288-40
+    ;;;
+]
+
+@show A
+@show riskratio.(eachmatrix(A))
+@show maximum_linkelihood_estimator(A)
+@show mhlike_estimator(A)
+@show nurminen_estimator(A)
+@show scoretest(A)
+@show mhrbglike(A)
+@show nurminen(A)
+flush(stdout)
+
+f(x) = maximum_likelihood_equation(A, x)
+g(x) = mhlike_approx_maximum_likelihood_equation(A, x)
+h(x) = nurminen_approx_maximum_likelihood_equation(A, x)
+
+P = plot(f, 0, 1.8; label="maximum likelihood equation")
+plot!(g; label="MH-like linear approx.", ls=:dash)
+plot!(h; label="Nurminen linear approx.", ls=:dashdot)
+hline!([0]; label="", c=:black, lw=0.5, ls=:dot)
+plot!(; xlabel="common risk ratio", ylabel="score")
+plot!(; xtick=0:0.2:10)
+
+Q = plot(f, 0.7, 1.1; label="maximum likelihood equation")
+plot!(g; label="MH-like linear approx.", ls=:dash)
+plot!(h; label="Nurminen linear approx.", ls=:dashdot)
+hline!([0]; label="", c=:black, lw=0.5, ls=:dot)
+plot!(; xlabel="common risk ratio", ylabel="score")
+plot!(; xtick=0:0.05:10)
+
+plot(P, Q; size=(1000, 350), leftmargin=5Plots.mm, bottommargin=5Plots.mm) |> display
+
+plot(title="P-value functions")
+plot!(ρ -> pvalue_score(A, ρ), 0.5, 1.6; label="score test")
+plot!(ρ -> pvalue_mhrbglike(A, ρ); label="MHRBG-like", ls=:dash)
+plot!(ρ -> pvalue_nurminen(A, ρ); label="Nurminen", ls=:dashdot)
+plot!(; xtick=0:0.1:20, ytick=0:0.05:1)
 vline!([1]; label="", c=:black, lw=0.5)
 plot!(; xlabel="common risk ratio", ylabel="P-value")
 ```
