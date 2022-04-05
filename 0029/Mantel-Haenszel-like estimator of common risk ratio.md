@@ -48,7 +48,12 @@ $$
 x = \frac{(a_k - y)(n_k + y)}{(m_k - y)(c_k + y)}.
 $$
 
-$y = \Delta_k(x)$ を $\Delta_k(\infty)=-c_k$, $\Delta_k(0)=a_k$ を満たす単調減少函数として定める(2次方程式の解として計算可能).
+$y = \Delta_k(x)$ を $\Delta_k(\infty)=-c_k$, $\Delta_k(0)=a_k$ を満たす単調減少函数として定める(2次方程式の解として計算可能):
+
+$$
+\Delta_k(x) = \frac{2C}{-B - \sqrt{B^2 - 4A*C}}, \quad
+A = 1 - x, \quad B = n - a + (m - c)x, \quad C = -(na - mcx).
+$$
 
 共通リスク比の最尤推定量 $\hat\rho$ は次の $x$ に関する方程式の解:
 
