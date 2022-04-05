@@ -46,22 +46,37 @@ print("ITT")
 print(ITT$massoc.detail$RR.strata.wald)
 print("MITT")
 print(MITT$massoc.detail$RR.strata.wald)
-print("PPS")
+print("PP")
 print(PP$massoc.detail$RR.strata.wald)
 ```
+
+* ITT: 0.90 (0.70-1.15)
+* MITT: 0.89 (0.69-1.15)
+* PP: 0.95 (0.67-1.34)
 
 ```{r}
 print("ITT")
 print(ITT$massoc.detail$RR.strata.score)
 print("MITT")
 print(MITT$massoc.detail$RR.strata.score)
-print("PPS")
+print("PP")
 print(PP$massoc.detail$RR.strata.score)
 ```
+
+* ITT: 0.90 (0.70-1.15)
+* MITT: 0.89 (0.69-1.15)
+* PP: 0.95 (0.67-1.35)
+
 
 See Table 2 of https://www.nejm.org/doi/full/10.1056/NEJMoa2115869, Bayesian credible intervals of relative risks:
 
 * ITT: 0.90 (0.70–1.16)
+* MITT: 0.89 (0.69–1.15)
+* PP: 0.94 (0.67–1.35)
+
+Supplementary Appendix, Figure S6:
+
+* ITT: 0.90 (0.70–1.15)
 * MITT: 0.89 (0.69–1.15)
 * PP: 0.94 (0.67–1.35)
 
