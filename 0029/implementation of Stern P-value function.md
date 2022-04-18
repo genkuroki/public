@@ -23,18 +23,47 @@ default(fmt=:png, titlefontsize=10)
 ```
 
 ```julia
+function pvalue_clopper_pearson(dist::DiscreteUnivariateDistribution, x)
+    min(1, 2cdf(dist, x), 2ccdf(dist, x-1))
+end
+pvalue_clopper_pearson(n, k, p) = pvalue_clopper_pearson(Binomial(n, p), k)
+```
+
+```julia
 x ⪅ y = x < y || x ≈ y
 
-# Naive implementation is terrible slow.
+# Naive implementation is terribly slow.
 function pvalue_stern_naive(dist::DiscreteUnivariateDistribution, x; xmax = 10^6)
     Px = pdf(dist, x)
     Px == 0 && return Px
-    m = mode(dist)
-    (x == m || Px ≈ pdf(dist, m)) && return 1.0
     ymin, maxdist = minimum(dist), maximum(dist)
     ymax = maxdist == Inf ? xmax : maxdist
     sum(pdf(dist, y) for y in ymin:ymax if 0 < pdf(dist, y) ⪅ Px; init = 0.0)
 end
+pvalue_stern_naive(n, k, p) = pvalue_stern_naive(Binomial(n, p), k)
+
+# Second implementation is very slow.
+function pvalue_stern_old(dist::DiscreteUnivariateDistribution, x)
+    Px = pdf(dist, x)
+    Px == 0 && return Px
+    distmin, distmax = extrema(dist)
+    m = mode(dist)
+    Px ≈ pdf(dist, m) && return one(Px)
+    if x < m
+        y = m + 1
+        while !(pdf(dist, y) ⪅ Px)
+            y += 1
+        end
+        cdf(dist, x) + ccdf(dist, y-1)
+    else # k > m
+        y = m - 1
+        while !(pdf(dist, y) ⪅ Px)
+            y -= 1
+        end
+        cdf(dist, y) + ccdf(dist, x-1)
+    end
+end
+pvalue_stern_old(n, k, p) = pvalue_stern_old(Binomial(n, p), k)
 
 ### efficient implementation
 
@@ -55,7 +84,7 @@ function pvalue_stern(dist::DiscreteUnivariateDistribution, x)
     Px = pdf(dist, x)
     Px == 0 && return Px
     m = mode(dist)
-    (x == m || Px ≈ pdf(dist, m)) && return 1.0
+    Px ≈ pdf(dist, m) && return one(Px)
     if x < m
         y = _search_boundary(_pdf_le, 2m - x, 1, (dist, Px))
         cdf(dist, x) + ccdf(dist, y-1)
@@ -64,39 +93,49 @@ function pvalue_stern(dist::DiscreteUnivariateDistribution, x)
         cdf(dist, y) + ccdf(dist, x-1)
     end
 end
+pvalue_stern(n, k, p) = pvalue_stern(Binomial(n, p), k)
 ```
 
 ```julia
-dist = Binomial(10, 0.3)
-a = pvalue_stern.(dist, -1:11)
-b = pvalue_stern_naive.(dist, -1:11)
-@show a ≈ b
-a
+n = 10
+k = -1:11
+p = 0.4
+a = @time pvalue_stern_naive.(n, k, p)
+b = @time pvalue_stern_old.(n, k, p)
+c = @time pvalue_stern.(n, k, p)
+d = @time pvalue_clopper_pearson.(n, k, p)
+@show a ≈ b ≈ c
+[a b c d]
 ```
 
 ```julia
-dist = Binomial(100000, 0.5)
-ran = 49500:50500
-@time a = pvalue_stern.(dist, ran)
-@time b = pvalue_stern_naive.(dist, ran)
-@show a ≈ b
-a
+n = 100000
+k = 49500:50500
+a = @time pvalue_stern_naive.(n, k, 0.5)
+b = @time pvalue_stern_old.(n, k, 0.5)
+c = @time pvalue_stern.(n, k, 0.5)
+d = @time pvalue_clopper_pearson.(n, k, 0.5)
+@show a ≈ b ≈ c ≈ d;
 ```
 
 ```julia
-dist = Hypergeometric(10, 10, 10)
-a = pvalue_stern.(dist, -1:11)
-b = pvalue_stern_naive.(dist, -1:11)
-@show a ≈ b
-a
+dist = Hypergeometric(9, 9, 9)
+ran = -1:10
+a = @time pvalue_stern_naive.(dist, ran)
+b = @time pvalue_stern_old.(dist, ran)
+c = @time pvalue_stern.(dist, ran)
+d = @time pvalue_clopper_pearson.(dist, ran)
+@show a ≈ b ≈ c ≈ d
+[a b c d]
 ```
 
 ```julia
 dist = Poisson(4)
-a = pvalue_stern.(dist, -1:10)
-b = pvalue_stern_naive.(dist, -1:10)
-@show a ≈ b
-a
+ran = -1:10
+a = @time pvalue_stern_naive.(dist, ran)
+c = @time pvalue_stern.(dist, ran)
+d = @time pvalue_clopper_pearson.(dist, ran)
+[a c d]
 ```
 
 ```julia
