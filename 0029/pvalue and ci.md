@@ -15,7 +15,7 @@ jupyter:
 
 https://sphweb.bumc.bu.edu/otlt/mph-modules/bs/sas/sas6-categoricaldata/SAS6-CategoricalData2.html
 
-![IMG_4939.PNG](attachment:6405e625-36e0-44ba-a98e-d4a977eb242a.PNG)
+![IMG_4959.PNG](attachment:5502b511-0ded-43e7-8a7a-3fda8e47e949.PNG)
 
 ```julia
 using Distributions
