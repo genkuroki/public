@@ -191,6 +191,8 @@ println("Not defaults: $not_defaults
     Percentage non-defaults correct $(predicted_not_defaults/not_defaults)")
 ```
 
+---
+
 ```julia
 names(chain)
 ```
@@ -202,6 +204,36 @@ intercept[1:5, :]
 
 ```julia
 plot(intercept[501:1500, :]; lw=0.5, label=false, size=(600, 200))
+```
+
+---
+
+```julia
+desc = describe(chain)
+```
+
+```julia
+S = desc[1]
+```
+
+```julia
+convert(Array, S)
+```
+
+```julia
+names(S)
+```
+
+```julia
+dump(S)
+```
+
+```julia
+S.nt[:parameters]
+```
+
+```julia
+S.nt[:mean]
 ```
 
 ```julia
