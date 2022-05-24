@@ -16,6 +16,18 @@ jupyter:
 https://turing.ml/dev/tutorials/02-logistic-regression/
 
 ```julia
+ENV["COLUMNS"], ENV["LINES"] = 100, 30;
+```
+
+```julia
+VERSION
+```
+
+```julia
+]st Turing Distributions RDatasets MCMCChains Plots StatsPlots StatsFuns MLDataUtils 
+```
+
+```julia
 # Import Turing and Distributions.
 using Turing, Distributions
 
@@ -180,11 +192,16 @@ println("Not defaults: $not_defaults
 ```
 
 ```julia
-VERSION
+names(chain)
 ```
 
 ```julia
-]st Turing Distributions RDatasets MCMCChains Plots StatsPlots StatsFuns MLDataUtils 
+intercept = chain[:intercept]
+intercept[1:5, :]
+```
+
+```julia
+plot(intercept[501:1500, :]; lw=0.5, label=false, size=(600, 200))
 ```
 
 ```julia
