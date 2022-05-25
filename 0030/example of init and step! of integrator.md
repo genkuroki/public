@@ -52,7 +52,7 @@ integrator = init(prob, Tsit5())
 param.g = 9.8 # on the earth
 dt = 0.1
 for _ in 1:40
-    step!(integrator, 0.1, true)
+    step!(integrator, dt, true)
 end
 plot_singlependulum(integrator.sol)
 ```
@@ -61,7 +61,7 @@ plot_singlependulum(integrator.sol)
 param.g = 1.6 # on the moon
 dt = 0.1
 for _ in 1:210
-    step!(integrator, 0.1, true)
+    step!(integrator, dt, true)
 end
 plot_singlependulum(integrator.sol)
 ```
@@ -70,7 +70,7 @@ plot_singlependulum(integrator.sol)
 param.g = 9.8 # on the earth
 dt = 0.1
 for _ in 1:200
-    step!(integrator, 0.1, true)
+    step!(integrator, dt, true)
 end
 plot_singlependulum(integrator.sol)
 ```
