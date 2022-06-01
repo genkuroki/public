@@ -28,8 +28,8 @@ function plot_samplemean_and_unbiasedvar(dist, n; L=10^4, kwargs...)
         X̄[i] = mean(X)
         S²[i] = var(X)
     end
-    scatter(X̄, S²; label="", ms=2.5, ma=0.3, msw=0)
-    title!("$distname, n=$n", kwargs...)
+    scatter(X̄, S²; label="", ms=2.5, ma=0.3, msw=0, kwargs...)
+    title!("$distname, n=$n")
 end
 
 # %%
@@ -55,5 +55,8 @@ plot_samplemean_and_unbiasedvar(Poisson(), 100)
 
 # %%
 plot_samplemean_and_unbiasedvar(Poisson(), 1000)
+
+# %%
+plot_samplemean_and_unbiasedvar(Chisq(1), 10000; L=10^5, ms=2, alpha=0.05)
 
 # %%
