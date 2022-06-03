@@ -15,7 +15,9 @@
 # ---
 
 # %%
-using Distributions, StatsPlots, StatsBase
+using Distributions
+using StatsPlots
+using StatsBase
 
 # %%
 using RCall
@@ -33,7 +35,7 @@ using SymPy: @vars, expand, sympy
 expr = (a-δ)*(d-δ) - ω*(b+δ)*(c+δ)
 sympy.Poly(expand(expr), δ)
 
-# %%
+# %% tags=[]
 function pval_chisq(a, b, c, d, ω)
     A = 1 - ω
     B = a + d + ω*(b + c)
@@ -48,16 +50,18 @@ end
 a, b, c, d = 5, 20, 11, 14
 beta1 = Beta(α + a, β + b)
 beta2 = Beta(α + c, β + d)
+
 L = 10^6
 R1 = rand(beta1, L)
 R2 = rand(beta2, L)
+
 OR = @. R1/(1-R1)/(R2/(1-R2))
 ecdf_OR = ecdf(OR)
 pval_bayes(x) = min(1, 2ecdf_OR(x), 2 - 2ecdf_OR(x))
 
 P1 = stephist(OR; norm=true, xlim=(0.0, 1.5), label="posteriot of OR")
 P2 = plot(x -> pval_bayes(x), 0.0, 1.5; label="Bayesian P-value")
-plot!(x -> pval_chisq(a, b, c, d, x); label="χ² P-value")
+plot!(x -> pval_chisq(a, b, c, d, x); label="χ² P-value", ls=:dash)
 
 @show [a b; c d]
 @show pval_bayes(1.0)
