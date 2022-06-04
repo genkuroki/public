@@ -1,0 +1,17 @@
+--- main.min-org.js	2020-12-15 05:09:09.000000000 +0900
++++ main.min.js	2022-06-01 04:52:03.304953000 +0900
+@@ -28602,6 +28602,6 @@
+                 "HTML-CSS": {
+-                    availableFonts: [],
++                    availableFonts: ["TeX"],
+                     imageFont: null,
+                     preferredFont: null,
+-                    webFont: "STIX-Web",
++                    webFont: "TeX",
+                     styles: {'.MathJax_Display': {"margin": 0}},
+@@ -28609,2 +28609,5 @@
+                 },
++                CommonHTML: {
++                    undefinedFamily: "'Yu Gothic UI', IPAPGothic, sans-serif, serif"
++                },
+             });
