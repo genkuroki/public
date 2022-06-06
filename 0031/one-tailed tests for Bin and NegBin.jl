@@ -52,8 +52,7 @@
 # \sum_{j=n}^\infty \binom{j-1}{k-1} p^k (1-p)^{j-k}.
 # \end{aligned}
 # $$
-
-# %% [markdown]
+#
 # これは「試行回数 $n$, 成功回数 $k$」というデータについて, 以下のようになることを含む:
 #
 # $$
@@ -74,8 +73,7 @@
 # (\text{ベータ分布 $\Beta(k, n-k)$ 内で仮説 $p\ge p_0$ が成立する確率}).
 # \end{aligned}
 # $$
-
-# %% [markdown]
+#
 # これは以下が成立していることを意味している:
 #
 # (1) 二項分布 $\Binomial(n, p)$ と負の二項分布 $\NegativeBinomial(k, p)$ のどちらにおいても, 仮説 $p\le p_0$ の片側検定のP値は, improper事前分布 $\Beta(0, 1)$ から定まる事後分布内でその仮説が成立する確率に等しい.
@@ -121,10 +119,6 @@ println()
 println()
 
 @show cdf(Binomial(n, p), k)
-@show ccdf(NegativeBinomial(k, p), n-1-k)
-println()
-
-@show cdf(Binomial(n, p), k)
 @show ccdf(NegativeBinomial(k+1, p), (n+1)-1-(k+1))
 @show ccdf(Beta(k+1, n-k), p)
 println()
@@ -142,10 +136,6 @@ println()
 @show ccdf(Binomial(n, p), k-1)
 @show cdf(NegativeBinomial(k, p), n-k)
 @show cdf(Beta(k, n-k+1), p)
-println()
-
-@show cdf(Binomial(n, p), k)
-@show ccdf(NegativeBinomial(k, p), n-1-k)
 println()
 
 @show cdf(Binomial(n, p), k)
