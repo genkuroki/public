@@ -22,19 +22,14 @@ using StatsPlots
 default(fmt=:png, titlefontsize=10, size=(400, 250))
 
 # %%
-function unbiased_std(X)
-    n = length(X)
-    c = √((n-1)/2) * exp(loggamma((n-1)/2) - loggamma(n/2))
-    c * std(X)
-end
-
-# %%
 function plot_unbiased_std(; dist = Normal(4, 3), n = 10, L = 10^6, kwargs...)
     @show dist
     @show n
     @show σ = std(dist)
     tmp = zeros(n)
-    unbiased_stds = [unbiased_std(rand!(dist, tmp)) for _ in 1:L]
+    stds = [std(rand!(dist, tmp)) for _ in 1:L]
+    a = √((n-1)/2) * exp(loggamma((n-1)/2) - loggamma(n/2))
+    unbiased_stds = a * stds
     E_unbiased_stds = mean(unbiased_stds)
     @show E_unbiased_stds
     @show std(unbiased_stds)
@@ -54,6 +49,9 @@ plot_unbiased_std(dist=Exponential(3), xtick=0:100, xlim=(-0.5, 10.5))
 # %%
 a = √(log((1+√(1+4*3^2))/2))
 plot_unbiased_std(dist=LogNormal(0, a), xtick=0:100, xlim=(-0.5, 10.5))
+
+# %%
+plot_unbiased_std(dist=LogNormal(0, a), n=30, xtick=0:100, xlim=(-0.5, 10.5))
 
 # %%
 plot_unbiased_std(dist=LogNormal(0, a), n=100, xtick=0:100, xlim=(-0.5, 10.5))
