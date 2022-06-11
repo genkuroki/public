@@ -72,11 +72,72 @@ plot_pvalue_functions(; n = 20, k = 0, f = Bool[1,0,1,0], z = 0)
 plot_pvalue_functions(; n = 20, k = 6, f = Bool[1,1,1,0], a=0.5, b=0.5)
 
 # %%
+using Roots
+using StatsFuns
+using DataFrames
+
+# %%
+function confint_clopper_pearson(n, k; α = 0.05)
+    p_L = k > 0 ? quantile(Beta(k, n-k+1), α/2) : zero(α)
+    p_U = k < n ? quantile(Beta(k+1, n-k), 1-α/2) : one(α)
+    [p_L, p_U]
+end
+
+# %%
+x ⪅ y = x < y || x ≈ y
+_pdf_le(x, (dist, y)) =  pdf(dist, x) ⪅ y
+
+function _search_boundary(f, x0, Δx, param)
+    x = x0
+    if f(x, param)
+        while f(x - Δx, param) x -= Δx end
+    else
+        x += Δx
+        while !f(x, param) x += Δx end
+    end
+    x
+end
+
+function pvalue_sterne(dist::DiscreteUnivariateDistribution, x)
+    Px = pdf(dist, x)
+    Px == 0 && return Px
+    Px == 1 && return Px
+    m = mode(dist)
+    Px ≈ pdf(dist, m) && return one(Px)
+    if x < m
+        y = _search_boundary(_pdf_le, 2m - x, 1, (dist, Px))
+        cdf(dist, x) + ccdf(dist, y-1)
+    else # x > m
+        y = _search_boundary(_pdf_le, 2m - x, -1, (dist, Px))
+        cdf(dist, y) + ccdf(dist, x-1)
+    end
+end
+
+function pvalue_sterne(n, k, p)
+    pvalue_sterne(Binomial(n, p), k)
+end
+
+# 大きな n についてもうまく行くように
+# Sterneの信頼区間の実装は難しい.
+function confint_sterne(n, k; α = 0.05)
+    a, b = confint_clopper_pearson(n, k; α = α/10)
+    ps = find_zeros(a-√eps(), b+√eps()) do p
+        logistic(0 < p ≤ 1 ? pvalue_sterne(n, k, p) : zero(p)) - logistic(α)
+    end
+    # 次の行は稀に区間にならない場合への対策
+    [first(ps), last(ps)]
+end
+
+# %%
+hcat(confint_sterne.(10, 0:10)...)'
+
+# %%
 function probabilities_of_type_I_error(; n = 100, z = 2, a = 1, b = 1, α = 0.05, L = 10^6)
     c_clopper_pearson = 0
     c_wilson_score = 0
     c_adjusted_wald = 0
     c_bayesian = 0
+    c_sterne = 0
     for i in 1:L
         p = rand()
         k = rand(Binomial(n, p))
@@ -84,28 +145,53 @@ function probabilities_of_type_I_error(; n = 100, z = 2, a = 1, b = 1, α = 0.05
         c_wilson_score += pvalue_wilson_score(n, k, p) < α
         c_adjusted_wald += pvalue_adjusted_wald(n, k, p; z) < α
         c_bayesian += pvalue_bayesian(n, k, p; a, b) < α
+        c_sterne += pvalue_sterne(n, k, p) < α
     end
-    (
-        p_clopper_pearson = c_clopper_pearson/L,
-        p_wilson_score = c_wilson_score/L,
-        p_adjusted_wald = c_adjusted_wald/L,
-        p_bayesian = c_bayesian/L
-    )
+    DataFrame(
+        method = [
+            "Clopper-Pearson",
+            "Sterne",
+            "adjusted Wald",
+            "Wilson score",
+            "Bayesian",
+        ],
+        var"prob. of α-error" = [
+            c_clopper_pearson,
+            c_sterne,
+            c_adjusted_wald,
+            c_wilson_score,
+            c_bayesian,
+        ]/L,
+        var"nominal α" = fill(α, 5),
+        var"sample size" = fill(n, 5),
+   )
 end
 
 # %%
-probabilities_of_type_I_error(n = 5, α = 0.05)
+@time probabilities_of_type_I_error(n = 5, α = 0.05)
 
 # %%
-probabilities_of_type_I_error(n = 20, α = 0.05)
+@time probabilities_of_type_I_error(n = 10, α = 0.05)
 
 # %%
-probabilities_of_type_I_error(n = 30, α = 0.05)
+@time probabilities_of_type_I_error(n = 20, α = 0.05)
 
 # %%
-probabilities_of_type_I_error(n = 50, α = 0.05)
+@time probabilities_of_type_I_error(n = 30, α = 0.05)
 
 # %%
-probabilities_of_type_I_error(n = 100, α = 0.05)
+@time probabilities_of_type_I_error(n = 50, α = 0.05)
+
+# %%
+@time probabilities_of_type_I_error(n = 100, α = 0.05)
+
+# %%
+@time probabilities_of_type_I_error(n = 200, α = 0.05)
+
+# %%
+@time probabilities_of_type_I_error(n = 300, α = 0.05)
+
+# %%
+@time probabilities_of_type_I_error(n = 1000, α = 0.05)
 
 # %%
