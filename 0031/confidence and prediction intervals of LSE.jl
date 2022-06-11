@@ -17,6 +17,8 @@
 # %%
 using Distributions
 using LinearAlgebra
+using Random
+Random.seed!(4649373)
 using StatsPlots
 default(fmt=:png, size=(400, 280), titlefontsize=10)
 
@@ -129,5 +131,14 @@ plot_pvalue_functions(x, y, (x->x^k for k in 0:5)...)
 
 # %%
 plot_pvalue_functions(x, y, (x->x^k for k in 0:11)...)
+
+# %%
+N = 50
+X = randn(N)
+Y = X + randn(N)
+scatter(X, Y; label="data", legend=:topleft, msc=:auto)
+
+# %%
+plot_pvalue_functions(X, Y, (x->x^k for k in 0:1)...)
 
 # %%
