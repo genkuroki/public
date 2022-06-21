@@ -43,6 +43,24 @@ safediv(x, y) = x == 0 ? x : isinf(y) ? zero(y) : x/y
 x ⪅ y = x < y || x ≈ y
 
 # %%
+function pvalue_wilson(n, k, p)
+    p̂ = k/n
+    SE = √(p*(1-p)/n)
+    2ccdf(Normal(), abs(p̂ - p)/SE)
+end
+
+function confint_wilson(n, k; α = 0.05)
+    p̂ = k/n
+    z = quantile(Normal(), 1-α/2)
+    a, b, c = 1+z^2/n, p̂+z^2/(2n), p̂^2
+    # ap² - 2bp + c = 0 を解く.
+    sqrtD = √(b^2 - a*c)
+    p_L = (b - sqrtD)/a
+    p_U = (b + sqrtD)/a
+    [p_L, p_U]
+end
+
+# %%
 oddsratiohat(a, b, c, d) = safediv(a*d, b*c)
 riskratiohat(a, b, c, d) = safediv(a*(c+d), (a+b)*c)
 
@@ -425,10 +443,11 @@ plot_probability_of_type_I_error(5, 100, 0.4)
 plot_probability_of_type_I_error(5, 100, 0.5)
 
 # %%
-function plot_betas(a=4, b=1, c=60, d=40;
+function plot_posteriors(a=4, b=1, c=60, d=40;
         γ = 0.5, δ = 0.5,
         xlim = confint_rr_pearson_chisq(a, b, c, d; α=1e-6),
         textpos = (1.7, 0.8),
+        show_annotation = true,
     )
     beta1 = Beta(a+γ, b+δ)
     beta2 = Beta(c+γ, d+δ)
@@ -451,16 +470,16 @@ function plot_betas(a=4, b=1, c=60, d=40;
     plot!(ρ -> pdfRR(beta1, beta2, ρ), first(xlim), 1; label="")
     vline!([1]; label="", ls=:dot, c=:black)
     plot!(; xguide="hypothetical success rate ratio p/q", yguide="density")
-    annotate!(textpos..., text("$(100round(prob_of_first_winning; digits=3))%", 12, :left, :blue))
+    show_annotation && annotate!(textpos..., text("$(100round(prob_of_first_winning; digits=3))%", 12, :left, :blue))
 
     plot(P, Q; size=(800, 250))
 end
 
 # %%
-plot_betas()
+plot_posteriors()
 
 # %%
-plot_betas(γ=1, δ=1)
+plot_posteriors(γ=1, δ=1)
 
 # %%
 P = plot(; legend=:bottomleft)
@@ -472,5 +491,46 @@ plot!(p -> ccdf(Binomial(5, p), 4-1), 0, 1; label="ccdf(Binomial(5, p), 4-1)")
 plot!(p -> cdf(Beta(4, 5-4+1), p); ls=:dash, label="cdf(Beta(4, 5-4+1), p)")
 
 plot(P, Q; size=(800, 250))
+
+# %%
+function plot_pvalues(a=4, b=1, c=60, d=40;
+        γ = 0.5, δ = 0.5,
+        xlim = confint_rr_pearson_chisq(a, b, c, d; α=1e-6),
+    )
+    (; pvalue_or_bayes, pvalue_rr_bayes) =
+        make_pvalue_functions_bayes(a, b, c, d; conjprior=(γ, δ))
+    beta1 = Beta(a+γ, b+δ)
+    beta2 = Beta(c+γ, d+δ)
+    
+    pvalue_beta1(p) = min(1, 2cdf(beta1, p), 2ccdf(beta1, p))
+    pvalue_beta2(p) = min(1, 2cdf(beta2, p), 2ccdf(beta2, p))
+    pvalue_rr_bayes(ρ) = min(1, 2cdfRR(beta1, beta2, ρ), 2(1-cdfRR(beta1, beta2, ρ)))
+    
+    P = plot(; legend=:topleft)
+    plot!(p -> pvalue_beta1(p), 0, 1; label="p ∼ Beta$(params(beta1))", c=1)
+    plot!(q -> pvalue_beta2(q), 0, 1; label="q ∼ Beta$(params(beta2))", c=2)
+    plot!(p -> pvalue_wilson(a+b, a, p), 0, 1; label="Wilson ($a, $b)", c=:blue, ls=:dash)
+    plot!(p -> pvalue_wilson(c+d, c, p), 0, 1; label="Wilson ($c, $d)", c=:red, ls=:dash)
+    plot!(; xguide="hypothetical success rate", yguide="P-value")
+    plot!(; xtick=0:0.1:1)
+    plot!(; leftmargin=4Plots.mm, bottommargin=4Plots.mm)
+
+    Q = plot()
+    plot!(ρ -> pvalue_rr_bayes(ρ), 1, last(xlim); label="", c=1)
+    plot!(ρ -> pvalue_rr_bayes(ρ), first(xlim), 1; label="", c=2)
+    plot!(ρ -> pvalue_rr_pearson_chisq(a, b, c, d; ρ), 1, last(xlim); label="", c=:blue, ls=:dash)
+    plot!(ρ -> pvalue_rr_pearson_chisq(a, b, c, d; ρ), first(xlim), 1; label="", c=:red, ls=:dash)
+    vline!([1]; label="", ls=:dot, c=:black)
+    plot!(; xguide="hypothetical success rate ratio p/q", yguide="P-value")
+    plot!(; ytick=0:0.1:1)
+
+    plot(P, Q; size=(800, 250))
+end
+
+# %%
+plot_pvalues()
+
+# %%
+plot(plot_posteriors(show_annotation=false), plot_pvalues(); size=(800, 500), layout=(2,1))
 
 # %%
