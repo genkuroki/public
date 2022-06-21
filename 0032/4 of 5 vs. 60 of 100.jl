@@ -27,11 +27,11 @@ using QuadGK
 #using RCall
 #using Random
 #Random.seed!(4649373)
-#using Roots
+using Roots
 #using SpecialFunctions
 #using StaticArrays
 using StatsBase
-#using StatsFuns
+using StatsFuns
 using StatsPlots
 default(fmt = :png, size = (500, 320),
     titlefontsize = 10, plot_titlefontsize = 12)
@@ -41,6 +41,10 @@ safemul(x, y) = x == 0 ? x : isinf(x) ? typeof(x)(Inf) : x*y
 safediv(x, y) = x == 0 ? x : isinf(y) ? zero(y) : x/y
 
 x ⪅ y = x < y || x ≈ y
+
+# %%
+oddsratiohat(a, b, c, d) = safediv(a*d, b*c)
+riskratiohat(a, b, c, d) = safediv(a*(c+d), (a+b)*c)
 
 # %%
 function delta(a, b, c, d; ω=1)
@@ -372,13 +376,13 @@ cdfRR(Beta(1.5, 4.5), Beta(40.5, 60.5), 1)
 
 # %%
 xlim = (1e-5, 2.5)
-plot(ρ -> pdfRR(Beta(2, 5), Beta(41, 61), ρ), xlim...; label="")
+plot(ρ -> pdfRR(Beta(1.5, 4.5), Beta(40.5, 60.5), ρ), xlim...; label="")
 vline!([1]; label="", ls=:dot, c=:black)
 plot!(; xguide="hypothetical risk ratio", yguide="density")
 
 # %%
 xlim = (1e-5, 2.5)
-plot(ρ -> pdfRR(Beta(1.5, 4.5), Beta(40.5, 60.5), ρ), xlim...; label="")
+plot(ρ -> pdfRR(Beta(2, 5), Beta(41, 61), ρ), xlim...; label="")
 vline!([1]; label="", ls=:dot, c=:black)
 plot!(; xguide="hypothetical risk ratio", yguide="density")
 
@@ -419,5 +423,43 @@ plot_probability_of_type_I_error(5, 100, 0.4)
 
 # %%
 plot_probability_of_type_I_error(5, 100, 0.5)
+
+# %%
+function plot_betas(a=4, b=1, c=60, d=40;
+        γ = 0.5, δ = 0.5,
+        xlim = confint_rr_pearson_chisq(a, b, c, d; α=1e-6),
+        textpos = (1.7, 0.8),
+    )
+    beta1 = Beta(a+γ, b+δ)
+    beta2 = Beta(c+γ, d+δ)
+    
+    @show 1 - pvalue_rr_pearson_chisq(a, b, c, d)/2
+    @show prob_of_second_winning = 1 - cdfRR(beta1, beta2, 1)
+    println()
+    @show pvalue_rr_pearson_chisq(a, b, c, d)
+    @show 2(1 - prob_of_second_winning)
+
+    P = plot(; legend=:topleft)
+    plot!(beta1; label="p ∼ Beta$(params(beta1))")
+    plot!(beta2; label="q ∼ Beta$(params(beta2))")
+    plot!(; xguide="hypothetical success rate", yguide="density")
+    plot!(; xtick=0:0.1:1)
+    plot!(; leftmargin=4Plots.mm, bottommargin=4Plots.mm)
+
+    Q = plot()
+    plot!(ρ -> pdfRR(beta1, beta2, ρ), 1, last(xlim); label="")
+    plot!(ρ -> pdfRR(beta1, beta2, ρ), first(xlim), 1; label="")
+    vline!([1]; label="", ls=:dot, c=:black)
+    plot!(; xguide="hypothetical success rate ratio p/q", yguide="density")
+    annotate!(textpos..., text("$(100round(prob_of_second_winning; digits=3))%", 12, :left, :blue))
+
+    plot(P, Q; size=(800, 250))
+end
+
+# %%
+plot_betas()
+
+# %%
+plot_betas(γ=1, δ=1)
 
 # %%
