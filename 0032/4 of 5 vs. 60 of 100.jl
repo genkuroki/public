@@ -434,10 +434,10 @@ function plot_betas(a=4, b=1, c=60, d=40;
     beta2 = Beta(c+γ, d+δ)
     
     @show 1 - pvalue_rr_pearson_chisq(a, b, c, d)/2
-    @show prob_of_second_winning = 1 - cdfRR(beta1, beta2, 1)
+    @show prob_of_first_winning = 1 - cdfRR(beta1, beta2, 1)
     println()
     @show pvalue_rr_pearson_chisq(a, b, c, d)
-    @show 2(1 - prob_of_second_winning)
+    @show 2(1 - prob_of_first_winning)
 
     P = plot(; legend=:topleft)
     plot!(beta1; label="p ∼ Beta$(params(beta1))")
@@ -451,7 +451,7 @@ function plot_betas(a=4, b=1, c=60, d=40;
     plot!(ρ -> pdfRR(beta1, beta2, ρ), first(xlim), 1; label="")
     vline!([1]; label="", ls=:dot, c=:black)
     plot!(; xguide="hypothetical success rate ratio p/q", yguide="density")
-    annotate!(textpos..., text("$(100round(prob_of_second_winning; digits=3))%", 12, :left, :blue))
+    annotate!(textpos..., text("$(100round(prob_of_first_winning; digits=3))%", 12, :left, :blue))
 
     plot(P, Q; size=(800, 250))
 end
