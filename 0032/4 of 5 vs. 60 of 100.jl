@@ -534,3 +534,6 @@ plot_pvalues()
 plot(plot_posteriors(show_annotation=false), plot_pvalues(); size=(800, 500), layout=(2,1))
 
 # %%
+plot(plot_posteriors(γ=1, δ=1, show_annotation=false), plot_pvalues(γ=1, δ=1); size=(800, 500), layout=(2,1))
+
+# %%
