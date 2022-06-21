@@ -142,3 +142,50 @@ scatter(X, Y; label="data", legend=:topleft, msc=:auto)
 plot_pvalue_functions(X, Y, (x->x^k for k in 0:1)...)
 
 # %%
+function plot_3d_pvalue_function(x, y, f...; α = 0.05, camera=(-45, 60), kwargs...)
+    n = length(x)
+    r = length(f)
+    X = [f(x) for x in x, f in f]
+    β̂ = X \ y
+    ŷ = X * β̂
+    
+    f̂(x) = sum(c * f(x) for (c, f) in zip(β̂, f))
+    s = norm(y - ŷ)/√(n - r)
+    xx(x) = [f(x) for f in f]
+    invXX = inv(X'X)
+    g(x) = s * √(xx(x)'invXX*xx(x))
+    G(x, y) = 2ccdf(TDist(n-r), abs(y - f̂(x))/g(x))
+    t = quantile(TDist(n - r), 1 - α/2)
+
+    a, b = extrema(x)
+    a, b = a - 0.05(b-a), b + 0.05(b-a)
+    xs = range(a, b, 400)
+    c, d = extrema(y)
+    c, d = c - 0.1t*(d-c), d + 0.1t*(d-c)
+    ys = range(c, d, 400)
+    
+    P = plot(; colorbar=false)
+    surface!(xs, ys, (x,y) -> G(x,y); camera, alpha=0.9)
+    scatter3d!(x, y, zeros(length(x)); label="", c=:cyan, msc=:auto)
+    plot!(; size=(600, 500))
+end
+
+# %%
+pyplot()
+plot_3d_pvalue_function(X, Y, (x->x^k for k in 0:1)...)
+
+# %%
+pyplot()
+@gif for t in 0:5:359
+    plot_3d_pvalue_function(X, Y, (x->x^k for k in 0:1)...; camera=(t, 60))
+end
+
+# %%
+gr()
+
+# %%
+@gif for t in 0:5:359
+    plot_3d_pvalue_function(X, Y, (x->x^k for k in 0:1)...; camera=(t, 60))
+end
+
+# %%
