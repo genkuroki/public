@@ -463,3 +463,14 @@ plot_betas()
 plot_betas(γ=1, δ=1)
 
 # %%
+P = plot(; legend=:bottomleft)
+plot!(p -> cdf(Binomial(5, p), 4), 0, 1; label="cdf(Binomial(5, p), 4)")
+plot!(p -> ccdf(Beta(4+1, 5-4), p); ls=:dash, label="ccdf(Beta(4+1, 5-4), p)")
+
+Q = plot(; legend=:topleft)
+plot!(p -> ccdf(Binomial(5, p), 4-1), 0, 1; label="ccdf(Binomial(5, p), 4-1)")
+plot!(p -> cdf(Beta(4, 5-4+1), p); ls=:dash, label="cdf(Beta(4, 5-4+1), p)")
+
+plot(P, Q; size=(800, 250))
+
+# %%
