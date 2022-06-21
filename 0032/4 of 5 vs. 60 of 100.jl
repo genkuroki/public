@@ -232,9 +232,6 @@ function make_pvalue_functions_bayes(a, b, c, d; conjprior=(1, 1), L=10^6)
 end
 
 # %%
-dump(a)
-
-# %%
 function logtick(; xlim=(0.03, 30))
     xmin, xmax = xlim
     a = floor(Int, log10(xmin))
