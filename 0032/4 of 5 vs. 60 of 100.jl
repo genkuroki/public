@@ -226,8 +226,13 @@ function make_pvalue_functions_bayes(a, b, c, d; conjprior=(1, 1), L=10^6)
     ecdf_rr = ecdf(@. p/q)
     pvalue_or_bayes(ω) = min(1, 2ecdf_or(ω), 2(1 - ecdf_or(ω)))
     pvalue_rr_bayes(ρ) = min(1, 2ecdf_rr(ρ), 2(1 - ecdf_rr(ρ)))
-    (; pvalue_or_bayes, pvalue_rr_bayes)
+    confint_or_bayes(α) = quantile.(Ref(ecdf_or.sorted_values), [α/2, 1-α/2])
+    confint_rr_bayes(α) = quantile.(Ref(ecdf_rr.sorted_values), [α/2, 1-α/2])
+    (; pvalue_or_bayes, pvalue_rr_bayes, confint_or_bayes, confint_rr_bayes)
 end
+
+# %%
+dump(a)
 
 # %%
 function logtick(; xlim=(0.03, 30))
@@ -496,15 +501,18 @@ plot(P, Q; size=(800, 250))
 function plot_pvalues(a=4, b=1, c=60, d=40;
         γ = 0.5, δ = 0.5,
         xlim = confint_rr_pearson_chisq(a, b, c, d; α=1e-6),
+        plot_confint = false,
+        α = 0.05,
     )
-    (; pvalue_or_bayes, pvalue_rr_bayes) =
-        make_pvalue_functions_bayes(a, b, c, d; conjprior=(γ, δ))
     beta1 = Beta(a+γ, b+δ)
     beta2 = Beta(c+γ, d+δ)
     
     pvalue_beta1(p) = min(1, 2cdf(beta1, p), 2ccdf(beta1, p))
     pvalue_beta2(p) = min(1, 2cdf(beta2, p), 2ccdf(beta2, p))
     pvalue_rr_bayes(ρ) = min(1, 2cdfRR(beta1, beta2, ρ), 2(1-cdfRR(beta1, beta2, ρ)))
+    confint_rr_bayes(α) = find_zeros(ρ -> pvalue_rr_bayes(ρ)-α, xlim...)
+    ci_rr_bayes = confint_rr_bayes(α)
+    ci_rr_pearson_chisq = confint_rr_pearson_chisq(a, b, c, d; α)
     
     P = plot(; legend=:topleft)
     plot!(p -> pvalue_beta1(p), 0, 1; label="p ∼ Beta$(params(beta1))", c=1)
@@ -515,11 +523,13 @@ function plot_pvalues(a=4, b=1, c=60, d=40;
     plot!(; xtick=0:0.1:1)
     plot!(; leftmargin=4Plots.mm, bottommargin=4Plots.mm)
 
-    Q = plot()
+    Q = plot(legend=:topright)
     plot!(ρ -> pvalue_rr_bayes(ρ), 1, last(xlim); label="", c=1)
     plot!(ρ -> pvalue_rr_bayes(ρ), first(xlim), 1; label="", c=2)
+    plot_confint && plot!(ci_rr_bayes, fill(α+0.01, 2); label="$(100(1-α))% BCI", c=:blue, lw=3, alpha=0.7)
     plot!(ρ -> pvalue_rr_pearson_chisq(a, b, c, d; ρ), 1, last(xlim); label="", c=:blue, ls=:dash)
     plot!(ρ -> pvalue_rr_pearson_chisq(a, b, c, d; ρ), first(xlim), 1; label="", c=:red, ls=:dash)
+    plot_confint && plot!(ci_rr_pearson_chisq, fill(α-0.01, 2); label="$(100(1-α))% CI", c=:red, lw=3, alpha=0.7)
     vline!([1]; label="", ls=:dot, c=:black)
     plot!(; xguide="hypothetical success rate ratio p/q", yguide="P-value")
     plot!(; ytick=0:0.1:1)
@@ -531,9 +541,26 @@ end
 plot_pvalues()
 
 # %%
-plot(plot_posteriors(show_annotation=false), plot_pvalues(); size=(800, 500), layout=(2,1))
+plot_pvalues(plot_confint=true)
 
 # %%
-plot(plot_posteriors(γ=1, δ=1, show_annotation=false), plot_pvalues(γ=1, δ=1); size=(800, 500), layout=(2,1))
+plot(plot_posteriors(show_annotation=false),
+    plot_pvalues();
+    size=(800, 500), layout=(2,1))
+
+# %%
+plot(plot_posteriors(show_annotation=false),
+    plot_pvalues(plot_confint=true);
+    size=(800, 500), layout=(2,1))
+
+# %%
+plot(plot_posteriors(γ=1, δ=1, show_annotation=false),
+    plot_pvalues(γ=1, δ=1);
+    size=(800, 500), layout=(2,1))
+
+# %%
+plot(plot_posteriors(γ=1, δ=1, show_annotation=false),
+    plot_pvalues(γ=1, δ=1, plot_confint=true);
+    size=(800, 500), layout=(2,1))
 
 # %%

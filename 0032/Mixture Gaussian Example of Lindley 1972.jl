@@ -70,3 +70,10 @@ for k in eachindex(X)
 end
 
 # %%
+P = plot(; legend=:topleft)
+for k in eachindex(X)
+    plot!(t -> f(X[k], -t), -2, 70; label="$k", ls=:auto)
+end
+P
+
+# %%
