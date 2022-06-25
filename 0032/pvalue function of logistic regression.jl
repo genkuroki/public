@@ -17,6 +17,7 @@
 # %%
 using Distributions
 using Optim
+using Random
 using Roots
 using StaticArrays
 using StatsFuns
@@ -103,7 +104,7 @@ end
 function chisqstat_β(x, y, β)
     α̃ = mle_β(x, y, β)
     v = score_β(x, y, α̃, β)
-    a, b, c = fisherinfo(x, y, α̃, β)
+    a, b, c = fisherinfo(x, α̃, β)
     cc = a/(a*c - b^2)
     v^2 * cc
 end
@@ -119,7 +120,7 @@ function sim_chisqstat_β(; α=1, β=2, n=40, L=10^4)
 end
 
 # %%
-C = sim_chisqstat_β(α=1, β=2, n=40, L=10^6)
+C = sim_chisqstat_β(α=1, β=2, n=40, L=10^5)
 stephist(C; norm=true, bin=0:0.1:7, label="score statistic of β")
 plot!(Chisq(1), 0.025, 7; label="Chisq(1)")
 
@@ -165,6 +166,7 @@ function plot_pvaluefunc(
     ps = range(0, 1, 100)
     pval = pvalue.(α̂, β̂, Ref(x), xs', ps)
     P = heatmap(xs, ps, pval; colorbar=false, xlim=extrema(xs))
+    plot!(x -> logistic(α + β*x); label="", c=:cyan, ls=:dash)
     scatter!(x, 1.06y .- 0.03; label="", c=1, msc=:auto, alpha=0.8)
     plot!(xguide="x", yguide="p")
     plot!(ytick=0:0.1:1)
@@ -173,12 +175,14 @@ function plot_pvaluefunc(
     logitps = range(-11, 10, 100)
     pval = pvalue.(α̂, β̂, Ref(x), xs', logistic.(logitps))
     Q = heatmap(xs, logitps, pval; colorbar=false)
+    plot!(x -> α + β*x; label="", c=:cyan, ls=:dash)
     plot!(xguide="x", yguide="logit(p)")
     plot!(leftmargin=8Plots.mm, bottommargin=4Plots.mm)
 
     plot(P, Q; size=(800, 300))
 end
 
+Random.seed!(4649373)
 plot_pvaluefunc()
 
 # %%
