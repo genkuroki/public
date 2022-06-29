@@ -55,3 +55,6 @@ plot(P1, P2; size=(800, 250),
     leftmargin=4Plots.mm, bottommargin=4Plots.mm)
 
 # %%
+pvalue_clopper_pearson.(n, k, ci)
+
+# %%
