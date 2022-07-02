@@ -21,20 +21,16 @@ default(fmt=:png, titlefontsize=12)
 
 # %%
 function sim_binomial(n, k, ps; L=10^5)
-    cnt = similar(ps, Int)
+    lik = similar(ps)
     @threads for i in eachindex(ps)
         bin = Binomial(n, ps[i])
-        cnt[i] = 0
-        for _ in 1:L
-            cnt[i] += rand(bin) == k
-        end
+        lik[i] = mean(rand(bin) == k for _ in 1:L) # likelihood
     end
-    lik = cnt/L # likelihood
-    ps, lik
+    lik
 end
 
 function plot_sim_binomial(n, k, ps; L=10^5, kwargs...)
-    @time ps, lik = sim_binomial(n, k, ps; L)
+    @time lik = sim_binomial(n, k, ps; L)
     plot(ps, lik; label="", kwargs...)
 end
 
