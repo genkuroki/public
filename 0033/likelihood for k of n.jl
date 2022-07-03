@@ -62,3 +62,32 @@ plot(p -> pdf(Binomial(1000, p), 999), 0.98, 1; label="")
 plot(p -> pdf(Binomial(1000, p), 1000), 0.98, 1; label="")
 
 # %%
+ps = 0.98:0.001:1
+
+# %%
+for p in ps
+    print(p, " ")
+end
+
+# %%
+lik = similar(ps)
+
+# %%
+?:
+
+# %%
+?similar
+
+# %%
+?pdf
+
+# %%
+?cdf
+
+# %%
+n, k = 1000, 967
+ps = 0.94:0.0001:0.985
+plot(ps, p -> cdf(Binomial(n, p), k); label="cdf(Binomial(n, p), k)")
+plot!(ps, p -> ccdf(Beta(k+1, n-k), p); label="ccdf(Beta(k+1, n-k), p)", ls=:dash)
+
+# %%
