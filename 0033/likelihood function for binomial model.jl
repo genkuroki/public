@@ -45,3 +45,25 @@ plot!(k -> pdf(Normal(n*p, √(n*p*(1-p))), k);
     label="k -> pdf(Normal(n*p, √(n*p*(1-p))))", ls=:dash)
 
 # %%
+using Distributions
+using StatsFuns
+using StatsPlots
+default(fmt=:png, titlefontsize=10)
+
+n, k = 100, 90
+plot(legend=:topleft)
+plot!(x -> (p=logistic(x); pdf(Binomial(n, p), k)), logit(0.66), logit(0.985); label="")
+plot!(x -> (p=logistic(x); p̂=k/n; pdf(Normal(x, 1/√(n*p*(1-p))), logit(p̂))*p̂*(1-p̂)); label="", ls=:dash)
+plot!(x -> (p=logistic(x); p̂=k/n; pdf(Normal(x, 1/√(n*p*(1-p))), logit(p̂))*p*(1-p)); label="", ls=:dashdot)
+
+# %%
+using Distributions
+using StatsFuns
+using StatsPlots
+default(fmt=:png, titlefontsize=10)
+
+n, k = 100, 95
+plot(legend=:topleft)
+plot!(x -> (p=logistic(x); pdf(Binomial(n, p), k)), logit(0.7), logit(0.993); label="")
+
+# %%
