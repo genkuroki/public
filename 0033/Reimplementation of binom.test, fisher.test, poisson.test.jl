@@ -167,7 +167,40 @@ plot!(ω -> pvalue_oddsratio_bayes(ω), 0.3, 30;
     label="Bayes (prior = Beta$(params(conjprior)))", ls=:dash)
 vline!([1]; label="", c=:black, ls=:dot)
 plot!(xscale=:log10, xtick=(xtick, string.(xtick)), ytick=0:0.05:1)
-plot!(xguide="parameter OR", yguide="P-value")
+plot!(xguide="parameter OR = (p/(1-p))/(q/(1-q))", yguide="P-value")
+title!("P-value functions for data [$a $b; $c $d]")
+plot!(legend=:topleft)
+
+# %%
+using StatsBase: ecdf
+
+function pvalue_rateratio_wald(a, b, c, d, ρ=1.0)
+    (a+b == 0 || c+d == 0) && return 1.0
+    logRRhat = log(safediv(a*(c+d), (a+b)*c))
+    SEhat_logRRhat = √(1/a - 1/(a+b) + 1/c - 1/(c+d))
+    2ccdf(Normal(), safediv(abs(logRRhat - log(ρ)), SEhat_logRRhat))
+end
+
+function make_pvalue_rateratio_bayes(a, b, c, d, ρ=1.0; L=10^6)
+    (a+b == 0 || c+d == 0) && return ω -> 1.0
+    bin1, bin2 = Binomial(a+b, safediv(a, a+b)), Binomial(c+d, safediv(c, c+d))
+    post1, post2 = posterior(bin1, a), posterior(bin2, c)
+    p, q = rand(post1, L), rand(post2, L)
+    rr = @. safediv(p, q)
+    ecdf_rr = ecdf(rr)
+    pvalue_rateratio_bayes(ρ) = min(1, 2ecdf_rr(ρ), 2(1-ecdf_rr(ρ)))
+end
+
+a, b, c, d = 15, 5, 9, 11
+pvalue_rateratio_bayes = make_pvalue_rateratio_bayes(a, b, c, d)
+
+xtick = Any[0.05, 0.1, 0.2, 0.3, 0.5, 1, 2, 3, 5, 10, 20, 30, 50, 100]
+plot(ρ -> pvalue_rateratio_wald(a, b, c, d, ρ), 0.5, 5; label="Wald")
+plot!(ρ -> pvalue_rateratio_bayes(ρ), 0.5, 5;
+    label="Bayes (prior = Beta$(params(conjprior)))", ls=:dash)
+vline!([1]; label="", c=:black, ls=:dot)
+plot!(xscale=:log10, xtick=(xtick, string.(xtick)), ytick=0:0.05:1)
+plot!(xguide="parameter RR = p/q", yguide="P-value")
 title!("P-value functions for data [$a $b; $c $d]")
 plot!(legend=:topleft)
 
