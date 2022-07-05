@@ -99,7 +99,7 @@ pvals = [
     [rcopy(poisson_test(x, λ))[:p_value] for x in datas]
 ]
 @show model datas
-plot(datas, pvals; label, ls, xtick=datas, ytick, xguide="data a", yguide)
+plot(datas, pvals; label, ls, xtick=datas, ytick, xguide="data", yguide)
 title!("Poisson test for λ=$λ")
 
 # %%
