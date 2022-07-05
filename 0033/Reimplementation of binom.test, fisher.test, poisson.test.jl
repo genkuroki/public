@@ -87,7 +87,7 @@ pvals = [
 ]
 @show model datas
 plot(datas, pvals; label, ls, xtick=datas, ytick, xguide="data a", yguide)
-title!("fisher test for a+b=$m, c+d=$n, a+c=$r")
+title!("Fisher test for a+b=$m, c+d=$n, a+c=$r")
 
 # %%
 λ = 5
