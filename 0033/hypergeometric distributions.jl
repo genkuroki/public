@@ -68,19 +68,31 @@ plot_likelihoods()
 plot_likelihoods(ws=4700:5000, rs=700:1000)
 
 # %%
-plot_likelihoods(x -> log(x+1e-4); ws=4700:5000, rs=700:1000,
-    plot_line=true, colorbar=false, title="line: x-(5000-24) : y-(1000-26) = 24 : 26")
-
-# %%
 plot_likelihoods(ws=4900:5000, rs=900:1000)
 
 # %%
-plot_likelihoods(ws=4965:4977, rs=965:975)
+plot_likelihoods(ws=4960:4977, rs=960:975)
 
 # %%
 plot_likelihoods(ws=4700:4950, rs=700:950, title="likelihoods")
 
 # %%
 plot_likelihoods(ws=4700:4900, rs=700:900, title="likelihoods")
+
+# %%
+plot_likelihoods(p -> log(p + 1e-4); colorbar=false,
+    plot_line=true, title="line: x-(5000-24) : y-(1000-26) = 24 : 26")
+
+# %%
+plot_likelihoods(p -> log(p + 1e-4); ws=3500:5000, colorbar=false,
+    plot_line=true, title="line: x-(5000-24) : y-(1000-26) = 24 : 26")
+
+# %%
+plot_likelihoods(p -> log(p + 1e-4); ws=4700:5000, rs=700:1000, colorbar=false,
+    plot_line=true, title="line: x-(5000-24) : y-(1000-26) = 24 : 26")
+
+# %%
+plot_likelihoods(p -> log(p + 1e-4); ws=4900:5000, rs=900:1000, colorbar=false,
+    plot_line=true, title="line: x-(5000-24) : y-(1000-26) = 24 : 26")
 
 # %%
