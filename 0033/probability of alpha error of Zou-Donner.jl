@@ -18,7 +18,8 @@
 using Distributions
 using StatsBase
 using StatsPlots
-default(fmt=:png, titlefontsize=10, tickfontsize=6, size=(400, 250))
+default(fmt=:png, titlefontsize=8, tickfontsize=6, size=(400, 250),
+    plot_titlefontsize=10)
 safemul(x, y) = x == 0 ? x : isinf(x) ? typeof(x)(Inf) : x*y
 safediv(x, y) = x == 0 ? x : isinf(y) ? zero(y) : x/y
 
@@ -205,122 +206,51 @@ end
 
 function plot_alphaerrors(m, n, p, q=p; L=10^5, kwargs...)
     (; F_wald, F_zou_donnerb, F_chisq) = sim_alphaerrors(m, n, p, q)
-    plot(legend=:topleft)
+    plot(legend=:bottomright)
     plot!(F_zou_donnerb, 0, 0.1; label="ZD")
     plot!(F_wald, 0, 0.1; label="Wald", ls=:dash)
     plot!(F_chisq, 0, 0.1; label="chisq", ls=:dashdot)
     plot!(identity, 0, 0.1; label="", c=:red, ls=:dot, alpha=0.7)
-    plot!(xtick=0:0.01:1, ytick=0:0.01:1)
+    plot!(xtick=0:0.01:1, ytick=0:0.01:1, xrotation=30)
+    title!("Bin(m=$m, p=$p)×Bin(n=$n, q=$q)")
     plot!(size=(400, 400))
     plot!(; kwargs...)
 end
 
-# %%
-m, n, p = 10, 20, 0.2
-PP = []
-for q in (0.1, 0.2, 0.3, 0.4)
-    P = plot_alphaerrors(m, n, p, q)
-    push!(PP, P)
+function plot_alphaerrors3x3(m, n; L=10^5, kwargs...)
+    for p in 0.1:0.1:0.5
+        PP = []
+        for q in 0.1:0.1:0.9
+            P = plot_alphaerrors(m, n, p, q; L, kwargs...)
+            push!(PP, P)
+        end
+        plot(PP...; size=(800, 840), layout=(3, 3))
+        plot!(plot_title="m = $m, n = $n, p = $p") |> display
+    end
 end
-plot(PP...; size=(800, 800), layout=(2, 2))
 
 # %%
-m, n, p = 10, 20, 0.4
-PP = []
-for q in (0.1, 0.2, 0.3, 0.4)
-    P = plot_alphaerrors(m, n, p, q)
-    push!(PP, P)
-end
-plot(PP...; size=(800, 800), layout=(2, 2))
+plot_alphaerrors3x3(10, 20)
 
 # %%
-m, n, p = 20, 40, 0.2
-PP = []
-for q in (0.1, 0.2, 0.3, 0.4)
-    P = plot_alphaerrors(m, n, p, q)
-    push!(PP, P)
-end
-plot(PP...; size=(800, 800), layout=(2, 2))
+plot_alphaerrors3x3(20, 40)
 
 # %%
-m, n, p = 20, 40, 0.4
-PP = []
-for q in (0.1, 0.2, 0.3, 0.4)
-    P = plot_alphaerrors(m, n, p, q)
-    push!(PP, P)
-end
-plot(PP...; size=(800, 800), layout=(2, 2))
+plot_alphaerrors3x3(30, 60)
 
 # %%
-m, n, p = 30, 60, 0.2
-PP = []
-for q in (0.1, 0.2, 0.3, 0.4)
-    P = plot_alphaerrors(m, n, p, q)
-    push!(PP, P)
-end
-plot(PP...; size=(800, 800), layout=(2, 2))
+plot_alphaerrors3x3(40, 80)
 
 # %%
-m, n, p = 30, 60, 0.4
-PP = []
-for q in (0.1, 0.2, 0.3, 0.4)
-    P = plot_alphaerrors(m, n, p, q)
-    push!(PP, P)
-end
-plot(PP...; size=(800, 800), layout=(2, 2))
+plot_alphaerrors3x3(10, 10)
 
 # %%
-m, n, p = 40, 80, 0.2
-PP = []
-for q in (0.1, 0.2, 0.3, 0.4)
-    P = plot_alphaerrors(m, n, p, q)
-    push!(PP, P)
-end
-plot(PP...; size=(800, 800), layout=(2, 2))
+plot_alphaerrors3x3(20, 20)
 
 # %%
-m, n, p = 40, 80, 0.4
-PP = []
-for q in (0.1, 0.2, 0.3, 0.4)
-    P = plot_alphaerrors(m, n, p, q)
-    push!(PP, P)
-end
-plot(PP...; size=(800, 800), layout=(2, 2))
+plot_alphaerrors3x3(30, 30)
 
 # %%
-m, n, p = 50, 100, 0.2
-PP = []
-for q in (0.1, 0.2, 0.3, 0.4)
-    P = plot_alphaerrors(m, n, p, q)
-    push!(PP, P)
-end
-plot(PP...; size=(800, 800), layout=(2, 2))
-
-# %%
-m, n, p = 50, 100, 0.4
-PP = []
-for q in (0.1, 0.2, 0.3, 0.4)
-    P = plot_alphaerrors(m, n, p, q)
-    push!(PP, P)
-end
-plot(PP...; size=(800, 800), layout=(2, 2))
-
-# %%
-m, n, p = 100, 200, 0.2
-PP = []
-for q in (0.1, 0.2, 0.3, 0.4)
-    P = plot_alphaerrors(m, n, p, q)
-    push!(PP, P)
-end
-plot(PP...; size=(800, 800), layout=(2, 2))
-
-# %%
-m, n, p = 100, 200, 0.4
-PP = []
-for q in (0.1, 0.2, 0.3, 0.4)
-    P = plot_alphaerrors(m, n, p, q)
-    push!(PP, P)
-end
-plot(PP...; size=(800, 800), layout=(2, 2))
+plot_alphaerrors3x3(40, 40)
 
 # %%
