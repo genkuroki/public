@@ -112,27 +112,27 @@ g(x) = @views f(x) ≥ 0 ? lik[1+round(Int, x), 1+round(Int, f(x))] : 0.0
 
 # %%
 plot(g, 4000, 5000; label="", xguide="x")
-title!("maximum of likelihoods for w=0,1,…,round(x), r=0,1,…,round(y),\nwhere x-(5000-24) : y-(1000-26) = 24 : 26")
+title!("likelihood of (w, r) = (x, y(x)) \nwhere 5000-x : 1000-y(x) = 24 : 26")
 
 # %%
 plot(g, 4000, 5000; label="", xguide="x")
-title!("maximum of likelihoods for w=0,1,…,round(x), r=0,1,…,round(y),\nwhere x-(5000-24) : y-(1000-26) = 24 : 26")
+title!("likelihood of (w, r) = (x, y(x)) \nwhere 5000-x : 1000-y(x) = 24 : 26")
 
 # %%
 plot(g, 4700, 5000; label="", xguide="x")
-title!("maximum of likelihoods for w=0,1,…,round(x), r=0,1,…,round(y),\nwhere x-(5000-24) : y-(1000-26) = 24 : 26")
+title!("likelihood of (w, r) = (x, y(x)) \nwhere 5000-x : 1000-y(x) = 24 : 26")
 
 # %%
 plot(g, 4800, 5000; label="", xguide="x")
-title!("maximum of likelihoods for w=0,1,…,round(x), r=0,1,…,round(y),\nwhere x-(5000-24) : y-(1000-26) = 24 : 26")
+title!("likelihood of (w, r) = (x, y(x)) \nwhere 5000-x : 1000-y(x) = 24 : 26")
 
 # %%
 plot(g, 4800, 5000-50; label="", xguide="x")
-title!("maximum of likelihoods for w=0,1,…,round(x), r=0,1,…,round(y),\nwhere x-(5000-24) : y-(1000-26) = 24 : 26")
+title!("likelihood of (w, r) = (x, y(x)) \nwhere 5000-x : 1000-y(x) = 24 : 26")
 
 # %%
 plot(g, 4950, 5000-20; label="", xguide="x")
-title!("maximum of likelihoods for w=0,1,…,round(x), r=0,1,…,round(y),\nwhere x-(5000-24) : y-(1000-26) = 24 : 26")
+title!("likelihood of (w, r) = (x, y(x)) \nwhere 5000-x : 1000-y(x) = 24 : 26")
 
 # %%
 function _pvalue(w, r; a=43, b=7, c=24, d=26, W=5000, R=1000)
@@ -244,15 +244,15 @@ h(5000-24)
 
 # %%
 plot(h, 4000, 5000; label="", xguide="x")
-title!("pvalues for (w, r) = (x, y(x)) \nwhere x-(5000-24) : y(x)-(1000-26) = 24 : 26")
+title!("pvalue of (w, r) = (x, y(x)) \nwhere 5000-x : 1000-y(x) = 24 : 26")
 
 # %%
 plot(h, 4700, 5000; label="", xguide="x")
-title!("pvalues for (w, r) = (x, y(x)) \nwhere x-(5000-24) : y(x)-(1000-26) = 24 : 26")
+title!("pvalue of (w, r) = (x, y(x)) \nwhere 5000-x : 1000-y(x) = 24 : 26")
 
 # %%
 plot(h, 4800, 4830; label="", xguide="x")
-title!("pvalues for (w, r) = (x, y(x)) \nwhere x-(5000-24) : y(x)-(1000-26) = 24 : 26")
+title!("pvalue of (w, r) = (x, y(x)) \nwhere 5000-x : 1000-y(x) = 24 : 26")
 
 # %%
 h.(4814:4820)
