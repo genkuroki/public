@@ -22,6 +22,7 @@ using Distributions
 using StatsPlots
 default(fmt=:png, titlefontsize=10, tickfontsize=6)
 using Memoization
+using SymPy
 
 function _likelihood(w, r; a=43, b=7, c=24, d=26, W=5000, R=1000)
     a+b ≤ w+r || return 0.0
@@ -46,21 +47,24 @@ end
 
 function plot_likelihoods(f = identity;
         a=43, b=7, c=24, d=26, W=5000, R=1000,
-        ws=0:W, rs=0:R, color=:CMRmap, colorbar=true,
+        ws=0:W, rs=0:R, color=:CMRmap, colorbar=true, clims=nothing,
         plot_line=false, plot_contourf=false, 
         title="", kwargs...)
     (; lik, Ws, Rs) = calculate_likelihoods(; a, b, c, d, W, R)
     xidx, yidx = 1 .+ ws, 1 .+ rs
-    if plot_contourf
-        contourf(Ws[xidx], Rs[yidx], f.(lik[xidx, yidx])'; color, colorbar)
-    else
-        heatmap(Ws[xidx], Rs[yidx], f.(lik[xidx, yidx])'; color, colorbar)
+    @views if isnothing(clims)
+        likmin, likmax = extrema(f, lik[xidx, yidx])
+        clims = (likmin - 0.05(likmax - likmin), likmax)
     end
-    plot_line && plot!(x -> (d/c)*(x - (W-c)) + (R-d); label="", c=:cyan)
-    plot!(xlim=extrema(Ws[xidx]), ylim=extrema(Rs[yidx]))
+    @views if plot_contourf
+        contourf(Ws[xidx], Rs[yidx], f.(lik[xidx, yidx])'; color, colorbar, clims, kwargs...)
+    else
+        heatmap(Ws[xidx], Rs[yidx], f.(lik[xidx, yidx])'; color, colorbar, clims, kwargs...)
+    end
+    plot_line && plot!(x -> (d/c)*(x - W) + R; label="", c=:cyan)
+    @views plot!(xlim=extrema(Ws[xidx]), ylim=extrema(Rs[yidx]))
     plot!(xguide="w", yguide="r")
     title!(title)
-    plot!(; kwargs...)
 end
 
 # %%
@@ -73,7 +77,7 @@ plot_likelihoods(ws=4700:5000, rs=700:1000, title="likelihoods")
 plot_likelihoods(ws=4900:5000, rs=900:1000, title="likelihoods")
 
 # %%
-plot_likelihoods(ws=4960:4977, rs=960:975, title="likelihoods")
+plot_likelihoods(ws=4960:4978, rs=960:976, title="likelihoods")
 
 # %%
 plot_likelihoods(ws=4700:4950, rs=700:950, title="likelihoods")
@@ -83,24 +87,24 @@ plot_likelihoods(ws=4700:4900, rs=700:900, title="likelihoods")
 
 # %%
 plot_likelihoods(p -> log(p + 1e-4); colorbar=false,
-    plot_line=true, title="likelihoods\nline: x-(5000-24) : y-(1000-26) = 24 : 26")
+    plot_line=true, title="likelihoods\nline:  5000-w : 1000-r = 24 : 26")
 
 # %%
 plot_likelihoods(p -> log(p + 1e-4); ws=3000:5000, colorbar=false,
-    plot_line=true, title="likelihoods\nline: x-(5000-24) : y-(1000-26) = 24 : 26")
+    plot_line=true, title="likelihoods\nline:  5000-w : 1000-r = 24 : 26")
 
 # %%
 plot_likelihoods(p -> log(p + 1e-4); ws=4700:5000, rs=700:1000, colorbar=false,
-    plot_line=true, title="likelihoods\nline: x-(5000-24) : y-(1000-26) = 24 : 26")
+    plot_line=true, title="likelihoods\nline:  5000-w : 1000-r = 24 : 26")
 
 # %%
 plot_likelihoods(p -> log(p + 1e-4); ws=4900:5000, rs=900:1000, colorbar=false,
-    plot_line=true, title="likelihoods\nline: x-(5000-24) : y-(1000-26) = 24 : 26")
+    plot_line=true, title="likelihoods\nline:  5000-w : 1000-r = 24 : 26")
 
 # %%
-f(x) = (26/24)*(x - (5000-24)) + (1000-26)
-plot_likelihoods(p -> log(p + 1e-4); ws=3000:5000, colorbar=false)
-plot!(x -> f(x); label="likelihoods", c=:white)
+f(x) = (26/24)*(x - 5000) + 1000
+plot_likelihoods(p -> log(p + 1e-4); ws=3000:5000, colorbar=false, label="likelihoods")
+plot!(x -> f(x); label="", c=:white)
 
 # %%
 (; lik, Ws, Rs) = calculate_likelihoods()
@@ -154,17 +158,21 @@ end
 
 function plot_pvalues(f = identity;
         a=43, b=7, c=24, d=26, W=5000, R=1000,
-        ws=0:W, rs=0:R, color=:CMRmap, colorbar=true,
+        ws=0:W, rs=0:R, color=:CMRmap, colorbar=true, clims=nothing,
         plot_line=false, plot_contourf=false, 
         title="", kwargs...)
     (; pval, Ws, Rs) = calculate_pvalues(; a, b, c, d, W, R)
     xidx, yidx = 1 .+ ws, 1 .+ rs
-    if plot_contourf
-        contourf(Ws[xidx], Rs[yidx], f.(pval[xidx, yidx])'; color, colorbar, kwargs...)
-    else
-        heatmap(Ws[xidx], Rs[yidx], f.(pval[xidx, yidx])'; color, colorbar, kwargs...)
+    @views if isnothing(clims)
+        pvalmin, pvalmax = extrema(f, pval[xidx, yidx])
+        clims = (pvalmin - 0.05(pvalmax - pvalmin), pvalmax)
     end
-    plot_line && plot!(x -> (d/c)*(x - (W-c)) + (R-d); label="", c=:cyan)
+    if plot_contourf
+        contourf(Ws[xidx], Rs[yidx], f.(pval[xidx, yidx])'; color, colorbar, clims, kwargs...)
+    else
+        heatmap(Ws[xidx], Rs[yidx], f.(pval[xidx, yidx])'; color, colorbar, clims, kwargs...)
+    end
+    plot_line && plot!(x -> (d/c)*(x - W) + R; label="", c=:cyan)
     plot!(xlim=extrema(Ws[xidx]), ylim=extrema(Rs[yidx]))
     plot!(xguide="w", yguide="r")
     title!(title)
@@ -190,36 +198,42 @@ plot_pvalues(ws=4700:4900, rs=700:900, title="pvalues")
 
 # %%
 plot_pvalues(p -> log(p + 1e-4); colorbar=false,
-    plot_line=true, title="pvalues\nline: x-(5000-24) : y-(1000-26) = 24 : 26")
+    plot_line=true, title="pvalues\nline:  5000-w : 1000-r = 24 : 26")
 
 # %%
 plot_pvalues(p -> log(p + 1e-4); ws=3000:5000, colorbar=false,
-    plot_line=true, title="pvalues\nline: x-(5000-24) : y-(1000-26) = 24 : 26")
+    plot_line=true, title="pvalues\nline:  5000-w : 1000-r = 24 : 26")
 
 # %%
 plot_pvalues(p -> log(p + 1e-4); ws=4700:5000, rs=700:1000, colorbar=false,
-    plot_line=true, title="pvalues\nline: x-(5000-24) : y-(1000-26) = 24 : 26")
+    plot_line=true, title="pvalues\nline:  5000-w : 1000-r = 24 : 26")
 
 # %%
 plot_pvalues(p -> log(p + 1e-4); ws=4900:5000, rs=900:1000, colorbar=false,
-    plot_line=true, title="pvalues\nline: x-(5000-24) : y-(1000-26) = 24 : 26")
+    plot_line=true, title="pvalues\nline:  5000-w : 1000-r = 24 : 26")
 
 # %%
 f(x) = (26/24)*(x - (5000-24)) + (1000-26)
-plot_pvalues(p -> log(p + 1e-4); ws=3000:5000, colorbar=false)
-plot!(x -> f(x); label="pvalues", c=:white)
+plot_pvalues(p -> log(p + 1e-4); ws=3000:5000, colorbar=false, title="pvalues")
+plot!(x -> f(x); label="", c=:white)
 
 # %%
 α = 0.1
-plot_pvalues(p -> p ≥ α ? p : 0.0; ws=3000:5000, clims=(-0.1, 1.8), title="max($α, pvalues)")
+plot_pvalues(p -> p ≥ α ? p : 0.0; ws=3000:5000, title="max($α, pvalues)")
 
 # %%
 α = 0.05
-plot_pvalues(p -> p ≥ α ? p : 0.0; ws=3000:5000, clims=(-0.1, 1.8), title="max($α, pvalues)")
+plot_pvalues(p -> p ≥ α ? p : 0.0; ws=3000:5000, title="max($α, pvalues)")
 
 # %%
 α = 0.01
-plot_pvalues(p -> p ≥ α ? p : 0.0; ws=3000:5000, clims=(-0.1, 1.8), title="max($α, pvalues)")
+plot_pvalues(p -> p ≥ α ? p : 0.0; ws=3000:5000, title="max($α, pvalues)")
+
+# %%
+plot_pvalues(ws=3000:5000, title="pvalues")
+
+# %%
+plot_likelihoods(p -> clamp(p, 0.0, 0.05); ws=3000:5000, title="min(likelihoods, 0.05)")
 
 # %%
 (; pval, Ws, Rs) = calculate_pvalues()
