@@ -75,7 +75,7 @@ end
 @show confint_rd_wald(1, 0, 0, 1) confint_rd_wald(1, 1e-4, 1e-8, 1);
 
 # %%
-function pvalue_rd_zou_donnerb(a, b, c, d; Δ=0)
+function pvalue_rd_zou_donner(a, b, c, d; Δ=0)
     ((a==0 && d==0) || (b==0 && c==0)) && return 1.0
     RDhat = riskdiffhat(a, b, c, d)
     SEhat_riskdiffhat = stderr_riskdiffhat(a, b, c, d)
@@ -83,7 +83,7 @@ function pvalue_rd_zou_donnerb(a, b, c, d; Δ=0)
     2ccdf(Normal(), abs(Z))
 end
 
-function confint_rd_zou_donnerb(a, b, c, d; α=0.05)
+function confint_rd_zou_donner(a, b, c, d; α=0.05)
     z = quantile(Normal(), 1-α/2)
     RDhat = riskdiffhat(a, b, c, d)
     SEhat_riskdiffhat = stderr_riskdiffhat(a, b, c, d)
@@ -93,28 +93,19 @@ function confint_rd_zou_donnerb(a, b, c, d; α=0.05)
 end
 
 # %%
-@show confint_rd_zou_donnerb(0, 1, 1, 1) confint_rd_zou_donnerb(1e-4, 1, 1, 1)
-@show confint_rd_zou_donnerb(1, 0, 1, 1) confint_rd_zou_donnerb(1, 1e-4, 1, 1)
-@show confint_rd_zou_donnerb(1, 1, 0, 1) confint_rd_zou_donnerb(1, 1, 1e-4, 1)
-@show confint_rd_zou_donnerb(1, 1, 1, 0) confint_rd_zou_donnerb(1, 1, 1, 1e-4)
-@show confint_rd_zou_donnerb(0, 0, 1, 1) confint_rd_zou_donnerb(1e-4, 1e-8, 1, 1)
-@show confint_rd_zou_donnerb(1, 1, 0, 0) confint_rd_zou_donnerb(1, 1, 1e-4, 1e-8)
-@show confint_rd_zou_donnerb(0, 1, 0, 1) confint_rd_zou_donnerb(1e-4, 1, 1e-8, 1)
-@show confint_rd_zou_donnerb(1, 0, 1, 0) confint_rd_zou_donnerb(1, 1e-4, 1, 1e-8)
-@show confint_rd_zou_donnerb(0, 1, 1, 0) confint_rd_wald(1e-4, 1, 1, 1e-8)
-@show confint_rd_zou_donnerb(1, 0, 0, 1) confint_rd_wald(1, 1e-4, 1e-8, 1);
+@show confint_rd_zou_donner(0, 1, 1, 1) confint_rd_zou_donner(1e-4, 1, 1, 1)
+@show confint_rd_zou_donner(1, 0, 1, 1) confint_rd_zou_donner(1, 1e-4, 1, 1)
+@show confint_rd_zou_donner(1, 1, 0, 1) confint_rd_zou_donner(1, 1, 1e-4, 1)
+@show confint_rd_zou_donner(1, 1, 1, 0) confint_rd_zou_donner(1, 1, 1, 1e-4)
+@show confint_rd_zou_donner(0, 0, 1, 1) confint_rd_zou_donner(1e-4, 1e-8, 1, 1)
+@show confint_rd_zou_donner(1, 1, 0, 0) confint_rd_zou_donner(1, 1, 1e-4, 1e-8)
+@show confint_rd_zou_donner(0, 1, 0, 1) confint_rd_zou_donner(1e-4, 1, 1e-8, 1)
+@show confint_rd_zou_donner(1, 0, 1, 0) confint_rd_zou_donner(1, 1e-4, 1, 1e-8)
+@show confint_rd_zou_donner(0, 1, 1, 0) confint_rd_wald(1e-4, 1, 1, 1e-8)
+@show confint_rd_zou_donner(1, 0, 0, 1) confint_rd_wald(1, 1e-4, 1e-8, 1);
 
 # %%
-function pvalue_rd_zou_donnerb_prime(a, b, c, d; Δ=0)
-    ((a==0 && d==0) || (b==0 && c==0)) && return 1.0
-    RDhat = riskdiffhat(a, b, c, d)
-    SEhat_riskdiffhat = stderr_riskdiffhat(a, b, c, d)
-    Z = safediv((1 - Δ^2)*abs(atanh(RDhat) - atanh(Δ)), SEhat_riskdiffhat)
-    2ccdf(Normal(), abs(Z))
-end
-
-# %%
-function pvalue_rd_zou_donnerb_prime(a, b, c, d; Δ=0)
+function pvalue_rd_zou_donner_prime(a, b, c, d; Δ=0)
     ((a==0 && d==0) || (b==0 && c==0)) && return 1.0
     RDhat = riskdiffhat(a, b, c, d)
     SEhat_riskdiffhat = stderr_riskdiffhat(a, b, c, d)
@@ -124,22 +115,22 @@ end
 
 # %%
 @show a, b, c, d = 1, 9, 19, 1
-@show pvalue_rd_zou_donnerb(a, b, c, d)
-@show pvalue_rd_zou_donnerb_prime(a, b, c, d)
+@show pvalue_rd_zou_donner(a, b, c, d)
+@show pvalue_rd_zou_donner_prime(a, b, c, d)
 @show pvalue_rd_wald(a, b, c, d)
 
-plot(Δ -> pvalue_rd_zou_donnerb(a, b, c, d; Δ), -1, 1; label="")
-#plot!(Δ -> pvalue_rd_zou_donnerb_prime(a, b, c, d; Δ), -1, 1; label="", ls=:dash)
+plot(Δ -> pvalue_rd_zou_donner(a, b, c, d; Δ), -1, 1; label="")
+#plot!(Δ -> pvalue_rd_zou_donner_prime(a, b, c, d; Δ), -1, 1; label="", ls=:dash)
 plot!(Δ -> pvalue_rd_wald(a, b, c, d; Δ), -1, 1; label="", ls=:dashdot)
 
 # %%
 @show a, b, c, d = 1, 9, 19, 1
-@show pvalue_rd_zou_donnerb(a, b, c, d)
-@show pvalue_rd_zou_donnerb_prime(a, b, c, d)
+@show pvalue_rd_zou_donner(a, b, c, d)
+@show pvalue_rd_zou_donner_prime(a, b, c, d)
 @show pvalue_rd_wald(a, b, c, d)
 
-plot(Δ -> pvalue_rd_zou_donnerb(a, b, c, d; Δ), -1, 1; label="")
-plot!(Δ -> pvalue_rd_zou_donnerb_prime(a, b, c, d; Δ), -1, 1; label="", ls=:dash)
+plot(Δ -> pvalue_rd_zou_donner(a, b, c, d; Δ), -1, 1; label="")
+plot!(Δ -> pvalue_rd_zou_donner_prime(a, b, c, d; Δ), -1, 1; label="", ls=:dash)
 #plot!(Δ -> pvalue_rd_wald(a, b, c, d; Δ), -1, 1; label="", ls=:dashdot)
 
 # %%
@@ -186,28 +177,28 @@ function sim_alphaerrors(m, n, p, q=p; L=10^5)
     ω = safediv(p*(1-q), (1-p)*q)
     bin1, bin2 = Binomial(m, p), Binomial(n, q)
     pval_wald = similar(zeros(), L)
-    pval_zou_donnerb = similar(zeros(), L)
+    pval_zou_donner = similar(zeros(), L)
     pval_chisq = similar(zeros(), L)
     Threads.@threads for i in 1:L
         a, c = rand(bin1), rand(bin2)
         b, d = m-a, n-c
         pval_wald[i] = pvalue_rd_wald(a, b, c, d; Δ)
-        pval_zou_donnerb[i] = pvalue_rd_zou_donnerb(a, b, c, d; Δ)
+        pval_zou_donner[i] = pvalue_rd_zou_donner(a, b, c, d; Δ)
         pval_chisq[i] = pvalue_or_pearson_chisq(a, b, c, d; ω)
     end
     ecdf_wald = ecdf(pval_wald)
-    ecdf_zou_donnerb = ecdf(pval_zou_donnerb)
+    ecdf_zou_donner = ecdf(pval_zou_donner)
     ecdf_chisq = ecdf(pval_chisq)
     F_wald(x) = ecdf_wald(x)
-    F_zou_donnerb(x) = ecdf_zou_donnerb(x)
+    F_zou_donner(x) = ecdf_zou_donner(x)
     F_chisq(x) = ecdf_chisq(x)
-    (; F_wald, F_zou_donnerb, F_chisq)
+    (; F_wald, F_zou_donner, F_chisq)
 end
 
 function plot_alphaerrors(m, n, p, q=p; L=10^5, kwargs...)
-    (; F_wald, F_zou_donnerb, F_chisq) = sim_alphaerrors(m, n, p, q)
+    (; F_wald, F_zou_donner, F_chisq) = sim_alphaerrors(m, n, p, q)
     plot(legend=:bottomright)
-    plot!(F_zou_donnerb, 0, 0.1; label="ZD")
+    plot!(F_zou_donner, 0, 0.1; label="ZD")
     plot!(F_wald, 0, 0.1; label="Wald", ls=:dash)
     plot!(F_chisq, 0, 0.1; label="chisq", ls=:dashdot)
     plot!(identity, 0, 0.1; label="", c=:red, ls=:dot, alpha=0.7)
