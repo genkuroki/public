@@ -36,7 +36,7 @@ safediv(x, y) = x == 0 ? x : isinf(y) ? zero(y) : x/y
 #
 # に書いてある. そこでは, 次の文献が引用されている:
 #
-# Guangyong Zou and Allan Donnerb
+# Guangyong Zou and Allan Donner
 # A simple alternative confidence interval for the difference between two proportions
 # Controlled Clinical Trials, Volume 25, Issue 1, February 2004, Pages 3-12
 # https://doi.org/10.1016/j.cct.2003.08.010
