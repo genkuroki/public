@@ -108,7 +108,7 @@ plot!(x -> f(x); label="", c=:white)
 
 # %%
 (; lik, Ws, Rs) = calculate_likelihoods()
-g(x) = @views f(x) ≥ 0 ? maximum(lik[1 .+ (0:round(Int, x)), 1 .+ (0:round(Int, f(x)))]) : 0.0
+g(x) = @views f(x) ≥ 0 ? lik[1+round(Int, x), 1+round(Int, f(x))] : 0.0
 
 # %%
 plot(g, 4000, 5000; label="", xguide="x")
@@ -237,30 +237,42 @@ plot_likelihoods(p -> clamp(p, 0.0, 0.05); ws=3000:5000, title="min(likelihoods,
 
 # %%
 (; pval, Ws, Rs) = calculate_pvalues()
-h(x) = @views f(x) ≥ 0 ? maximum(pval[1 .+ (0:round(Int, x)), 1 .+ (0:round(Int, f(x)))]) : 0.0
+h(x) = @views f(x) ≥ 0 ? pval[1+round(Int, x), 1+round(Int, f(x))] : 0.0
 
 # %%
 h(5000-24)
 
 # %%
 plot(h, 4000, 5000; label="", xguide="x")
-title!("maximum of pvalues for w=0,1,…,round(x), r=0,1,…,round(y),\nwhere x-(5000-24) : y-(1000-26) = 24 : 26")
+title!("pvalues for (w, r) = (x, y(x)) \nwhere x-(5000-24) : y(x)-(1000-26) = 24 : 26")
 
 # %%
 plot(h, 4700, 5000; label="", xguide="x")
-title!("maximum of pvalues for w=0,1,…,round(x), r=0,1,…,round(y),\nwhere x-(5000-24) : y-(1000-26) = 24 : 26")
+title!("pvalues for (w, r) = (x, y(x)) \nwhere x-(5000-24) : y(x)-(1000-26) = 24 : 26")
 
 # %%
-plot(h, 4800, 5000-20; label="", xguide="x")
-title!("maximum of pvalues for w=0,1,…,round(x), r=0,1,…,round(y),\nwhere x-(5000-24) : y-(1000-26) = 24 : 26")
+plot(h, 4800, 4830; label="", xguide="x")
+title!("pvalues for (w, r) = (x, y(x)) \nwhere x-(5000-24) : y(x)-(1000-26) = 24 : 26")
 
 # %%
-h.(4814:4816)
+h.(4814:4820)
 
 # %%
-h.(5000-26:5000-24)
+h.(5000-30:5000-24)
 
 # %%
-all(h.(4815:5000-25) .== h(4815))
+val, idx = findmax(pval[1 .+ (0:4900), 1 .+ (0:1000)])
+w, r = Tuple(idx) .+ (1, 1)
+val, (w, r)
+
+# %%
+5000 - w, 1000 - r
+
+# %%
+(5000 - w)/24, (1000 - r)/26
+
+# %%
+plot_pvalues(ws=4200:5000, rs=200:1000, colorbar=false, title="min(pvalues, 0.05)")
+scatter!([w], [r]; label="($w, $r)", c=:cyan, msc=:red, legend=:topleft)
 
 # %%
