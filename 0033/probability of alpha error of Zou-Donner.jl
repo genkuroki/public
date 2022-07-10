@@ -170,6 +170,26 @@ function confint_or_pearson_chisq(a, b, c, d; α=0.05, correction=0.0)
 end
 
 # %%
+"""Bayes版P値函数達を作る函数"""
+function make_pvalue_rd_bayes(a, b, c, d; M=10^6, conjprior=(0.5, 0.5))
+    α, β = conjprior
+    p = rand(Beta(α+a, β+b), M)
+    q = rand(Beta(α+c, β+d), M)
+    Δ = @. p - q
+    ecdf_RD = ecdf(Δ)
+    pvalue_rd_bayes(Δ) = min(1, 2ecdf_RD(Δ), 2(1-ecdf_RD(Δ)))
+    pvalue_rd_bayes
+end
+
+# %%
+a, b, c, d = 10, 3, 4, 9
+pvalue_rd_bayes = make_pvalue_rd_bayes(a, b, c, d)
+plot(legend=:topleft)
+plot!(Δ -> pvalue_rd_zou_donner(a, b, c, d; Δ), -1, 1; label="ZD")
+plot!(Δ -> pvalue_rd_wald(a, b, c, d; Δ); label="Wald", ls=:dash)
+plot!(Δ -> pvalue_rd_bayes(Δ); label="Bayes", ls=:dashdotdot)
+
+# %%
 oddsratiohat(a, b, c, d) = safediv(a*d, b*c)
 
 function sim_alphaerrors(m, n, p, q=p; L=10^5)
