@@ -22,7 +22,7 @@ safediv(x, y) = x==0 ? x : y==Inf ? zero(y) : x/y
 # %% [markdown]
 # https://twitter.com/03t_ms/status/1545720479868022784
 #
-# <img src="attachment:76f3afac-ac86-4eed-8fa9-8f59faaace44.jpg" width=70%>
+# <img src="https://github.com/genkuroki/public/raw/main/0033/FXOAk2cUcAArHXd.jpg" width=70%>
 
 # %%
 RWB = [
