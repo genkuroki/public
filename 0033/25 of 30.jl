@@ -60,6 +60,15 @@ end
 pvalue_logit_wald(30, 25, 2/3)
 
 # %%
+function pvalue_bayes(n, k, p; conjprior=(0.5, 0.5))
+    α, β = conjprior
+    beta = Beta(α+k, β+n-k)
+    min(1, 2cdf(beta, p), 2ccdf(beta, p))
+end
+
+pvalue_bayes(30, 25, 2/3)
+
+# %%
 function pvalue_clopper_pearson(n, k, p)
     bin = Binomial(n, p)
     min(1, 2cdf(bin, k), 2ccdf(bin, k-1))
@@ -87,6 +96,8 @@ end
 
 @show ci(pvalue_wilson, 30, 25)
 @show ci(pvalue_wald, 30, 25)
+@show ci(pvalue_logit_wald, 30, 25)
+@show ci(pvalue_bayes, 30, 25)
 @show ci(pvalue_clopper_pearson, 30, 25)
 @show ci(pvalue_sterne, 30, 25)
 @show rcopy(prop_test(25, 30, p=2/3, correct=false))[:conf_int]
@@ -98,6 +109,7 @@ n, k = 30, 25
 plot(p -> pvalue_wilson(n, k, p), 0.5, 1; label="Wilson")
 plot!(p -> pvalue_wald(n, k, p); label="Wald", ls=:dash)
 plot!(p -> pvalue_logit_wald(n, k, p); label="logit Wald", ls=:dashdot)
+plot!(p -> pvalue_bayes(n, k, p); label="Bayes", ls=:dashdotdot)
 plot!(legend=:topleft)
 plot!(xguide="p", yguide="P-value")
 plot!(xtick=0:0.1:1, ytick=0:0.1:1)
