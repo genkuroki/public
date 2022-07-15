@@ -43,10 +43,10 @@ function plot_least_squares_estimate(x, y, f...; α = 0.05, kwargs...)
     a, b = extrema(x)
     a, b = a - 0.05(b-a), b + 0.05(b-a)
     plot!(f̂, a, b; label="", c=:red, lw=2)
-    plot!(x -> f̂(x) - g(x), a, b; label="$(100(1-α))% CI", c=3, ls=:dash)
-    plot!(x -> f̂(x) + g(x), a, b; label="", c=3, ls=:dash)
-    plot!(x -> f̂(x) - h(x), a, b; label="$(100(1-α))% PI", c=4, ls=:dashdot)
-    plot!(x -> f̂(x) + h(x), a, b; label="", c=4, ls=:dashdot)
+    plot!(x -> f̂(x) - t*g(x), a, b; label="$(100(1-α))% CI", c=3, ls=:dash)
+    plot!(x -> f̂(x) + t*g(x), a, b; label="", c=3, ls=:dash)
+    plot!(x -> f̂(x) - t*h(x), a, b; label="$(100(1-α))% PI", c=4, ls=:dashdot)
+    plot!(x -> f̂(x) + t*h(x), a, b; label="", c=4, ls=:dashdot)
     plot!(; kwargs...)
 end
 
@@ -71,7 +71,7 @@ plot_least_squares_estimate(x, y, (x->x^k for k in 0:3)...)
 plot_least_squares_estimate(x, y, (x->x^k for k in 0:5)...)
 
 # %%
-plot_least_squares_estimate(x, y, (x->x^k for k in 0:11)...; ylim=(-1.5, 1.5))
+plot_least_squares_estimate(x, y, (x->x^k for k in 0:11)...; ylim=(-2.5, 2.5))
 
 # %%
 function plot_pvalue_functions(x, y, f...; α = 0.05, kwargs...)

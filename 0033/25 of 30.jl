@@ -232,3 +232,8 @@ binom_test(25, 30, p=19/30)
 19/30
 
 # %%
+for k in 1:4
+    @eval @show pdf(Binomial($(10^k), 1/2), $(10^k÷2))
+end
+
+# %%
