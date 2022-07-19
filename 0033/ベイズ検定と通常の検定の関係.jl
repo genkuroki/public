@@ -123,8 +123,8 @@
 # -2\log\BF_{01} &=
 # 2\log Z_1(k|n) - 2\log Z_0(k|n)
 # \\ &\approx
-# -2\log(n+1) + \log(2\pi) + \log(p_0(1-p_0)) + \chi^2(k|n,p_0)
-# \\ &\approx
+# -2\log(n+1) + \log(2\pi) + \log n + \log(p_0(1-p_0)) + \chi^2(k|n,p_0)
+# \\ &=
 # -\log\frac{(n+1)^2}{n} + \log(p_0(1-p_0)) + \log(2\pi) + \chi^2(k|n,p_0)
 # \end{aligned}
 # $$
@@ -170,7 +170,7 @@ default(fmt=:png, size=(400, 250),
     titlefontsize=10, tickfontsize=7, guidefontsize=9)
 
 # %% [markdown]
-# 例えば, $C=0.1$, $p_0=0.5$ のとき, $\alpha_n$ は以下のようになる.
+# 例えば, $C=0.1$, $p_0=0.5$ のとき, $\alpha_n(p_0, C)$ は以下のようになる.
 
 # %%
 function alpha(n, p₀, C)
@@ -181,12 +181,22 @@ end
 C = 0.1
 p₀ = 0.5
 ns = 5:5:1000
-plot(ns, n -> alpha(n, p₀, C); label="αₙ(C)")
+plot(ns, n -> alpha(n, p₀, C); label="αₙ(p₀, C)")
 title!("p₀ = $p₀,  C = $C")
 plot!(xtick=0:100:1000, xguide="n", ylim=(0, 0.01))
 
 # %% [markdown]
-# このように, $n$ とともに $\alpha_n(C)$ はどんどん小さくなる.
+# このように, $n$ とともに $\alpha_n(p_0, C)$ はどんどん小さくなる.
+#
+# $C=1$, $p_0=0.5$ のとき($C=1$ はベイズ自由エネルギーによるモデル選択の場合に対応), $\alpha_n(p_0, C)$ は以下のようになる.
+
+# %%
+C = 1.0
+p₀ = 0.5
+ns = 5:5:1000
+plot(ns, n -> alpha(n, p₀, C); label="αₙ(p₀, C)")
+title!("p₀ = $p₀,  C = $C")
+plot!(xtick=0:100:1000, xguide="n", ylim=(0, 0.21))
 
 # %% [markdown]
 # $-2\log\BF_{10}$ の近似式も数値的に確認してみよう.
