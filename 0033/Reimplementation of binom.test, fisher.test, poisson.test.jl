@@ -30,6 +30,8 @@ x ⪅ y = x < y || x ≈ y
 
 function pvalue_sterne(model::DiscreteUnivariateDistribution, data)
     p0 = pdf(model, data)
+    p0 == 0 && return 0.0
+    p0 == 1 && return 1.0
     m = mode(model)
     pdf(model, m) ≈ p0 && return 1.0
     if data > m
