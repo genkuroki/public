@@ -71,23 +71,30 @@ function confint_rd_zou_donner(a, b, c, d; α=0.05)
 end
 
 # %% [markdown]
-# https://twitter.com/ERUin2525/status/1548616745518497792
+# https://twitter.com/heijikodera/status/1548616745518497792
 #
 # ![FX3JgBWaQAAE92J.jpg](attachment:eb2c1adc-fbcd-4c15-af41-5982f394d9e5.jpg)
+
+# %% [markdown]
+# https://twitter.com/heijikodera/status/1549368016269639682
+#
+# ![FYB1y6FaMAE-J-1.jpg](attachment:f690728b-5a03-408f-8aac-912fa7835038.jpg)
+#
+# 小寺平治, 新統計入門, 裳華房, 1996/10/20
 
 # %%
 riskdiffhat(a, b, c, d) = safediv(a, a+b) - safediv(c, c+d)
 
-function stderr_riskdiffhat_ERUin2525(a, b, c, d)
+function stderr_riskdiffhat_heijikodera(a, b, c, d)
     m, n = a+b, c+d
     p̂ = (a + c) / (m + n)
     √((1/m + 1/n) * p̂*(1 - p̂))
 end
 
-@memoize function pvalue_rd_ERUin2525(a, b, c, d; Δ=0)
+@memoize function pvalue_rd_heijikodera(a, b, c, d; Δ=0)
     RDhat = riskdiffhat(a, b, c, d)
-    SEhat_riskdiffhat = stderr_riskdiffhat_ERUin2525(a, b, c, d)
-    2ccdf(Normal(0, 1), safediv(abs(RDhat - Δ), SEhat_riskdiffhat))
+    SEhat_riskdiffhat_heijikodera = stderr_riskdiffhat_heijikodera(a, b, c, d)
+    2ccdf(Normal(0, 1), safediv(abs(RDhat - Δ), SEhat_riskdiffhat_heijikodera))
 end
 
 # %%
@@ -97,17 +104,20 @@ function plot_pvaluefuncs(a, b, c, d; Δ=0.0, xlim=(-1.0, 1.0), kwargs...)
     @show Δ
     @show pvalue_rd_zou_donner(a, b, c, d; Δ)
     @show pvalue_rd_wald(a, b, c, d; Δ)
-    @show pvalue_rd_ERUin2525(a, b, c, d; Δ)
+    @show pvalue_rd_heijikodera(a, b, c, d; Δ)
 
     plot(legend=:topleft)
     plot!(Δ -> pvalue_rd_zou_donner(a, b, c, d; Δ), xlim...; label="Zou-Donner")
     plot!(Δ -> pvalue_rd_wald(a, b, c, d; Δ); label="Wald", ls=:dash)
-    plot!(Δ -> pvalue_rd_ERUin2525(a, b, c, d; Δ); label="ERUin2525", ls=:dashdot)
+    plot!(Δ -> pvalue_rd_heijikodera(a, b, c, d; Δ); label="heijikodera", ls=:dashdot)
     plot!(ytick=0:0.1:1)
     plot!(xguide="p − q", yguide="P-value")
     title!("a, b, c, d = $a, $b, $c, $d")
     plot!(; kwargs...)
 end
+
+# %%
+plot_pvaluefuncs(170, 500-170, 70, 400-70; Δ=0.1, xlim=(0.05, 0.27))
 
 # %%
 plot_pvaluefuncs(50, 50, 50, 50; Δ=-0.1, xlim=(-0.3, 0.3))
@@ -128,6 +138,44 @@ plot_pvaluefuncs(90, 10, 10, 90; Δ=0.7, xlim=(0.55, 1.0))
 plot_pvaluefuncs(900, 100, 100, 900; Δ=0.77, xlim=(0.74, 0.86))
 
 # %%
+function sim(m, p, n, q; L=10^5)
+    Δ = p - q
+    bin1, bin2 = Binomial(m, p), Binomial(n, q)
+    z_wald = similar(zeros(), L)
+    z_zou_donner = similar(zeros(), L)
+    z_heijikodera = similar(zeros(), L)
+    Threads.@threads for i in 1:L
+        a, c = rand(bin1), rand(bin2)
+        b, d = m-a, n-c
+        RDhat = riskdiffhat(a, b, c, d)
+        SEhat_riskdiffhat = stderr_riskdiffhat(a, b, c, d)
+        SEhat_riskdiffhat_heijikodera = stderr_riskdiffhat_heijikodera(a, b, c, d)
+        z_wald[i] = safediv(RDhat - Δ, SEhat_riskdiffhat)
+        z_zou_donner[i] = safediv((1 - RDhat^2)*(atanh(RDhat) - atanh(Δ)), SEhat_riskdiffhat)
+        z_heijikodera[i] = safediv(RDhat - Δ, SEhat_riskdiffhat_heijikodera)
+    end
+    z_wald, z_zou_donner, z_heijikodera
+end
+
+function plot_sim(m, p, n, q; L=10^5, bin=range(-5, 5, 30), kwargs...)
+    z_wald, z_zou_donner, z_heijikodera = sim(m, p, n, q; L)
+    norm = true
+    stephist(z_wald; norm, bin, label="Wald")
+    stephist!(z_zou_donner; norm, bin, label="Zou-Donner", ls=:dash)
+    stephist!(z_heijikodera; norm, bin, label="Kodera", ls=:dashdot)
+    plot!(Normal(0,1); label="Normal(0,1)")
+    plot!(xguide="z")
+    plot!(size=(500, 300))
+    plot!(; kwargs...)
+end
+
+# %%
+plot_sim(1000, 0.9, 1000, 0.1)
+
+# %%
+plot_sim(10000, 0.9, 10000, 0.1)
+
+# %%
 function E(f, m, p, n, q)
     bin1, bin2 = Binomial(m, p), Binomial(n, q)
     sum(f(a, m-a, c, n-c) * pdf(bin1, a) * pdf(bin2, c)
@@ -143,7 +191,7 @@ end
 # %%
 @show probalphaerror(pvalue_rd_zou_donner, 10, 0.8, 10, 0.2)
 @show probalphaerror(pvalue_rd_wald, 10, 0.8, 10, 0.2)
-@show probalphaerror(pvalue_rd_ERUin2525, 10, 0.8, 10, 0.2);
+@show probalphaerror(pvalue_rd_heijikodera, 10, 0.8, 10, 0.2);
 
 # %%
 function plot_probalphaerrors(m, p, n, q)
@@ -152,8 +200,8 @@ function plot_probalphaerrors(m, p, n, q)
 #         label="Zou-Donner")
 #     plot!(α -> probalphaerror(pvalue_rd_wald, m, p, n, q; α), 0, 1;
 #         label="Wald", ls=:dash)
-#     plot!(α -> probalphaerror(pvalue_rd_ERUin2525, m, p, n, q; α), 0, 1;
-#         label="ERUin2525", ls=:dashdot)
+#     plot!(α -> probalphaerror(pvalue_rd_heijikodera, m, p, n, q; α), 0, 1;
+#         label="heijikodera", ls=:dashdot)
 #     plot!([0, 1], [0, 1]; label="", c=:black, ls=:dot)
 #     plot!(xtick=0:0.1:1, ytick=0:0.1:1)
 #     plot!(xlim=(-0.02, 1.02), ylim=(-0.02, 1.02))
@@ -164,8 +212,8 @@ function plot_probalphaerrors(m, p, n, q)
         label="Zou-Donner")
     plot!(α -> probalphaerror(pvalue_rd_wald, m, p, n, q; α), 0, 0.1;
         label="Wald", ls=:dash)
-    plot!(α -> probalphaerror(pvalue_rd_ERUin2525, m, p, n, q; α), 0, 0.1;
-        label="ERUin2525", ls=:dashdot)
+    plot!(α -> probalphaerror(pvalue_rd_heijikodera, m, p, n, q; α), 0, 0.1;
+        label="heijikodera", ls=:dashdot)
     plot!([0, 0.1], [0, 0.1]; label="", c=:black, ls=:dot)
     plot!(xtick=0:0.01:1, ytick=0:0.01:1)
     plot!(xlim=(-0.002, 0.102), ylim=(-0.002, 0.102))
