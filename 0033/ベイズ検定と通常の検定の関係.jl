@@ -44,27 +44,27 @@
 # %% [markdown]
 # ## 二項分布モデルでのPearsonのχ²検定
 #
-# データは「$n$ 回中 $k$ 回成功した」の型であり, 統計モデルは二項分布
+# 「$n$ 回中 $k$ 回成功した」の形のデータに関する統計モデルとして二項分布
 #
 # $$
 # P(k|n,p) = \binom{n}{k} p^k (1-p)^{n-k}
 # $$
 #
-# であるとする.  $0\le p \le 1$ は成功確率を意味するモデルのパラメータである.
+# を採用したとする. ここで $0\le p \le 1$ は成功確率を意味するモデルのパラメータである.
 #
 # このとき, 仮説 $p=p_0$ に関するPearsonの $\chi^2$ 統計量は次のように定義される:
 #
 # $$
-# \chi^2(k|n,p_0) = \frac{(k - np_0)}{np_0(1-p_0)}.
+# \chi^2(k|n,p_0) = \frac{(k - np_0)^2}{np_0(1-p_0)}.
 # $$
 #
-# $k$ が $p=p_0$ の統計モデルに従うとき, $n$ が十分大きいならば, Pearsonの $\chi^2$ 統計量 $\chi^2$ は自由度 $1$ の $\chi^2$ 分布に近似的に従うことが知られている.  このことを使って, 仮説 $o=p_0$ のP値が次のように定義される:
+# $k$ が仮説 $p=p_0$ の下での統計モデルに従うとき, $n$ が十分大きいならば, このPearsonの $\chi^2$ 統計量は自由度 $1$ の $\chi^2$ 分布に近似的に従うことが知られている.  このことを使って, 仮説 $p=p_0$ のP値が次のように定義される:
 #
 # $$
 # \pvalue(k|n,p=p_0) = \ccdf(\Chisq(1), \chi^2(k|n,p_0)).
 # $$
 #
-# このとき, 有意水準 $\alpha$ に対して,
+# このとき, 有意水準 $\alpha$ について
 #
 # $$
 # \chi^2_\alpha = \quantile
@@ -89,14 +89,12 @@
 # Z_1(k|n) = \int_0^1 \binom{n}{k} p^k(1-p)^{n-k}\,dp = \binom{n}{k}B(k+1,n-k+1) = \frac{1}{n+1}
 # $$
 #
-# ここで,
+# 最後の等号で次を使った:
 #
 # $$
 # B(k+1, n-k+1) = \frac{\Gamma(k+1)\Gamma(n-k+1)}{\Gamma(n+2)} =
-# \frac{k!(n-k)!}{(n+1)!} = \frac{1}{n+1}\binom{n}{k}^{-1}
+# \frac{k!(n-k)!}{(n+1)!} = \frac{1}{n+1}\binom{n}{k}^{-1}.
 # $$
-#
-# であることを使った.
 #
 # デルタ事前分布 $p=p_0$ の周辺尤度は
 #
@@ -107,13 +105,13 @@
 # ゆえに, ベイズ因子は次のようになる:
 #
 # $$
-# \BF_{10} = \frac{Z_0(k|n)}{Z_1(k|n)} = (n+1)\binom{n}{k} p_0^k(1-p_0)^{n-k}.
+# \BF_{01} = \frac{Z_0(k|n)}{Z_1(k|n)} = (n+1)\binom{n}{k} p_0^k(1-p_0)^{n-k}.
 # $$
 #
 # 二項分布の中心極限定理より, $n$ が十分大きなとき($n=10$ 程度ですでにそれなりに良い近似になる), これは次のように近似される:
 #
 # $$
-# \BF_{10} \approx
+# \BF_{01} \approx
 # \frac{n+1}{\sqrt{2\pi np_0(1-p_0)}}\exp\left(-\frac{(k-np_0)^2}{2np_0(1-p_0)}\right) =
 # \frac{n+1}{\sqrt{2\pi np_0(1-p_0)}}\exp\left(-\frac{\chi^2(k|n,p_0)}{2}\right).
 # $$
@@ -122,7 +120,7 @@
 #
 # $$
 # \begin{aligned}
-# -2\log\BF_{10} &=
+# -2\log\BF_{01} &=
 # 2\log Z_1(k|n) - 2\log Z_0(k|n)
 # \\ &\approx
 # -2\log(n+1) + \log(2\pi) + \log(p_0(1-p_0)) + \chi^2(k|n,p_0)
@@ -131,7 +129,7 @@
 # \end{aligned}
 # $$
 #
-# このとき, $0 < C < 1$ に関するベイズ検定の条件 $\BF_{10} < C$ は
+# このとき, $0 < C < 1$ に関するベイズ検定の条件 $\BF_{01} < C$ は
 #
 # $$
 # \chi^2(n, p_0, C) = -2\log C + \log\frac{(n+1)^2}{n} - \log(p_0(1-p_0)) - \log(2\pi)
@@ -153,7 +151,7 @@
 #
 # と定めると, 次の2つの条件は互いに近似的に同値になる:
 #
-# * $\BF_{10} < C$.
+# * $\BF_{01} < C$.
 # * 仮説 $p=p_0$ が有意水準 $\alpha_n(p_0, C)$ で棄却される.
 #
 # $\alpha_n(p_0, C)$ は $n$ を大きくすると小さくなることに注意せよ.
@@ -198,9 +196,9 @@ chisq(k, n, p₀) = (k - n*p₀)^2/(n*p₀*(1-p₀))
 
 logZ0(k, n, p₀) = logpdf(Binomial(n, p₀), k)
 logZ1(k, n) = -log(n+1)
-neg2logBF10(k, n, p₀) = 2logZ1(k, n) - 2logZ0(k, n, p₀)
+neg2logBF01(k, n, p₀) = 2logZ1(k, n) - 2logZ0(k, n, p₀)
 
-neg2logBF10_approx(k, n, p₀) = 
+neg2logBF01_approx(k, n, p₀) = 
     -2log(n+1) + log(2π) + log(n*p₀*(1-p₀)) + chisq(k, n, p₀)
 
 # %%
@@ -208,8 +206,8 @@ n, p₀ = 10, 0.5
 μ, σ = n*p₀, √(n*p₀*(1-p₀))
 ks = max(0, round(Int, μ-4σ)):min(n, round(Int, μ+4σ))
 plot(legend=:top)
-plot!(ks, k -> neg2logBF10(k, n, p₀); label="-2logBF₁₀")
-plot!(ks, k -> neg2logBF10_approx(k, n, p₀); label="approximation")
+plot!(ks, k -> neg2logBF01(k, n, p₀); label="-2logBF₀₁")
+plot!(ks, k -> neg2logBF01_approx(k, n, p₀); label="approximation")
 plot!(xguide="k")
 title!("n = $n,  p₀ = $p₀")
 
@@ -218,8 +216,8 @@ n, p₀ = 30, 0.5
 μ, σ = n*p₀, √(n*p₀*(1-p₀))
 ks = max(0, round(Int, μ-4σ)):min(n, round(Int, μ+4σ))
 plot(legend=:top)
-plot!(ks, k -> neg2logBF10(k, n, p₀); label="-2logBF₁₀")
-plot!(ks, k -> neg2logBF10_approx(k, n, p₀); label="approximation")
+plot!(ks, k -> neg2logBF01(k, n, p₀); label="-2logBF₀₁")
+plot!(ks, k -> neg2logBF01_approx(k, n, p₀); label="approximation")
 plot!(xguide="k")
 title!("n = $n,  p₀ = $p₀")
 
@@ -228,8 +226,8 @@ n, p₀ = 100, 0.5
 μ, σ = n*p₀, √(n*p₀*(1-p₀))
 ks = max(0, round(Int, μ-4σ)):min(n, round(Int, μ+4σ))
 plot(legend=:top)
-plot!(ks, k -> neg2logBF10(k, n, p₀); label="-2logBF₁₀")
-plot!(ks, k -> neg2logBF10_approx(k, n, p₀); label="approximation")
+plot!(ks, k -> neg2logBF01(k, n, p₀); label="-2logBF₀₁")
+plot!(ks, k -> neg2logBF01_approx(k, n, p₀); label="approximation")
 plot!(xguide="k")
 title!("n = $n,  p₀ = $p₀")
 
@@ -238,8 +236,8 @@ n, p₀ = 300, 0.5
 μ, σ = n*p₀, √(n*p₀*(1-p₀))
 ks = max(0, round(Int, μ-4σ)):min(n, round(Int, μ+4σ))
 plot(legend=:top)
-plot!(ks, k -> neg2logBF10(k, n, p₀); label="-2logBF₁₀")
-plot!(ks, k -> neg2logBF10_approx(k, n, p₀); label="approximation")
+plot!(ks, k -> neg2logBF01(k, n, p₀); label="-2logBF₀₁")
+plot!(ks, k -> neg2logBF01_approx(k, n, p₀); label="approximation")
 plot!(xguide="k")
 title!("n = $n,  p₀ = $p₀")
 
@@ -248,8 +246,8 @@ n, p₀ = 1000, 0.5
 μ, σ = n*p₀, √(n*p₀*(1-p₀))
 ks = max(0, round(Int, μ-4σ)):min(n, round(Int, μ+4σ))
 plot(legend=:top)
-plot!(ks, k -> neg2logBF10(k, n, p₀); label="-2logBF₁₀")
-plot!(ks, k -> neg2logBF10_approx(k, n, p₀); label="approximation")
+plot!(ks, k -> neg2logBF01(k, n, p₀); label="-2logBF₀₁")
+plot!(ks, k -> neg2logBF01_approx(k, n, p₀); label="approximation")
 plot!(xguide="k")
 title!("n = $n,  p₀ = $p₀")
 
@@ -258,8 +256,8 @@ n, p₀ = 1000, 0.3
 μ, σ = n*p₀, √(n*p₀*(1-p₀))
 ks = max(0, round(Int, μ-4σ)):min(n, round(Int, μ+4σ))
 plot(legend=:top)
-plot!(ks, k -> neg2logBF10(k, n, p₀); label="-2logBF₁₀")
-plot!(ks, k -> neg2logBF10_approx(k, n, p₀); label="approximation")
+plot!(ks, k -> neg2logBF01(k, n, p₀); label="-2logBF₀₁")
+plot!(ks, k -> neg2logBF01_approx(k, n, p₀); label="approximation")
 plot!(xguide="k")
 title!("n = $n,  p₀ = $p₀")
 
