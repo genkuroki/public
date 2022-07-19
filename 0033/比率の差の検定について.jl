@@ -110,6 +110,18 @@ function plot_pvaluefuncs(a, b, c, d; Δ=0.0, xlim=(-1.0, 1.0), kwargs...)
 end
 
 # %%
+plot_pvaluefuncs(50, 50, 50, 50; Δ=-0.1, xlim=(-0.3, 0.3))
+
+# %%
+plot_pvaluefuncs(60, 40, 40, 60; Δ=0.1, xlim=(-0.05, 0.45))
+
+# %%
+plot_pvaluefuncs(70, 30, 30, 70; Δ=0.5, xlim=(0.2, 0.6))
+
+# %%
+plot_pvaluefuncs(80, 20, 20, 80; Δ=0.5, xlim=(0.4, 0.8))
+
+# %%
 plot_pvaluefuncs(90, 10, 10, 90; Δ=0.7, xlim=(0.55, 1.0))
 
 # %%
@@ -184,7 +196,5 @@ plot_probalphaerrors(100, 0.9, 100, 0.1)
 
 # %%
 plot_probalphaerrors(160, 0.9, 160, 0.1)
-
-# %%
 
 # %%
