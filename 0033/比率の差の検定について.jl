@@ -138,8 +138,7 @@ plot_pvaluefuncs(90, 10, 10, 90; Δ=0.7, xlim=(0.55, 1.0))
 plot_pvaluefuncs(900, 100, 100, 900; Δ=0.77, xlim=(0.74, 0.86))
 
 # %%
-function sim(m, p, n, q; L=10^5)
-    Δ = p - q
+function sim(m, p, n, q; Δ=p-q, L=10^5)
     bin1, bin2 = Binomial(m, p), Binomial(n, q)
     z_wald = similar(zeros(), L)
     z_zou_donner = similar(zeros(), L)
@@ -165,6 +164,7 @@ function plot_sim(m, p, n, q; L=10^5, bin=range(-5, 5, 30), kwargs...)
     stephist!(z_heijikodera; norm, bin, label="Kodera", ls=:dashdot)
     plot!(Normal(0,1); label="Normal(0,1)")
     plot!(xguide="z")
+    title!("m, p = $m, $p,  n, q = $n, $q")
     plot!(size=(500, 300))
     plot!(; kwargs...)
 end
