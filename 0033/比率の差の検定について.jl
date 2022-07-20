@@ -158,11 +158,15 @@ end
 
 function plot_sim(m, p, n, q; L=10^5, bin=range(-5, 5, 30), kwargs...)
     z_wald, z_zou_donner, z_heijikodera = sim(m, p, n, q; L)
-    norm = true
-    stephist(z_wald; norm, bin, label="Wald")
-    stephist!(z_zou_donner; norm, bin, label="Zou-Donner", ls=:dash)
-    stephist!(z_heijikodera; norm, bin, label="Kodera", ls=:dashdot)
-    plot!(Normal(0,1); label="Normal(0,1)")
+    se = stderr_riskdiffhat(m*p, m*(1-p), n*q, n*(1-q))
+    se_kodera = stderr_riskdiffhat_heijikodera(m*p, m*(1-p), n*q, n*(1-q))
+    se_ratio = se / se_kodera 
+    round_se_ratio = round(se_ratio; digits=3)
+    stephist(z_wald; norm=true, bin, label="Wald")
+    stephist!(z_zou_donner; norm=true, bin, label="Zou-Donner", ls=:dash)
+    stephist!(z_heijikodera; norm=true, bin, label="Kodera", ls=:dashdot)
+    plot!(Normal(0, 1); label="Normal(0,1)")
+    plot!(Normal(0, se_ratio); label="Normal(0,$round_se_ratio)", ls=:dot)
     plot!(xguide="z")
     title!("m, p = $m, $p,  n, q = $n, $q")
     plot!(size=(500, 300))
@@ -174,6 +178,21 @@ plot_sim(1000, 0.9, 1000, 0.1)
 
 # %%
 plot_sim(10000, 0.9, 10000, 0.1)
+
+# %%
+plot_sim(5000, 0.9, 10000, 0.1)
+
+# %%
+plot_sim(10000, 0.9, 5000, 0.1)
+
+# %%
+plot_sim(10000, 0.5, 10000, 0.05)
+
+# %%
+plot_sim(5000, 0.5, 15000, 0.05)
+
+# %%
+plot_sim(15000, 0.5, 5000, 0.05)
 
 # %%
 function E(f, m, p, n, q)
