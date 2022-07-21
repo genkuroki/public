@@ -281,24 +281,43 @@ function expectation_value(f, dist::DiscreteUnivariateDistribution)
     sum(f(x)*pdf(dist, x) for x in supp)
 end
 
-function plot_probs_selecting_true(p₀; ns=10:100, C=1, kwargs...)
+function plot_powers(p₀, q₀; ns=10:100, C=1, α=0.05, kwargs...)
     neg2logC = -2log(C)
     f(n) = k -> neg2logBF01(k, n, p₀) > neg2logC
+    y_bayes = (n -> expectation_value(f(n), Binomial(n, q₀))).(ns)
     g(n) = k -> ccdf(Chisq(1), chisq(k, n, p₀)) < alpha(n, p₀, C)
-    ymax = maximum(n -> expectation_value(f(n), Binomial(n, p₀)), ns[begin:begin+30])
-    ylim = (0.0, ymax)
-    plot(ns, n -> expectation_value(f(n), Binomial(n, p₀));
-        label="Bayesian test with C")
-    plot!(ns, n -> expectation_value(g(n), Binomial(n, p₀));
-        label="Pearson's χ²-test with αₙ", ls=:dash)
-    plot!(ns, n -> alpha(n, p₀, C);
-        label="αₙ", c=:red, lw=0.5)
-    plot!(xguide="n", yguide="probability of alpha error")
-    title!("p₀ = $p₀,  C = $C")
-    plot!(; ylim, size=(400, 300))
+    y_approx = (n -> expectation_value(g(n), Binomial(n, q₀))).(ns)
+    plot(ns, y_bayes; label="Bayesian test with C")
+    plot!(ns, y_approx; label="Pearson's χ²-test with αₙ", ls=:dash)
+    if q₀ == p₀
+        ymin = 0.0
+        ymax = maximum(y_bayes)
+        plot!(ns, n -> alpha(n, p₀, C); label="αₙ", c=:red, lw=0.5)
+        title!("p₀ = $p₀,  C = $C")
+    else
+        h(n) = k -> ccdf(Chisq(1), chisq(k, n, p₀)) < α
+        y_chisq = (n -> expectation_value(h(n), Binomial(n, q₀))).(ns)
+        ymin = min(minimum(y_bayes), minimum(y_chisq))
+        ymax = max(maximum(y_bayes), maximum(y_chisq))
+        plot!(ns, y_chisq; label="Pearson's χ²-test with α=$α", ls=:dashdot)
+        title!("p₀ = $p₀,  C = $C  (true p = $q₀)")
+        plot!(legend=:bottomright)
+    end
+    plot!(xguide="n", yguide="probability of rejecting p=p₀")
+    plot!(; ylim=(ymin < 0.1 ? 0.0 : ymin, ymax > 0.9 ? 1.0 : ymax), size=(400, 300))
     plot!(; kwargs...)
 end
 
+function plot_probs_selecting_true(p₀; ns=10:100, C=1, kwargs...)
+    plot_powers(p₀, p₀; ns, C, kwargs...)
+end
+
+# %% [markdown]
+# ### C = 1 の場合
+#
+# この場合にはデルタ事前分布 $p=p_0$ を使ってデータ「$n$ 回中 $k$ 回」がランダムに生成されているときに, $Z_0(k|n) < Z_1(n|k)$ となってデルタ事前分布 $p=p_0$ の真のモデルが棄却される確率の計算. 
+
+# %%
 plot_probs_selecting_true(0.5; ns=2:100)
 
 # %%
@@ -306,5 +325,38 @@ plot_probs_selecting_true(0.5; ns=10:5:1000)
 
 # %%
 plot_probs_selecting_true(0.5; ns=100:50:10000)
+
+# %% [markdown]
+# ### C = 0.1 の場合
+
+# %%
+plot_probs_selecting_true(0.5; ns=2:100, C=0.1)
+
+# %%
+plot_probs_selecting_true(0.5; ns=10:5:1000, C=0.1)
+
+# %%
+plot_probs_selecting_true(0.5; ns=100:50:10000, C=0.1)
+
+# %% [markdown]
+# ### 検出力の視覚化
+
+# %%
+plot_powers(0.5, 0.6; ns=50:2:500)
+
+# %%
+plot_powers(0.5, 0.55; ns=50:10:2000)
+
+# %%
+plot_powers(0.5, 0.52; ns=50:50:10000)
+
+# %%
+plot_powers(0.5, 0.6; ns=50:2:500, C=0.1)
+
+# %%
+plot_powers(0.5, 0.55; ns=50:10:2000, C=0.1)
+
+# %%
+plot_powers(0.5, 0.52; ns=50:50:10000, C=0.1)
 
 # %%
