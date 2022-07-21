@@ -271,4 +271,40 @@ plot!(ks, k -> neg2logBF01_approx(k, n, p₀); label="approximation")
 plot!(xguide="k")
 title!("n = $n,  p₀ = $p₀")
 
+# %% [markdown]
+# ## 真のモデルの選択に失敗する確率
+
+# %%
+function expectation_value(f, dist::DiscreteUnivariateDistribution)
+    m, s = mean(dist), std(dist)
+    supp = max(minimum(dist), round(Int, m-6s)):min(maximum(dist), round(Int, m+6s))
+    sum(f(x)*pdf(dist, x) for x in supp)
+end
+
+function plot_probs_selecting_true(p₀; ns=10:100, C=1, kwargs...)
+    neg2logC = -2log(C)
+    f(n) = k -> neg2logBF01(k, n, p₀) > neg2logC
+    g(n) = k -> ccdf(Chisq(1), chisq(k, n, p₀)) < alpha(n, p₀, C)
+    ymax = maximum(n -> expectation_value(f(n), Binomial(n, p₀)), ns[begin:begin+30])
+    ylim = (0.0, ymax)
+    plot(ns, n -> expectation_value(f(n), Binomial(n, p₀));
+        label="Bayesian test with C")
+    plot!(ns, n -> expectation_value(g(n), Binomial(n, p₀));
+        label="Pearson's χ²-test with αₙ", ls=:dash)
+    plot!(ns, n -> alpha(n, p₀, C);
+        label="αₙ", c=:red, lw=0.5)
+    plot!(xguide="n", yguide="probability of alpha error")
+    title!("p₀ = $p₀,  C = $C")
+    plot!(; ylim, size=(400, 300))
+    plot!(; kwargs...)
+end
+
+plot_probs_selecting_true(0.5; ns=2:100)
+
+# %%
+plot_probs_selecting_true(0.5; ns=10:5:1000)
+
+# %%
+plot_probs_selecting_true(0.5; ns=100:50:10000)
+
 # %%
