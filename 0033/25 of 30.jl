@@ -237,3 +237,32 @@ for k in 1:4
 end
 
 # %%
+n, k = 10, 10
+
+P1 = plot(p -> pvalue_wilson(n, k, p), 0.5, 1; label="Wilson")
+#plot!(p -> pvalue_wald(n, k, p); label="Wald", ls=:dash)
+#plot!(p -> pvalue_logit_wald(n, k, p); label="logit Wald", ls=:dashdot)
+#plot!(p -> pvalue_bayes(n, k, p); label="Bayes", ls=:dashdotdot)
+#plot!(legend=:topleft)
+#plot!(xguide="p", yguide="P-value")
+#plot!(xtick=0:0.1:1, ytick=0:0.1:1)
+#title!("data: n = $n, k = $k")
+
+#P2 = plot(p -> pvalue_clopper_pearson(n, k, p), 0.5, 1; label="Clopper-Pearson")#, c=4)
+plot!(p -> pvalue_clopper_pearson(n, k, p), 0.5, 1; label="Clopper-Pearson", ls=:dash)#, c=4)
+plot!(p -> pvalue_sterne(n, k, p); label="Sterne", ls=:dashdot)#, c=5)
+plot!(legend=:topleft)
+plot!(xguide="p", yguide="P-value")
+plot!(xtick=0:0.1:1, ytick=0:0.1:1)
+title!("data: n = $n, k = $k")
+
+#display(P1)
+#display(P2)
+
+# %%
+0.7^10
+
+# %%
+0.8^10
+
+# %%
