@@ -18,11 +18,37 @@
 using Base.Threads
 using Distributions
 using HypothesisTests
+using QuadGK
 using Random
+using Roots
 using StatsBase
 using StatsFuns
 using StatsPlots
 default(fmt=:png, titlefontsize=10, guidefontsize=8, tickfontsize=6)
+
+# %%
+function prob_x_le_y(distx, disty, a=0.0)
+    H(y) = cdf(distx, y) * pdf(disty, y-a)
+    quadgk(H, extrema(disty + a)...)[1]
+end
+
+function tieshift(distx, disty; probtie=0.5)
+    #s = max(std(distx), std(disty))
+    #m = median(distx) - median(disty)
+    #find_zero(a -> prob_x_le_y(distx, disty, a) - probtie,
+    #    (amin, amax), Bisection())
+    find_zero(a -> prob_x_le_y(distx, disty, a) - probtie, 0.0)
+end
+
+@show tieshift(Normal(0, 1), Normal(2, 2))
+@show tieshift(Normal(0, 1), Laplace(2, 2))
+@show tieshift(Normal(0, 1), Uniform(0, 1));
+
+# %%
+distx, disty = Gamma(6, 1), Gamma(2, 3)
+@show median(distx), median(disty)
+@show median(distx) - median(disty)
+@show tieshift(distx, disty);
 
 # %%
 function sim(TestFunc = MannWhitneyUTest;
@@ -62,14 +88,18 @@ function plot_pvals(
         distx = Normal(0, 1), disty = Normal(0, 4), m = 100, n = 50,
         L = 10^6, kwargs...)
     
+    @show a = tieshift(distx, disty)
+    @show prob_x_le_y(distx, disty + a)
     ecdf_pval1 = @time sim(TestFunc1;
-        distx = distx - median(distx),
-        disty = disty - median(disty),
+        distx = distx,
+        disty = disty + a,
         m, n, L, kwargs...)
     ymax1 = ecdf_pval1(0.1)
+    @show Δμ = mean(distx) - mean(disty)
+    @show mean(distx), mean(distx + Δμ)
     ecdf_pval2 = @time sim(TestFunc2;
-        distx = distx - mean(distx),
-        disty = disty - mean(disty),
+        distx = distx,
+        disty = disty + Δμ,
         m, n, L, kwargs...)
     ymax2 = ecdf_pval2(0.1)
     ymax = max(ymax1, ymax2)
