@@ -57,6 +57,12 @@ distx, disty = Uniform(), Chisq(1)
 @show tieshift(distx, disty);
 
 # %%
+
+sprint(printcompact, Normal(√2))
+
+# %%
+
+# %%
 function sim(TestFunc = MannWhitneyUTest;
         distx = Normal(0, 1), disty = Normal(0, 4), m = 100, n = 50,
         L = 10^6)
@@ -72,7 +78,13 @@ function sim(TestFunc = MannWhitneyUTest;
     ecdf(pval)
 end
 
-distname(dist) = replace(string(dist), r"\{[^\}]*\}"=>"")
+function printcompact(io, xs...)
+    print(IOContext(io, :compact => true), xs...)
+end
+
+function distname(dist)
+    replace(sprint(printcompact, dist), r"\{[^\}]*\}"=>"")
+end
 
 function plot_ecdf(ecdf_pval, TestFunc, distx, disty, m, n, a; kwargs...)
     plot(p -> ecdf_pval(p), 0, 0.1; label="ecdf of P-values")
@@ -81,7 +93,7 @@ function plot_ecdf(ecdf_pval, TestFunc, distx, disty, m, n, a; kwargs...)
     plot!(xtick=0:0.01:0.1, ytick=0:0.01:1)
     plot!(xguide="nominal significance level α", 
         yguide="probability of P-value < α")
-    s = (a < 0 ? "" : "+") * string(round(a; digits=3))
+    s = (a < 0 ? "" : "+") * string(round(a; digits=4))
     title!("$TestFunc\n\
         X: $(distname(distx)), m=$m\n\
         Y: $(distname(disty))$s, n=$n")
@@ -265,12 +277,12 @@ distx, disty = Uniform(-1, 1), Exponential()
 
 a = @show tieshift(distx, disty)
 P1 = plot(distx, -2, 6; label="distx")
-plot!(disty + a, -2, 6; label="disty + ($(round(a; digits=3)))", ls=:dash)
+plot!(disty + a, -2, 6; label="disty + ($(round(a; digits=4)))", ls=:dash)
 title!("case of tie shifting")
 
 a = @show median(distx) - median(disty)
 P2 = plot(distx, -2, 6; label="distx")
-plot!(disty + a, -2, 6; label="disty + ($(round(a; digits=3)))", ls=:dash)
+plot!(disty + a, -2, 6; label="disty + ($(round(a; digits=4)))", ls=:dash)
 vline!([median(distx)]; label="median(distx)", ls=:dot, lw=1.5)
 title!("case of matching medians")
 
@@ -297,12 +309,12 @@ distx, disty = Uniform(-1, 1), Exponential(4)
 
 a = @show tieshift(distx, disty)
 P1 = plot(distx, -4, 10; label="distx")
-plot!(disty + a, -4, 10; label="disty + ($(round(a; digits=3)))", ls=:dash)
+plot!(disty + a, -4, 10; label="disty + ($(round(a; digits=4)))", ls=:dash)
 title!("case of tie shifting")
 
 a = @show median(distx) - median(disty)
 P2 = plot(distx, -4, 10; label="distx")
-plot!(disty + a, -4, 10; label="disty + ($(round(a; digits=3)))", ls=:dash)
+plot!(disty + a, -4, 10; label="disty + ($(round(a; digits=4)))", ls=:dash)
 vline!([median(distx)]; label="median(distx)", ls=:dot, lw=1.5)
 title!("case of matching medians")
 
@@ -329,12 +341,12 @@ distx, disty = Uniform(-1, 1), Exponential(0.5773502691896257)
 
 a = @show tieshift(distx, disty)
 P1 = plot(distx, -2, 4; label="distx")
-plot!(disty + a, -2, 4; label="disty + ($(round(a; digits=3)))", ls=:dash)
+plot!(disty + a, -2, 4; label="disty + ($(round(a; digits=4)))", ls=:dash)
 title!("case of tie shifting")
 
 a = @show median(distx) - median(disty)
 P2 = plot(distx, -2, 4; label="distx")
-plot!(disty + a, -2, 4; label="disty + ($(round(a; digits=3)))", ls=:dash)
+plot!(disty + a, -2, 4; label="disty + ($(round(a; digits=4)))", ls=:dash)
 vline!([median(distx)]; label="median(distx)", ls=:dot, lw=1.5)
 title!("case of matching medians")
 
