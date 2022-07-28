@@ -277,3 +277,35 @@ title!("case of matching medians")
 plot(P1, P2; size=(800, 250))
 
 # %%
+distx, disty = Uniform(-1, 1), Exponential(4)
+m, n, = 100, 100
+
+@show a = tieshift(distx, disty)
+ecdf_pval1 = @time sim(; distx = distx, disty = disty + a, m, n)
+P1 = plot_ecdf(ecdf_pval1, MannWhitneyUTest, distx, disty, m, n, a)
+
+@show a = median(distx) - median(disty)
+ecdf_pval2 = @time sim(; distx = distx, disty = disty + a, m, n)
+P2 = plot_ecdf(ecdf_pval2, MannWhitneyUTest, distx, disty, m, n, a)
+
+plot(P1, P2; size=(800, 450), topmargin=4Plots.mm)
+
+# %%
+distx, disty = Uniform(-1, 1), Exponential(4)
+@show distx, std(distx)
+@show disty, std(disty)
+
+a = @show tieshift(distx, disty)
+P1 = plot(distx, -4, 10; label="distx")
+plot!(disty + a, -4, 10; label="disty + ($(round(a; digits=3)))", ls=:dash)
+title!("case of tie shifting")
+
+a = @show median(distx) - median(disty)
+P2 = plot(distx, -4, 10; label="distx")
+plot!(disty + a, -4, 10; label="disty + ($(round(a; digits=3)))", ls=:dash)
+vline!([median(distx)]; label="median(distx)", ls=:dot, lw=1.5)
+title!("case of matching medians")
+
+plot(P1, P2; size=(800, 250))
+
+# %%
