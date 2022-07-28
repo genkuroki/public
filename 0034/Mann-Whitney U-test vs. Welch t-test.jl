@@ -51,6 +51,12 @@ distx, disty = Gamma(6, 1), Gamma(2, 3)
 @show tieshift(distx, disty);
 
 # %%
+distx, disty = Uniform(), Chisq(1)
+@show median(distx), median(disty)
+@show median(distx) - median(disty)
+@show tieshift(distx, disty);
+
+# %%
 function sim(TestFunc = MannWhitneyUTest;
         distx = Normal(0, 1), disty = Normal(0, 4), m = 100, n = 50,
         L = 10^6)
@@ -68,16 +74,17 @@ end
 
 distname(dist) = replace(string(dist), r"\{[^\}]*\}"=>"")
 
-function plot_ecdf(ecdf_pval, TestFunc, distx, disty, m, n; kwargs...)
+function plot_ecdf(ecdf_pval, TestFunc, distx, disty, m, n, a; kwargs...)
     plot(p -> ecdf_pval(p), 0, 0.1; label="ecdf of P-values")
     plot!([0, 0.1], [0, 0.1]; label="", ls=:dot, c=:black)
     plot!(legend=:topleft)
-    plot!(xtick=0:0.01:0.1, ytick=0:0.01:0.2)
+    plot!(xtick=0:0.01:0.1, ytick=0:0.01:1)
     plot!(xguide="nominal significance level α", 
         yguide="probability of P-value < α")
+    s = (a < 0 ? "" : "+") * string(round(a; digits=3))
     title!("$TestFunc\n\
         X: $(distname(distx)), m=$m\n\
-        Y: $(distname(disty)), n=$n")
+        Y: $(distname(disty))$s, n=$n")
     plot!(size=(400, 450))
     plot!(; kwargs...)
 end
@@ -86,28 +93,33 @@ function plot_pvals(
         TestFunc1 = MannWhitneyUTest,
         TestFunc2 = UnequalVarianceTTest;
         distx = Normal(0, 1), disty = Normal(0, 4), m = 100, n = 50,
-        L = 10^6, kwargs...)
+        L = 10^6, a = nothing, kwargs...)
     
-    @show a = tieshift(distx, disty)
-    @show prob_x_le_y(distx, disty + a)
+    if isnothing(a)
+        @show a = tieshift(distx, disty)
+        @show prob_x_le_y(distx, disty + a)
+    else
+        @show a
+        @show median(distx) - median(disty)
+    end
     ecdf_pval1 = @time sim(TestFunc1;
         distx = distx,
         disty = disty + a,
         m, n, L, kwargs...)
     ymax1 = ecdf_pval1(0.1)
     @show Δμ = mean(distx) - mean(disty)
-    @show mean(distx), mean(distx + Δμ)
+    @show mean(distx), mean(disty + Δμ)
     ecdf_pval2 = @time sim(TestFunc2;
         distx = distx,
         disty = disty + Δμ,
         m, n, L, kwargs...)
     ymax2 = ecdf_pval2(0.1)
     ymax = max(ymax1, ymax2)
-    P1 = plot_ecdf(ecdf_pval1, TestFunc1, distx, disty, m, n;
+    P1 = plot_ecdf(ecdf_pval1, TestFunc1, distx, disty, m, n, a;
         ylim=(-0.002, 1.02*ymax), kwargs...)
-    P2 = plot_ecdf(ecdf_pval2, TestFunc2, distx, disty, m, n;
+    P2 = plot_ecdf(ecdf_pval2, TestFunc2, distx, disty, m, n, Δμ;
         ylim=(-0.002, 1.02*ymax), kwargs...)
-    plot(P1, P2; size=(800, 430))
+    plot(P1, P2; size=(800, 450), topmargin=3.5Plots.mm)
 end
 
 # %% [markdown]
@@ -228,5 +240,40 @@ plot_pvals(distx = TDist(2), disty = 2TDist(2), m = 100, n = 100)
 
 # %%
 plot_pvals(distx = TDist(2), disty = 2TDist(2), m = 200, n = 100)
+
+# %% [markdown]
+# ## median matching vs. tie shifting
+
+# %%
+distx, disty = Uniform(-1, 1), Exponential()
+m, n, = 100, 100
+
+@show a = tieshift(distx, disty)
+ecdf_pval1 = @time sim(; distx = distx, disty = disty + a, m, n)
+P1 = plot_ecdf(ecdf_pval1, MannWhitneyUTest, distx, disty, m, n, a)
+
+@show a = median(distx) - median(disty)
+ecdf_pval2 = @time sim(; distx = distx, disty = disty + a, m, n)
+P2 = plot_ecdf(ecdf_pval2, MannWhitneyUTest, distx, disty, m, n, a)
+
+plot(P1, P2; size=(800, 450), topmargin=4Plots.mm)
+
+# %%
+distx, disty = Uniform(-1, 1), Exponential()
+@show distx, std(distx)
+@show disty, std(disty)
+
+a = @show tieshift(distx, disty)
+P1 = plot(distx, -2, 6; label="distx")
+plot!(disty + a, -2, 6; label="disty + ($(round(a; digits=3)))", ls=:dash)
+title!("case of tie shifting")
+
+a = @show median(distx) - median(disty)
+P2 = plot(distx, -2, 6; label="distx")
+plot!(disty + a, -2, 6; label="disty + ($(round(a; digits=3)))", ls=:dash)
+vline!([median(distx)]; label="median(distx)", ls=:dot, lw=1.5)
+title!("case of matching medians")
+
+plot(P1, P2; size=(800, 250))
 
 # %%
