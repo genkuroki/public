@@ -57,12 +57,6 @@ distx, disty = Uniform(), Chisq(1)
 @show tieshift(distx, disty);
 
 # %%
-
-sprint(printcompact, Normal(√2))
-
-# %%
-
-# %%
 function sim(TestFunc = MannWhitneyUTest;
         distx = Normal(0, 1), disty = Normal(0, 4), m = 100, n = 50,
         L = 10^6)
@@ -106,6 +100,8 @@ function plot_pvals(
         TestFunc2 = UnequalVarianceTTest;
         distx = Normal(0, 1), disty = Normal(0, 4), m = 100, n = 50,
         L = 10^6, a = nothing, kwargs...)
+    @show (mean(distx), std(distx))
+    @show (mean(disty), std(disty))
     
     if isnothing(a)
         @show a = tieshift(distx, disty)
@@ -150,6 +146,9 @@ plot_pvals(distx = Normal(0, 1), disty = Normal(0, 2), m = 25, n = 25)
 plot_pvals(distx = Normal(0, 1), disty = Normal(0, 2), m = 50, n = 25)
 
 # %%
+plot_pvals(distx = Normal(0, 1), disty = Normal(0, 2), m = 25, n = 50)
+
+# %%
 plot_pvals(distx = Normal(0, 1), disty = Normal(0, 1), m = 10, n = 10)
 
 # %%
@@ -160,6 +159,9 @@ plot_pvals(distx = Normal(0, 1), disty = Normal(0, 2), m = 10, n = 10)
 
 # %%
 plot_pvals(distx = Normal(0, 1), disty = Normal(0, 2), m = 20, n = 10)
+
+# %%
+plot_pvals(distx = Normal(0, 1), disty = Normal(0, 2), m = 10, n = 20)
 
 # %% [markdown]
 # ## ガンマ分布
@@ -177,16 +179,22 @@ plot_pvals(distx = Gamma(6, 1), disty = Gamma(2, 3), m = 25, n = 25)
 plot_pvals(distx = Gamma(6, 1), disty = Gamma(2, 3), m = 50, n = 25)
 
 # %%
+plot_pvals(distx = Gamma(6, 1), disty = Gamma(2, 3), m = 25, n = 50)
+
+# %%
 plot_pvals(distx = Gamma(2, 3), disty = Gamma(2, 3), m = 10, n = 10)
 
 # %%
 plot_pvals(distx = Gamma(2, 3), disty = Gamma(2, 3), m = 20, n = 10)
 
 # %%
-plot_pvals(distx = Gamma(6, 1), disty = Gamma(2, 3), m = 10, n = 10)
+plot_pvals(distx = Gamma(2, 3), disty = Gamma(2, 3), m = 10, n = 10)
 
 # %%
 plot_pvals(distx = Gamma(6, 1), disty = Gamma(2, 3), m = 20, n = 10)
+
+# %%
+plot_pvals(distx = Gamma(6, 1), disty = Gamma(2, 3), m = 10, n = 20)
 
 # %% [markdown]
 # ## 雑多
@@ -204,7 +212,13 @@ plot_pvals(distx = Laplace(0, 1), disty = Laplace(0, 2), m = 50, n = 50)
 plot_pvals(distx = Laplace(0, 1), disty = Laplace(0, 2), m = 20, n = 10)
 
 # %%
+plot_pvals(distx = Laplace(0, 1), disty = Laplace(0, 2), m = 10, n = 20)
+
+# %%
 plot_pvals(distx = Laplace(0, 1), disty = Laplace(0, 2), m = 50, n = 25)
+
+# %%
+plot_pvals(distx = Laplace(0, 1), disty = Laplace(0, 2), m = 25, n = 50)
 
 # %%
 plot_pvals(distx = Uniform(-1, 1), disty = Uniform(-2, 2), m = 10, n = 10)
@@ -213,7 +227,13 @@ plot_pvals(distx = Uniform(-1, 1), disty = Uniform(-2, 2), m = 10, n = 10)
 plot_pvals(distx = Uniform(-1, 1), disty = Uniform(-2, 2), m = 20, n = 10)
 
 # %%
+plot_pvals(distx = Uniform(-1, 1), disty = Uniform(-2, 2), m = 10, n = 20)
+
+# %%
 plot_pvals(distx = Uniform(-1, 1), disty = Uniform(-2, 2), m = 50, n = 25)
+
+# %%
+plot_pvals(distx = Uniform(-1, 1), disty = Uniform(-2, 2), m = 25, n = 50)
 
 # %%
 @doc LogNormal
@@ -235,6 +255,9 @@ plot_pvals(distx = LogNormal(0, 1), disty = LogNormal(0, 1.25), m = 500, n = 500
 plot_pvals(distx = LogNormal(0, 1), disty = LogNormal(0, 1.25), m = 1000, n = 500, L=10^5)
 
 # %%
+plot_pvals(distx = LogNormal(0, 1), disty = LogNormal(0, 1.25), m = 500, n = 1000, L=10^5)
+
+# %%
 plot(TDist(2), -10, 10)
 plot!(2TDist(2), -10, 10)
 
@@ -248,13 +271,19 @@ plot_pvals(distx = TDist(2), disty = TDist(2), m = 100, n = 100)
 plot_pvals(distx = TDist(2), disty = TDist(2), m = 200, n = 100)
 
 # %%
+plot_pvals(distx = TDist(2), disty = TDist(2), m = 100, n = 200)
+
+# %%
 plot_pvals(distx = TDist(2), disty = 2TDist(2), m = 100, n = 100)
 
 # %%
 plot_pvals(distx = TDist(2), disty = 2TDist(2), m = 200, n = 100)
 
+# %%
+plot_pvals(distx = TDist(2), disty = 2TDist(2), m = 100, n = 200)
+
 # %% [markdown]
-# ## median matching vs. tie shifting
+# ## tie shifting vs. median matching
 
 # %%
 distx, disty = Uniform(-1, 1), Exponential()
