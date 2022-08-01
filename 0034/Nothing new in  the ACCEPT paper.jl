@@ -172,8 +172,8 @@
 # \min\begin{pmatrix}
 # 1 \\
 # 2P\left(\Delta \le \Delta_0 \mid \op{posterior}\,\right) \\
-# 2\left(1 - P\left(\Delta \ge \Delta_0 \mid \op{posterior}\,\right)\right) \\
-# \end{pmatrix}
+# 2P\left(\Delta \ge \Delta_0 \mid \op{posterior}\,\right) \\
+# \end{pmatrix}.
 # $$
 #
 # ここで $\Delta = p - q$ は事後分布 $\op{posterior}$ の下での確率変数とみなされており, $P(\ )$ は確率を表す.
@@ -186,7 +186,7 @@
 # 1 \\
 # 2\op{cdf}\left(\op{posterior}_\Delta, \Delta_0\right) \\
 # 2\left(1 - \op{cdf}\left(\op{posterior}_\Delta, \Delta_0\right)\right) \\
-# \end{pmatrix}
+# \end{pmatrix}.
 # $$
 #
 # このP値函数(の類似物)に対応する信頼区間
@@ -199,6 +199,14 @@
 # $$
 #
 # は信用区間(確信区間, credible interval)と呼ばれている.
+#
+# 仮説 $\Delta \ge \Delta_0$ の片側検定のP値のBayes的類似物は事後分布において仮説 $\Delta \ge \Delta_0$ が成立する確率になる:
+#
+# $$
+# \op{pvalue}_{\op{Bayes}}(\,a,b,c,d\mid \Delta\ge\Delta_0\,) =
+# P(\,\Delta\ge\Delta_0 \mid \op{posterior}\,) = 
+# 1 - \op{cdf}\left(\op{posterior}_\Delta, \Delta_0\right).
+# $$
 #
 # これらは, 事後分布に従う乱数を大量に生成することによって(Monte Carlo法によって), 容易に近似計算可能である.
 #
