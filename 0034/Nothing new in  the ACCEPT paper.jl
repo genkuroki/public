@@ -28,7 +28,7 @@
 # * https://twitter.com/epidemia_jp/status/1552902192670986240
 # * https://twitter.com/epidemia_jp/status/1552933838245941248
 #
-# を見て存在を知った論文にあった計算の
+# を見て存在を知った論文
 #
 # * https://evidence.nejm.org/doi/full/10.1056/EVIDctw2200018
 # * https://arxiv.org/abs/2203.11164
