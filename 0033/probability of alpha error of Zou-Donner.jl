@@ -16,6 +16,7 @@
 
 # %%
 using Distributions
+using Roots
 using StatsBase
 using StatsPlots
 default(fmt=:png, titlefontsize=8, tickfontsize=6, size=(400, 250),
@@ -88,7 +89,7 @@ function confint_rd_zou_donner(a, b, c, d; α=0.05)
     RDhat = riskdiffhat(a, b, c, d)
     SEhat_riskdiffhat = stderr_riskdiffhat(a, b, c, d)
     m = atanh(RDhat)
-    d = safediv(2z*SEhat_riskdiffhat, 1 - RDhat^2)
+    d = safediv(z*SEhat_riskdiffhat, 1 - RDhat^2)
     [tanh(m-d), tanh(m+d)]
 end
 
@@ -103,6 +104,18 @@ end
 @show confint_rd_zou_donner(1, 0, 1, 0) confint_rd_zou_donner(1, 1e-4, 1, 1e-8)
 @show confint_rd_zou_donner(0, 1, 1, 0) confint_rd_wald(1e-4, 1, 1, 1e-8)
 @show confint_rd_zou_donner(1, 0, 0, 1) confint_rd_wald(1, 1e-4, 1e-8, 1);
+
+# %%
+function ci_rd(pvaluefunc; α=0.05)
+    f(x) = pvaluefunc(x) - α
+    find_zeros(f, -1, 1)
+end
+
+a, b, c, d = 426-255, 255, 433-277, 277
+
+@show confint_rd_zou_donner(a, b, c, d; α=0.05)
+f(Δ) = pvalue_rd_zou_donner(a, b, c, d; Δ)
+@show ci_rd(f; α=0.05);
 
 # %%
 function pvalue_rd_zou_donner_prime(a, b, c, d; Δ=0)
