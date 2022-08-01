@@ -33,11 +33,7 @@
 # * https://evidence.nejm.org/doi/full/10.1056/EVIDctw2200018
 # * https://arxiv.org/abs/2203.11164
 #
-# の Julia による再現. これについては
-#
-# * https://twitter.com/ueafam/status/1553204311408394240
-#
-# が正しい. 通常のP値とそのBayes的類似物がほぼ一致する場合について, 片側検定のP値のBayes的類似物をプロットしているだけであった.
+# の Julia による再現. 通常のP値とそのBayes的類似物がほぼ一致する場合について, 片側検定のP値のBayes的類似物をプロットしているだけであった.
 
 # %% [markdown]
 # __以下のJuliaによる再現が論文と違う所__
