@@ -115,6 +115,7 @@ function confint_rd_zou_donner(a, b, c, d; α=0.05)
 end
 
 # %%
+# ジェネリックな信頼区間函数
 function confint_rd(pvaluefunc; α=0.05)
     f(x) = pvaluefunc(x) - α
     find_zeros(f, -1, 1)
@@ -157,8 +158,22 @@ function make_ecdf_posterior_rd(a, b, c, d; conjprior=(0.5, 0.5), L=10^6)
     ecdf_rd_bayes(x) = _ecdf_delta(x)
     eccdf_rd_bayes(x) = 1 - _ecdf_delta(x)
     pvalue_rd_bayes(x) = min(1, 2ecdf_rd_bayes(x), 2eccdf_rd_bayes(x))
-    (; ecdf_rd_bayes, eccdf_rd_bayes, pvalue_rd_bayes)
+    confint_rd_bayes(; α=0.05) = collect(quantile.(Ref(diff), (α/2, 1-α/2)))
+    (; ecdf_rd_bayes, eccdf_rd_bayes, pvalue_rd_bayes, confint_rd_bayes)
 end
+
+# %%
+# 信頼区間函数達が正しいかどうかの確認
+
+a, b, c, d = 426-255, 255, 433-277, 277
+
+(; ecdf_rd_bayes, eccdf_rd_bayes, pvalue_rd_bayes, confint_rd_bayes) =
+        make_ecdf_posterior_rd(a, b, c, d; conjprior=(0.5, 0.5))
+
+ci1 = @show confint_rd_bayes(; α=0.05)
+ci2 = @show confint_rd(pvalue_rd_bayes; α=0.05)
+@show ci1 - ci2
+;
 
 # %%
 # グラフのプロット用の函数
@@ -167,13 +182,13 @@ function plot_ACCEPT(; data = earnest, unacceptable_diff = 0.0, legend = :left)
     @show data
     @show unacceptable_diff
 
-    (; ecdf_rd_bayes, eccdf_rd_bayes, pvalue_rd_bayes) =
+    (; ecdf_rd_bayes, eccdf_rd_bayes, pvalue_rd_bayes, confint_rd_bayes) =
         make_ecdf_posterior_rd(data...; conjprior=(0.5, 0.5))
     @show riskdiffhat(data...)
     @show ecdf_rd_bayes._ecdf_delta.sorted_values |> mean
     @show ecdf_rd_bayes._ecdf_delta.sorted_values |> median
     ci_wald = @show confint_rd_wald(data...; α=0.05)
-    ci_bayes = @show confint_rd(pvalue_rd_bayes; α=0.05)
+    ci_bayes = @show confint_rd_bayes(; α=0.05)
 
     P0 = plot(; legend)
     plot!(Δ -> pvalue_rd_wald(data...; Δ), -0.15, 0.15; label="Wald")
