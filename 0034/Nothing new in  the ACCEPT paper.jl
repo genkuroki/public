@@ -363,9 +363,9 @@ function plot_ACCEPT(; data = earnest, unacceptable_diff = 0.0, legend = :left)
     scatter!([first(ci_wald)], [pvalue_rd_wald(data...; Δ=first(ci_wald))];
         marker=:square, label="", c=:red, msc=:auto)
     scatter!([last(ci_wald)], [pvalue_rd_wald(data...; Δ=last(ci_wald))];
-        marker=:utriangle, label="", c=:red, msc=:auto)
+        marker=:utriangle, label="", c=:red, msc=:auto, ms=5)
     scatter!([unacceptable_diff], [pvalue_rd_wald(data...; Δ=unacceptable_diff)];
-        marker=:x, label="", c=:red, msw=3)
+        marker=:star6, label="", c=:red, msc=:auto, ms=7)
     plot!(ytick=0:0.05:1)
     title!("two-sided P-value functions")
 
@@ -380,9 +380,9 @@ function plot_ACCEPT(; data = earnest, unacceptable_diff = 0.0, legend = :left)
     scatter!([first(ci_wald)], [pvalue_rd_ge_wald(data...; Δ=first(ci_wald))];
         marker=:square, label="", c=:red, msc=:auto)
     scatter!([last(ci_wald)], [pvalue_rd_ge_wald(data...; Δ=last(ci_wald))];
-        marker=:utriangle, label="", c=:red, msc=:auto)
+        marker=:utriangle, label="", c=:red, msc=:auto, ms=5)
     scatter!([unacceptable_diff], [pvalue_rd_ge_wald(data...; Δ=unacceptable_diff)];
-        marker=:x, label="", c=:red, msw=3)
+        marker=:star6, label="", c=:red, msc=:auto, ms=7)
     plot!(ytick=0:0.05:1)
     title!("one-sided P-value functions")
 
