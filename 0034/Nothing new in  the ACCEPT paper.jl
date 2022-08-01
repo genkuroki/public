@@ -120,13 +120,20 @@ function confint_rd(pvaluefunc; α=0.05)
     find_zeros(f, -1, 1)
 end
 
-# Zou-Donner版の信頼区間函数が正しいかどうかの確認
+# 信頼区間函数達が正しいかどうかの確認
 
 a, b, c, d = 426-255, 255, 433-277, 277
 
-@show confint_rd_zou_donner(a, b, c, d; α=0.05)
-f(Δ) = pvalue_rd_zou_donner(a, b, c, d; Δ)
-@show confint_rd(f; α=0.05);
+ci1 = @show confint_rd_wald(a, b, c, d; α=0.05)
+f_wald(Δ) = pvalue_rd_wald(a, b, c, d; Δ)
+ci2 = @show confint_rd(f_wald; α=0.05)
+@show ci1 - ci2
+
+ci1 = @show confint_rd_zou_donner(a, b, c, d; α=0.05)
+f_zou_donner(Δ) = pvalue_rd_zou_donner(a, b, c, d; Δ)
+ci2 = @show confint_rd(f_zou_donner; α=0.05)
+@show ci1 - ci2
+;
 
 # %%
 # 片側検定のP値函数
