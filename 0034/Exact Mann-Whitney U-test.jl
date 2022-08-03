@@ -84,12 +84,37 @@ for i in 1:binomial(n, t)+2
 end
 
 # %%
-function pvalue_exact_mann_whitney_u_test(x, y,
+"""
+    exact_mann_whitney_u(x, y,
         xy = Vector{promote_type(eltype(x), eltype(y))}(undef, length(x)+length(y)),
         rankxy = similar(xy, Float64),
         place = similar(xy, Int),
         c = similar(x, Int, min(length(x), length(y)))
     )
+
+データ `x, y` に関するMann-WhitneyのU検定のexact版を素朴なアルゴリズム(遅い)で実行し, `(u, u_less, u_greater, p_twosided, p_less, p_greater)` を返す.  ここで,
+
+* `u` は `x`, `y` の `length` が小さい方のU統計量達.
+* `u_less`, `u_greater` はそれぞれ `u`, `length(x)*length(y) - u` の小さい方と大きい方.
+* `p_twosided` は両側検定のP値.
+* `p_less` は `u_less` 以下になる確率.
+* `p_greater` は `u_greater` 以上になる確率.
+
+`p_twosided` は `p_less + p_greater` と1の小さい方になる.
+
+`xy`, `rankxy`, `place`, `comb` は内部で使用する配列である. それらを事前に割り当てておけば, この函数はメモリ割り当てゼロで実行される.
+"""
+function exact_mann_whitney_u(x, y,
+        xy = Vector{promote_type(eltype(x), eltype(y))}(undef, length(x)+length(y)),
+        rankxy = similar(xy, Float64),
+        place = similar(xy, Int),
+        comb = similar(x, Int, min(length(x), length(y)))
+    )
+    # Assume length(x) ≤ length(y)
+    if length(x) > length(y)
+        return exact_mann_whitney_u(y, x, xy, rankxy, place, comb)
+    end
+    
     # Initialization
     m, n = length(x), length(y)
     xy[1:m] .= x
@@ -102,8 +127,7 @@ function pvalue_exact_mann_whitney_u_test(x, y,
     i = 1
     @inbounds while i ≤ N
         j = i
-        vi = xy[place[i]]
-        while (j + 1 ≤ N) && (vi == xy[place[j + 1]])
+        while (j + 1 ≤ N) && (xy[place[i]] == xy[place[j+1]])
             j += 1
         end
         if j > i
@@ -118,198 +142,158 @@ function pvalue_exact_mann_whitney_u_test(x, y,
         i = j + 1
     end
     
-    # Calculation of the two-sided exact P-value
-    l = min(m, n)
-    r = l == m ? sum(@view rankxy[1:m]) : sum(@view rankxy[m+1:m+n])
-    r_le, r_ge = minmax(r, m*n + l*(l+1) - r)
-    le, ge = 0, 0
-    for comb in mycombinations!(rankxy, l, c)
-        R = sum(comb)
-        le += R ≤ r_le
-        ge += R ≥ r_ge
+    # Calculation of P-values
+    r = sum(@view rankxy[1:m])
+    r_less, r_greater = minmax(r, m*(m+n+1) - r)
+    num_less, num_greater = 0, 0
+    for c in mycombinations!(rankxy, m, comb)
+        R = sum(c)
+        num_less    += R ≤ r_less
+        num_greater += R ≥ r_greater
     end
-    min(1, (le + ge)/binomial(N, l))
+    den = binomial(N, m)
+    p_less = num_less/den
+    p_greater = num_greater/den
+    p_twosided = min(1, p_less + p_greater)
+    
+    # Calculation of U-statistics
+    u, u_less, u_greater = (r, r_less, r_greater) .- m*(m+1)÷2
+    
+    # Returns
+    u, u_less, u_greater, p_twosided, p_less, p_greater
 end
+
+# %%
+@doc exact_mann_whitney_u
 
 # %%
 using BenchmarkTools
 using HypothesisTests
 using RCall
-R"library(coin)"
-R"library(exactRankTests)"
+@rimport exactRankTests as exactRankTests
 using DataFrames
 using SciPy
 
 # %%
 x, y = [1, 2], [0, 5, 3, 4]
-m, n = length(x), length(y)
-@show pvalue_exact_mann_whitney_u_test(x, y)
-@show pvalue_exact_mann_whitney_u_test(y, x)
+@show x y
+@show m, n = length(x), length(y)
+@show exact_mann_whitney_u(x, y)
+@show exact_mann_whitney_u(y, x)
 @show pvalue(ExactMannWhitneyUTest(x, y))
-
-# %%
-@rput x y
-R"""
-wilcox.exact(x, y)
-"""
-
-# %%
-score = [x; y]
-gender = [fill(1, length(x)); fill(0, length(y))]
-df = DataFrame(score=score, gender=gender)
-@show df
-@rput df
-R"""
-df$gender <- as.factor(df$gender)
-wilcox_test(score ~ gender, distribution = "exact", data=df)
-"""
-
-# %%
-SciPy.stats.mannwhitneyu(x, y; method="exact")
+@show pvalue(ExactMannWhitneyUTest(y, x))
+@show rcopy(exactRankTests.wilcox_exact(x, y))[:p_value]
+@show rcopy(exactRankTests.wilcox_exact(y, x))[:p_value]
+@show SciPy.stats.mannwhitneyu(x, y; method="exact")
+@show SciPy.stats.mannwhitneyu(y, x; method="exact");
 
 # %%
 x, y = [1, 2], [2, 2, 3, 4]
-m, n = length(x), length(y)
-@show pvalue_exact_mann_whitney_u_test(x, y)
-@show pvalue_exact_mann_whitney_u_test(y, x)
-@show pvalue(ExactMannWhitneyUTest(x, y));
-
-# %%
-@rput x y
-R"""
-wilcox.exact(x, y)
-"""
-
-# %%
-score = [x; y]
-gender = [fill(1, length(x)); fill(0, length(y))]
-df = DataFrame(score=score, gender=gender)
-@show df
-@rput df
-R"""
-df$gender <- as.factor(df$gender)
-wilcox_test(score ~ gender, distribution = "exact", data=df)
-"""
-
-# %%
-SciPy.stats.mannwhitneyu(x, y; method="exact")
+@show x y
+@show m, n = length(x), length(y)
+@show exact_mann_whitney_u(x, y)
+@show exact_mann_whitney_u(y, x)
+@show pvalue(ExactMannWhitneyUTest(x, y))
+@show pvalue(ExactMannWhitneyUTest(y, x))
+@show rcopy(exactRankTests.wilcox_exact(x, y))[:p_value]
+@show rcopy(exactRankTests.wilcox_exact(y, x))[:p_value]
+@show SciPy.stats.mannwhitneyu(x, y; method="exact")
+@show SciPy.stats.mannwhitneyu(y, x; method="exact");
 
 # %%
 x, y = [1, 2], [2, 2, 2, 4, 5]
-m, n = length(x), length(y)
-@show pvalue_exact_mann_whitney_u_test(x, y)
-@show pvalue_exact_mann_whitney_u_test(y, x)
-@show pvalue(ExactMannWhitneyUTest(x, y));
-
-# %%
-@rput x y
-R"""
-wilcox.exact(x, y)
-"""
-
-# %%
-SciPy.stats.mannwhitneyu(x, y; method="exact")
+@show x y
+@show m, n = length(x), length(y)
+@show exact_mann_whitney_u(x, y)
+@show exact_mann_whitney_u(y, x)
+@show pvalue(ExactMannWhitneyUTest(x, y))
+@show pvalue(ExactMannWhitneyUTest(y, x))
+@show rcopy(exactRankTests.wilcox_exact(x, y))[:p_value]
+@show rcopy(exactRankTests.wilcox_exact(y, x))[:p_value]
+@show SciPy.stats.mannwhitneyu(x, y; method="exact")
+@show SciPy.stats.mannwhitneyu(y, x; method="exact");
 
 # %% tags=[]
 x, y = [1, 2, 2], [2, 2, 2, 4, 5, 6, 7]
-m, n = length(x), length(y)
-@show pvalue_exact_mann_whitney_u_test(x, y)
-@show pvalue_exact_mann_whitney_u_test(y, x)
-@show pvalue(ExactMannWhitneyUTest(x, y));
-
-# %%
-@rput x y
-R"""
-wilcox.exact(x, y)
-"""
-
-# %%
-score = [x; y]
-gender = [fill(1, length(x)); fill(0, length(y))]
-df = DataFrame(score=score, gender=gender)
-@show df
-@rput df
-R"""
-df$gender <- as.factor(df$gender)
-wilcox_test(score ~ gender, distribution = "exact", data=df)
-"""
-
-# %%
-SciPy.stats.mannwhitneyu(x, y; method="exact")
+@show x y
+@show m, n = length(x), length(y)
+@show exact_mann_whitney_u(x, y)
+@show exact_mann_whitney_u(y, x)
+@show pvalue(ExactMannWhitneyUTest(x, y))
+@show pvalue(ExactMannWhitneyUTest(y, x))
+@show rcopy(exactRankTests.wilcox_exact(x, y))[:p_value]
+@show rcopy(exactRankTests.wilcox_exact(y, x))[:p_value]
+@show SciPy.stats.mannwhitneyu(x, y; method="exact")
+@show SciPy.stats.mannwhitneyu(y, x; method="exact");
 
 # %%
 x = [11, 15,  9,  4, 34, 17, 18, 14, 12, 13, 26, 31]
 y = [34, 31, 35, 29, 28, 12, 18, 30, 14, 22, 10]
-m, n = length(x), length(y)
-@show pvalue_exact_mann_whitney_u_test(x, y)
-@show pvalue_exact_mann_whitney_u_test(y, x)
-@show pvalue(ExactMannWhitneyUTest(x, y));
+@show x y
+@show m, n = length(x), length(y)
+@show exact_mann_whitney_u(x, y)
+@show exact_mann_whitney_u(y, x)
+@show pvalue(ExactMannWhitneyUTest(x, y))
+@show pvalue(ExactMannWhitneyUTest(y, x))
+@show rcopy(exactRankTests.wilcox_exact(x, y))[:p_value]
+@show rcopy(exactRankTests.wilcox_exact(y, x))[:p_value]
+@show SciPy.stats.mannwhitneyu(x, y; method="exact")
+@show SciPy.stats.mannwhitneyu(y, x; method="exact");
 
 # %%
-@rput x y
-R"""
-wilcox.exact(x, y)
-"""
+x = [ 4,  7,  8,  9, 13, 13, 17, 11] |> sort
+y = [23,  6,  3, 24, 17, 14, 24, 29, 13, 33] |> sort
+@show x y
+@show m, n = length(x), length(y)
+@show exact_mann_whitney_u(x, y)
+@show exact_mann_whitney_u(y, x)
+@show pvalue(ExactMannWhitneyUTest(x, y))
+@show pvalue(ExactMannWhitneyUTest(y, x))
+@show rcopy(exactRankTests.wilcox_exact(x, y))[:p_value]
+@show rcopy(exactRankTests.wilcox_exact(y, x))[:p_value]
+@show SciPy.stats.mannwhitneyu(x, y; method="exact")
+@show SciPy.stats.mannwhitneyu(y, x; method="exact");
 
 # %%
-score = [x; y]
-gender = [fill(1, length(x)); fill(0, length(y))]
-df = DataFrame(score=score, gender=gender)
-@show df
-@rput df
-R"""
-df$gender <- as.factor(df$gender)
-wilcox_test(score ~ gender, distribution = "exact", data=df)
-"""
-
-# %%
-SciPy.stats.mannwhitneyu(x, y; method="exact")
-
-# %%
-@show x = [ 4,  7,  8,  9, 13, 13, 17, 11] |> sort
-@show y = [23,  6,  3, 24, 17, 14, 24, 29, 13, 33] |> sort
-m, n = length(x), length(y)
-println()
-@show pvalue_exact_mann_whitney_u_test(x, y)
-@show pvalue_exact_mann_whitney_u_test(y, x)
-@show pvalue(ExactMannWhitneyUTest(x, y));
-
-# %%
-@rput x y
-R"""
-wilcox.exact(x, y)
-"""
-
-# %%
-score = [x; y]
-gender = [fill(1, length(x)); fill(0, length(y))]
-df = DataFrame(score=score, gender=gender)
-@show df
-@rput df
-R"""
-df$gender <- as.factor(df$gender)
-wilcox_test(score ~ gender, distribution = "exact", data=df)
-"""
-
-# %%
-SciPy.stats.mannwhitneyu(x, y; method="exact")
-
-# %%
-@show x = [ 4,  7,  8,  9, 13, 13, 17, 11] |> sort
-@show y = [23,  6,  3, 24, 17, 14, 24, 29, 13, 33] |> sort
+x = [ 4,  7,  8,  9, 13, 13, 17, 11] |> sort
+y = [23,  6,  3, 24, 17, 14, 24, 29, 13, 33] |> sort
+@show x y
 @show m, n = length(x), length(y)
 println()
 
 xy = Vector{promote_type(eltype(x), eltype(y))}(undef, length(x)+length(y))
 rankxy = similar(xy, Float64)
 place = similar(xy, Int)
-c = similar(x, Int, min(length(x), length(y)))
+comb = similar(x, Int, min(length(x), length(y)))
 
-a = @btime pvalue_exact_mann_whitney_u_test($x, $y, $xy, $rankxy, $place, $c)
-b = @btime pvalue_exact_mann_whitney_u_test($x, $y)
-c = @btime pvalue_exact_mann_whitney_u_test($y, $x, $xy, $rankxy, $place, $c)
-d = @btime pvalue_exact_mann_whitney_u_test($y, $x)
+a = @btime exact_mann_whitney_u($x, $y, $xy, $rankxy, $place, $comb)
+b = @btime exact_mann_whitney_u($x, $y)
+c = @btime exact_mann_whitney_u($y, $x, $xy, $rankxy, $place, $comb)
+d = @btime exact_mann_whitney_u($y, $x)
 e = @btime pvalue(ExactMannWhitneyUTest($x, $y))
-@show a b c d e;
+f = @btime rcopy(exactRankTests.wilcox_exact($x, $y))[:p_value]
+g = @btime SciPy.stats.mannwhitneyu($x, $y; method="exact")
+@show a b c d e f g;
+
+# %%
+x = [4, 7, 8, 9, 11, 12, 13, 17]
+y = [3, 6, 10, 14, 16, 23, 24, 25, 29, 33]
+@show x y
+@show m, n = length(x), length(y)
+println()
+
+xy = Vector{promote_type(eltype(x), eltype(y))}(undef, length(x)+length(y))
+rankxy = similar(xy, Float64)
+place = similar(xy, Int)
+comb = similar(x, Int, min(length(x), length(y)))
+
+a = @btime exact_mann_whitney_u($x, $y, $xy, $rankxy, $place, $comb)
+b = @btime exact_mann_whitney_u($x, $y)
+c = @btime exact_mann_whitney_u($y, $x, $xy, $rankxy, $place, $comb)
+d = @btime exact_mann_whitney_u($y, $x)
+e = @btime pvalue(ExactMannWhitneyUTest($x, $y))
+f = @btime rcopy(exactRankTests.wilcox_exact($x, $y))[:p_value]
+g = @btime SciPy.stats.mannwhitneyu($x, $y; method="exact")
+@show a b c d e f g;
 
 # %%
