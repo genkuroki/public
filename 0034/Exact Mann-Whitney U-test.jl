@@ -96,7 +96,7 @@ end
 function myrank(X, rank = similar(X, Float64), place = similar(X, Int))
     N = length(X)
     place .= 1:N
-    sort!(place; by = i->X[i])
+    sort!(place; by = i -> @inbounds(X[i]))
     i = 1
     @inbounds while i ≤ N
         j = i
@@ -149,7 +149,7 @@ end
 * https://pure.tue.nl/ws/files/1330412/200012964.pdf
 * https://www.sciencedirect.com/science/article/pii/S1672022916000358
 
-注意: この函数が返す両側検定のP値はR言語の [exactRankTests::wilcox.exact](https://rdrr.io/cran/exactRankTests/src/R/wilcox.exact.R) や [coin::wilcox_test](https://rdrr.io/cran/coin/src/R/LocationTests.R) と同じ値になる.
+注意: この函数が返す両側検定のP値はR言語の [exactRankTests::wilcox.exact](https://rdrr.io/cran/exactRankTests/src/R/wilcox.exact.R) や [coin::wilcox_test](https://rdrr.io/cran/coin/src/R/LocationTests.R) と同じ値になる.  それらは素朴な実装を採用しているこの函数よりも計算が速い.
 
 注意: この函数が返す両側検定のP値は [HypothesisTests.jl](https://github.com/JuliaStats/HypothesisTests.jl) の `pvalue(ExactMannWhitneyUTest(x, y))` とは一般に異なる.  そうなる理由は HypothesisTests.jl が `[x; y]` 内の値に重複(tie)がある場合に分布の左右対称性が崩れることに配慮していないからである.  さらに現時点の HypothesisTests.jl (v0.10.10) の `pvalue(ExactMannWhitneyUTest(x, y))` ではメモリ割り当てがかなり発生する.
 
@@ -175,11 +175,11 @@ function exact_mann_whitney_u(x, y,
     rankxy = myrank(xy, rankxy, place)
     
     # Calculation of P-values
-    r = sum(@view rankxy[1:m])
+    r = sum(@view rankxy[1:m]) # rank sum of the data x,y
     r_less, r_greater = minmax(r, m*(m+n+1) - r)
     num_less, num_greater = 0, 0
     for c in mycombinations!(rankxy, m, comb)
-        R = sum(c)
+        R = sum(c) # rank sum of the combination c
         num_less    += R ≤ r_less
         num_greater += R ≥ r_greater
     end
