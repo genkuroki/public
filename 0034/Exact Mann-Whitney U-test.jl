@@ -15,6 +15,9 @@
 # ---
 
 # %%
+using BenchmarkTools
+
+# %%
 """
     nextcombination!(n, t, c = typeof(t)[min(t-1, i) for i in 1:t])
 
@@ -84,8 +87,12 @@ for i in 1:binomial(n, t)+2
 end
 
 # %%
+using StatsBase
+
 """
-    myrank(X, rank = similar(X, Float64), place = similar(X, Int))
+    mytiedrank(X,
+        rank = similar(X, Float64),
+        place = similar(X, Int))
 
 配列 `X` 内の値の順位(下から何番目に大きいか)を計算する.
 
@@ -93,35 +100,42 @@ end
 
 `rank`, `place` は内部で使う配列で, 事前に割り当てておけば, この函数はメモリ割り当てゼロで実行される.  `rank` が返り値になる.
 """
-function myrank(X, rank = similar(X, Float64), place = similar(X, Int))
-    N = length(X)
-    place .= 1:N
+function mytiedrank(X,
+        rank = similar(X, Float64),
+        place = similar(X, Int))
+    # Xの要素が整数ならば sortperm(X) を使った方がずっと速い.
+    # そうなる理由は sortperm は sort! と違って sortperm_int_range も使用するから.
+    # その代わりに sortperm だとメモリ割り当てが発生する.
+    # この辺は Base 自体に改善の余地が残っているように思われる.
+    #place = sortperm(X)
+    place .= axes(place, 1)
     sort!(place; by = i -> @inbounds(X[i]))
-    i = 1
-    @inbounds while i ≤ N
-        j = i
-        while (j + 1 ≤ N) && (X[place[i]] == X[place[j+1]])
-            j += 1
-        end
-        if j > i
-            t = j - i + 1
-            rk = sum(i:j) / t
-            for k in i:j
-                rank[place[k]] = rk
-            end
-        else
-            rank[place[i]] = i
-        end
-        i = j + 1
-    end
-    rank
+    StatsBase._tiedrank!(rank, X, place)
 end
 
 # %%
-@doc myrank
+@doc mytiedrank
 
 # %%
-@show myrank([1, 2, 3, 3, 5, 5, 5, 8]);
+using StatsBase
+
+X = Float64[8, 5, 1, 2, 3, 3, 5, 5]
+rank = similar(X, Float64)
+place = similar(X, Int)
+
+@show X
+a = @show mytiedrank(X, rank, place)
+b = @show mytiedrank(X)
+c = @show tiedrank(X)
+a == b == c
+
+# %%
+X = rand(1.0:100, 100000)
+rank = similar(X, Float64)
+place = similar(X, Int)
+a = @btime mytiedrank(X, rank, place)
+b = @btime tiedrank(X)
+a == b
 
 # %%
 """
@@ -172,7 +186,7 @@ function exact_mann_whitney_u(x, y,
     xy[m+1:m+n] .= y
 
     # Calculation of ranks
-    rankxy = myrank(xy, rankxy, place)
+    rankxy = mytiedrank(xy, rankxy, place)
     
     # Calculation of P-values
     r = sum(@view rankxy[1:m]) # rank sum of the data x,y
@@ -201,8 +215,8 @@ using BenchmarkTools
 using HypothesisTests
 
 # https://www.jstor.org/stable/2533173
-x = [1,2,1,1,1,1,1,1,1,1,2,4,1,1]
-y = [3,3,4,3,1,2,3,1,1,5,4]
+x = Float64[1,2,1,1,1,1,1,1,1,1,2,4,1,1]
+y = Float64[3,3,4,3,1,2,3,1,1,5,4]
 
 xy = Vector{promote_type(eltype(x), eltype(y))}(undef, length(x)+length(y))
 rankxy = similar(xy, Float64)
@@ -220,7 +234,7 @@ using RCall
 using SciPy
 
 # %%
-x, y = [1, 2], [0, 5, 3, 4]
+x, y = Float64[1, 2], Float64[0, 5, 3, 4]
 @show x y
 @show m, n = length(x), length(y)
 @show exact_mann_whitney_u(x, y)
@@ -233,7 +247,7 @@ x, y = [1, 2], [0, 5, 3, 4]
 @show SciPy.stats.mannwhitneyu(y, x; method="exact");
 
 # %%
-x, y = [1, 2], [2, 2, 3, 4]
+x, y = Float64[1, 2], Float64[2, 2, 3, 4]
 @show x y
 @show m, n = length(x), length(y)
 @show exact_mann_whitney_u(x, y)
@@ -246,7 +260,7 @@ x, y = [1, 2], [2, 2, 3, 4]
 @show SciPy.stats.mannwhitneyu(y, x; method="exact");
 
 # %%
-x, y = [1, 2], [2, 2, 2, 4, 5]
+x, y = Float64[1, 2], Float64[2, 2, 2, 4, 5]
 @show x y
 @show m, n = length(x), length(y)
 @show exact_mann_whitney_u(x, y)
@@ -259,7 +273,7 @@ x, y = [1, 2], [2, 2, 2, 4, 5]
 @show SciPy.stats.mannwhitneyu(y, x; method="exact");
 
 # %% tags=[]
-x, y = [1, 2, 2], [2, 2, 2, 4, 5, 6, 7]
+x, y = Float64[1, 2, 2], Float64[2, 2, 2, 4, 5, 6, 7]
 @show x y
 @show m, n = length(x), length(y)
 @show exact_mann_whitney_u(x, y)
@@ -272,8 +286,8 @@ x, y = [1, 2, 2], [2, 2, 2, 4, 5, 6, 7]
 @show SciPy.stats.mannwhitneyu(y, x; method="exact");
 
 # %%
-x = [11, 15,  9,  4, 34, 17, 18, 14, 12, 13, 26, 31]
-y = [34, 31, 35, 29, 28, 12, 18, 30, 14, 22, 10]
+x = Float64[11, 15,  9,  4, 34, 17, 18, 14, 12, 13, 26, 31]
+y = Float64[34, 31, 35, 29, 28, 12, 18, 30, 14, 22, 10]
 @show x y
 @show m, n = length(x), length(y)
 @show exact_mann_whitney_u(x, y)
@@ -286,8 +300,8 @@ y = [34, 31, 35, 29, 28, 12, 18, 30, 14, 22, 10]
 @show SciPy.stats.mannwhitneyu(y, x; method="exact");
 
 # %%
-x = [ 4,  7,  8,  9, 13, 13, 17, 11] |> sort
-y = [23,  6,  3, 24, 17, 14, 24, 29, 13, 33] |> sort
+x = Float64[ 4,  7,  8,  9, 13, 13, 17, 11] |> sort
+y = Float64[23,  6,  3, 24, 17, 14, 24, 29, 13, 33] |> sort
 @show x y
 @show m, n = length(x), length(y)
 @show exact_mann_whitney_u(x, y)
@@ -300,8 +314,8 @@ y = [23,  6,  3, 24, 17, 14, 24, 29, 13, 33] |> sort
 @show SciPy.stats.mannwhitneyu(y, x; method="exact");
 
 # %%
-x = [ 4,  7,  8,  9, 13, 13, 17, 11] |> sort
-y = [23,  6,  3, 24, 17, 14, 24, 29, 13, 33] |> sort
+x = Float64[ 4,  7,  8,  9, 13, 13, 17, 11] |> sort
+y = Float64[23,  6,  3, 24, 17, 14, 24, 29, 13, 33] |> sort
 @show x y
 @show m, n = length(x), length(y)
 println()
@@ -321,8 +335,8 @@ g = @btime SciPy.stats.mannwhitneyu($x, $y; method="exact")
 @show a b c d e f g;
 
 # %%
-x = [4, 7, 8, 9, 11, 12, 13, 17]
-y = [3, 6, 10, 14, 16, 23, 24, 25, 29, 33]
+x = Float64[4, 7, 8, 9, 11, 12, 13, 17]
+y = Float64[3, 6, 10, 14, 16, 23, 24, 25, 29, 33]
 @show x y
 @show m, n = length(x), length(y)
 println()
