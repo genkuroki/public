@@ -85,6 +85,46 @@ end
 
 # %%
 """
+    myrank(X, rank = similar(X, Float64), place = similar(X, Int))
+
+配列 `X` 内の値の順位(下から何番目に大きいか)を計算する.
+
+値に重複がある場合には同順位にするために順位の平均を順位として採用する.
+
+`rank`, `place` は内部で使う配列で, 事前に割り当てておけば, この函数はメモリ割り当てゼロで実行される.  `rank` が返り値になる.
+"""
+function myrank(X, rank = similar(X, Float64), place = similar(X, Int))
+    N = length(X)
+    place .= 1:N
+    sort!(place; by = i->X[i])
+    i = 1
+    @inbounds while i ≤ N
+        j = i
+        while (j + 1 ≤ N) && (X[place[i]] == X[place[j+1]])
+            j += 1
+        end
+        if j > i
+            t = j - i + 1
+            rk = sum(i:j) / t
+            for k in i:j
+                rank[place[k]] = rk
+            end
+        else
+            rank[place[i]] = i
+        end
+        i = j + 1
+    end
+    rank
+end
+
+# %%
+@doc myrank
+
+# %%
+@show myrank([1, 2, 3, 3, 5, 5, 5, 8]);
+
+# %%
+"""
     exact_mann_whitney_u(x, y,
         xy = Vector{promote_type(eltype(x), eltype(y))}(undef, length(x)+length(y)),
         rankxy = similar(xy, Float64),
@@ -103,6 +143,17 @@ end
 `p_twosided` は `p_less + p_greater` と1の小さい方になる.
 
 `xy`, `rankxy`, `place`, `comb` は内部で使用する配列である. それらを事前に割り当てておけば, この函数はメモリ割り当てゼロで実行される.
+
+この函数の実装では素朴にすべての組み合わせに関する和を計算する方法を採用しているので, `x`, `y` のサイズが大きくなると極めて遅くなる.  より洗練されたアルゴリズムについては以下の文献を参照せよ.
+
+* https://pure.tue.nl/ws/files/1330412/200012964.pdf
+* https://www.sciencedirect.com/science/article/pii/S1672022916000358
+
+注意: この函数が返す両側検定のP値はR言語の [exactRankTests::wilcox.exact](https://rdrr.io/cran/exactRankTests/src/R/wilcox.exact.R) や [coin::wilcox_test](https://rdrr.io/cran/coin/src/R/LocationTests.R) と同じ値になる.
+
+注意: この函数が返す両側検定のP値は [HypothesisTests.jl](https://github.com/JuliaStats/HypothesisTests.jl) の `pvalue(ExactMannWhitneyUTest(x, y))` とは一般に異なる.  そうなる理由は HypothesisTests.jl が `[x; y]` 内の値に重複(tie)がある場合に分布の左右対称性が崩れることに配慮していないからである.  さらに現時点の HypothesisTests.jl (v0.10.10) の `pvalue(ExactMannWhitneyUTest(x, y))` ではメモリ割り当てがかなり発生する.
+
+注意: この函数が返す両側検定のP値は [scipy.stats.mannwhitneyu](https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.mannwhitneyu.html) とは一般に異なる.  その理由は仕様的に "No correction is made for ties." となっているからである.
 """
 function exact_mann_whitney_u(x, y,
         xy = Vector{promote_type(eltype(x), eltype(y))}(undef, length(x)+length(y)),
@@ -119,28 +170,9 @@ function exact_mann_whitney_u(x, y,
     m, n = length(x), length(y)
     xy[1:m] .= x
     xy[m+1:m+n] .= y
-    N = m + n
-    place .= 1:N
 
     # Calculation of ranks
-    sort!(place; by = i->xy[i])
-    i = 1
-    @inbounds while i ≤ N
-        j = i
-        while (j + 1 ≤ N) && (xy[place[i]] == xy[place[j+1]])
-            j += 1
-        end
-        if j > i
-            t = j - i + 1
-            rk = sum(i:j) / t
-            for k in i:j
-                rankxy[place[k]] = rk
-            end
-        else
-            rankxy[place[i]] = i
-        end
-        i = j + 1
-    end
+    rankxy = myrank(xy, rankxy, place)
     
     # Calculation of P-values
     r = sum(@view rankxy[1:m])
@@ -151,9 +183,7 @@ function exact_mann_whitney_u(x, y,
         num_less    += R ≤ r_less
         num_greater += R ≥ r_greater
     end
-    den = binomial(N, m)
-    p_less = num_less/den
-    p_greater = num_greater/den
+    p_less, p_greater = (num_less, num_greater) ./ binomial(m+n, m)
     p_twosided = min(1, p_less + p_greater)
     
     # Calculation of U-statistics
@@ -169,9 +199,24 @@ end
 # %%
 using BenchmarkTools
 using HypothesisTests
+
+# https://www.jstor.org/stable/2533173
+x = [1,2,1,1,1,1,1,1,1,1,2,4,1,1]
+y = [3,3,4,3,1,2,3,1,1,5,4]
+
+xy = Vector{promote_type(eltype(x), eltype(y))}(undef, length(x)+length(y))
+rankxy = similar(xy, Float64)
+place = similar(xy, Int)
+comb = similar(x, Int, min(length(x), length(y)))
+
+a = @btime exact_mann_whitney_u($x, $y)
+b = @btime exact_mann_whitney_u($x, $y, $xy, $rankxy, $place, $comb)
+c = @btime pvalue(ExactMannWhitneyUTest($x, $y))
+@show a b c;
+
+# %%
 using RCall
 @rimport exactRankTests as exactRankTests
-using DataFrames
 using SciPy
 
 # %%
