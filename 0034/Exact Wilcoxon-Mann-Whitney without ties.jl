@@ -17,9 +17,11 @@
 # %%
 using BenchmarkTools
 using Combinatorics
+using Distributions
 using HypothesisTests
 using Memoization
 using StatsBase
+using StatsPlots
 
 # %% [markdown]
 # $\{1,2,\ldots,N\}$ から重複無しに $m$ 個の組み合わせ $1\le i_1<\cdots<i_m\le N$ を取るとき, その和が $r$ になる場合の数を $f(N, m, r)$ と書くと, 以下が成立することがわかる:
@@ -82,18 +84,20 @@ end
 
 # %% [markdown]
 # 念のために正しく計算されていることを確認しておこう.
+#
+# 以下では $N = n + m$ とおく.
 
 # %%
-function F_memoize(N, m)
+function F_memoize(n, m)
     rmin = m*(m+1)÷2
-    rmax = rmin + m*(N-m)
+    rmax = rmin + m*n
     rs = rmin:rmax
-    fs = [f_memoize(N, m, r) for r in rs]
+    fs = [f_memoize(n+m, m, r) for r in rs]
     rs, fs
 end
 
-function F_comb(N, m)
-    rank_sums = [sum(comb) for comb in combinations(1:N, m)]
+function F_comb(n, m)
+    rank_sums = [sum(comb) for comb in combinations(1:(n+m), m)]
     c = countmap(rank_sums)
     rmin, rmax = extrema(keys(c))
     rs = rmin:rmax
@@ -106,20 +110,20 @@ N = 10
 F1 = F_memoize
 F2 = F_comb
 for m in 0:N
-    @show N, m, F1(N, m)
-    @show N, m, F2(N, m)
-    @show F1(N, m) == F2(N, m)
+    @show N, m, F1(N-m, m)
+    @show N, m, F2(N-m, m)
+    @show F1(N-m, m) == F2(N-m, m)
     println()
 end
 
 # %%
-[F_memoize(N, m) == F_comb(N, m) for N in 10:20, m in 0:10]
+[F_memoize(n, m) == F_comb(n, m) for n in 0:10, m in 0:10]
 
 # %%
-for N in 50:10:100
-    m = N÷2
-    print("N = $N, m = $m: ")
-    @time F_memoize(N, m)
+for m in 25:5:50
+    n = m
+    print("n = $n, m = $m: ")
+    @time F_memoize(m, m)
 end
 
 # %% [markdown]
@@ -198,11 +202,10 @@ function G(n, m,
     @view next[:, 1+m]
 end
 
-function F_recursive(N, m,
-        prev = Matrix{Int}(undef, m*(N-m)+1, m+1),
+function F_recursive(n, m,
+        prev = Matrix{Int}(undef, m*n+1, m+1),
         next = similar(prev),
     )
-    n = N - m
     rmin = m*(m+1)÷2
     rmax = rmin + m*n
     rs = rmin:rmax
@@ -215,20 +218,19 @@ N = 10
 F1 = F_memoize
 F2 = F_recursive
 for m in 0:N
-    @show N, m, F1(N, m)
-    @show N, m, F2(N, m)
-    @show F1(N, m) == F2(N, m)
+    @show N, m, F1(N-m, m)
+    @show N, m, F2(N-m, m)
+    @show F1(N-m, m) == F2(N-m, m)
     println()
 end
 
 # %%
-[F_recursive(m+n, m) == F_memoize(m+n, m) for n in 0:20, m in 0:20]
+[F_recursive(n, m) == F_memoize(n, m) for n in 0:20, m in 0:20]
 
 # %%
-for N in 50:10:200
-    m = N÷2
-    n = N - m
-    print("N = $N, m = $m: ")
+for m in 25:5:100
+    n = m
+    print("n = $n, m = $m: ")
     prev = Matrix{Int}(undef, m*n+1, m+1)
     next = similar(prev)
     @time G(n, m, prev, next)
@@ -238,7 +240,7 @@ end
 n, m = 100, 100
 prev = Matrix{Int}(undef, m*n+1, m+1)
 next = similar(prev)
-@btime F_recursive($(m+n), $m, $prev, $next);
+@btime F_recursive($n, $m, $prev, $next);
 
 # %%
 n, m = 100, 100
@@ -246,5 +248,70 @@ x, y = rand(m), rand(n)
 @time ExactMannWhitneyUTest(x, y)
 @time ExactMannWhitneyUTest(x, y)
 @time ExactMannWhitneyUTest(x, y)
+
+# %%
+n, m = 100, 100
+prev = Matrix{Int}(undef, m*n+1, m+1)
+next = similar(prev)
+rs, fs = @time F_recursive(n, m, prev, next)
+@show rs length(fs) typeof(fs)
+
+ps = fs/sum(fs)
+@show mu = m*(m+n+1)/2
+@show s2 = m*n*(m+n+1)/12
+
+plot(rs[begin:10:end], ps[begin:10:end]; label="")
+plot!(Normal(mu, √s2), extrema(rs)...; ls=:dash, label="")
+
+# %%
+extrema(fs)
+
+# %%
+n, m = 100, 100
+prev = Matrix{Int128}(undef, m*n+1, m+1)
+next = similar(prev)
+rs, fs = @time F_recursive(n, m, prev, next)
+@show rs length(fs) typeof(fs)
+
+ps = fs/sum(fs)
+@show mu = m*(m+n+1)/2
+@show s2 = m*n*(m+n+1)/12
+
+plot(rs[begin:10:end], ps[begin:10:end]; label="")
+plot!(Normal(mu, √s2), extrema(rs)...; ls=:dash, label="")
+
+# %%
+extrema(fs)
+
+# %%
+n, m = 100, 100
+prev = Matrix{BigInt}(undef, m*n+1, m+1)
+next = similar(prev)
+rs, fs = @time F_recursive(n, m, prev, next)
+@show rs length(fs) typeof(fs)
+
+ps = fs/sum(fs)
+@show mu = m*(m+n+1)/2
+@show s2 = m*n*(m+n+1)/12
+
+plot(rs[begin:10:end], ps[begin:10:end]; label="")
+plot!(Normal(mu, √s2), extrema(rs)...; ls=:dash, label="")
+
+# %%
+extrema(fs)
+
+# %%
+n, m = 100, 100
+prev = Matrix{Float64}(undef, m*n+1, m+1)
+next = similar(prev)
+rs, fs = @time F_recursive(n, m, prev, next)
+@show rs length(fs) typeof(fs)
+
+ps = fs/sum(fs)
+@show mu = m*(m+n+1)/2
+@show s2 = m*n*(m+n+1)/12
+
+plot(rs[begin:10:end], ps[begin:10:end]; label="")
+plot!(Normal(mu, √s2), extrema(rs)...; ls=:dash, label="")
 
 # %%
