@@ -1,0 +1,250 @@
+# -*- coding: utf-8 -*-
+# ---
+# jupyter:
+#   jupytext:
+#     formats: ipynb,jl:hydrogen
+#     text_representation:
+#       extension: .jl
+#       format_name: hydrogen
+#       format_version: '1.3'
+#       jupytext_version: 1.10.3
+#   kernelspec:
+#     display_name: Julia 1.7.3
+#     language: julia
+#     name: julia-1.7
+# ---
+
+# %%
+using BenchmarkTools
+using Combinatorics
+using HypothesisTests
+using Memoization
+using StatsBase
+
+# %% [markdown]
+# $\{1,2,\ldots,N\}$ から重複無しに $m$ 個の組み合わせ $1\le i_1<\cdots<i_m\le N$ を取るとき, その和が $r$ になる場合の数を $f(N, m, r)$ と書くと, 以下が成立することがわかる:
+#
+# $$
+# \begin{aligned}
+# &
+# f(N, m, r) = 0\quad\text{unless $0\le m \le N$ and $0\le r - m(m+1)/2 \le m(N-m)$},
+# \\ &
+# f(N, 0, 0) = 1,
+# \\ &
+# f(N, 1, r) = \text{if $1\le r\le N$ then $1$ else $0$},
+# \\ &
+# f(N, m, r) = f(N-1, m, r) + f(N-1, m-1, r-N).
+# \end{aligned}
+# $$
+#
+# ただし, この方法で計算するにはメモ化がほぼ必須である.
+#
+# 以下のセルのコードは上の方法による $f(N, m, r)$ の計算法をそのままコードに翻訳したものである.
+
+# %%
+function f_naive(N, m, r)
+    0 ≤ m ≤ N || return zero(N)
+    0 ≤ r - m*(m+1)÷2 ≤ m*(N-m) || return zero(N)
+    m == 0 && return one(N)
+    m == 1 && return 1 ≤ r ≤ N ? one(N) : zero(N)
+    f_naive(N-1, m, r) + f_naive(N-1, m-1, r-N)
+end
+
+@memoize function f_memoize(N, m, r)
+    0 ≤ m ≤ N || return zero(N)
+    0 ≤ r - m*(m+1)÷2 ≤ m*(N-m) || return zero(N)
+    m == 0 && return one(N)
+    m == 1 && return 1 ≤ r ≤ N ? one(N) : zero(N)
+    f_memoize(N-1, m, r) + f_memoize(N-1, m-1, r-N)
+end
+
+# %% [markdown]
+# メモ化していない `f_naive` はひどく遅い.
+
+# %%
+for m in 10:18
+    N = 2m
+    r = m*(m+1)÷2 + m*(N-m)÷2
+    print("m = $m, N = $N, r = $r: ")
+    @time f_naive(N, m, r)
+end
+
+# %% [markdown]
+# メモ化された `f` はこれよりかなり速くなっている.
+
+# %%
+for m in 10:18
+    N = 2m
+    r = m*(m+1)÷2 + m*(N-m)÷2
+    print("m = $m, N = $N, r = $r: ")
+    @time f_memoize(N, m, r)
+end
+
+# %% [markdown]
+# 念のために正しく計算されていることを確認しておこう.
+
+# %%
+function F_memoize(N, m)
+    rmin = m*(m+1)÷2
+    rmax = rmin + m*(N-m)
+    rs = rmin:rmax
+    fs = [f_memoize(N, m, r) for r in rs]
+    rs, fs
+end
+
+function F_comb(N, m)
+    rank_sums = [sum(comb) for comb in combinations(1:N, m)]
+    c = countmap(rank_sums)
+    rmin, rmax = extrema(keys(c))
+    rs = rmin:rmax
+    fs = [c[k] for k in rs]
+    rs, fs
+end
+
+# %%
+N = 10
+F1 = F_memoize
+F2 = F_comb
+for m in 0:N
+    @show N, m, F1(N, m)
+    @show N, m, F2(N, m)
+    @show F1(N, m) == F2(N, m)
+    println()
+end
+
+# %%
+[F_memoize(N, m) == F_comb(N, m) for N in 10:20, m in 0:10]
+
+# %%
+for N in 50:10:100
+    m = N÷2
+    print("N = $N, m = $m: ")
+    @time F_memoize(N, m)
+end
+
+# %% [markdown]
+# $$
+# \begin{aligned}
+# &
+# f(N, m, r) = 0\quad\text{unless $0\le m \le N$ and $0\le r - m(m+1)/2 \le m(N-m)$},
+# \\ &
+# f(N, 0, 0) = 1,
+# \\ &
+# f(N, 1, r) = \text{if $1\le r\le N$ then $1$ else $0$},
+# \\ &
+# f(N, m, r) = f(N-1, m, r) + f(N-1, m-1, r-N).
+# \end{aligned}
+# $$
+#
+# より,
+#
+# $$
+# N = m + n, \quad
+# r = m(m+1)/2 + u, \quad
+# g(n, m, u) = f(m+n, m, m(m+1)/2 + u)
+# $$
+#
+# とおくと,
+#
+# $$
+# \begin{aligned}
+# &
+# g(n, m, u) = 0\quad\text{unless $0 \le m$, $0\le n$, and $0\le u \le mn$},
+# \\ &
+# g(n, 0, 0) = 1,
+# \\ &
+# g(n, 1, u) = \text{if $0\le u \le m+n-1$ then $1$ else $0$},
+# \\ &
+# g(n, m, u) = g(n-1, m, u) + g(n, m-1, u-n).
+# \end{aligned}
+# $$
+
+# %% [markdown]
+# 特に,
+#
+# $$
+# g(0, 1, u) = \text{if $u=0$ then $1$ else $0$}.
+# $$
+#
+# $g(n, m, u)$ の値は以下を帰納的に計算すれば得られる:
+#
+# $$
+# g(j, i, u-(n-j)n), \quad 0\le j\le n, \quad 0\le i \le m.
+# $$
+
+# %%
+function G(n, m,
+        prev = Matrix{Int}(undef, m*n+1, m+1),
+        next = similar(prev),
+    )
+    # g(0, i, u) = δ_{i0} δ_{u0}
+    @. next = 0
+    next[1+0, 1+0] = 1
+    for k in 1:m+n
+        @. prev = next
+        for i in max(0, k-n):min(m, k)
+            j = k - i
+            # g(j, i, u) = g(j-1, i, u) + g(j, i-1, u-j)
+            @views @. next[1:1+i*(j-1), 1+i] = prev[1:1+i*(j-1), 1+i]
+            if i ≥ 1
+                @views @. next[1+j:1+i*j, 1+i] += prev[1:1+(i-1)*j, 1+i-1]
+            end
+            # g(0, i, u) = δ_{i0} δ_{u0}
+            if j == 0
+                next[1+0, 1+i] = 1
+            end
+        end
+    end
+    @view next[:, 1+m]
+end
+
+function F_recursive(N, m,
+        prev = Matrix{Int}(undef, m*(N-m)+1, m+1),
+        next = similar(prev),
+    )
+    n = N - m
+    rmin = m*(m+1)÷2
+    rmax = rmin + m*n
+    rs = rmin:rmax
+    fs = G(n, m, prev, next)
+    rs, fs
+end
+
+# %%
+N = 10
+F1 = F_memoize
+F2 = F_recursive
+for m in 0:N
+    @show N, m, F1(N, m)
+    @show N, m, F2(N, m)
+    @show F1(N, m) == F2(N, m)
+    println()
+end
+
+# %%
+[F_recursive(m+n, m) == F_memoize(m+n, m) for n in 0:20, m in 0:20]
+
+# %%
+for N in 50:10:200
+    m = N÷2
+    n = N - m
+    print("N = $N, m = $m: ")
+    prev = Matrix{Int}(undef, m*n+1, m+1)
+    next = similar(prev)
+    @time G(n, m, prev, next)
+end
+
+# %%
+n, m = 100, 100
+prev = Matrix{Int}(undef, m*n+1, m+1)
+next = similar(prev)
+@btime F_recursive($(m+n), $m, $prev, $next);
+
+# %%
+n, m = 100, 100
+x, y = rand(m), rand(n)
+@time ExactMannWhitneyUTest(x, y)
+@time ExactMannWhitneyUTest(x, y)
+@time ExactMannWhitneyUTest(x, y)
+
+# %%
