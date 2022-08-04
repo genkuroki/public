@@ -315,3 +315,15 @@ plot(rs[begin:10:end], ps[begin:10:end]; label="")
 plot!(Normal(mu, √s2), extrema(rs)...; ls=:dash, label="")
 
 # %%
+extrema(fs)
+
+# %%
+sum(fs)
+
+# %%
+binomial(big(200), 100)
+
+# %%
+binomial(big(200), 100) |> float
+
+# %%
