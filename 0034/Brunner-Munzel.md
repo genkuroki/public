@@ -13,6 +13,13 @@ jupyter:
     name: julia-1.7
 ---
 
+# Brunner-Munzel検定について
+
+* 黒木玄
+* 2022-08-05
+
+__文献__
+
 * E. Brunner and U. Munzel. The nonparametric Behrens-Fisher problem: Asymptotic theory and a small-sample
 approximation. Biometrical Journal, 42:17–25, 2000.
 \[[pdf](https://www.researchgate.net/profile/Edgar-Brunner/publication/264799502_Nonparametric_Hypotheses_and_Rank_Statistics_for_Unbalanced_Factorial_Designs/links/5756a00408ae155a87bc5c8c/Nonparametric-Hypotheses-and-Rank-Statistics-for-Unbalanced-Factorial-Designs.pdf)\]
