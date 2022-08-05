@@ -142,6 +142,48 @@ end
 ```
 
 ```julia
+function findpositive(f, a, b; maxsplit = 30)
+    @assert f(a) < 0
+    @assert f(b) < 0
+    c = (a + b)/2
+    f(c) > 0 && return c
+    w = b - a
+    for k in 2:maxsplit
+        for d in range(w/2^(k+1), w/2-w/2^(k+1), step=w/2^k)
+            x = c + d
+            f(x) > 0 && return x 
+            x = c - d
+            f(x) > 0 && return x 
+        end
+    end
+    error("k > maxplit = $maxsplit")
+end
+
+f(x) = abs(x) < 1e-4 ? 1.0 : -1.0
+
+@time findpositive(f, -100abs(randn()), 20abs(randn()))
+```
+
+```julia
+function prob_x_le_y(distx, disty, a=0.0)
+    H(y) = cdf(distx, y) * pdf(disty, y-a)
+    quadgk(H, extrema(disty + a)...)[1]
+end
+
+function tieshift(distx, disty; probtie=0.5)
+    #s = max(std(distx), std(disty))
+    #m = median(distx) - median(disty)
+    #find_zero(a -> prob_x_le_y(distx, disty, a) - probtie,
+    #    (amin, amax), Bisection())
+    find_zero(a -> prob_x_le_y(distx, disty, a) - probtie, 0.0)
+end
+
+@show tieshift(Normal(0, 1), Normal(2, 2))
+@show tieshift(Normal(0, 1), Laplace(2, 2))
+@show tieshift(Normal(0, 1), Uniform(0, 1));
+```
+
+```julia
 h_brunner_munzel(x, y) = (x < y) + (x == y)/2
 
 phat_brunner_munzel(X, Y) = mean(h_brunner_munzel(x, y) for x in X, y in Y)
@@ -180,7 +222,8 @@ function brunner_munzel(X, Y,
         RRy = similar(Y, Float64),
         Ytmp = similar(Y, Float64);
         p = 1/2,
-        α = 0.05
+        α = 0.05,
+        maxsplit = 30
     )
     (; phat, sehat, tvalue, df, pvalue) = statistics_brunner_munzel(X, Y, RRx, RRy; p)
     
@@ -191,10 +234,9 @@ function brunner_munzel(X, Y,
         @. Ytmp = Y + a
         pvalue_brunner_munzel(X, Ytmp, RRx, RRy; p)
     end
-    locmin = minimum(X) - maximum(Y) - 1
-    locmax = maximum(X) - minimum(Y) + 1
-    N = length(X) + length(Y)
-    loccent = argmax(a -> pvalue_location(a), range(locmin, locmax, round(Int, 16√N)))
+    locmin = minimum(X) - maximum(Y) - 0.1
+    locmax = maximum(X) - minimum(Y) + 0.1
+    loccent = findpositive(a -> pvalue_location(a) - α, locmin, locmax; maxsplit)
     confint_location = [
         find_zero(a -> pvalue_location(a) - α, (locmin, loccent))
         find_zero(a -> pvalue_location(a) - α, (loccent, locmax))
@@ -210,16 +252,18 @@ function show_plot_brunner_munzel(X, Y,
         Ytmp = similar(Y, Float64);
         p = 1/2,
         α = 0.05,
+        showXY = false,
         kwargs...
     )
-    @show X Y
+    showXY && (@show X Y)
     (; phat, sehat, tvalue, df, p, pvalue, α, confint_p, confint_location,
         pvalue_location, locmin, locmax) = brunner_munzel(X, Y, RRx, RRy, Ytmp; p, α)
     pprint((; phat, sehat, tvalue, df, p, pvalue, α, confint_p, confint_location))
     println()
-    @show median(X), median(Y)
+    @show median(X) median(Y)
     plot(pvalue_location, locmin, locmax; label="")
-    title!("pvalue_location")
+    vline!([tieshift(distx, disty)]; label="")    
+    title!("P-value function of location")
     plot!(ytick=0:0.05:1)
     plot!(; kwargs...)
 end
@@ -234,7 +278,8 @@ pvalue_brunner_munzel(X, Y)
 ```
 
 ```julia
-plot(a -> pvalue_brunner_munzel(X, Y .+ a), locmin, locmax; label="", title="location P-value")
+plot(a -> pvalue_brunner_munzel(X, Y .+ a), locmin, locmax;
+    label="", title="P-value function of location")
 ```
 
 <!-- #region -->
@@ -457,22 +502,24 @@ show_plot_brunner_munzel(X, Y)
 ```
 
 ```julia
-function prob_x_le_y(distx, disty, a=0.0)
-    H(y) = cdf(distx, y) * pdf(disty, y-a)
-    quadgk(H, extrema(disty + a)...)[1]
-end
+distx, disty = LogNormal(), LogNormal(1)
+m, n = 10, 10
+X, Y = rand(distx, m), rand(disty, n)
+show_plot_brunner_munzel(X, Y)
+```
 
-function tieshift(distx, disty; probtie=0.5)
-    #s = max(std(distx), std(disty))
-    #m = median(distx) - median(disty)
-    #find_zero(a -> prob_x_le_y(distx, disty, a) - probtie,
-    #    (amin, amax), Bisection())
-    find_zero(a -> prob_x_le_y(distx, disty, a) - probtie, 0.0)
-end
+```julia
+distx, disty = LogNormal(), LogNormal(1)
+m, n = 40, 40
+X, Y = rand(distx, m), rand(disty, n)
+show_plot_brunner_munzel(X, Y; xlim=(-5, 2))
+```
 
-@show tieshift(Normal(0, 1), Normal(2, 2))
-@show tieshift(Normal(0, 1), Laplace(2, 2))
-@show tieshift(Normal(0, 1), Uniform(0, 1));
+```julia
+distx, disty = LogNormal(), LogNormal(1)
+m, n = 160, 160
+X, Y = rand(distx, m), rand(disty, n)
+show_plot_brunner_munzel(X, Y; xlim=(-3, 0))
 ```
 
 ```julia
@@ -566,11 +613,19 @@ plot_pvals(; distx = LogNormal(), disty = LogNormal(1), m = 10, n = 10)
 ```
 
 ```julia
-plot_pvals(; distx = Cauchy(0, 1), disty = Cauchy(0, 1), m = 10, n = 10, Δμ = 0.0)
+plot_pvals(; distx = LogNormal(), disty = LogNormal(1), m = 20, n = 20)
 ```
 
 ```julia
-plot_pvals(; distx = Cauchy(0, 1), disty = Cauchy(0, 2), m = 10, n = 10, Δμ = 0.0)
+plot_pvals(; distx = LogNormal(), disty = LogNormal(1), m = 40, n = 40)
+```
+
+```julia
+plot_pvals(; distx = TDist(2), disty = TDist(2), m = 10, n = 10, Δμ = 0.0)
+```
+
+```julia
+plot_pvals(; distx = TDist(2), disty = TDist(1.1), m = 10, n = 10, Δμ = 0.0)
 ```
 
 ```julia
@@ -585,13 +640,15 @@ Y = rand(Normal(0, 4), n)
 function plot_confints(;
         distx = Normal(0, 1), disty = Normal(0, 2), m = 10, n = 10,
         L = 100, kwargs...)
+    a = tieshift(distx, disty)
+    Δμ = mean(distx) - mean(disty)
     BM = fill(zeros(2), 0)
     W = fill(zeros(2), 0)
     for _ in 1:L
         X = rand(distx, m)
         Y = rand(disty, n)
-        push!(BM, brunner_munzel(X, Y).confint_location)
-        push!(W, confint_welch(X, Y))
+        push!(BM, brunner_munzel(X, Y .+ a).confint_location)
+        push!(W, confint_welch(X, Y .+ Δμ))
     end
     P = plot()
     for i in 1:L
@@ -616,6 +673,22 @@ plot_confints(distx = LogNormal(0), disty = LogNormal(1), m = 10, n = 10)
 ```
 
 ```julia
+plot_confints(distx = LogNormal(0), disty = LogNormal(1), m = 40, n = 40)
+```
+
+```julia
+plot_confints(distx = LogNormal(0), disty = LogNormal(1), m = 160, n = 160)
+```
+
+```julia
+plot_confints(distx = TDist(2), disty = TDist(2), m = 10, n = 10)
+```
+
+```julia
+plot_confints(distx = TDist(2), disty = TDist(1.1), m = 10, n = 10)
+```
+
+```julia
 function plot_limits(;
         distx = Normal(0, 1), disty = Normal(0, 2), m = 10, n = 10,
         L = 1000, kwargs...)
@@ -623,13 +696,16 @@ function plot_limits(;
     @show distx, m
     @show disty, n
 
+    a = tieshift(distx, disty)
+    Δμ = mean(distx) - mean(disty)
+
     BM = fill(zeros(2), 0)
     W = fill(zeros(2), 0)
     for _ in 1:L
         X = rand(distx, m)
         Y = rand(disty, n)
-        push!(BM, brunner_munzel(X, Y).confint_location)
-        push!(W, confint_welch(X, Y))
+        push!(BM, brunner_munzel(X, Y .+ a).confint_location)
+        push!(W, confint_welch(X, Y .+ Δμ))
     end
 
     lower = [(first(BM[i]), first(W[i])) for i in 1:L]
@@ -666,7 +742,15 @@ plot_limits(distx = LogNormal(), disty = LogNormal(1), m = 40, n = 40)
 ```
 
 ```julia
-plot_limits(distx = LogNormal(), disty = LogNormal(1), m = 160, n = 160)
+@time plot_limits(distx = LogNormal(), disty = LogNormal(1), m = 160, n = 160)
+```
+
+```julia
+plot_limits(distx = TDist(2), disty = TDist(2), m = 10, n = 10)
+```
+
+```julia
+plot_limits(distx = TDist(2), disty = TDist(1.1), m = 10, n = 10)
 ```
 
 ```julia
