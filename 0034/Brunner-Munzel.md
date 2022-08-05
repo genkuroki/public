@@ -177,12 +177,9 @@ function prob_x_le_y(distx, disty, a=0.0)
     quadgk(H, extrema(disty + a)...)[1]
 end
 
-function tieshift(distx, disty; probtie=0.5)
-    #s = max(std(distx), std(disty))
-    #m = median(distx) - median(disty)
-    #find_zero(a -> prob_x_le_y(distx, disty, a) - probtie,
-    #    (amin, amax), Bisection())
-    find_zero(a -> prob_x_le_y(distx, disty, a) - probtie, 0.0)
+function tieshift(distx::UnivariateDistribution, disty::UnivariateDistribution;
+        p=0.5)
+    find_zero(a -> prob_x_le_y(distx, disty, a) - p, 0.0)
 end
 
 @show tieshift(Normal(0, 1), Normal(2, 2))
@@ -224,6 +221,12 @@ function pvalue_brunner_munzel(X, Y,
     statistics_brunner_munzel(X, Y, RRx, RRy; p).pvalue
 end
 
+function tieshift(X::AbstractVector, Y::AbstractVector; p=0.5)
+    locmin = minimum(X) - maximum(Y) - 0.1
+    locmax = maximum(X) - minimum(Y) + 0.1
+    find_zero(a -> phat_brunner_munzel(X, Y .+ a) - p, (locmin, locmax))
+end
+
 function brunner_munzel(X, Y,
         RRx = similar(X, Float64),
         RRy = similar(Y, Float64),
@@ -243,7 +246,10 @@ function brunner_munzel(X, Y,
     end
     locmin = minimum(X) - maximum(Y) - 0.1
     locmax = maximum(X) - minimum(Y) + 0.1
-    loccent = findpositive(a -> pvalue_location(a) - α, locmin, locmax; maxsplit)
+    loccent = tieshift(X, Y; p)
+    #if pvalue_location(loccent) - α < 0
+    #    loccent = findpositive(a -> pvalue_location(a) - α, locmin, locmax; maxsplit)
+    #end
     confint_location = [
         find_zero(a -> pvalue_location(a) - α, (locmin, loccent))
         find_zero(a -> pvalue_location(a) - α, (loccent, locmax))
@@ -269,7 +275,7 @@ function show_plot_brunner_munzel(X, Y,
     println()
     @show median(X) median(Y)
     plot(pvalue_location, locmin, locmax; label="")
-    vline!([tieshift(distx, disty)]; label="")    
+    vline!([tieshift(X, Y)]; label="", ls=:dash)    
     title!("P-value function of location")
     plot!(ytick=0:0.05:1)
     plot!(; kwargs...)
