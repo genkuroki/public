@@ -716,6 +716,9 @@ plot_pvals(; distx = TDist(2), disty = TDist(1.1), m = 10, n = 10, Δμ = 0.0)
 distx, disty = Uniform(-1, 1), Exponential()
 m, n, = 100, 100
 
+@show distx, std(distx)
+@show disty, std(disty)
+
 @show a = tieshift(distx, disty)
 ecdf_pval1, _ = @time sim_brunner_mumzel_and_welch(;
     distx = distx, disty = disty + a, m, n)
@@ -754,6 +757,9 @@ plot(P1, P2; size=(800, 250))
 distx, disty = Uniform(-1, 1), Exponential(4)
 m, n, = 100, 100
 
+@show distx, std(distx)
+@show disty, std(disty)
+
 @show a = tieshift(distx, disty)
 ecdf_pval1, _ = @time sim_brunner_mumzel_and_welch(;
     distx = distx, disty = disty + a, m, n)
@@ -782,6 +788,47 @@ title!("case of tie shifting")
 a = @show median(distx) - median(disty)
 P2 = plot(distx, -4, 10; label="distx")
 plot!(disty + a, -4, 10; label="disty + ($(round(a; digits=4)))", ls=:dash)
+vline!([median(distx)]; label="median(distx)", ls=:dot, lw=1.5)
+title!("case of matching medians")
+
+plot(P1, P2; size=(800, 250))
+```
+
+```julia
+distx, disty = Uniform(-1, 1), Exponential(0.5773502691896257)
+m, n, = 100, 100
+
+@show distx, std(distx)
+@show disty, std(disty)
+
+@show a = tieshift(distx, disty)
+ecdf_pval1, _ = @time sim_brunner_mumzel_and_welch(;
+    distx = distx, disty = disty + a, m, n)
+P1 = plot_ecdf(ecdf_pval1, distx, disty, m, n, a;
+    testname="case of tie shifting\n")
+
+@show a = median(distx) - median(disty)
+ecdf_pval2, _ = @time sim_brunner_mumzel_and_welch(;
+    distx = distx, disty = disty + a, m, n)
+P2 = plot_ecdf(ecdf_pval2, distx, disty, m, n, a;
+    testname="case of matching medians\n")
+
+plot(P1, P2; size=(800, 450), topmargin=4Plots.mm)
+```
+
+```julia
+distx, disty = Uniform(-1, 1), Exponential(0.5773502691896257)
+@show distx, std(distx)
+@show disty, std(disty)
+
+a = @show tieshift(distx, disty)
+P1 = plot(distx, -2, 4; label="distx")
+plot!(disty + a, -2, 4; label="disty + ($(round(a; digits=4)))", ls=:dash)
+title!("case of tie shifting")
+
+a = @show median(distx) - median(disty)
+P2 = plot(distx, -2, 4; label="distx")
+plot!(disty + a, -2, 4; label="disty + ($(round(a; digits=4)))", ls=:dash)
 vline!([median(distx)]; label="median(distx)", ls=:dot, lw=1.5)
 title!("case of matching medians")
 
