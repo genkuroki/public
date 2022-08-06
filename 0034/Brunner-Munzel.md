@@ -32,6 +32,7 @@ https://arxiv.org/abs/2208.01231
 
 ```julia
 using Base.Threads
+using BenchmarkTools
 using Distributions
 using PrettyPrinting
 using QuadGK
@@ -320,8 +321,64 @@ show_plot_brunner_munzel(X, Y)
 ```
 
 ```julia
+"""
+    complementcomb!(comb, ccomb)
+
+`comb` は {1,2,…,N} から重複無しに m 個を選ぶ組み合わせを表す配列で, `comb` の中で数は小さな順に並んでいることを仮定する.  この函数は `ccomb` に `comb` の補集合を格納し, `ccomb` を返す.
+"""
+function complementcomb!(ccomb::AbstractVector, comb::AbstractVector)
+    N = length(comb) + length(ccomb)
+    k = 0
+    a = 0
+    @inbounds for b in comb
+        for i in a+1:b-1
+            k += 1
+            ccomb[k] = i
+        end
+        a = b
+    end
+    @inbounds for i in a+1:N
+        k +=1
+        ccomb[k] = i
+    end
+    ccomb
+end
+
+complementcomb(N, comb::AbstractVector) =
+    complementcomb!(similar(comb, N - length(comb)), comb)
+```
+
+```julia
+N = 10
+comb = [2, 4, 5, 8]
+ccomb = similar(comb, N - length(comb))
+@btime complementcomb!($ccomb, $comb);
+```
+
+```julia
+N, m = 5, 3
+ccomb = Vector{Int}(undef, N-m)
+[(copy(comb), copy(complementcomb!(ccomb, comb))) for comb in mycombinations(1:N, m)]
+```
+
+```julia
+N, m = 5, 3
+ccomb = Vector{Int}(undef, N-m)
+[(copy(comb), complementcomb(N, comb)) for comb in mycombinations(1:N, m)]
+```
+
+```julia
+"""
+    permutation_tvalues_brunner_munzel(X, Y;
+        XandY = Vector{Float64}(undef, length(X)+length(Y)),
+        Tval = Vector{Float64}(undef, binomial(length(X)+length(Y), length(X)))
+    )
+
+Brunner-Munzel検定のt値を `[X; Y]` からインデックスの重複無しに `length(X)` 個取る組み合わせとその補集合への分割のすべてについて計算して, `Tval` に格納して返す.
+"""
 function permutation_tvalues_brunner_munzel(X, Y;
-        XandY = Vector{Float64}(undef, length(X)+length(Y))
+        XandY = Vector{Float64}(undef, length(X)+length(Y)),
+        Tval = Vector{Float64}(undef, binomial(length(X)+length(Y), length(X)))
     )
     m, n = length(X), length(Y)
     N = m + n
@@ -331,21 +388,23 @@ function permutation_tvalues_brunner_munzel(X, Y;
     RRx = similar(X, Float64)
     RRy = similar(Y, Float64)
     ccomb = Vector{Int}(undef, n)
-    Tval = Vector{Float64}(undef, binomial(N, m))
     for (k, comb) in enumerate(mycombinations(1:N, m))
-        j = 0
-        for i in 1:N
-            if i ∉ comb
-                j += 1
-                ccomb[j] = i
-            end
-        end
+        complementcomb!(ccomb, comb)
         Tval[k] = statistics_brunner_munzel(
             view(XandY, comb), view(XandY, ccomb), RRx, RRy).tvalue
     end
     Tval
 end
 
+"""
+    pvalue_brunner_munzel_perm(X, Y,
+        Tval = permutation_tvalues_brunner_munzel(X, Y),
+        tval = statistics_brunner_munzel(X, Y).tvalue;
+        le = ⪅
+    )
+
+Brunner-Munzel検定のpermutation版のP値を返す.
+"""
 function pvalue_brunner_munzel_perm(X, Y,
         Tval = permutation_tvalues_brunner_munzel(X, Y),
         tval = statistics_brunner_munzel(X, Y).tvalue;
@@ -642,11 +701,79 @@ plot_pvals(; distx = TDist(2), disty = TDist(1.1), m = 10, n = 10, Δμ = 0.0)
 ```
 
 ```julia
-m, n = 10, 10
-X = rand(Normal(0, 1), m)
-Y = rand(Normal(0, 4), n)
-@show brunner_munzel(X, Y).confint_location
-@show confint_welch(X, Y);
+distx, disty = Uniform(-1, 1), Exponential()
+m, n, = 100, 100
+
+@show a = tieshift(distx, disty)
+ecdf_pval1, _ = @time sim_brunner_mumzel_and_welch(;
+    distx = distx, disty = disty + a, m, n)
+P1 = plot_ecdf(ecdf_pval1, distx, disty, m, n, a;
+    testname="case of tie shifting\n")
+
+@show a = median(distx) - median(disty)
+ecdf_pval2, _ = @time sim_brunner_mumzel_and_welch(;
+    distx = distx, disty = disty + a, m, n)
+P2 = plot_ecdf(ecdf_pval2, distx, disty, m, n, a;
+    testname="case of matching medians\n")
+
+plot(P1, P2; size=(800, 450), topmargin=4Plots.mm)
+```
+
+```julia
+distx, disty = Uniform(-1, 1), Exponential()
+@show distx, std(distx)
+@show disty, std(disty)
+
+a = @show tieshift(distx, disty)
+P1 = plot(distx, -2, 6; label="distx")
+plot!(disty + a, -2, 6; label="disty + ($(round(a; digits=4)))", ls=:dash)
+title!("case of tie shifting")
+
+a = @show median(distx) - median(disty)
+P2 = plot(distx, -2, 6; label="distx")
+plot!(disty + a, -2, 6; label="disty + ($(round(a; digits=4)))", ls=:dash)
+vline!([median(distx)]; label="median(distx)", ls=:dot, lw=1.5)
+title!("case of matching medians")
+
+plot(P1, P2; size=(800, 250))
+```
+
+```julia
+distx, disty = Uniform(-1, 1), Exponential(4)
+m, n, = 100, 100
+
+@show a = tieshift(distx, disty)
+ecdf_pval1, _ = @time sim_brunner_mumzel_and_welch(;
+    distx = distx, disty = disty + a, m, n)
+P1 = plot_ecdf(ecdf_pval1, distx, disty, m, n, a;
+    testname="case of tie shifting\n")
+
+@show a = median(distx) - median(disty)
+ecdf_pval2, _ = @time sim_brunner_mumzel_and_welch(;
+    distx = distx, disty = disty + a, m, n)
+P2 = plot_ecdf(ecdf_pval2, distx, disty, m, n, a;
+    testname="case of matching medians\n")
+
+plot(P1, P2; size=(800, 450), topmargin=4Plots.mm)
+```
+
+```julia
+distx, disty = Uniform(-1, 1), Exponential(4)
+@show distx, std(distx)
+@show disty, std(disty)
+
+a = @show tieshift(distx, disty)
+P1 = plot(distx, -4, 10; label="distx")
+plot!(disty + a, -4, 10; label="disty + ($(round(a; digits=4)))", ls=:dash)
+title!("case of tie shifting")
+
+a = @show median(distx) - median(disty)
+P2 = plot(distx, -4, 10; label="distx")
+plot!(disty + a, -4, 10; label="disty + ($(round(a; digits=4)))", ls=:dash)
+vline!([median(distx)]; label="median(distx)", ls=:dot, lw=1.5)
+title!("case of matching medians")
+
+plot(P1, P2; size=(800, 250))
 ```
 
 ```julia
