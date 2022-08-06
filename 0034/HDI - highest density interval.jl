@@ -31,11 +31,10 @@ default(fmt=:png, size=(400, 250))
 """
 function invpdf(dist::ContinuousUnivariateDistribution, y;
         alg = Order0())
-    m = mode(dist)
-    cdfm = cdf(dist, m)
-    a0, b0 = quantile.(dist, (cdfm/2, 1 - (1-cdfm)/2))
-    logy = log(y)
-    f(x) = logpdf(dist, x) - logy
+    f(x) = logpdf(dist, x) - log(y)
+    cdfm = cdf(dist, mode(dist))
+    a0 = quantile(dist, cdfm/2)
+    b0 = quantile(dist, 1 - (1 - cdfm)/2)
     a = find_zero(f, a0, alg)
     b = find_zero(f, b0, alg)
     a, b
@@ -81,7 +80,8 @@ plot(y -> cdfinvpdf(dist, y), eps(), pdfm)
 
 # %%
 """
-    hdi(dist::ContinuousUnivariateDistribution, α = 0.05)
+    hdi(dist::ContinuousUnivariateDistribution, α = 0.05;
+        alg = Order0())
 
 `dist` は `mode(dist)` を持つ単峰型の連続分布であると仮定する.
 
@@ -89,13 +89,10 @@ plot(y -> cdfinvpdf(dist, y), eps(), pdfm)
 """
 function hdi(dist::ContinuousUnivariateDistribution, α = 0.05;
         alg = Order0())
-    m = mode(dist)
-    function g(y)
-        a, b = invpdf(dist, y; alg)
-        cdf(dist, b) - cdf(dist, a) - (1 - α)
+    pdfm = pdf(dist, mode(dist))
+    y = find_zero(pdfm/2, alg) do y
+        cdfinvpdf(dist, y; alg) - (1 - α)
     end
-    pdfm = pdf(dist, m)
-    y = find_zero(g, pdfm/2, alg)
     invpdf(dist, y; alg)
 end
 
