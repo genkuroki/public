@@ -22,25 +22,42 @@ default(fmt=:png, size=(400, 250))
 
 # %%
 """
-    invpdf(dist::ContinuousUnivariateDistribution, y;
-        alg = Order0())
+    invpdf(dist, y; alg = Order0(), modefunc = mymode)
 
-`dist` は `mode(dist)` を持つ単峰型の連続分布であると仮定する.
+`dist` は最頻値を持つ単峰型の連続分布であると仮定する.
 
-この函数はその分布の左側と右側での pdf の逆函数の `y` における値達のタプルを返す.
+この函数はその分布の最頻値の左側と右側での pdf の逆函数の `y` における値達のタプルを返す.
 """
-function invpdf(dist::ContinuousUnivariateDistribution, y;
-        alg = Order0())
-    f(x) = logpdf(dist, x) - log(y)
-    cdfm = cdf(dist, mode(dist))
+function invpdf(dist, y; alg = Order0(), modefunc = mymode)
+    m = modefunc(dist)
+    cdfm = cdf(dist, m)
     a0 = quantile(dist, cdfm/2)
     b0 = quantile(dist, 1 - (1 - cdfm)/2)
-    a = find_zero(f, a0, alg)
-    b = find_zero(f, b0, alg)
+    f(x) = logpdf(dist, x) - log(y)
+    a = m == minimum(dist) ? minimum(dist) : find_zero(f, a0, alg)
+    b = m == maximum(dist) ? maximum(dist) : find_zero(f, b0, alg)
     a, b
 end
 
+"""
+    mymode(x)
+
+適当に修正された `mode(x)`.
+"""
+mymode(x) = mode(x)
+
+function mymode(beta::Beta)
+    α, β = params(beta)
+    α == 1 && β == 1 && return median(beta)
+    α == 1 && β > 1 && return mininmum(beta)
+    α > 1 && β == 1 && return maximum(beta)
+    mode(beta)
+end
+
 @doc invpdf
+
+# %%
+@doc mymode
 
 # %%
 dist = Normal()
@@ -55,17 +72,23 @@ dist = Gamma(2, 3)
 invpdf(dist, 0.05)
 
 # %%
+dist = Exponential()
+invpdf(dist, 0.1)
+
+# %%
+dist = Beta(5, 1)
+invpdf(dist, 0.1)
+
+# %%
 """
-    cdfinvpdf(dist::ContinuousUnivariateDistribution, y;
-        alg = Order0())
+    cdfinvpdf(dist, y; alg = Order0())
 
 `dist` は `mode(dist)` を持つ単峰型の連続分布であると仮定する.
 
 この函数はその分布の左側と右側での pdf の逆函数の `y` における値達のあいだの区間の確率の値を返す.
 
 """
-function cdfinvpdf(dist::ContinuousUnivariateDistribution, y;
-        alg = Order0())
+function cdfinvpdf(dist, y; alg = Order0())
     a, b = invpdf(dist, y; alg)
     cdf(dist, b) - cdf(dist, a)
 end
@@ -80,16 +103,14 @@ plot(y -> cdfinvpdf(dist, y), eps(), pdfm)
 
 # %%
 """
-    hdi(dist::ContinuousUnivariateDistribution, α = 0.05;
-        alg = Order0())
+    hdi(dist, α = 0.05; alg = Order0(), modefunc = mymode)
 
 `dist` は `mode(dist)` を持つ単峰型の連続分布であると仮定する.
 
 この函数はその分布の100(1-α)% HDI (highest density interval)を返す.
 """
-function hdi(dist::ContinuousUnivariateDistribution, α = 0.05;
-        alg = Order0())
-    pdfm = pdf(dist, mode(dist))
+function hdi(dist, α = 0.05; alg = Order0(), modefunc = mymode)
+    pdfm = pdf(dist, modefunc(dist))
     y = find_zero(pdfm/2, alg) do y
         cdfinvpdf(dist, y; alg) - (1 - α)
     end
@@ -111,12 +132,18 @@ end
 plot_hdi(Normal())
 
 # %%
-plot_hdi(Gamma(2, 3); size=(640, 250))
+plot_hdi(Gamma(10, 3))
+
+# %%
+plot_hdi(Exponential())
 
 # %%
 plot_hdi(Gamma(10, 1))
 
 # %%
 plot_hdi(Beta(5, 10))
+
+# %%
+plot_hdi(Beta(5, 1); legend=:topleft)
 
 # %%
