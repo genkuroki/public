@@ -30,6 +30,16 @@ https://doi.org/10.1016/j.csda.2006.05.024
 * Claus P. Nowak, Markus Pauly, Edgar Brunner. The nonparametric Behrens-Fisher problem in small samples.
 https://arxiv.org/abs/2208.01231
 
+<!-- #region toc=true -->
+<h1>目次<span class="tocSkip"></span></h1>
+<div class="toc"><ul class="toc-item"><li><span><a href="#準備" data-toc-modified-id="準備-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>準備</a></span><ul class="toc-item"><li><span><a href="#パッケージの読み込みなど" data-toc-modified-id="パッケージの読み込みなど-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>パッケージの読み込みなど</a></span></li><li><span><a href="#組み合わせの生成子" data-toc-modified-id="組み合わせの生成子-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>組み合わせの生成子</a></span></li><li><span><a href="#Welchのt検定" data-toc-modified-id="Welchのt検定-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>Welchのt検定</a></span></li><li><span><a href="#単峰型の函数が正の値になる場所を見つける函数" data-toc-modified-id="単峰型の函数が正の値になる場所を見つける函数-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>単峰型の函数が正の値になる場所を見つける函数</a></span></li><li><span><a href="#2つの分布が「互角」になるシフトの仕方を求める函数" data-toc-modified-id="2つの分布が「互角」になるシフトの仕方を求める函数-1.5"><span class="toc-item-num">1.5&nbsp;&nbsp;</span>2つの分布が「互角」になるシフトの仕方を求める函数</a></span></li></ul></li><li><span><a href="#Brunner-Munzel検定" data-toc-modified-id="Brunner-Munzel検定-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Brunner-Munzel検定</a></span><ul class="toc-item"><li><span><a href="#Brunner-Munzel検定の実装実装" data-toc-modified-id="Brunner-Munzel検定の実装実装-2.1"><span class="toc-item-num">2.1&nbsp;&nbsp;</span>Brunner-Munzel検定の実装実装</a></span></li><li><span><a href="#よく使われているっぽいテストデータで正しく実装されているかを確認" data-toc-modified-id="よく使われているっぽいテストデータで正しく実装されているかを確認-2.2"><span class="toc-item-num">2.2&nbsp;&nbsp;</span>よく使われているっぽいテストデータで正しく実装されているかを確認</a></span></li><li><span><a href="#組み合わせの生成子" data-toc-modified-id="組み合わせの生成子-2.3"><span class="toc-item-num">2.3&nbsp;&nbsp;</span>組み合わせの生成子</a></span></li><li><span><a href="#Brunner-Munzel検定のpermutation版の実装" data-toc-modified-id="Brunner-Munzel検定のpermutation版の実装-2.4"><span class="toc-item-num">2.4&nbsp;&nbsp;</span>Brunner-Munzel検定のpermutation版の実装</a></span></li><li><span><a href="#permutation版が正しく実装されているかの確認" data-toc-modified-id="permutation版が正しく実装されているかの確認-2.5"><span class="toc-item-num">2.5&nbsp;&nbsp;</span>permutation版が正しく実装されているかの確認</a></span></li></ul></li><li><span><a href="#計算例" data-toc-modified-id="計算例-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>計算例</a></span></li><li><span><a href="#Brunner-Munzel検定とWelchのt検定の比較" data-toc-modified-id="Brunner-Munzel検定とWelchのt検定の比較-4"><span class="toc-item-num">4&nbsp;&nbsp;</span>Brunner-Munzel検定とWelchのt検定の比較</a></span><ul class="toc-item"><li><span><a href="#第一種の過誤の確率" data-toc-modified-id="第一種の過誤の確率-4.1"><span class="toc-item-num">4.1&nbsp;&nbsp;</span>第一種の過誤の確率</a></span></li><li><span><a href="#Brunner-Munzel検定は中央値に関する検定ではないことの証拠" data-toc-modified-id="Brunner-Munzel検定は中央値に関する検定ではないことの証拠-4.2"><span class="toc-item-num">4.2&nbsp;&nbsp;</span>Brunner-Munzel検定は中央値に関する検定ではないことの証拠</a></span></li><li><span><a href="#BM検定による互角シフトの信頼区間とWelchのt検定による平均の差の信頼区間の比較" data-toc-modified-id="BM検定による互角シフトの信頼区間とWelchのt検定による平均の差の信頼区間の比較-4.3"><span class="toc-item-num">4.3&nbsp;&nbsp;</span>BM検定による互角シフトの信頼区間とWelchのt検定による平均の差の信頼区間の比較</a></span></li></ul></li><li><span><a href="#小サンプルでのpermutation版の検定とBM検定とWelchのt検定の比較" data-toc-modified-id="小サンプルでのpermutation版の検定とBM検定とWelchのt検定の比較-5"><span class="toc-item-num">5&nbsp;&nbsp;</span>小サンプルでのpermutation版の検定とBM検定とWelchのt検定の比較</a></span></li></ul></div>
+<!-- #endregion -->
+
+## 準備
+
+
+### パッケージの読み込みなど
+
 ```julia
 using Base.Threads
 using BenchmarkTools
@@ -50,6 +60,8 @@ x ⪆ y = x > y || x ≈ y
 safemul(x, y) = x == 0 ? x : isinf(x) ? typeof(x)(Inf) : x*y
 safediv(x, y) = x == 0 ? x : isinf(y) ? zero(y) : x/y
 ```
+
+### 組み合わせの生成子
 
 ```julia
 """
@@ -102,6 +114,8 @@ end
 mycombinations(x, t) = mycombinations!(x, t, Vector{typeof(t)}(undef, t))
 ```
 
+### Welchのt検定
+
 ```julia
 function tvalue_welch(m, x̄, sx², n, ȳ, sy²; Δμ=0)
     (x̄ - ȳ - Δμ) / √(sx²/m + sy²/n)
@@ -149,6 +163,8 @@ function confint_welch(x, y; α=0.05)
 end
 ```
 
+### 単峰型の函数が正の値になる場所を見つける函数
+
 ```julia
 function findpositive(f, a, b; maxsplit = 30)
     @assert f(a) < 0
@@ -172,12 +188,16 @@ f(x) = abs(x) < 1e-4 ? 1.0 : -1.0
 @time findpositive(f, -100abs(randn()), 20abs(randn()))
 ```
 
+### 2つの分布が「互角」になるシフトの仕方を求める函数
+
 ```julia
 """
     prob_x_le_y(distx::UnivariateDistribution, disty::UnivariateDistribution;
         a = 0.0)
 
-この函数は, 連続分布 `distx`, `disty` と実数 `a` について, `distx` と `disty` に従って生成される乱数をそれぞれ X, Y と書くとき, X ≤ Y + a が成立する確率を返す.
+この函数は, 連続分布 `distx`, `disty` と実数 `a` について, 
+`distx` と `disty` に従って生成される乱数をそれぞれ X, Y と書くとき, 
+X ≤ Y + a が成立する確率を返す.
 """
 function prob_x_le_y(distx::UnivariateDistribution, disty::UnivariateDistribution,
         a = 0.0)
@@ -189,7 +209,9 @@ end
     tieshift(distx::UnivariateDistribution, disty::UnivariateDistribution;
         p = 0.5)
 
-この函数は, 連続分布 `distx`, `disty` と実数 `p` について, `distx` と `disty` に従って生成される乱数をそれぞれ X, Y と書くとき, X X ≤ Y + a が成立する確率が `p` に等しくなるような実数 a を返す.
+この函数は, 連続分布 `distx`, `disty` と実数 `p` について, 
+`distx` と `disty` に従って生成される乱数をそれぞれ X, Y と書くとき, 
+X ≤ Y + a が成立する確率が `p` に等しくなるような実数 a を返す.
 """
 function tieshift(distx::UnivariateDistribution, disty::UnivariateDistribution;
         p=0.5)
@@ -200,6 +222,11 @@ end
 @show tieshift(Normal(0, 1), Laplace(2, 2))
 @show tieshift(Normal(0, 1), Uniform(0, 1));
 ```
+
+## Brunner-Munzel検定
+
+
+### Brunner-Munzel検定の実装実装
 
 ````julia
 """
@@ -462,6 +489,8 @@ plot(a -> pvalue_brunner_munzel(X, Y .+ a), shiftmin, shiftmax;
     label="", title="P-value function of shift")
 ```
 
+### よく使われているっぽいテストデータで正しく実装されているかを確認
+
 <!-- #region -->
 https://okumuralab.org/~okumura/stat/brunner-munzel.html
 
@@ -497,6 +526,9 @@ brunner.munzel.test(X, Y)
 ```
 
 このように Brunner-Munzel 検定は R では [lawstat](https://cran.r-project.org/package=lawstat) パッケージの [brunner.munzel.test](https://rdrr.io/cran/lawstat/man/brunner.munzel.test.html) で使える.
+
+
+### 組み合わせの生成子
 
 ```julia
 """
@@ -565,6 +597,8 @@ N, m = 5, 3
 ccomb = Vector{Int}(undef, N-m)
 [(copy(comb), complementcomb(N, comb)) for comb in mycombinations(1:N, m)]
 ```
+
+### Brunner-Munzel検定のpermutation版の実装
 
 ```julia
 """
@@ -652,9 +686,102 @@ Tval = @time permutation_tvalues_brunner_munzel(X, Y)
 stephist(Tval; norm=true, bin=101, label="", title="permutation t-values")
 ```
 
+### permutation版が正しく実装されているかの確認
+
+* https://github.com/toshi-ara/brunnermunzel/issues/14
+* https://github.com/toshi-ara/brunnermunzel/files/4395032/mwe.R.zip
+
+<!-- #region -->
+__追記 2022-08-06:__ https://twitter.com/TA25140989/status/1555825941451923457 を参照せよ.
+
+https://github.com/toshi-ara/brunnermunzel/tree/development の修正版の brunnermunzel パッケージをインストールし直した.  以下のセルの実行結果が変わるはずなので, その記録を残しておく.
+
+以下の記録を見なくても,
+
+* https://github.com/genkuroki/public/blob/e4faafc52721b63876b3b705f9450eade3c902f5/0034/Brunner-Munzel.ipynb
+
+で閲覧できるが, わざわざ見に行くのも面倒なのでこのファイルにも記録を残しておく.
+
+以前の実行結果:
+
+```julia
+@show pval_J - pval_J_le;
+```
+```
+pval_J - pval_J_le = [0.0, 0.0, 0.007936507936507936, 0.023809523809523808, 0.023809523809523808, 0.0793650793650793, 0.0, 0.0, 0.007936507936507936, 0.0357142857142857, 0.0, 0.015873015873015928, 0.015873015873015872, 0.0, 0.015873015873015872, 0.0, 0.0, 0.0, 0.007936507936507936, 0.0, 0.023809523809523836, 0.015873015873015928, 0.011904761904761918, 0.0, 0.015873015873015928, 0.0, 0.003968253968253968, 0.0, 0.0, 0.0, 0.0, 0.007936507936507936, 0.0, 0.015873015873015928, 0.0, 0.015873015873015928, 0.0, 0.0, 0.0, 0.007936507936507908, 0.0, 0.007936507936507908, 0.0, 0.007936507936507908, 0.0, 0.0, 0.007936507936507936, 0.007936507936507936, 0.011904761904761918, 0.007936507936507936, 0.03968253968253965, 0.0, 0.007936507936507936, 0.0, 0.05555555555555547, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.015873015873015872, 0.015873015873015872, 0.0, 0.015873015873015928, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.015873015873015928, 0.007936507936507964, 0.007936507936507964, 0.0, 0.003968253968253954, 0.0, 0.0, 0.0, 0.015873015873015872, 0.0, 0.0, 0.0357142857142857, 0.015873015873015872, 0.0, 0.023809523809523725, 0.0, 0.023809523809523808, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+```
+```julia
+idx = @show findall(pval_J .!= pval_J_le)
+length(idx)
+```
+```
+findall(pval_J .!= pval_J_le) = [3, 4, 5, 6, 9, 10, 12, 13, 15, 19, 21, 22, 23, 25, 27, 32, 34, 36, 40, 42, 44, 47, 48, 49, 50, 51, 53, 55, 68, 69, 71, 78, 79, 80, 82, 86, 89, 90, 92, 94]
+
+40
+```
+```julia
+@show pval_R - pval_J_le;
+```
+```
+pval_R - pval_J_le = [0.0, 0.0, 0.007936507936507936, 0.023809523809523808, 0.023809523809523808, 0.0793650793650793, 0.0, 0.0, 0.007936507936507936, 0.0357142857142857, 0.0, 0.015873015873015928, 0.015873015873015872, 0.0, 0.015873015873015872, 0.0, 0.0, 0.0, 0.007936507936507936, 0.0, 0.023809523809523836, 0.007936507936507908, 0.011904761904761918, 0.0, 0.015873015873015928, 0.0, 0.003968253968253968, 0.0, 0.0, 0.0, 0.0, 0.007936507936507936, 0.0, 0.00793650793650802, 0.0, 0.015873015873015928, 0.0, 0.0, 0.0, 0.007936507936507908, 0.0, 0.007936507936507908, 0.0, 0.007936507936507908, 0.0, 0.0, 0.007936507936507936, 0.007936507936507936, 0.011904761904761918, 0.007936507936507936, 0.03968253968253965, 0.0, 0.007936507936507936, 0.0, 0.05555555555555547, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.015873015873015872, 0.015873015873015872, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.007936507936507908, 0.007936507936507964, 0.007936507936507964, 0.0, 0.003968253968253954, 0.0, 0.0, 0.0, 0.015873015873015872, 0.0, 0.0, 0.0357142857142857, 0.015873015873015872, 0.0, 0.023809523809523725, 0.0, 0.023809523809523808, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+```
+```julia
+idx = @show findall(pval_R .!= pval_J_le)
+length(idx)
+```
+```
+findall(pval_R .!= pval_J_le) = [3, 4, 5, 6, 9, 10, 12, 13, 15, 19, 21, 22, 23, 25, 27, 32, 34, 36, 40, 42, 44, 47, 48, 49, 50, 51, 53, 55, 68, 69, 78, 79, 80, 82, 86, 89, 90, 92, 94]
+
+39
+```
+```julia
+@show pval_J - pval_R;
+```
+```
+pval_J - pval_R = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.00793650793650802, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.007936507936507908, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.015873015873015928, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.00793650793650802, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+```
+```julia
+idx = @show findall(.!(pval_J .≈ pval_R))
+length(idx)
+```
+```
+findall(.!(pval_J .≈ pval_R)) = [22, 34, 71, 78]
+
+4
+```
+```julia
+all(pval_J .≥ pval_R .≥ pval_J_le)
+```
+```
+true
+```
+
+以前のコメントは以下の通り:
+
+```
+なるほど！
+
 https://github.com/toshi-ara/brunnermunzel/issues/14
 
-https://github.com/toshi-ara/brunnermunzel/files/4395032/mwe.R.zip
+に書いてあるように, 22, 34, 71 and 78 の4つで, 値が一致していない.
+
+〇〇以下または〇〇以上の判定を $x \approx y$ のときも true にする必要があるのだが, その部分で違いが生じているものと思われる.
+
+現時点では https://CRAN.R-project.org/package=brunnermunzel  にアクセスすると,
+
+>Package ‘brunnermunzel’ was removed from the CRAN repository.
+>
+>Formerly available versions can be obtained from the [archive](https://cran.r-project.org/src/contrib/Archive/brunnermunzel/).
+>
+>Archived on 2022-03-04 as check problems were not corrected in time. , LENGTH_1 checks.
+>
+>A summary of the most recent check results can be obtained from the [check results archive](https://cran-archive.r-project.org/web/checks/2022/2022-03-04_check_results_brunnermunzel.html).
+>
+>Please use the canonical form https://CRAN.R-project.org/package=brunnermunzel to link to this page.
+
+と表示される.
+```
+<!-- #endregion -->
 
 ```julia
 R"""
@@ -719,28 +846,14 @@ length(idx)
 all(pval_J .≥ pval_R .≥ pval_J_le)
 ```
 
-なるほど！
+__2022-08-06:__ やった! 値が完全に一致した! permutation版Brunner-Munzel検定について,
 
-https://github.com/toshi-ara/brunnermunzel/issues/14
+* https://github.com/toshi-ara/brunnermunzel/tree/development
 
-に書いてあるように, 22, 34, 71 and 78 の4つで, 値が一致していない.
-
-〇〇以下または〇〇以上の判定を $x \approx y$ のときも true にする必要があるのだが, その部分で違いが生じているものと思われる.
+の実装と私による実装の計算結果は以上の場合において完全に一致している.
 
 
-現時点では https://CRAN.R-project.org/package=brunnermunzel  にアクセスすると,
-
->Package ‘brunnermunzel’ was removed from the CRAN repository.
->
->Formerly available versions can be obtained from the [archive](https://cran.r-project.org/src/contrib/Archive/brunnermunzel/).
->
->Archived on 2022-03-04 as check problems were not corrected in time. , LENGTH_1 checks.
->
->A summary of the most recent check results can be obtained from the [check results archive](https://cran-archive.r-project.org/web/checks/2022/2022-03-04_check_results_brunnermunzel.html).
->
->Please use the canonical form https://CRAN.R-project.org/package=brunnermunzel to link to this page.
-
-と表示される.
+## 計算例
 
 ```julia
 m, n = 10, 10
@@ -803,6 +916,11 @@ m, n = 160, 160
 X, Y = rand(distx, m), rand(disty, n)
 show_plot_brunner_munzel(X, Y; xlim=(-3, 0))
 ```
+
+## Brunner-Munzel検定とWelchのt検定の比較
+
+
+### 第一種の過誤の確率
 
 ```julia
 function sim_brunner_mumzel(;
@@ -926,6 +1044,8 @@ plot_pvals(; distx = TDist(2), disty = TDist(2), m = 10, n = 10, Δμ = 0.0)
 plot_pvals(; distx = TDist(2), disty = TDist(1.1), m = 10, n = 10, Δμ = 0.0)
 ```
 
+### Brunner-Munzel検定は中央値に関する検定ではないことの証拠
+
 ```julia
 distx, disty = Uniform(-1, 1), Exponential()
 m, n, = 100, 100
@@ -934,13 +1054,13 @@ m, n, = 100, 100
 @show disty, std(disty)
 
 @show a = tieshift(distx, disty)
-ecdf_pval1, _ = @time sim_brunner_mumzel_and_welch(;
+ecdf_pval1 = @time sim_brunner_mumzel(;
     distx = distx, disty = disty + a, m, n)
 P1 = plot_ecdf(ecdf_pval1, distx, disty, m, n, a;
     testname="case of tie shifting\n")
 
 @show a = median(distx) - median(disty)
-ecdf_pval2, _ = @time sim_brunner_mumzel_and_welch(;
+ecdf_pval2 = @time sim_brunner_mumzel(;
     distx = distx, disty = disty + a, m, n)
 P2 = plot_ecdf(ecdf_pval2, distx, disty, m, n, a;
     testname="case of matching medians\n")
@@ -975,13 +1095,13 @@ m, n, = 100, 100
 @show disty, std(disty)
 
 @show a = tieshift(distx, disty)
-ecdf_pval1, _ = @time sim_brunner_mumzel_and_welch(;
+ecdf_pval1 = @time sim_brunner_mumzel(;
     distx = distx, disty = disty + a, m, n)
 P1 = plot_ecdf(ecdf_pval1, distx, disty, m, n, a;
     testname="case of tie shifting\n")
 
 @show a = median(distx) - median(disty)
-ecdf_pval2, _ = @time sim_brunner_mumzel_and_welch(;
+ecdf_pval2 = @time sim_brunner_mumzel(;
     distx = distx, disty = disty + a, m, n)
 P2 = plot_ecdf(ecdf_pval2, distx, disty, m, n, a;
     testname="case of matching medians\n")
@@ -1016,13 +1136,13 @@ m, n, = 100, 100
 @show disty, std(disty)
 
 @show a = tieshift(distx, disty)
-ecdf_pval1, _ = @time sim_brunner_mumzel_and_welch(;
+ecdf_pval1 = @time sim_brunner_mumzel(;
     distx = distx, disty = disty + a, m, n)
 P1 = plot_ecdf(ecdf_pval1, distx, disty, m, n, a;
     testname="case of tie shifting\n")
 
 @show a = median(distx) - median(disty)
-ecdf_pval2, _ = @time sim_brunner_mumzel_and_welch(;
+ecdf_pval2 = @time sim_brunner_mumzel(;
     distx = distx, disty = disty + a, m, n)
 P2 = plot_ecdf(ecdf_pval2, distx, disty, m, n, a;
     testname="case of matching medians\n")
@@ -1048,6 +1168,8 @@ title!("case of matching medians")
 
 plot(P1, P2; size=(800, 250))
 ```
+
+### BM検定による互角シフトの信頼区間とWelchのt検定による平均の差の信頼区間の比較
 
 ```julia
 function plot_confints(;
@@ -1165,6 +1287,8 @@ plot_limits(distx = TDist(2), disty = TDist(2), m = 10, n = 10)
 ```julia
 plot_limits(distx = TDist(2), disty = TDist(1.1), m = 10, n = 10)
 ```
+
+## 小サンプルでのpermutation版の検定とBM検定とWelchのt検定の比較
 
 ```julia
 function sim_brunner_mumzel_perm(;
