@@ -568,27 +568,28 @@ ccomb = Vector{Int}(undef, N-m)
 
 ```julia
 """
-    permutation_tvalues_brunner_munzel(X, Y;
+    permutation_tvalues_brunner_munzel(X, Y,
         XandY = Vector{Float64}(undef, length(X)+length(Y)),
-        Tval = Vector{Float64}(undef, binomial(length(X)+length(Y), length(X)))
+        Tval = Vector{Float64}(undef, binomial(length(X)+length(Y), length(X))),
+        Hx = similar(X, Float64),
+        Hy = similar(Y, Float64)
     )
 
 Brunner-Munzel検定のt値を `[X; Y]` から\
 インデックスの重複無しに `length(X)` 個取る組み合わせと\
 その補集合への分割のすべてについて計算して, `Tval` に格納して返す.
 """
-function permutation_tvalues_brunner_munzel(X, Y;
+function permutation_tvalues_brunner_munzel(X, Y,
         XandY = Vector{Float64}(undef, length(X)+length(Y)),
-        Tval = Vector{Float64}(undef, binomial(length(X)+length(Y), length(X)))
+        Tval = Vector{Float64}(undef, binomial(length(X)+length(Y), length(X))),
+        Hx = similar(X, Float64),
+        Hy = similar(Y, Float64),
+        ccomb = Vector{Int}(undef, length(Y))
     )
     m, n = length(X), length(Y)
     N = m + n
     @views XandY[1:m] .= X
     @views XandY[m+1:N] .= Y
-    allindices = 1:N
-    Hx = similar(X, Float64)
-    Hy = similar(Y, Float64)
-    ccomb = Vector{Int}(undef, n)
     for (k, comb) in enumerate(mycombinations(1:N, m))
         complementcomb!(ccomb, comb)
         Tval[k] = statistics_brunner_munzel(
@@ -804,11 +805,10 @@ show_plot_brunner_munzel(X, Y; xlim=(-3, 0))
 ```
 
 ```julia
-function sim_brunner_mumzel_and_welch(;
+function sim_brunner_mumzel(;
         distx = Normal(0, 1), disty = Normal(0, 2), m = 10, n = 10,
         L = 10^6)
     pval_bm = Vector{Float64}(undef, L)
-    pval_w = Vector{Float64}(undef, L)
     tmpX = [Vector{Float64}(undef, m) for _ in 1:nthreads()]
     tmpY = [Vector{Float64}(undef, n) for _ in 1:nthreads()]
     tmpHx = [Vector{Float64}(undef, m) for _ in 1:nthreads()]
@@ -817,9 +817,22 @@ function sim_brunner_mumzel_and_welch(;
         X = rand!(distx, tmpX[threadid()])
         Y = rand!(disty, tmpY[threadid()])
         pval_bm[i] = pvalue_brunner_munzel(X, Y, tmpHx[threadid()], tmpHy[threadid()])
+    end
+    ecdf(pval_bm)
+end
+
+function sim_welch(;
+        distx = Normal(0, 1), disty = Normal(0, 2), m = 10, n = 10,
+        L = 10^6)
+    pval_w = Vector{Float64}(undef, L)
+    tmpX = [Vector{Float64}(undef, m) for _ in 1:nthreads()]
+    tmpY = [Vector{Float64}(undef, n) for _ in 1:nthreads()]
+    @threads for i in 1:L
+        X = rand!(distx, tmpX[threadid()])
+        Y = rand!(disty, tmpY[threadid()])
         pval_w[i] = pvalue_welch(X, Y)
     end
-    ecdf(pval_bm), ecdf(pval_w)
+    ecdf(pval_w)
 end
 
 function printcompact(io, xs...)
@@ -866,9 +879,13 @@ function plot_pvals(;
         @show mean(distx), mean(disty + Δμ)
     end
         
-    ecdf_bm, ecdf_w = @time sim_brunner_mumzel_and_welch(;
+    ecdf_bm = @time sim_brunner_mumzel(;
         distx = distx,
         disty = disty + a,
+        m, n, L, kwargs...)
+    ecdf_w = @time sim_welch(;
+        distx = distx,
+        disty = disty + Δμ,
         m, n, L, kwargs...)
     ymax = max(ecdf_bm(0.1), ecdf_w(0.1))
     P1 = plot_ecdf(ecdf_bm, distx, disty, m, n, a;
@@ -1147,6 +1164,145 @@ plot_limits(distx = TDist(2), disty = TDist(2), m = 10, n = 10)
 
 ```julia
 plot_limits(distx = TDist(2), disty = TDist(1.1), m = 10, n = 10)
+```
+
+```julia
+function sim_brunner_mumzel_perm(;
+        distx = Normal(0, 1), disty = Normal(0, 2), m = 5, n = 5,
+        L = 10^2)
+    pval_bm_perm = Vector{Float64}(undef, L)
+    tmpX = [Vector{Float64}(undef, m) for _ in 1:nthreads()]
+    tmpY = [Vector{Float64}(undef, n) for _ in 1:nthreads()]
+    tmpXandY = [Vector{Float64}(undef, m+n) for _ in 1:nthreads()]
+    tmpTval = [Vector{Float64}(undef, binomial(m+n, m)) for _ in 1:nthreads()]
+    tmpHx = [Vector{Float64}(undef, m) for _ in 1:nthreads()]
+    tmpHy = [Vector{Float64}(undef, n) for _ in 1:nthreads()]
+    tmpccomb = [Vector{Int}(undef, n) for _ in 1:nthreads()]
+    @threads for i in 1:L
+        tid = threadid()
+        X = rand!(distx, tmpX[tid])
+        Y = rand!(disty, tmpY[tid])
+        Tval = permutation_tvalues_brunner_munzel(X, Y,
+            tmpXandY[tid], tmpTval[tid], tmpHx[tid], tmpHy[tid], tmpccomb[tid])
+        tval = statistics_brunner_munzel(X, Y, tmpHx[tid], tmpHy[tid]).tvalue
+        pval_bm_perm[i] = pvalue_brunner_munzel_perm(X, Y, Tval, tval)
+    end
+    ecdf(pval_bm_perm)
+end
+```
+
+```julia
+@time ecdf_bm_perm = sim_brunner_mumzel_perm(
+    distx = Normal(0, 1), disty = Normal(0, 2), m = 7, n = 7, L = 10^4)
+```
+
+```julia
+function plot_pvals_with_perm(;
+        distx = Normal(0, 1),
+        disty = Normal(0, 2),
+        m = 7,
+        n = 7,
+        L = 10^4,
+        kwargs...
+    )
+    a = tieshift(distx, disty)
+    @time ecdf_bm_perm = sim_brunner_mumzel_perm(; distx, disty = disty + a, m, n, L)
+    @time ecdf_bm = sim_brunner_mumzel(; distx, disty = disty + a, m, n, L)
+    Δμ = mean(distx) - mean(disty)
+    @time ecdf_w = sim_welch(; distx, disty = disty + Δμ, m, n, L)
+    @show a Δμ
+
+    plot(legend=:topleft)
+    plot!(α -> ecdf_bm_perm(α), 0, 0.1; label="BM permutation")
+    plot!(α -> ecdf_bm(α), 0, 0.1; label="Brunner-Munzel", ls=:dash)
+    plot!(α -> ecdf_w(α), 0, 0.1; label="Welch", ls=:dashdot)
+    plot!(identity; label="", c=:black, ls=:dot)
+    plot!(xtick=0:0.01:0.1, ytick=0:0.01:1)
+    plot!(xguide="nominal significance level α", 
+        yguide="probability of P-value < α")
+    a_ = string(round(a; digits=4))
+    Δμ_ = string(round(Δμ; digits=4))
+    title!("X: $(distname(distx)), m=$m\n\
+        Y: $(distname(disty))+(a, Δμ), n=$n\n\
+        a=$a_, Δμ=$Δμ_")
+    plot!(size=(400, 450), titlefontsize=9)
+    plot!(; kwargs...)
+end
+```
+
+```julia
+plot_pvals_with_perm(
+    distx = Normal(0, 1), disty = Normal(0, 2), m = 5, n = 5, L = 10^4)
+```
+
+```julia
+plot_pvals_with_perm(
+    distx = Normal(0, 1), disty = Normal(0, 2), m = 7, n = 7, L = 10^4)
+```
+
+```julia
+plot_pvals_with_perm(
+    distx = Normal(0, 1), disty = Normal(0, 2), m = 5, n = 10, L = 10^4)
+```
+
+```julia
+plot_pvals_with_perm(
+    distx = Normal(0, 1), disty = Normal(0, 2), m = 10, n = 5, L = 10^4)
+```
+
+```julia
+plot_pvals_with_perm(
+    distx = Normal(0, 1), disty = Normal(0, 2), m = 10, n = 10, L = 2000)
+```
+
+```julia
+plot_pvals_with_perm(
+    distx = Uniform(-1, 1), disty = Exponential(0.5773502691896257),
+    m = 5, n = 5, L = 10^4)
+```
+
+```julia
+plot_pvals_with_perm(
+    distx = Uniform(-1, 1), disty = Exponential(0.5773502691896257),
+    m = 7, n = 7, L = 10^4)
+```
+
+```julia
+plot_pvals_with_perm(
+    distx = Uniform(-1, 1), disty = Exponential(0.5773502691896257),
+    m = 5, n = 10, L = 10^4)
+```
+
+```julia
+plot_pvals_with_perm(
+    distx = Uniform(-1, 1), disty = Exponential(0.5773502691896257),
+    m = 10, n = 5, L = 10^4)
+```
+
+```julia
+plot_pvals_with_perm(
+    distx = Uniform(-1, 1), disty = Exponential(0.5773502691896257),
+    m = 10, n = 10, L = 2000)
+```
+
+```julia
+plot_pvals_with_perm(
+    distx = LogNormal(), disty = LogNormal(1), m = 5, n = 5, L = 10^4)
+```
+
+```julia
+plot_pvals_with_perm(
+    distx = LogNormal(), disty = LogNormal(1), m = 5, n = 10, L = 10^4)
+```
+
+```julia
+plot_pvals_with_perm(
+    distx = LogNormal(), disty = LogNormal(1), m = 10, n = 5, L = 10^4)
+```
+
+```julia
+plot_pvals_with_perm(
+    distx = LogNormal(0), disty = LogNormal(1), m = 10, n = 10, L = 2000)
 ```
 
 ```julia
