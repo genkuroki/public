@@ -14,6 +14,13 @@
 #     name: julia-1.7
 # ---
 
+# %% [markdown]
+# # HDI - highest density interval
+#
+# * 黒木玄
+# * 2022-08-06
+# * License: https://opensource.org/licenses/MIT
+
 # %%
 using Distributions
 using Roots
