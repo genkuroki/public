@@ -243,34 +243,36 @@ phat_brunner_munzel(X, Y) = mean(h_brunner_munzel(x, y) for x in X, y in Y)
 
 この函数はデータ `X`, `Y` について, Brunner-Munzel検定関係の統計量達を計算する. 詳細は以下の通り.
 
-$H(x, y)$, $H^x_i$, $H^y_j$, $\bar{H}^x$, $\bar{H}^y$ を次のように定める:
+函数 $H(x, y)$ と $\hat{p}$, $H^x_i$, $H^y_j$, $\bar{H}^x$, $\bar{H}^y$ を次のように定める:
 
 ```math
 \begin{aligned}
 &
-H(x, y) = \begin{cases} 1 & (x < y) \\ 1/2 & (x = y), \end{cases}
-\\ &
 m = \mathrm{length}(X), \quad
 n = \mathrm{length}(Y), \quad
 x_i = X[i], \quad
 y_j = Y[j],
 \\ &
-H^x_i = \sum_{j=1}^n H(y_j, x_i) = \sum_{j=1}^n (1-H(x_i, y_j)), \quad
+\hat{p} = \frac{1}{mn}\sum_{i=1}^m \sum_{j=1}^n H(x_i, y_j),
+\\ &
+H(x, y) = \begin{cases} 1 & (x < y) \\ 1/2 & (x = y), \end{cases}
+\\ &
+H^x_i = \sum_{j=1}^n H(y_j, x_i), \quad
 H^y_j = \sum_{i=1}^m H(x_i, y_j),
 \\ &
-\bar{H}^x = \frac{1}{m} \sum_{i=1}^m H^x_i, \quad
-\bar{H}^y = \frac{1}{n} \sum_{j=1}^n H^y_j.
+\bar{H}^x = \frac{1}{m} \sum_{i=1}^m H^x_i = n - n\hat{p},
+\\ &
+\bar{H}^y = \frac{1}{n} \sum_{j=1}^n H^y_j = m\hat{p}.
 \end{aligned}
 ```
 
-この函数は以下達を named tuple で返す:
+この函数は以下達の named tuple で返す:
 
 ```math
 \begin{aligned}
 &
 \mathrm{phat} = 
-\hat{p} = \frac{1}{mn}\sum_{i=1}^m \sum_{j=1}^n H(x_i, y_j)
-= \frac{\bar{\rho}_x - \bar{\rho}_y + n}{m + n},
+\hat{p} = \frac{\bar{H}^x - \bar{H}^y + n}{m + n},
 \\ &
 \mathrm{sx2} =
 \hat{\sigma}_x^2 = \frac{1}{n^2}\frac{1}{m-1}\sum_{i=1}^m (H^x_i - \bar{H}^x)^2,
