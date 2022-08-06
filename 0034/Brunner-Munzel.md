@@ -1257,6 +1257,36 @@ plot_pvals_with_perm(
 
 ```julia
 plot_pvals_with_perm(
+    distx = Exponential(1), disty = Exponential(2),
+    m = 5, n = 5, L = 10^4)
+```
+
+```julia
+plot_pvals_with_perm(
+    distx = Exponential(1), disty = Exponential(2),
+    m = 7, n = 7, L = 10^4)
+```
+
+```julia
+plot_pvals_with_perm(
+    distx = Exponential(1), disty = Exponential(2),
+    m = 5, n = 10, L = 10^4)
+```
+
+```julia
+plot_pvals_with_perm(
+    distx = Exponential(1), disty = Exponential(2),
+    m = 10, n = 5, L = 10^4)
+```
+
+```julia
+plot_pvals_with_perm(
+    distx = Exponential(1), disty = Exponential(2),
+    m = 10, n = 10, L = 2000)
+```
+
+```julia
+plot_pvals_with_perm(
     distx = Uniform(-1, 1), disty = Exponential(0.5773502691896257),
     m = 5, n = 5, L = 10^4)
 ```
