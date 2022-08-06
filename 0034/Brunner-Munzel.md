@@ -321,6 +321,18 @@ show_plot_brunner_munzel(X, Y)
 ```
 
 ```julia
+X = [1,2,1,1,1,1,1,1,1,1,2,4,1,1]
+Y = [3,3,4,3,1,2,3,1,1,5,4]
+@rput X Y
+R"""
+library(lawstat)
+brunner.munzel.test(X, Y)
+"""
+```
+
+このように Brunner-Munzel 検定は R では [lawstat](https://cran.r-project.org/package=lawstat) パッケージの [brunner.munzel.test](https://rdrr.io/cran/lawstat/man/brunner.munzel.test.html) で使える.
+
+```julia
 """
     complementcomb!(comb, ccomb)
 
