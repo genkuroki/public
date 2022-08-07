@@ -437,6 +437,9 @@ function pvalue_brunner_munzel_perm(X, Y,
 end
 
 # %%
+Random.seed!(4649373)
+
+# %%
 @rlibrary brunnermunzel
 
 # %%
@@ -444,7 +447,7 @@ distx = Normal(0, 1)
 disty = Normal(0, 2)
 m = 10
 n = 10
-L = 10
+L = 30
 Xs = [rand(distx, m) for _ in 1:L]
 Ys = [rand(disty, n) for _ in 1:L];
 
@@ -469,7 +472,7 @@ pval_R == pval_J
 
 # %%
 pval_R = zeros(0)
-for (X, Y) in zip(Xs, Ys)
+for (X, Y) in zip(Xs[1:10], Ys[1:10])
     o = @btime brunnermunzel_permutation_test($X, $Y)
     push!(pval_R, rcopy(o)[:p_value])
 end
@@ -477,7 +480,7 @@ pval_R
 
 # %%
 pval_J = zeros(0)
-for (X, Y) in zip(Xs, Ys)
+for (X, Y) in zip(Xs[1:10], Ys[1:10])
     p = @btime pvalue_brunner_munzel_perm($X, $Y)
     push!(pval_J, p)
 end
