@@ -168,53 +168,54 @@ scatter!(x, fill(-0.05h, m); label="sample", ms=3, msc=:auto, alpha=0.5, c=:red)
 title!("true distribution and size-$m sample")
 
 # %%
-plot(μ₀ -> pvalue(x, μ₀), a, b; label="t-test")
+plot(μ₀ -> pvalue(x, μ₀), a, b; label="P-value function of t-test")
 scatter!(x, fill(-0.05, m); label="sample", ms=3, msc=:auto, alpha=0.5, c=:red)
 plot!(xguide="μ₀", ytick=0:0.05:1)
-title!("P-value of hypothesis μ = μ₀ for size-$m sample")
+title!("P-value function of hypothesis μ = μ₀ for size-$m sample")
 
 # %%
-plot(μ₀ -> pvalue_loglikrat(x, μ₀), a, b; label="log maximum likelihood ratio test", c=2)
+plot(μ₀ -> pvalue_loglikrat(x, μ₀), a, b; label="P-value function of log max. lik. ratio test", c=2)
 scatter!(x, fill(-0.05, m); label="sample", ms=3, msc=:auto, alpha=0.5, c=:red)
 plot!(xguide="μ₀", ytick=0:0.05:1)
-title!("P-value of hypothesis μ = μ₀ for size-$m sample")
+title!("P-value function of hypothesis μ = μ₀ for size-$m sample")
 
 # %%
-plot(μ₀ -> pvalue(x, μ₀), a, b; label="t-test")
-plot!(μ₀ -> pvalue_loglikrat(x, μ₀), a, b; label="log maximum likelihood ratio test", c=2, ls=:dash)
+plot(μ₀ -> pvalue(x, μ₀), a, b; label="P-value function of t-test")
+plot!(μ₀ -> pvalue_loglikrat(x, μ₀), a, b; label="P-value function of log max. lik. ratio test", c=2, ls=:dash)
 scatter!(x, fill(-0.05, m); label="sample", ms=3, msc=:auto, alpha=0.5, c=:red)
 plot!(xguide="μ₀", ytick=0:0.05:1)
-title!("P-value of hypothesis μ = μ₀ for size-$m sample")
+title!("P-value function of hypothesis μ = μ₀ for size-$m sample")
 
 # %%
 α = 0.05
 @show ci = confint(x; α)
 
-plot(μ₀ -> pvalue(x, μ₀), a, b; label="")
+plot(μ₀ -> pvalue(x, μ₀), a, b; label="P-value function of t-test")
 plot!(ci, fill(α, 2); label="$(100(1-α))% CI of μ", lw=3, c=:blue)
 scatter!(x, fill(-0.05, m); label="sample", ms=3, msc=:auto, alpha=0.5, c=:red)
 plot!(xguide="μ₀", ytick=0:0.05:1)
-title!("P-value of hypothesis μ = μ₀ for size-$m sample and confidence interval")
+title!("P-value function of hypothesis μ = μ₀ and confidence interval for size-$m sample")
 
 # %%
 α = 0.05
 @show ci = confint_loglikrat(x; α)
 
-plot(μ₀ -> pvalue_loglikrat(x, μ₀), a, b; label="log maximum likelihood ratio test", c=2)
+plot(μ₀ -> pvalue_loglikrat(x, μ₀), a, b; label="P-value function of log max. lik. ratio test", c=2)
 plot!(ci, fill(α, 2); label="$(100(1-α))% CI of μ", lw=3, c=:magenta)
 scatter!(x, fill(-0.05, m); label="sample", ms=3, msc=:auto, alpha=0.5, c=:red)
 plot!(xguide="μ₀", ytick=0:0.05:1)
-title!("P-value of hypothesis μ = μ₀ for size-$m sample and confidence interval")
+title!("P-value function of hypothesis μ = μ₀ and confidence interval for size-$m sample")
 
 # %%
 α = 0.05
 @show ci = confint_loglikrat(x; α)
 
-plot(μ₀ -> maxlikrat(x, μ₀), a, b; label="maximum likelihood ratio", c=2)
-plot!(ci, zeros(2); label="$(100(1-α))% CI of μ", lw=3, c=:magenta)
+plot(μ₀ -> maxlikrat(x, μ₀), a, b; label="maximum likelihood ratio function", c=2)
+c = quantile(Chisq(1), 1-α)
+plot!(ci, fill(exp(-c/2), 2); label="$(100(1-α))% CI of μ", lw=3, c=:magenta)
 scatter!(x, fill(-0.05, m); label="sample", ms=3, msc=:auto, alpha=0.5, c=:red)
 plot!(xguide="μ₀", ytick=0:0.05:1)
-title!("maximum likelihood ratio of μ = μ₀ for size-$m sample")
+title!("maximum likelihood ratio function of μ = μ₀ for size-$m sample")
 
 # %%
 Random.seed!(4649373)
@@ -234,31 +235,32 @@ title!("true distribution and size-$m sample")
 α = 0.05
 @show ci = confint(x; α)
 
-plot(μ₀ -> pvalue(x, μ₀), a, b; label="")
+plot(μ₀ -> pvalue(x, μ₀), a, b; label="P-value function of t-test")
 plot!(ci, fill(α, 2); label="$(100(1-α))% CI of μ", lw=3, c=:blue)
 scatter!(x, fill(-0.05, m); label="sample", ms=1, msc=:auto, alpha=0.5, c=:red)
 plot!(xguide="μ₀", ytick=0:0.05:1)
-title!("P-value of hypothesis μ = μ₀ for size-$m sample and confidence interval")
+title!("P-value function of hypothesis μ = μ₀ and confidence interval for size-$m sample")
 
 # %%
 α = 0.05
 @show ci = confint_loglikrat(x; α)
 
-plot(μ₀ -> pvalue_loglikrat(x, μ₀), a, b; label="log max lik test", c=2)
+plot(μ₀ -> pvalue_loglikrat(x, μ₀), a, b; label="P-value function of log max. lik. test", c=2)
 plot!(ci, fill(α, 2); label="$(100(1-α))% CI of μ", lw=3, c=:magenta)
 scatter!(x, fill(-0.05, m); label="sample", ms=1, msc=:auto, alpha=0.5, c=:red)
 plot!(xguide="μ₀", ytick=0:0.05:1)
-title!("P-value of hypothesis μ = μ₀ for size-$m sample and confidence interval")
+title!("P-value function of hypothesis μ = μ₀ and confidence interva for size-$m samplel")
 
 # %%
 α = 0.05
 @show ci = confint_loglikrat(x; α)
 
-plot(μ₀ -> maxlikrat(x, μ₀), a, b; label="maximum likelihood ratio", c=2)
-plot!(ci, zeros(2); label="$(100(1-α))% CI of μ", lw=3, c=:magenta)
+plot(μ₀ -> maxlikrat(x, μ₀), a, b; label="maximum likelihood ratio function", c=2)
+c = quantile(Chisq(1), 1-α)
+plot!(ci, fill(exp(-c/2), 2); label="$(100(1-α))% CI of μ", lw=3, c=:magenta)
 scatter!(x, fill(-0.05, m); label="sample", ms=1, msc=:auto, alpha=0.5, c=:red)
 plot!(xguide="μ₀", ytick=0:0.05:1)
-title!("maximum likelihood ratio of μ = μ₀ for size-$m sample")
+title!("maximum likelihood ratio function of μ = μ₀ for size-$m sample")
 
 # %%
 function plot_ttest(;
