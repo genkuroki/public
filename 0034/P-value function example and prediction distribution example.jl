@@ -136,6 +136,29 @@ plot!(xguide="μ₀", ytick=0:0.05:1)
 title!("P-value of hypothesis μ = μ₀ for size-$m sample and confidence interval")
 
 # %%
+Random.seed!(4649373)
+
+dist_true = Gamma(10, 1)
+m = 640
+x = rand(dist_true, m)
+
+μ, σ = mean(dist_true), std(dist_true)
+a, b = max(minimum(dist_true), μ-3σ), min(maximum(dist_true), μ+4σ)
+plot(dist_true, a, b; label="true dist")
+h = pdf(dist_true, mode(dist_true))
+scatter!(x, fill(-0.05h, m); label="sample", ms=1, msc=:auto, alpha=0.5, c=:red)
+title!("true distribution and size-$m sample")
+
+# %%
+α = 0.05
+
+plot(μ₀ -> pvalue(x, μ₀), a, b; label="")
+plot!(confint(x; α), fill(α, 2); label="$(100(1-α))% CI of μ", lw=3)
+scatter!(x, fill(-0.05, m); label="sample", ms=1, msc=:auto, alpha=0.5, c=:red)
+plot!(xguide="μ₀", ytick=0:0.05:1)
+title!("P-value of hypothesis μ = μ₀ for size-$m sample and confidence interval")
+
+# %%
 function plot_ttest(;
         dist_true = Gamma(10, 1),
         m = 10,
