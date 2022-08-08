@@ -154,6 +154,12 @@ function confint_loglikrat(x; α = 0.05)
 end
 
 # %%
+logmaxlikrat2pvalue(lmlr) = ccdf(Chisq(1), -2lmlr)
+maxlikrat2pvalue(mlr) = ccdf(Chisq(1), -2log(mlr))
+pvalue2logmaxlikrat(pval) = -quantile(Chisq(1), 1 - pval)/2
+pvalue2maxlikrat(pval) = exp(pvalue2logmaxlikrat(pval))
+
+# %%
 Random.seed!(4649373)
 
 dist_true = Gamma(10, 1)
@@ -213,6 +219,13 @@ title!("P-value function of hypothesis μ = μ₀ and confidence interval for si
 plot(μ₀ -> maxlikrat(x, μ₀), a, b; label="maximum likelihood ratio function", c=2)
 c = quantile(Chisq(1), 1-α)
 plot!(ci, fill(exp(-c/2), 2); label="$(100(1-α))% CI of μ", lw=3, c=:magenta)
+scatter!(x, fill(-0.05, m); label="sample", ms=3, msc=:auto, alpha=0.5, c=:red)
+plot!(xguide="μ₀", ytick=0:0.05:1)
+title!("maximum likelihood ratio function of μ = μ₀ for size-$m sample")
+
+# %%
+plot(μ₀ -> pvalue2maxlikrat(pvalue(x, μ₀)), a, b; label="max. lik. rat. conversion of t-test P-value func.")
+plot!(μ₀ -> maxlikrat(x, μ₀), a, b; label="maximum likelihood ratio function", c=2, ls=:dash)
 scatter!(x, fill(-0.05, m); label="sample", ms=3, msc=:auto, alpha=0.5, c=:red)
 plot!(xguide="μ₀", ytick=0:0.05:1)
 title!("maximum likelihood ratio function of μ = μ₀ for size-$m sample")
