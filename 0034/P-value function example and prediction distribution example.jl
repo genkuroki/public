@@ -65,6 +65,7 @@ function confint(x; α = 0.05)
     confint(m, x̄, sx²; α)
 end
 
+# %%
 function preddist(m, x̄, sx²)
     SEhat = √(sx²*(1+1/m))
     x̄ + SEhat * TDist(m - 1)
@@ -160,12 +161,36 @@ pvalue2logmaxlikrat(pval) = -quantile(Chisq(1), 1 - pval)/2
 pvalue2maxlikrat(pval) = exp(pvalue2logmaxlikrat(pval))
 
 # %%
+function baysian_update(μ₀, λ₀, γ, θ, x)
+    m, x̄, s² = length(x), mean(x), var(x)
+    μ₀_new = (λ₀*μ₀ + m*x̄)/(λ₀ + m)
+    λ₀_new = λ₀ + m
+    γ_new = γ + m/2
+    θ_new = θ/(1 + θ/2*(m*λ₀/(λ₀ + m)*(x̄ - μ₀)^2 + (m - 1)*s²))
+    (μ₀ = μ₀_new, λ₀ = λ₀_new, γ = γ_new, θ = θ_new)
+end
+
+pdf_μλ(μ₀, λ₀, γ, θ, μ, λ) = pdf(Normal(μ₀, 1/√(λ*λ₀)), μ) * pdf(Gamma(γ, θ), λ)
+
+dist_μ(μ₀, λ₀, γ, θ) = μ₀ + TDist(2γ)/√(λ₀*γ*θ)
+dist_λ(μ₀, λ₀, γ, θ) = Gamma(γ, θ)
+
+function rand_μλ(μ₀, λ₀, γ, θ)
+    λ = rand(Gamma(γ, θ))
+    μ = rand(Normal(μ₀, 1/√(λ*λ₀)))
+    (μ, λ)
+end
+
+rand_μλ(μ₀, λ₀, γ, θ, L) = [rand_μλ(μ₀, λ₀, γ, θ) for _ in 1:L]
+
+# %%
 Random.seed!(4649373)
 
 dist_true = Gamma(10, 1)
 m = 10
 x = rand(dist_true, m)
 
+@show mean(dist_true) var(dist_true)
 μ, σ = mean(dist_true), std(dist_true)
 a, b = max(minimum(dist_true), μ-3σ), min(maximum(dist_true), μ+6σ)
 plot(dist_true, a, b; label="true dist")
@@ -180,7 +205,8 @@ plot!(xguide="μ₀", ytick=0:0.05:1)
 title!("P-value function of hypothesis μ = μ₀ for size-$m sample")
 
 # %%
-plot(μ₀ -> pvalue_loglikrat(x, μ₀), a, b; label="P-value function of log max. lik. ratio test", c=2)
+plot(μ₀ -> pvalue_loglikrat(x, μ₀), a, b;
+    label="P-value function of log max. lik. ratio test", c=2)
 scatter!(x, fill(-0.05, m); label="sample", ms=3, msc=:auto, alpha=0.5, c=:red)
 plot!(xguide="μ₀", ytick=0:0.05:1)
 title!("P-value function of hypothesis μ = μ₀ for size-$m sample")
@@ -206,7 +232,8 @@ title!("P-value function of hypothesis μ = μ₀ and confidence interval for si
 α = 0.05
 @show ci = confint_loglikrat(x; α)
 
-plot(μ₀ -> pvalue_loglikrat(x, μ₀), a, b; label="P-value function of log max. lik. ratio test", c=2)
+plot(μ₀ -> pvalue_loglikrat(x, μ₀), a, b;
+    label="P-value function of log max. lik. ratio test", c=2)
 plot!(ci, fill(α, 2); label="$(100(1-α))% CI of μ", lw=3, c=:magenta)
 scatter!(x, fill(-0.05, m); label="sample", ms=3, msc=:auto, alpha=0.5, c=:red)
 plot!(xguide="μ₀", ytick=0:0.05:1)
@@ -224,19 +251,178 @@ plot!(xguide="μ₀", ytick=0:0.05:1)
 title!("maximum likelihood ratio function of μ = μ₀ for size-$m sample")
 
 # %%
-plot(μ₀ -> pvalue2maxlikrat(pvalue(x, μ₀)), a, b; label="max. lik. rat. conversion of t-test P-value func.")
-plot!(μ₀ -> maxlikrat(x, μ₀), a, b; label="maximum likelihood ratio function", c=2, ls=:dash)
+plot(μ₀ -> pvalue2maxlikrat(pvalue(x, μ₀)), a, b;
+    label="max. lik. rat. conversion of t-test P-value func.")
+plot!(μ₀ -> maxlikrat(x, μ₀), a, b;
+    label="maximum likelihood ratio function", c=2, ls=:dash)
 scatter!(x, fill(-0.05, m); label="sample", ms=3, msc=:auto, alpha=0.5, c=:red)
 plot!(xguide="μ₀", ytick=0:0.05:1)
 title!("maximum likelihood ratio function of μ = μ₀ for size-$m sample")
 
 # %%
+γ, θ = 1.5, 2
+sμ² = 100^2
+@show pri = (μ₀ = 0, λ₀ = 1/(γ*θ*(1 - 1/γ)*sμ²), γ, θ)
+μλ = rand_μλ(pri..., 10^5)
+μσ² = [(μ, 1/λ) for (μ, λ) in μλ]
+scatter(μσ²; label="", ms=1, msc=:auto, alpha=0.1)
+plot!(xguide="μ", yguide="σ²")
+plot!(xlim=(-500, 500), ylim=(0.01, 100), yscale=:log10)
+title!("prior")
+
+# %%
+@show post = baysian_update(pri..., x)
+μλ = rand_μλ(post..., 10^4)
+μσ² = [(μ, 1/λ) for (μ, λ) in μλ]
+scatter(μσ²; label="", ms=1, msc=:auto, alpha=0.3)
+plot!(xguide="μ", yguide="σ²")
+title!("posterior of (μ, σ²) for size-$m sample")
+
+# %%
+@show post_μ = dist_μ(post...)
+plot(post_μ, a, b; label="posterior")
+c = pdf(post_μ, mode(post_μ))
+plot!(μ₀ -> c*maxlikrat(x, μ₀), a, b;
+    label="normalized maximum likelihood ratio function", c=2, ls=:dash)
+scatter!(x, fill(-0.05c, 2); label="sample", ms=3, msc=:auto, alpha=0.5, c=:red)
+title!("posterior pdf function of μ for size-$m sample")
+
+# %%
 Random.seed!(4649373)
 
 dist_true = Gamma(10, 1)
-m = 640
+m = 20
 x = rand(dist_true, m)
 
+@show mean(dist_true) var(dist_true)
+μ, σ = mean(dist_true), std(dist_true)
+a, b = max(minimum(dist_true), μ-3σ), min(maximum(dist_true), μ+6σ)
+plot(dist_true, a, b; label="true dist")
+h = pdf(dist_true, mode(dist_true))
+scatter!(x, fill(-0.05h, m); label="sample", ms=3, msc=:auto, alpha=0.5, c=:red)
+title!("true distribution and size-$m sample")
+
+# %%
+α = 0.05
+@show ci = confint(x; α)
+
+plot(μ₀ -> pvalue(x, μ₀), a, b; label="P-value function of t-test")
+plot!(ci, fill(α, 2); label="$(100(1-α))% CI of μ", lw=3, c=:blue)
+scatter!(x, fill(-0.05, m); label="sample", ms=1, msc=:auto, alpha=0.5, c=:red)
+plot!(xguide="μ₀", ytick=0:0.05:1)
+title!("P-value function of hypothesis μ = μ₀ and confidence interval for size-$m sample")
+
+# %%
+α = 0.05
+@show ci = confint_loglikrat(x; α)
+
+plot(μ₀ -> pvalue_loglikrat(x, μ₀), a, b;
+    label="P-value function of log max. lik. test", c=2)
+plot!(ci, fill(α, 2); label="$(100(1-α))% CI of μ", lw=3, c=:magenta)
+scatter!(x, fill(-0.05, m); label="sample", ms=1, msc=:auto, alpha=0.5, c=:red)
+plot!(xguide="μ₀", ytick=0:0.05:1)
+title!("P-value function of hypothesis μ = μ₀ and confidence interva for size-$m samplel")
+
+# %%
+α = 0.05
+@show ci = confint_loglikrat(x; α)
+
+plot(μ₀ -> maxlikrat(x, μ₀), a, b; label="maximum likelihood ratio function", c=2)
+c = quantile(Chisq(1), 1-α)
+plot!(ci, fill(exp(-c/2), 2); label="$(100(1-α))% CI of μ", lw=3, c=:magenta)
+scatter!(x, fill(-0.05, m); label="sample", ms=2, msc=:auto, alpha=0.5, c=:red)
+plot!(xguide="μ₀", ytick=0:0.05:1)
+title!("maximum likelihood ratio function of μ = μ₀ for size-$m sample")
+
+# %%
+@show post = baysian_update(pri..., x)
+μλ = rand_μλ(post..., 10^4)
+μσ² = [(μ, 1/λ) for (μ, λ) in μλ]
+scatter(μσ²; label="", ms=1, msc=:auto, alpha=0.3)
+plot!(xguide="μ", yguide="σ²")
+title!("posterior of (μ, σ²) for size-$m sample")
+
+# %%
+@show post_μ = dist_μ(post...)
+plot(post_μ, a, b; label="posterior")
+c = pdf(post_μ, mode(post_μ))
+plot!(μ₀ -> c*maxlikrat(x, μ₀), a, b;
+    label="normalized maximum likelihood ratio function", c=2, ls=:dash)
+scatter!(x, fill(-0.05c, 2); label="sample", ms=3, msc=:auto, alpha=0.5, c=:red)
+title!("posterior pdf function of μ for size-$m sample")
+
+# %%
+Random.seed!(4649373)
+
+dist_true = Gamma(10, 1)
+m = 40
+x = rand(dist_true, m)
+
+@show mean(dist_true) var(dist_true)
+μ, σ = mean(dist_true), std(dist_true)
+a, b = max(minimum(dist_true), μ-3σ), min(maximum(dist_true), μ+6σ)
+plot(dist_true, a, b; label="true dist")
+h = pdf(dist_true, mode(dist_true))
+scatter!(x, fill(-0.05h, m); label="sample", ms=3, msc=:auto, alpha=0.5, c=:red)
+title!("true distribution and size-$m sample")
+
+# %%
+α = 0.05
+@show ci = confint(x; α)
+
+plot(μ₀ -> pvalue(x, μ₀), a, b; label="P-value function of t-test")
+plot!(ci, fill(α, 2); label="$(100(1-α))% CI of μ", lw=3, c=:blue)
+scatter!(x, fill(-0.05, m); label="sample", ms=1, msc=:auto, alpha=0.5, c=:red)
+plot!(xguide="μ₀", ytick=0:0.05:1)
+title!("P-value function of hypothesis μ = μ₀ and confidence interval for size-$m sample")
+
+# %%
+α = 0.05
+@show ci = confint_loglikrat(x; α)
+
+plot(μ₀ -> pvalue_loglikrat(x, μ₀), a, b;
+    label="P-value function of log max. lik. test", c=2)
+plot!(ci, fill(α, 2); label="$(100(1-α))% CI of μ", lw=3, c=:magenta)
+scatter!(x, fill(-0.05, m); label="sample", ms=1, msc=:auto, alpha=0.5, c=:red)
+plot!(xguide="μ₀", ytick=0:0.05:1)
+title!("P-value function of hypothesis μ = μ₀ and confidence interva for size-$m samplel")
+
+# %%
+α = 0.05
+@show ci = confint_loglikrat(x; α)
+
+plot(μ₀ -> maxlikrat(x, μ₀), a, b; label="maximum likelihood ratio function", c=2)
+c = quantile(Chisq(1), 1-α)
+plot!(ci, fill(exp(-c/2), 2); label="$(100(1-α))% CI of μ", lw=3, c=:magenta)
+scatter!(x, fill(-0.05, m); label="sample", ms=2, msc=:auto, alpha=0.5, c=:red)
+plot!(xguide="μ₀", ytick=0:0.05:1)
+title!("maximum likelihood ratio function of μ = μ₀ for size-$m sample")
+
+# %%
+@show post = baysian_update(pri..., x)
+μλ = rand_μλ(post..., 10^4)
+μσ² = [(μ, 1/λ) for (μ, λ) in μλ]
+scatter(μσ²; label="", ms=1, msc=:auto, alpha=0.3)
+plot!(xguide="μ", yguide="σ²")
+title!("posterior of (μ, σ²) for size-$m sample")
+
+# %%
+@show post_μ = dist_μ(post...)
+plot(post_μ, a, b; label="posterior")
+c = pdf(post_μ, mode(post_μ))
+plot!(μ₀ -> c*maxlikrat(x, μ₀), a, b;
+    label="normalized maximum likelihood ratio function", c=2, ls=:dash)
+scatter!(x, fill(-0.05c, 2); label="sample", ms=2, msc=:auto, alpha=0.5, c=:red)
+title!("posterior pdf function of μ for size-$m sample")
+
+# %%
+Random.seed!(4649373)
+
+dist_true = Gamma(10, 1)
+m = 160
+x = rand(dist_true, m)
+
+@show mean(dist_true) var(dist_true)
 μ, σ = mean(dist_true), std(dist_true)
 a, b = max(minimum(dist_true), μ-3σ), min(maximum(dist_true), μ+6σ)
 plot(dist_true, a, b; label="true dist")
@@ -258,7 +444,8 @@ title!("P-value function of hypothesis μ = μ₀ and confidence interval for si
 α = 0.05
 @show ci = confint_loglikrat(x; α)
 
-plot(μ₀ -> pvalue_loglikrat(x, μ₀), a, b; label="P-value function of log max. lik. test", c=2)
+plot(μ₀ -> pvalue_loglikrat(x, μ₀), a, b;
+    label="P-value function of log max. lik. test", c=2)
 plot!(ci, fill(α, 2); label="$(100(1-α))% CI of μ", lw=3, c=:magenta)
 scatter!(x, fill(-0.05, m); label="sample", ms=1, msc=:auto, alpha=0.5, c=:red)
 plot!(xguide="μ₀", ytick=0:0.05:1)
@@ -274,6 +461,87 @@ plot!(ci, fill(exp(-c/2), 2); label="$(100(1-α))% CI of μ", lw=3, c=:magenta)
 scatter!(x, fill(-0.05, m); label="sample", ms=1, msc=:auto, alpha=0.5, c=:red)
 plot!(xguide="μ₀", ytick=0:0.05:1)
 title!("maximum likelihood ratio function of μ = μ₀ for size-$m sample")
+
+# %%
+@show post = baysian_update(pri..., x)
+μλ = rand_μλ(post..., 10^4)
+μσ² = [(μ, 1/λ) for (μ, λ) in μλ]
+scatter(μσ²; label="", ms=1, msc=:auto, alpha=0.3)
+plot!(xguide="μ", yguide="σ²")
+title!("posterior of (μ, σ²) for size-$m sample")
+
+# %%
+@show post_μ = dist_μ(post...)
+plot(post_μ, a, b; label="posterior")
+c = pdf(post_μ, mode(post_μ))
+plot!(μ₀ -> c*maxlikrat(x, μ₀), a, b;
+    label="normalized maximum likelihood ratio function", c=2, ls=:dash)
+scatter!(x, fill(-0.05c, 2); label="sample", ms=1, msc=:auto, alpha=0.5, c=:red)
+title!("posterior pdf of μ for size-$m sample")
+
+# %%
+Random.seed!(4649373)
+
+dist_true = Gamma(10, 1)
+m = 640
+x = rand(dist_true, m)
+
+@show mean(dist_true) var(dist_true)
+μ, σ = mean(dist_true), std(dist_true)
+a, b = max(minimum(dist_true), μ-3σ), min(maximum(dist_true), μ+6σ)
+plot(dist_true, a, b; label="true dist")
+h = pdf(dist_true, mode(dist_true))
+scatter!(x, fill(-0.05h, m); label="sample", ms=1, msc=:auto, alpha=0.5, c=:red)
+title!("true distribution and size-$m sample")
+
+# %%
+α = 0.05
+@show ci = confint(x; α)
+
+plot(μ₀ -> pvalue(x, μ₀), a, b; label="P-value function of t-test")
+plot!(ci, fill(α, 2); label="$(100(1-α))% CI of μ", lw=3, c=:blue)
+scatter!(x, fill(-0.05, m); label="sample", ms=1, msc=:auto, alpha=0.5, c=:red)
+plot!(xguide="μ₀", ytick=0:0.05:1)
+title!("P-value function of hypothesis μ = μ₀ and confidence interval for size-$m sample")
+
+# %%
+α = 0.05
+@show ci = confint_loglikrat(x; α)
+
+plot(μ₀ -> pvalue_loglikrat(x, μ₀), a, b;
+    label="P-value function of log max. lik. test", c=2)
+plot!(ci, fill(α, 2); label="$(100(1-α))% CI of μ", lw=3, c=:magenta)
+scatter!(x, fill(-0.05, m); label="sample", ms=1, msc=:auto, alpha=0.5, c=:red)
+plot!(xguide="μ₀", ytick=0:0.05:1)
+title!("P-value function of hypothesis μ = μ₀ and confidence interva for size-$m samplel")
+
+# %%
+α = 0.05
+@show ci = confint_loglikrat(x; α)
+
+plot(μ₀ -> maxlikrat(x, μ₀), a, b; label="maximum likelihood ratio function", c=2)
+c = quantile(Chisq(1), 1-α)
+plot!(ci, fill(exp(-c/2), 2); label="$(100(1-α))% CI of μ", lw=3, c=:magenta)
+scatter!(x, fill(-0.05, m); label="sample", ms=1, msc=:auto, alpha=0.5, c=:red)
+plot!(xguide="μ₀", ytick=0:0.05:1)
+title!("maximum likelihood ratio function of μ = μ₀ for size-$m sample")
+
+# %%
+@show post = baysian_update(pri..., x)
+μλ = rand_μλ(post..., 10^4)
+μσ² = [(μ, 1/λ) for (μ, λ) in μλ]
+scatter(μσ²; label="", ms=1, msc=:auto, alpha=0.3)
+plot!(xguide="μ", yguide="σ²")
+title!("posterior of (μ, σ²) for size-$m sample")
+
+# %%
+@show post_μ = dist_μ(post...)
+plot(post_μ, a, b; label="posterior")
+c = pdf(post_μ, mode(post_μ))
+plot!(μ₀ -> c*maxlikrat(x, μ₀), a, b;
+    label="normalized maximum likelihood ratio function", c=2, ls=:dash)
+scatter!(x, fill(-0.05c, 2); label="sample", ms=1, msc=:auto, alpha=0.5, c=:red)
+title!("posterior pdf function of μ for size-$m sample")
 
 # %%
 function plot_ttest(;
