@@ -143,7 +143,7 @@ m = 640
 x = rand(dist_true, m)
 
 μ, σ = mean(dist_true), std(dist_true)
-a, b = max(minimum(dist_true), μ-3σ), min(maximum(dist_true), μ+4σ)
+a, b = max(minimum(dist_true), μ-3σ), min(maximum(dist_true), μ+6σ)
 plot(dist_true, a, b; label="true dist")
 h = pdf(dist_true, mode(dist_true))
 scatter!(x, fill(-0.05h, m); label="sample", ms=1, msc=:auto, alpha=0.5, c=:red)
