@@ -66,14 +66,14 @@ function confint(x; α = 0.05)
 end
 
 # %%
-function preddist(m, x̄, sx²)
+function dist_pred(m, x̄, sx²)
     SEhat = √(sx²*(1+1/m))
     x̄ + SEhat * TDist(m - 1)
 end
 
-function preddist(x)
+function dist_pred(x)
     m, x̄, sx² = length(x), mean(x), var(x)
-    preddist(m, x̄, sx²)
+    dist_pred(m, x̄, sx²)
 end
 
 function tvalue_pred(m, x̄, sx², xnew)
@@ -175,6 +175,8 @@ pdf_μλ(μ₀, λ₀, γ, θ, μ, λ) = pdf(Normal(μ₀, 1/√(λ*λ₀)), μ)
 dist_μ(μ₀, λ₀, γ, θ) = μ₀ + TDist(2γ)/√(λ₀*γ*θ)
 dist_λ(μ₀, λ₀, γ, θ) = Gamma(γ, θ)
 
+dist_x(μ₀, λ₀, γ, θ) = μ₀ + TDist(2γ)*√((1 + 1/λ₀)/(γ*θ))
+
 function rand_μλ(μ₀, λ₀, γ, θ)
     λ = rand(Gamma(γ, θ))
     μ = rand(Normal(μ₀, 1/√(λ*λ₀)))
@@ -182,6 +184,24 @@ function rand_μλ(μ₀, λ₀, γ, θ)
 end
 
 rand_μλ(μ₀, λ₀, γ, θ, L) = [rand_μλ(μ₀, λ₀, γ, θ) for _ in 1:L]
+
+function pvalue_bayes(x, μ;
+        μ_0 = 0, sμ² = 100^2, γ = 1.5, θ = 2,
+        pri = (μ₀ = 0, λ₀ = 1/(γ*θ*(1 - 1/γ)*sμ²), γ, θ)
+    )
+    post = baysian_update(pri..., x)
+    post_μ = dist_μ(post...)
+    2ccdf(post_μ, mean(post_μ) + abs(μ - mean(post_μ)))
+end
+
+function credint(x; α = 0.05,
+        μ_0 = 0, sμ² = 100^2, γ = 1.5, θ = 2,
+        pri = (μ₀ = 0, λ₀ = 1/(γ*θ*(1 - 1/γ)*sμ²), γ, θ)
+    )
+    post = baysian_update(pri..., x)
+    post_μ = dist_μ(post...)
+    quantile.(post_μ, [α/2, 1-α/2])
+end
 
 # %%
 Random.seed!(4649373)
@@ -191,6 +211,7 @@ m = 10
 x = rand(dist_true, m)
 
 @show mean(dist_true) var(dist_true)
+@show mean(x) var(x)
 μ, σ = mean(dist_true), std(dist_true)
 a, b = max(minimum(dist_true), μ-3σ), min(maximum(dist_true), μ+6σ)
 plot(dist_true, a, b; label="true dist")
@@ -279,7 +300,10 @@ plot!(xguide="μ", yguide="σ²")
 title!("posterior of (μ, σ²) for size-$m sample")
 
 # %%
+α = 0.05
+
 @show post_μ = dist_μ(post...)
+@show ci = credint(x; α, pri)
 plot(post_μ, a, b; label="posterior")
 c = pdf(post_μ, mode(post_μ))
 plot!(μ₀ -> c*maxlikrat(x, μ₀), a, b;
@@ -295,6 +319,7 @@ m = 20
 x = rand(dist_true, m)
 
 @show mean(dist_true) var(dist_true)
+@show mean(x) var(x)
 μ, σ = mean(dist_true), std(dist_true)
 a, b = max(minimum(dist_true), μ-3σ), min(maximum(dist_true), μ+6σ)
 plot(dist_true, a, b; label="true dist")
@@ -343,7 +368,10 @@ plot!(xguide="μ", yguide="σ²")
 title!("posterior of (μ, σ²) for size-$m sample")
 
 # %%
+α = 0.05
+
 @show post_μ = dist_μ(post...)
+@show ci = credint(x; α, pri)
 plot(post_μ, a, b; label="posterior")
 c = pdf(post_μ, mode(post_μ))
 plot!(μ₀ -> c*maxlikrat(x, μ₀), a, b;
@@ -359,6 +387,7 @@ m = 40
 x = rand(dist_true, m)
 
 @show mean(dist_true) var(dist_true)
+@show mean(x) var(x)
 μ, σ = mean(dist_true), std(dist_true)
 a, b = max(minimum(dist_true), μ-3σ), min(maximum(dist_true), μ+6σ)
 plot(dist_true, a, b; label="true dist")
@@ -407,7 +436,10 @@ plot!(xguide="μ", yguide="σ²")
 title!("posterior of (μ, σ²) for size-$m sample")
 
 # %%
+α = 0.05
+
 @show post_μ = dist_μ(post...)
+@show ci = credint(x; α, pri)
 plot(post_μ, a, b; label="posterior")
 c = pdf(post_μ, mode(post_μ))
 plot!(μ₀ -> c*maxlikrat(x, μ₀), a, b;
@@ -423,6 +455,7 @@ m = 160
 x = rand(dist_true, m)
 
 @show mean(dist_true) var(dist_true)
+@show mean(x) var(x)
 μ, σ = mean(dist_true), std(dist_true)
 a, b = max(minimum(dist_true), μ-3σ), min(maximum(dist_true), μ+6σ)
 plot(dist_true, a, b; label="true dist")
@@ -471,7 +504,10 @@ plot!(xguide="μ", yguide="σ²")
 title!("posterior of (μ, σ²) for size-$m sample")
 
 # %%
+α = 0.05
+
 @show post_μ = dist_μ(post...)
+@show ci = credint(x; α, pri)
 plot(post_μ, a, b; label="posterior")
 c = pdf(post_μ, mode(post_μ))
 plot!(μ₀ -> c*maxlikrat(x, μ₀), a, b;
@@ -487,6 +523,7 @@ m = 640
 x = rand(dist_true, m)
 
 @show mean(dist_true) var(dist_true)
+@show mean(x) var(x)
 μ, σ = mean(dist_true), std(dist_true)
 a, b = max(minimum(dist_true), μ-3σ), min(maximum(dist_true), μ+6σ)
 plot(dist_true, a, b; label="true dist")
@@ -535,7 +572,10 @@ plot!(xguide="μ", yguide="σ²")
 title!("posterior of (μ, σ²) for size-$m sample")
 
 # %%
+α = 0.05
+
 @show post_μ = dist_μ(post...)
+@show ci = credint(x; α, pri)
 plot(post_μ, a, b; label="posterior")
 c = pdf(post_μ, mode(post_μ))
 plot!(μ₀ -> c*maxlikrat(x, μ₀), a, b;
@@ -547,40 +587,73 @@ title!("posterior pdf function of μ for size-$m sample")
 function plot_ttest(;
         dist_true = Gamma(10, 1),
         m = 10,
-        x = rand(dist_true, m))
+        x = rand(dist_true, m),
+        μ_0 = 0, sμ² = 100^2, γ = 1.5, θ = 2,
+        pri = (μ₀ = 0, λ₀ = 1/(γ*θ*(1 - 1/γ)*sμ²), γ, θ),
+    )
 
     μ, σ = mean(dist_true), std(dist_true)
     a, b = max(minimum(dist_true), μ - 5σ), min(maximum(dist_true), μ + 5σ)
 
-    P1 = plot(μ -> pvalue(x, μ), a, b; label="P-value")
+    post = baysian_update(pri..., x)
+    post_μ = dist_μ(post...)
+    pred_xnew = dist_x(post...)
+    μ_xnew = mean(pred_xnew)
+    
+    P1 = plot(μ -> pvalue(x, μ), a, b; label="t-test")
+    plot!(μ -> pvalue_bayes(x, μ), a, b; label="Bayesian", ls=:dash)
     scatter!(x, fill(-0.05, length(x)); label="sample", ms=1.5, msc=:auto, alpha=0.5, c=:red)
+    title!("P-value functions")
 
-    P2 = plot(xnew -> pdf(confdist(x), xnew), a, b; label="conf dist")
+    P2 = plot(μ -> pdf(confdist(x), μ), a, b; label="t-test")
+    plot!(μ -> pdf(post_μ, μ), a, b; label="Bayesian", ls=:dash)
     h = pdf(confdist(x), mode(confdist(x)))
     scatter!(x, fill(-0.05h, length(x)); label="sample", ms=1.5, msc=:auto, alpha=0.5, c=:red)
+    title!("parameter distributions")
 
-    P3 = plot(xnew -> pvalue_pred(x, xnew), a, b; label="pred P-value")
+    P3 = plot(xnew -> pvalue_pred(x, xnew), a, b; label="t-test")
+    plot!(xnew -> 2ccdf(pred_xnew, μ_xnew + abs(xnew - μ_xnew)), a, b;
+        label="Bayesian", ls=:dash)
     scatter!(x, fill(-0.05, length(x)); label="sample", ms=1.5, msc=:auto, alpha=0.5, c=:red)
+    title!("prediction P-value functions")
 
-    P4 = plot(xnew -> pdf(preddist(x), xnew), a, b; label="pred dist")
-    plot!(dist_true, a, b; label="true dist", ls=:dash)
-    h = pdf(preddist(x), mode(preddist(x)))
+    P4 = plot(xnew -> pdf(dist_pred(x), xnew), a, b; label="t-test")
+    plot!(xnew -> pdf(pred_xnew, xnew), a, b; label="Bayesian", ls=:dash)
+    plot!(dist_true, a, b; label="true dist", ls=:dot, c=:black)
+    h = pdf(dist_pred(x), mode(dist_pred(x)))
     scatter!(x, fill(-0.05h, length(x)); label="sample", ms=1.5, msc=:auto, alpha=0.5, c=:red)
+    title!("prediction distributions")
 
     plot(P1, P2, P3, P4; size=(800, 500), layout=(2, 2))
-    plot!(; plot_title="P-value function, etc. for size-$m sample of $(dist_true)")
+    plot!(; plot_title="P-value functions, etc. for size-$m sample of $(dist_true)")
 end
 
 # %%
+Random.seed!(4649373)
+plot_ttest(m = 5)
+
+# %%
+Random.seed!(4649373)
 plot_ttest(m = 10)
 
 # %%
+Random.seed!(4649373)
+plot_ttest(m = 20)
+
+# %%
+Random.seed!(4649373)
+plot_ttest(m = 30)
+
+# %%
+Random.seed!(4649373)
 plot_ttest(m = 40)
 
 # %%
+Random.seed!(4649373)
 plot_ttest(m = 160)
 
 # %%
+Random.seed!(4649373)
 plot_ttest(m = 640)
 
 # %%
