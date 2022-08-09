@@ -600,6 +600,11 @@ function plot_ttest(;
     pred_xnew = dist_x(post...)
     μ_xnew = mean(pred_xnew)
     
+    @show mean(dist_true) var(dist_true)
+    @show mean(x) var(x)
+    @show mean(dist_pred(x)) var(dist_pred(x))
+    @show mean(pred_xnew) var(pred_xnew)
+    
     P1 = plot(μ -> pvalue(x, μ), a, b; label="t-test")
     plot!(μ -> pvalue_bayes(x, μ), a, b; label="Bayesian", ls=:dash)
     scatter!(x, fill(-0.05, length(x)); label="sample", ms=1.5, msc=:auto, alpha=0.5, c=:red)
@@ -630,10 +635,6 @@ end
 
 # %%
 Random.seed!(4649373)
-plot_ttest(m = 5)
-
-# %%
-Random.seed!(4649373)
 plot_ttest(m = 10)
 
 # %%
@@ -650,7 +651,15 @@ plot_ttest(m = 40)
 
 # %%
 Random.seed!(4649373)
+plot_ttest(m = 80)
+
+# %%
+Random.seed!(4649373)
 plot_ttest(m = 160)
+
+# %%
+Random.seed!(4649373)
+plot_ttest(m = 320)
 
 # %%
 Random.seed!(4649373)
