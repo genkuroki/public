@@ -83,3 +83,18 @@ end
 @code_native debuginfo=:none f1(10, 20)
 
 # %%
+using Dates
+
+# %%
+x = Day(7)
+
+# %%
+zero(x)
+
+# %%
+one(x)
+
+# %%
+oneunit(x)
+
+# %%
