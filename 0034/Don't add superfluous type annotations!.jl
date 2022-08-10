@@ -65,3 +65,21 @@ F(10.0, 20)
 @code_llvm F(10.0, 20)
 
 # %%
+G(a, b) = zero(eltype(a:b))
+
+# %%
+@code_llvm F(10.0, 20)
+
+# %%
+function f1(a, b)
+    s = zero(eltype(a:b))
+    for i in a:b
+        s += i
+    end
+    s
+end
+
+# %%
+@code_native debuginfo=:none f1(10, 20)
+
+# %%
