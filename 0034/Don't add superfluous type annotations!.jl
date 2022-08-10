@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # ---
 # jupyter:
 #   jupytext:
@@ -96,5 +97,17 @@ one(x)
 
 # %%
 oneunit(x)
+
+# %%
+function mcpi(N)
+    s = zero(N)
+    for _ in 1:N
+        s += rand()^2 + rand()^2 ≤ 1
+    end
+    4s/N
+end
+
+# %%
+mcpi(10^9)
 
 # %%
