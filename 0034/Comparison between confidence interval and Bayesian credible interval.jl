@@ -145,7 +145,7 @@ end
 function plot_prob_ci(; α=0.05, p_true=0.5, prior=(1/2, 1/2),
         nmin=2, nmax=1000, kwargs...)
     plot(nmin:2:nmax, n -> prob_ci_wilson(n, n*p_true; α, prior); label="")
-    title!("prior = $prior,  data = (n, $(p_true)n)\n\
+    title!("prior = $prior,  data = (n, $(p_true)n),  α = $α\n\
         probability of p ∈ Wilson's CI with p ∼ posterior")
     hline!([1-α]; label="", ls=:dot)
     plot!(xguide="n")
