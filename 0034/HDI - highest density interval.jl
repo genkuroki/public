@@ -51,7 +51,7 @@ function plot_hdi(dist, α = 0.05; kwargs...)
     @show α
     @show a, b = hdi(dist, α)
     plot(dist; label="")
-    vline!([a, b]; label="Optim", ls=:dash)
+    vline!([a, b]; label="", ls=:dash)
     title!("HDI of $dist")
     plot!(; kwargs...)
 end
