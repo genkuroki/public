@@ -38,13 +38,10 @@ returns the 100(1 - `α`)% highest density interval (HDI) of the distribution `d
 Assumption: `dist` is unimodal.
 """
 function hdi(dist, α = 0.05; alg = Brent())
-    o = optimize(0, α, alg) do p
-        a, b = quantile.(dist, (p, p + (1 - α)))
-        b - a
-    end
+    f(p) = quantile(dist, p + (1 - α)) - quantile(dist, p)
+    o = optimize(f, 0, α, alg)
     p = o.minimizer
-    q = p + (1 - α)
-    quantile.(dist, (p, q))
+    quantile.(dist, (p, p + (1 - α)))
 end
 
 @doc hdi
@@ -53,7 +50,14 @@ end
 function plot_hdi(dist, α = 0.05; alg=Brent(), kwargs...)
     @show α
     @show a, b = hdi(dist, α; alg)
-    plot(dist; label="")
+    plot()
+    if dist isa DiscreteUnivariateDistribution
+        m, s = mean(dist), std(dist)
+        a, b = max(minimum(dist), m-5s), min(maximum(dist), m+5s)
+        plot!(x -> pdf(dist, round(Int, x)), a, b; label="")
+    else
+        plot!(dist; label="")
+    end
     vline!([a, b]; label="Optim", ls=:dash)
     title!("HDI of $dist")
     plot!(; kwargs...)
