@@ -63,7 +63,7 @@ end
 plot_hdi(Normal())
 
 # %%
-plot_hdi(Gamma(10, 3))
+plot_hdi(Gamma(5, 3))
 
 # %%
 plot_hdi(Exponential())
