@@ -31,13 +31,13 @@ default(fmt=:png, size=(400, 250), titlefontsize=10)
 
 # %%
 """
-    hdi(dist, α = 0.05; alg = Brent())
+    hdi(dist::ContinuousUnivariateDistribution, α = 0.05; alg = Brent())
 
 returns the 100(1 - `α`)% highest density interval (HDI) of the distribution `dist`.
 
-Assumption: `dist` is unimodal.
+Assumption: `dist` is a unimodal continuous univariate distribution.
 """
-function hdi(dist, α = 0.05; alg = Brent())
+function hdi(dist::ContinuousUnivariateDistribution, α = 0.05; alg = Brent())
     f(p) = quantile(dist, p + (1 - α)) - quantile(dist, p)
     o = optimize(f, 0, α, alg)
     p = o.minimizer
@@ -47,17 +47,10 @@ end
 @doc hdi
 
 # %%
-function plot_hdi(dist, α = 0.05; alg=Brent(), kwargs...)
+function plot_hdi(dist, α = 0.05; kwargs...)
     @show α
-    @show a, b = hdi(dist, α; alg)
-    plot()
-    if dist isa DiscreteUnivariateDistribution
-        m, s = mean(dist), std(dist)
-        a, b = max(minimum(dist), m-5s), min(maximum(dist), m+5s)
-        plot!(x -> pdf(dist, round(Int, x)), a, b; label="")
-    else
-        plot!(dist; label="")
-    end
+    @show a, b = hdi(dist, α)
+    plot(dist; label="")
     vline!([a, b]; label="Optim", ls=:dash)
     title!("HDI of $dist")
     plot!(; kwargs...)
