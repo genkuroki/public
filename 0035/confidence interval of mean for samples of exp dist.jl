@@ -96,7 +96,7 @@ function confint_t(x, α=0.05)
     (x̄ - c*s/√n, x̄ + c*s/√n)
 end
 
-function confint_e(x, α=0.05; a=-20, b=20)
+function confint_e(x, α=0.05; a=-10, b=10)
     f(t) = pvalue_e(x, exp(t)) - α
     exp.(find_zeros(f, a, b))
 end
