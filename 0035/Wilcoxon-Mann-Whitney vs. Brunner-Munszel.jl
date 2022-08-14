@@ -15,15 +15,11 @@
 # ---
 
 # %%
-using Base.Threads
-using BenchmarkTools
 using Distributions
 using HypothesisTests
-using PrettyPrinting
-using QuadGK
 using Random
 Random.seed!(4649373)
-using RCall
+using QuadGK
 using Roots
 using StatsBase
 using StatsFuns
@@ -394,9 +390,10 @@ function iterplot_pvals(distx, disty, m, n; seed=nothing, kwargs...)
     isnothing(seed) || Random.seed!(seed)
     @show distx, m
     @show disty, n
+    @show std(distx)/std(disty)
     @show mean(distx) - mean(disty)
     @show median(distx) - median(disty)
-    @show std(distx)/std(disty)
+    @show tieshift(distx, disty)
     PP = []
     for _ in 1:15
         X, Y = rand(distx, m), rand(disty, n)
@@ -502,5 +499,17 @@ iterplot_pvals(Cauchy(), Cauchy(), 20, 10; seed=4649373)
 
 # %%
 iterplot_pvals(Cauchy(), Cauchy(), 100, 100; seed=4649373)
+
+# %%
+iterplot_pvals(Cauchy(), Cauchy(0, 2), 10, 20; seed=4649373)
+
+# %%
+iterplot_pvals(Cauchy(), Cauchy(0, 2), 15, 15; seed=4649373)
+
+# %%
+iterplot_pvals(Cauchy(), Cauchy(0, 2), 20, 10; seed=4649373)
+
+# %%
+iterplot_pvals(Cauchy(), Cauchy(0, 2), 100, 100; seed=4649373)
 
 # %%
