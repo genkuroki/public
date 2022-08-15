@@ -22,7 +22,7 @@ P(x, p) = p^x * (1 - p)^(1 - x)
 L(X, p) = prod(P(x, p) for x in X)
 
 @show X = rand(0:1, 12)
-plot(p -> L(X, p), 0, 1; label="likelhood", xguide="x")
+plot(p -> L(X, p), 0, 1; label="likelhood", xguide="p")
 
 # %%
 using Random
@@ -37,7 +37,7 @@ function likelihood(X, p)
 end
 
 @show X = rand(0:1, 12)
-plot(p -> likelihood(X, p), 0, 1; label="likelhood", xguide="x")
+plot(p -> likelihood(X, p), 0, 1; label="likelhood", xguide="p")
 
 # %%
 using BenchmarkTools
