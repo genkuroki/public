@@ -24,7 +24,7 @@ using Roots
 using StatsBase
 using StatsFuns
 using StatsPlots
-default(size=(400, 250), titlefontsize=10, tickfontsize=6, guidefontsize=9)
+default(fmt=:png, size=(400, 250), titlefontsize=10, tickfontsize=6, guidefontsize=9)
 
 x ⪅ y = x < y || x ≈ y
 x ⪆ y = x > y || x ≈ y
@@ -417,6 +417,18 @@ iterplot_pvals(Normal(), Normal(), 20, 10; seed=4649373)
 iterplot_pvals(Normal(), Normal(), 100, 100; seed=4649373)
 
 # %%
+iterplot_pvals(Normal(0, 1), Normal(0, 4), 10, 20; seed=4649373)
+
+# %%
+iterplot_pvals(Normal(0, 1), Normal(0, 4), 15, 15; seed=4649373)
+
+# %%
+iterplot_pvals(Normal(0, 1), Normal(0, 4), 20, 10; seed=4649373)
+
+# %%
+iterplot_pvals(Normal(0, 1), Normal(0, 4), 100, 100; seed=4649373)
+
+# %%
 iterplot_pvals(Uniform(0, 2), Exponential(std(Uniform(0, 2))), 10, 20; seed=4649373)
 
 # %%
@@ -429,28 +441,16 @@ iterplot_pvals(Uniform(0, 2), Exponential(std(Uniform(0, 2))), 20, 10; seed=4649
 iterplot_pvals(Uniform(0, 2), Exponential(std(Uniform(0, 2))), 100, 100; seed=4649373)
 
 # %%
-iterplot_pvals(Normal(0, 1), Normal(0, 2), 10, 20; seed=4649373)
+iterplot_pvals(Gamma(6, 1), Gamma(1, 6), 10, 20; seed=4649373)
 
 # %%
-iterplot_pvals(Normal(0, 1), Normal(0, 2), 15, 15; seed=4649373)
+iterplot_pvals(Gamma(6, 1), Gamma(1, 6), 15, 15; seed=4649373)
 
 # %%
-iterplot_pvals(Normal(0, 1), Normal(0, 2), 20, 10; seed=4649373)
+iterplot_pvals(Gamma(6, 1), Gamma(1, 6), 20, 10; seed=4649373)
 
 # %%
-iterplot_pvals(Normal(0, 1), Normal(0, 2), 100, 100; seed=4649373)
-
-# %%
-iterplot_pvals(Gamma(6, 1), Gamma(2, 3), 10, 20; seed=4649373)
-
-# %%
-iterplot_pvals(Gamma(6, 1), Gamma(2, 3), 15, 15; seed=4649373)
-
-# %%
-iterplot_pvals(Gamma(6, 1), Gamma(2, 3), 20, 10; seed=4649373)
-
-# %%
-iterplot_pvals(Gamma(6, 1), Gamma(2, 3), 100, 100; seed=4649373)
+iterplot_pvals(Gamma(6, 1), Gamma(1, 6), 100, 100; seed=4649373)
 
 # %%
 iterplot_pvals(LogNormal(), LogNormal(), 10, 20; seed=4649373)
