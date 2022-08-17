@@ -119,3 +119,25 @@ Q = @btime nextprimes(2, 10^5)
 P == Q
 
 # %%
+@inline function naive_isprime(n)
+    for i in 2:isqrt(n)
+        n % i == 0 && return false
+    end
+    true
+end
+
+function naive_primes2(N)
+    P = typeof(N)[]
+    for n in 2:N
+        naive_isprime(n) && push!(P, n)
+    end
+    P
+end
+
+# %%
+@btime naive_primes2(10^5)
+
+# %%
+naive_primes2(10^5) == primes(10^5)
+
+# %%
