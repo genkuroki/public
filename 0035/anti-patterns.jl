@@ -81,3 +81,29 @@ multiply(x::AbstractFoo, y) = throw(MethodError(multiply, (x, y)))
 multiply(Foo(3), [10.0])
 
 # %%
+function double!(a::Array)
+    @. a = 2a
+end
+
+# %%
+v = [1, 2, 3, 4]
+@show double!(v)
+@show v;
+
+# %%
+w = view(v, 2:3)
+
+# %%
+double!(w)
+
+# %%
+function double!(v)
+    @. v = 2v
+end
+
+# %%
+@show double!(w)
+@show w
+@show v;
+
+# %%
