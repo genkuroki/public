@@ -24,7 +24,7 @@ using Distributions
 
 function sim_t_test(; dist = Normal(), n = 10, μ = mean(dist), L = 10^5)
     pval = Float64[]
-    for i in 1:L
+    for _ in 1:L
         X = rand(dist, n)
         X̄ = mean(X)
         S = std(X)
