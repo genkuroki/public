@@ -74,3 +74,26 @@ pval = @btime sim_t_test_rev(; n=$n, L=$L, pval=$pval, tmp=$tmp);
 @profview_allocs sim_t_test_rev(; n, L, pval, tmp) sample_rate=1
 
 # %%
+val = @showtime 1 + 2sum(sin(x)/x for x in 1:10^8)
+val
+
+# %%
+function sim_t_test_showtime(; dist = Normal(), n = 10, μ = mean(dist), L = 10)
+    @showtime pval = Float64[]
+    println()
+    for i in 1:L
+        @show i
+        @showtime X = rand(dist, n)
+        @showtime X̄ = mean(X)
+        @showtime S = std(X)
+        @showtime t = √n * (X̄ - μ)/S
+        @showtime p = 2ccdf(TDist(n-1), abs(t))
+        @showtime push!(pval, p)
+        println()
+    end
+    @showtime pval
+end
+
+sim_t_test_showtime();
+
+# %%
