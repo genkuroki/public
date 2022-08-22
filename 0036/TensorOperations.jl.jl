@@ -74,7 +74,7 @@ refA_Gs(:A, :G, 4)
 
 # %%
 macro multitrace(G, N)
-    refA, Gs = refA_Gs(:A, G, N)
+    refA, Gs = refA_Gs(:A, :G, N)
     quote
         let G = $(esc(G))
             @tensor $refA := $Gs
@@ -91,7 +91,7 @@ A == B
 
 # %%
 macro multitrace(A, G, N)
-    refA, Gs = refA_Gs(:A, G, N)
+    refA, Gs = refA_Gs(:A, :G, N)
     quote
         let A = $(esc(A)), G = $(esc(G))
             @tensor $refA = $Gs
