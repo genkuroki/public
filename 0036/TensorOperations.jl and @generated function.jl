@@ -72,9 +72,8 @@ end
 multr!(A, G) = multr!(A, G, Val(length(G)))
 
 # %%
-i = rand(5:13, 4)
-j = rand(3:6, 4)
-i[1] = 100
+i = [100, 8, 6, 5]
+j = [6, 7, 5, 4]
 H = [randn(i[mod1(k, 4)], j[k], i[mod1(k+1, 4)]) for k in 1:4]
 size.(H)
 
@@ -108,5 +107,8 @@ D = @btime @multitrace $K 4
 E = @btime multr($K)
 F = @btime multr!($F, $K)
 D == E == F
+
+# %%
+permutedims(A, (4, 1, 2, 3)) ≈ D
 
 # %%
