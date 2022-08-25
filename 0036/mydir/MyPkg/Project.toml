@@ -1,0 +1,4 @@
+name = "MyPkg"
+uuid = "60df982b-9e7b-4c7e-aa74-fd6d0ac1b252"
+authors = ["Gen Kuroki <genkuroki@gmail.com>"]
+version = "0.1.0"

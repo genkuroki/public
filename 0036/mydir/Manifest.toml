@@ -1,0 +1,10 @@
+# This file is machine-generated - editing it directly is not advised
+
+julia_version = "1.8.0"
+manifest_format = "2.0"
+project_hash = "73a92146263e5d6d30207f419f3cc3182d4600bd"
+
+[[deps.MyPkg]]
+path = "MyPkg"
+uuid = "60df982b-9e7b-4c7e-aa74-fd6d0ac1b252"
+version = "0.1.0"
