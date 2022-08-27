@@ -36,3 +36,18 @@ o.minimizer
 sum(o.minimizer)
 
 # %%
+using Optim
+
+function G(x; w = (0.39, 0.30, 0.21, 0.10))
+    p, q  = x
+    r = 1 - p - q
+    a, b, c, d = w
+    (p^2 + 2p*r - a)^2 + (r^2 - b)^2 + (q^2 + 2q*r - c)^2 + (2p*q - d)^2
+end
+
+o = optimize(G, fill(1/3, 2), LBFGS())
+
+# %%
+[o.minimizer; 1 - sum(o.minimizer)]
+
+# %%
