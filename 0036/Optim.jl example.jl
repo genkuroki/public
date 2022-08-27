@@ -21,9 +21,10 @@
 # %%
 using Optim
 
-function F(x; a=0.39, b=0.30, c=0.21, d=0.10)
+function F(x; w = (0.39, 0.30, 0.21, 0.10))
     p, q, r = x
-    (p^2 + 2p*r - a)^2 + (r^2 - b)^2 + (q^2 + 2q*r - c)^2 + (2p*q - d)^2
+    a, b, c, d = w
+    (p + q + r - 1)^2 + (p^2 + 2p*r - a)^2 + (r^2 - b)^2 + (q^2 + 2q*r - c)^2 + (2p*q - d)^2
 end
 
 o = optimize(F, fill(1/3, 3), LBFGS())
