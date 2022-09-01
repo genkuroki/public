@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # ---
 # jupyter:
 #   jupytext:
@@ -48,6 +49,41 @@ end
 o = optimize(G, fill(1/3, 2), LBFGS())
 
 # %%
-[o.minimizer; 1 - sum(o.minimizer)]
+sol = [o.minimizer; 1 - sum(o.minimizer)]
+
+# %%
+using Optim
+using Plots
+
+function G(x; w = (0.39, 0.30, 0.21, 0.10))
+    p, q  = x
+    r = 1 - p - q
+    a, b, c, d = w
+    (p^2 + 2p*r - a)^2 + (r^2 - b)^2 + (q^2 + 2q*r - c)^2 + (2p*q - d)^2
+end
+o = optimize(G, fill(1/3, 2), LBFGS())
+@show minimum(o)
+sol = [o.minimizer; 1 - sum(o.minimizer)]
+@show sol
+
+p = range(0, 1, 200)
+q = range(0, 1, 200)
+heatmap(p, q, (p, q) -> p + q ≤ 1 ? √G((p, q)) : NaN; clim=(0, 1))
+scatter!([sol[1]], [sol[2]]; label="(p, q)", c=:cyan)
+plot!(xlim=(0, 1), ylim=(0, 1), xtick=0:0.1:1, ytick=0:0.1:1)
+plot!(xguide="p", yguide="q", size=(480, 400))
+
+# %%
+using Optim
+
+function H(x; w = (0.39, 0.30))
+    p, q, c, d  = x
+    r = 1 - p - q
+    a, b = w
+    (p^2 + 2p*r - a)^2 + (r^2 - b)^2 + (q^2 + 2q*r - c)^2 + (2p*q - d)^2
+end
+o = optimize(H, fill(1/4, 4), LBFGS())
+@show minimum(o)
+@show o.minimizer;
 
 # %%
