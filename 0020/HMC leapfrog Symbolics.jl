@@ -9,46 +9,79 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.10.3
 #   kernelspec:
-#     display_name: Julia 1.6.4
+#     display_name: Julia 1.8.0
 #     language: julia
-#     name: julia-1.6
+#     name: julia-1.8
 # ---
 
 # %% [markdown]
 # # Hamiltonian Monte Carlo with leapfrog
 #
+# * 黒木玄
+# * 2021-12-06, 2022-09-03
+#
 # Scalar version: https://github.com/genkuroki/public/blob/main/0018/HMC%20leapfrog.ipynb
+#
+# 2022-09-03: カーネルをJulia v1.8.0に変更して, ConcreteStructs.jl と Parameters.jl への依存を無くした.
 
 # %% tags=[]
-module My
+# Sample code of Hamiltonian Monte Carlo with leapfrog
 
-using ConcreteStructs: @concrete
-using Parameters: @unpack
+module My
 
 using LinearAlgebra: dot
 using ForwardDiff: gradient
 using Random: default_rng, randn!
 using StaticArrays: SVector, MVector
 
-@concrete struct LFProblem{dim} ϕ; H; F; dt; nsteps end
+# Type of Leapfrog Problem
+struct LFProblem{dim, F1, F2, F3, T, I}
+    ϕ::F1
+    H::F2
+    F::F3
+    dt::T
+    nsteps::I
+end
 
-"""Assume ϕ is a potential function."""
+"""
+    LFProblem(dim, ϕ, H, F, dt, nsteps)
+
+Assume that `ϕ(x, param)` is a potential function of a `dim`-dimensional vector `x` and a parameter `param`, `H(x, v, param)` and `F(x, param)` the Hamiltonian and force functions corresponding to `ϕ`, `dt` a step of discretized time, and `nsteps` the number of steps.  Then it returns the Problem object of solving the Hamiltonian equation with leapfrog method.
+"""
+function LFProblem(dim, ϕ, H, F, dt, nsteps)
+    F1, F2, F3, T, I = typeof(ϕ), typeof(H), typeof(F), typeof(dt), typeof(nsteps)
+    LFProblem{dim, F1, F2, F3, T, I}(ϕ, H, F, dt, nsteps)
+end
+
+"""
+    LFProblem(dim, ϕ; dt = 1.0, nsteps = 40)
+
+Assume that `ϕ(x, param)` is a potential function of a `dim`-dimensional vector `x` and a parameter `param`.  Then it defines the Hamiltonian function `H(x, v, param)` and the force function `F(x, param)` corresponding to `ϕ` and returns `LFProblem(dim, ϕ, H, F, dt, nsteps)`.
+"""
 function LFProblem(dim, ϕ; dt = 1.0, nsteps = 40)
     H(x, v, param) = dot(v, v)/2 + ϕ(x, param)
     F(x, param) = -gradient(x -> ϕ(x, param), x)
-    LFProblem{dim}(ϕ, H, F, dt, nsteps)
+    LFProblem(dim, ϕ, H, F, dt, nsteps)
 end
 
-"""Assume ϕ is a potential function and ∇ϕ its gradient."""
+"""
+    LFProblem(dim, ϕ, ∇ϕ; dt = 1.0, nsteps = 40)
+
+Assume that `ϕ(x, param)` is a potential function of a `dim`-dimensional vector `x` and a parameter `param` and `∇ϕ` its gradient with respect to `x`.  Then it deifnes the Hamiltonian function `H(x, v, param)` and the force function `F(x, param)` corresponding to `ϕ` and `∇ϕ` and returns `LFProblem(dim, ϕ, H, F, dt, nsteps)`.
+"""
 function LFProblem(dim, ϕ, ∇ϕ; dt = 1.0, nsteps = 40)
     H(x, v, param) = dot(v, v)/2 + ϕ(x, param)
     F(x, param) = -∇ϕ(x, param)
-    LFProblem{dim}(ϕ, H, F, dt, nsteps)
+    LFProblem(dim, ϕ, H, F, dt, nsteps)
 end
 
-"""Numerically solve Hamilton's equation of motion with leapfrog method"""
+"""
+    solve(lf::LFProblem, x, v, param)
+
+numerically solve the Hamilton's equation of motion given by `lf` with leapfrog method, where (`x`, `v`) is the initial value and `param` is the parameter of the potential function `lf.ϕ`.
+"""
 function solve(lf::LFProblem, x, v, param)
-    @unpack F, dt, nsteps = lf
+    (; F, dt, nsteps) = lf
     v = v + F(x, param)*dt/2
     x = x + v*dt
     for _ in 2:nsteps
@@ -60,14 +93,20 @@ function solve(lf::LFProblem, x, v, param)
 end
 
 @inline function _update!(lf::LFProblem{dim}, x, vtmp, param, rng) where dim
-    @unpack H = lf
+    (; H) = lf
     v = SVector{dim}(randn!(rng, vtmp))
     xnew, vnew = solve(lf, x, v, param)
     dH = H(xnew, vnew, param) - H(x, v, param)
     rand(rng) ≤ exp(-dH) ? xnew : x
 end
 
-"""Hamiltonian Monte Carlo"""
+"""
+    HMC(lf::LFProblem{dim}, param = nothing;
+        niters = 10^5, thin = 1, nwarmups = 0, rng = default_rng(),
+        init = SVector{dim}(randn(rng, dim))) where dim
+
+generates the sample of the distribution given by the probability density function proportioal to exp(-`lf.ϕ(x, param)`) by Hamiltonian Monte Carlo method.
+"""
 function HMC(lf::LFProblem{dim}, param = nothing;
         niters = 10^5, thin = 1, nwarmups = 0, rng = default_rng(),
         init = SVector{dim}(randn(rng, dim))) where dim
@@ -87,6 +126,15 @@ function HMC(lf::LFProblem{dim}, param = nothing;
 end
 
 end
+
+# %%
+?My.LFProblem
+
+# %%
+?My.solve
+
+# %%
+?My.HMC
 
 # %%
 using Plots
@@ -232,6 +280,9 @@ param = A = @SMatrix [
 
 # %%
 @btime My.HMC($lf, $param);
+
+# %% [markdown]
+# 自動微分を使うよりも計算が速くなっている.
 
 # %%
 X, Y = first.(sample), last.(sample)
