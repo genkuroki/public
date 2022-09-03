@@ -29,7 +29,7 @@ $
 
 <!-- #region toc=true -->
 <h1>目次<span class="tocSkip"></span></h1>
-<div class="toc"><ul class="toc-item"><li><span><a href="#正規分布モデルの共役事前分布とその応用" data-toc-modified-id="正規分布モデルの共役事前分布とその応用-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>正規分布モデルの共役事前分布とその応用</a></span><ul class="toc-item"><li><span><a href="#逆ガンマ正規分布" data-toc-modified-id="逆ガンマ正規分布-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>逆ガンマ正規分布</a></span></li><li><span><a href="#Bayes更新" data-toc-modified-id="Bayes更新-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Bayes更新</a></span></li><li><span><a href="#μの周辺事前分布" data-toc-modified-id="μの周辺事前分布-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>μの周辺事前分布</a></span></li><li><span><a href="#事前・事後予測分布" data-toc-modified-id="事前・事後予測分布-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>事前・事後予測分布</a></span></li><li><span><a href="#Jeffreys事前分布の場合" data-toc-modified-id="Jeffreys事前分布の場合-1.5"><span class="toc-item-num">1.5&nbsp;&nbsp;</span>Jeffreys事前分布の場合</a></span></li><li><span><a href="#通常の信頼区間と予測区間との比較" data-toc-modified-id="通常の信頼区間と予測区間との比較-1.6"><span class="toc-item-num">1.6&nbsp;&nbsp;</span>通常の信頼区間と予測区間との比較</a></span></li><li><span><a href="#データの数値から事前分布を決めた場合" data-toc-modified-id="データの数値から事前分布を決めた場合-1.7"><span class="toc-item-num">1.7&nbsp;&nbsp;</span>データの数値から事前分布を決めた場合</a></span></li></ul></li></ul></div>
+<div class="toc"><ul class="toc-item"><li><span><a href="#正規分布モデルの共役事前分布とその応用" data-toc-modified-id="正規分布モデルの共役事前分布とその応用-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>正規分布モデルの共役事前分布とその応用</a></span><ul class="toc-item"><li><span><a href="#逆ガンマ正規分布" data-toc-modified-id="逆ガンマ正規分布-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>逆ガンマ正規分布</a></span></li><li><span><a href="#Bayes更新" data-toc-modified-id="Bayes更新-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>Bayes更新</a></span></li><li><span><a href="#μの周辺事前・事後分布" data-toc-modified-id="μの周辺事前・事後分布-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>μの周辺事前・事後分布</a></span></li><li><span><a href="#事前・事後予測分布" data-toc-modified-id="事前・事後予測分布-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>事前・事後予測分布</a></span></li><li><span><a href="#Jeffreys事前分布の場合" data-toc-modified-id="Jeffreys事前分布の場合-1.5"><span class="toc-item-num">1.5&nbsp;&nbsp;</span>Jeffreys事前分布の場合</a></span></li><li><span><a href="#通常の信頼区間と予測区間との比較" data-toc-modified-id="通常の信頼区間と予測区間との比較-1.6"><span class="toc-item-num">1.6&nbsp;&nbsp;</span>通常の信頼区間と予測区間との比較</a></span></li><li><span><a href="#データの数値から事前分布を決めた場合" data-toc-modified-id="データの数値から事前分布を決めた場合-1.7"><span class="toc-item-num">1.7&nbsp;&nbsp;</span>データの数値から事前分布を決めた場合</a></span></li></ul></li></ul></div>
 <!-- #endregion -->
 
 ```julia
@@ -39,6 +39,30 @@ default(fmt=:png, size=(400, 250),
     titlefontsize=10, tickfontsize=6, guidefontsize=9,
     plot_titlefontsize=10)
 using SymPy
+```
+
+```julia
+# Override the Base.show definition of SymPy.jl:
+# https://github.com/JuliaPy/SymPy.jl/blob/29c5bfd1d10ac53014fa7fef468bc8deccadc2fc/src/types.jl#L87-L105
+
+@eval SymPy function Base.show(io::IO, ::MIME"text/latex", x::SymbolicObject)
+    print(io, as_markdown("\\displaystyle " *
+            sympy.latex(x, mode="plain", fold_short_frac=false)))
+end
+@eval SymPy function Base.show(io::IO, ::MIME"text/latex", x::AbstractArray{Sym})
+    function toeqnarray(x::Vector{Sym})
+        a = join(["\\displaystyle " *
+                sympy.latex(x[i]) for i in 1:length(x)], "\\\\")
+        """\\left[ \\begin{array}{r}$a\\end{array} \\right]"""
+    end
+    function toeqnarray(x::AbstractArray{Sym,2})
+        sz = size(x)
+        a = join([join("\\displaystyle " .* map(sympy.latex, x[i,:]), "&")
+                for i in 1:sz[1]], "\\\\")
+        "\\left[ \\begin{array}{" * repeat("r",sz[2]) * "}" * a * "\\end{array}\\right]"
+    end
+    print(io, as_markdown(toeqnarray(x)))
+end
 ```
 
 ## 正規分布モデルの共役事前分布とその応用
@@ -78,6 +102,8 @@ E[v] = \frac{\theta}{\kappa - 1}, \quad
 \end{aligned}
 $$
 
+以下において, $A$ と $B$ が $\mu, v$ に関する定数倍を除いて等しいことを $A\propto B$ と書く.
+
 逆ガンマ正規分布の密度函数を次のように定義する:
 
 $$
@@ -104,8 +130,6 @@ $$
 
 
 ### Bayes更新
-
-以下において, $A$ と $B$ が $\mu, v$ に関する定数倍を除いて等しいことを $A\propto B$ と書く.
 
 データの数値 $y_1,\ldots,y_n$ が与えられたとき, 正規分布モデルの尤度函数は
 
@@ -136,14 +160,14 @@ $$
 &
 \prod_{i=1}^n p_\op{N}(y_i|\mu,v)\times p_\op{IGN}(\mu,v|\mu_*, v_*, \kappa, \theta)
 \\ &\propto
-v^{-n/2}\exp\left(-\frac{1}{2v}(y_i-\mu)^2\right)\times
+v^{-n/2}\exp\left(-\frac{n}{2v}\left((\mu-\ybar)^2 + \sigmahat^2\right)\right)\times
 v^{-(\kappa+1/2)-1}
 \exp\left(-\frac{1}{v}\left(\theta + \frac{1}{2v_*}(\mu-\mu_*)^2\right)\right)
-\\ &\propto
+\\ &=
 v^{-(\kappa+n/2+1/2)-1}
 \exp\left(-\frac{1}{v}\left(
-\theta + \frac{n\sigmahat^2}{2} +
-\frac{1+nv_*}{2v_*}\left(\mu - \frac{\mu_*+nv_*\ybar}{1+nv_*}\right)
+\theta + \frac{n}{2}\left(\sigmahat^2 + \frac{(\ybar - \mu_*)^2}{1+nv_*}\right) +
+\frac{1+nv_*}{2v_*}\left(\mu - \frac{\mu_*+nv_*\ybar}{1+nv_*}\right)^2
 \right)\right).
 \end{aligned}
 $$
@@ -154,21 +178,43 @@ $$
 \begin{alignedat}{2}
 &
 \tilde\kappa = \kappa + \frac{n}{2} =
-\frac{n}{2}\left(1 + \frac{2\kappa}{n}\right), \qquad
-& &
-\tilde\theta = \theta + \frac{n\sigmahat^2}{2} =
-\frac{n\sigmahat^2}{2}\left(1 + \frac{2\theta}{n\sigmahat^2}\right),
+\frac{n}{2}\left(1 + \frac{2\kappa}{n}\right), 
+\\ &
+\tilde\theta =
+\theta + \frac{n}{2}\left(\sigmahat^2 + \frac{(\ybar - \mu_*)^2}{1+nv_*}\right) =
+\frac{n\sigmahat^2}{2}\left(1 + \frac{2\theta}{n\sigmahat^2} + \frac{(\ybar - \mu_*)^2}{(1+nv_*)\sigmahat^2}\right),
 \\ &
 \tilde\mu_* = \frac{\mu_*+nv_*\ybar}{1+nv_*} =
-\ybar\frac{1+\mu_*/(nv_*\ybar)}{1+1/(nv_*)}, \qquad
-& &
+\ybar\frac{1+\mu_*/(nv_*\ybar)}{1+1/(nv_*)}, 
+\\ &
 \tilde v_* = \frac{v_*}{1+nv_*} =
 \frac{1}{n}\frac{1}{1+1/(nv_*)}.
 \end{alignedat}
 $$
 
+```julia
+@vars n ȳ v̂ μ v μ0 v0 κ θ
+```
 
-### μの周辺事前分布
+```julia
+negloglik = n/2*log(v) + n/(2v)*((μ - ȳ)^2 + v̂)
+```
+
+```julia
+neglogpri = (κ + 1//2 + 1)*log(v) + 1/v*(θ + 1/(2v0)*(μ-μ0)^2)
+```
+
+```julia
+neglogpost = (κ + n/2 + 1//2 + 1)*log(v) +  1/v*(
+    θ + n/2*(v̂ + 1/(1+n*v0)*(ȳ - μ0)^2) +
+    (1 + n*v0)/(2v0)*(μ - (μ0 + n*v0*ȳ)/(1 + n*v0))^2)
+```
+
+```julia
+simplify(negloglik + neglogpri - neglogpost)
+```
+
+### μの周辺事前・事後分布
 
 共役事前分布における $\mu$ の周辺分布は次になる:
 
@@ -177,7 +223,35 @@ $$
 \mu_* + \sqrt{\frac{\theta}{\kappa}v_*}\;\op{TDist}(2\kappa).
 $$
 
-パラメータをBayes更新後に置き換えればこれは $\mu$ の周辺事後分布になる.
+パラメータをBayes更新後のパラメータ
+
+$$
+\begin{alignedat}{2}
+&
+\tilde\kappa = \kappa + \frac{n}{2} =
+\frac{n}{2}\left(1 + \frac{2\kappa}{n}\right), 
+\\ &
+\tilde\theta =
+\theta + \frac{n}{2}\left(\sigmahat^2 + \frac{(\ybar - \mu_*)^2}{1+nv_*}\right) =
+\frac{n\sigmahat^2}{2}\left(1 + \frac{2\theta}{n\sigmahat^2} + \frac{(\ybar - \mu_*)^2}{(1+nv_*)\sigmahat^2}\right),
+\\ &
+\tilde\mu_* = \frac{\mu_*+nv_*\ybar}{1+nv_*} =
+\ybar\frac{1+\mu_*/(nv_*\ybar)}{1+1/(nv_*)}, 
+\\ &
+\tilde v_* = \frac{v_*}{1+nv_*} =
+\frac{1}{n}\frac{1}{1+1/(nv_*)}.
+\end{alignedat}
+$$
+
+に置き換えればこれは $\mu$ の周辺事後分布になる.
+
+その事後分布を使った区間推定の幅は
+
+* $n$ が大きいほど狭くなる.
+* $\kappa$ が大きいほど狭くなる.
+* $\theta$ が大きいほど広くなる.
+* $|\ybar - \mu_*|/\sigmahat$ が大きいほど広くなる.
+* $|\ybar - \mu_*|/\sigmahat$ が大きくても, $v_*$ がさらに大きければ狭くなる.
 
 
 ### 事前・事後予測分布
@@ -215,12 +289,12 @@ $$
 前節の逆ガンマ正規分布の密度函数と比較すると, Jeffreys事前分布に対応するパラメータ値は形式的に次になることがわかる:
 
 $$
-\kappa = 0, \quad
-\theta = 0, \quad
-v_* = \infty.
+\kappa \to 0, \quad
+\theta \to 0, \quad
+v_* \to \infty.
 $$
 
-そのとき, 前節のBayes更新の公式は次のようにシンプルになる:
+そのとき, Bayes更新後のパラメータの公式は次のようにシンプルになる:
 
 $$
 \tilde\kappa = \frac{n}{2}, \quad
@@ -234,7 +308,8 @@ $$
 さらに, Jeffreys事前分布の場合には
 
 $$
-\frac{\tilde\theta}{\tilde\kappa} = \sigmahat^2.
+\frac{\tilde\theta}{\tilde\kappa} = \sigmahat^2, \quad
+v_* = \frac{1}{n}.
 $$
 
 ゆえに, $\mu$ に関する周辺事後分布は
@@ -270,7 +345,7 @@ s^2 = \frac{1}{n-1}\sum_{i=1}^n(y_i - \ybar)^2 =
 \frac{n\sigmahat^2}{n-1} > \sigmahat^2.
 $$
 
-したがって, 前節の結果と比較すると, Jeffreys事前分布の事後分布と予測分布による区間推定は, 以上の通常の区間推定よりも少し狭くなることがわかる.
+したがって, 前節の結果と比較すると, Jeffreys事前分布の事後分布と予測分布による区間推定は, 通常の信頼区間と予測区間よりも少し狭くなることがわかる.
 
 
 ### データの数値から事前分布を決めた場合
@@ -306,7 +381,7 @@ $$
 \to 2 + \frac{n}{2},
 \\ &
 \tilde\theta =
-\sigmahat^2\left(1 + \frac{1}{b} + \frac{n}{2}\right) =
+\sigmahat^2\left(1 + \frac{1}{b} + \frac{n}{2}\right) + \frac{n}{2}\frac{(\ybar - \ybar)^2}{1+na} =
 \frac{n\sigmahat^2}{2}\left(1 + \frac{2(1+1/b))}{n}\right)
 & &
 \to \sigmahat^2\left(1 + \frac{n}{2}\right),
@@ -323,22 +398,23 @@ $$
 \end{alignedat}
 $$
 
-以上における $\to$ は $a\to\infty$, $b\to\infty$ での極限を意味する.  その極限を取った後もJeffreys事前分布の場合とは一致しない.
+以上における $\to$ は $a\to\infty$, $b\to\infty$ での極限を意味する.
 
-以上の状況の下で,
+その極限を取った後もJeffreys事前分布の場合とは一致しない.
+
+以上の構成のポイントは, $\mu_* = \ybar$ となっているおかげで, $\tilde\mu_*$ も $\tilde\mu_* = \ybar$ となってバイアスが消え, さらに, $\tilde\theta$ の中の $\ds\frac{n}{2}\frac{(\ybar - \mu_*)^2}{1+na}$ の項が消えて, 区間推定の幅が無用に広くならずに済むことである.
+
+ただし, この場合には 
 
 $$
 \frac{\tilde\theta}{\tilde\kappa} =
-\sigmahat^2
-\frac{1+2(1+1/b)/n}{1+2(2+1/b)/n} < \sigmahat^2,
-\quad
-\tilde v_* =
-\frac{1}{n}\frac{1}{1+1/(na)} < \frac{1}{n}.
+\sigmahat^2\frac{1 + 2(1+1/b)/n}{1 + 2(2+1/b)/n} < \sigmahat^2, \quad
+v_* = \frac{1}{n}\frac{1}{1+1/(na)} < \frac{1}{n}
 $$
 
-ゆえに, この場合の区間推定はJeffreys事前分布の場合よりも狭くなる.
+なので, 区間推定の幅はJeffreys事前分布の場合よりも少し狭くなる.
 
-しかし, $n$ が大きければその違いは小さくなる.
+しかし, $n$ が大きければそれらの違いは小さくなる.
 
 ```julia
 
