@@ -16,7 +16,7 @@ jupyter:
 # 正規分布モデルの共役事前分布によるベイズ統計
 
 * 黒木玄
-* 2022-09-03
+* 2022-09-03～2022-09-04
 $
 \newcommand\ds{\displaystyle}
 \newcommand\op[1]{{\operatorname{#1}}}
@@ -29,16 +29,18 @@ $
 
 <!-- #region toc=true -->
 <h1>目次<span class="tocSkip"></span></h1>
-<div class="toc"><ul class="toc-item"><li><span><a href="#正規分布モデルの共役事前分布とその応用" data-toc-modified-id="正規分布モデルの共役事前分布とその応用-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>正規分布モデルの共役事前分布とその応用</a></span><ul class="toc-item"><li><span><a href="#逆ガンマ正規分布" data-toc-modified-id="逆ガンマ正規分布-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>逆ガンマ正規分布</a></span></li><li><span><a href="#共役事前分布のBayes更新" data-toc-modified-id="共役事前分布のBayes更新-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>共役事前分布のBayes更新</a></span></li><li><span><a href="#μの周辺事前・事後分布および事前・事後予測分布" data-toc-modified-id="μの周辺事前・事後分布および事前・事後予測分布-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>μの周辺事前・事後分布および事前・事後予測分布</a></span></li><li><span><a href="#Jeffreys事前分布の場合" data-toc-modified-id="Jeffreys事前分布の場合-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>Jeffreys事前分布の場合</a></span></li><li><span><a href="#平均と対数分散について一様な事前分布の場合" data-toc-modified-id="平均と対数分散について一様な事前分布の場合-1.5"><span class="toc-item-num">1.5&nbsp;&nbsp;</span>平均と対数分散について一様な事前分布の場合</a></span></li><li><span><a href="#通常の信頼区間と予測区間との比較" data-toc-modified-id="通常の信頼区間と予測区間との比較-1.6"><span class="toc-item-num">1.6&nbsp;&nbsp;</span>通常の信頼区間と予測区間との比較</a></span></li><li><span><a href="#データの数値から事前分布を決めた場合" data-toc-modified-id="データの数値から事前分布を決めた場合-1.7"><span class="toc-item-num">1.7&nbsp;&nbsp;</span>データの数値から事前分布を決めた場合</a></span></li></ul></li></ul></div>
+<div class="toc"><ul class="toc-item"><li><span><a href="#正規分布モデルの共役事前分布とその応用" data-toc-modified-id="正規分布モデルの共役事前分布とその応用-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>正規分布モデルの共役事前分布とその応用</a></span><ul class="toc-item"><li><span><a href="#逆ガンマ正規分布" data-toc-modified-id="逆ガンマ正規分布-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>逆ガンマ正規分布</a></span></li><li><span><a href="#共役事前分布のBayes更新" data-toc-modified-id="共役事前分布のBayes更新-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>共役事前分布のBayes更新</a></span></li><li><span><a href="#μの周辺事前・事後分布および事前・事後予測分布" data-toc-modified-id="μの周辺事前・事後分布および事前・事後予測分布-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>μの周辺事前・事後分布および事前・事後予測分布</a></span></li><li><span><a href="#Jeffreys事前分布の場合" data-toc-modified-id="Jeffreys事前分布の場合-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>Jeffreys事前分布の場合</a></span></li><li><span><a href="#平均と対数分散について一様な事前分布の場合" data-toc-modified-id="平均と対数分散について一様な事前分布の場合-1.5"><span class="toc-item-num">1.5&nbsp;&nbsp;</span>平均と対数分散について一様な事前分布の場合</a></span></li><li><span><a href="#平均と対数分散について一様な事前分布の場合の結果の数値的確認" data-toc-modified-id="平均と対数分散について一様な事前分布の場合の結果の数値的確認-1.6"><span class="toc-item-num">1.6&nbsp;&nbsp;</span>平均と対数分散について一様な事前分布の場合の結果の数値的確認</a></span></li><li><span><a href="#通常の信頼区間と予測区間との比較" data-toc-modified-id="通常の信頼区間と予測区間との比較-1.7"><span class="toc-item-num">1.7&nbsp;&nbsp;</span>通常の信頼区間と予測区間との比較</a></span></li><li><span><a href="#データの数値から事前分布を決めた場合" data-toc-modified-id="データの数値から事前分布を決めた場合-1.8"><span class="toc-item-num">1.8&nbsp;&nbsp;</span>データの数値から事前分布を決めた場合</a></span></li><li><span><a href="#n-=-5-ではデフォルト事前分布の場合と無情報事前分布の場合の結果が結構違う." data-toc-modified-id="n-=-5-ではデフォルト事前分布の場合と無情報事前分布の場合の結果が結構違う.-1.9"><span class="toc-item-num">1.9&nbsp;&nbsp;</span>n = 5 ではデフォルト事前分布の場合と無情報事前分布の場合の結果が結構違う.</a></span></li><li><span><a href="#n-=-20-ではデフォルト事前分布の場合と無情報事前分布の場合の結果が近付く." data-toc-modified-id="n-=-20-ではデフォルト事前分布の場合と無情報事前分布の場合の結果が近付く.-1.10"><span class="toc-item-num">1.10&nbsp;&nbsp;</span>n = 20 ではデフォルト事前分布の場合と無情報事前分布の場合の結果が近付く.</a></span></li><li><span><a href="#n-=-20-で事前分布とデータの数値の相性が悪い場合" data-toc-modified-id="n-=-20-で事前分布とデータの数値の相性が悪い場合-1.11"><span class="toc-item-num">1.11&nbsp;&nbsp;</span>n = 20 で事前分布とデータの数値の相性が悪い場合</a></span></li></ul></li></ul></div>
 <!-- #endregion -->
 
 ```julia
 using Distributions
+using LinearAlgebra
 using StatsPlots
-default(fmt=:png, size=(400, 250),
+default(fmt=:png, size=(500, 350),
     titlefontsize=10, tickfontsize=6, guidefontsize=9,
     plot_titlefontsize=10)
 using SymPy
+using Turing
 ```
 
 ```julia
@@ -63,6 +65,34 @@ end
     end
     print(io, as_markdown(toeqnarray(x)))
 end
+```
+
+```julia
+function pvalue_tdist(x̄, s², n, μ)
+    t = (x̄ - μ)/√(s²/n)
+    2ccdf(TDist(n-1), abs(t))
+end
+
+function pvalue_tdist(x, μ)
+    x̄, s², n = mean(x), var(x), length(x)
+    pvalue_tdist(x̄, s², n, μ)
+end
+
+function confint_tdist(x̄, s², n; α = 0.05)
+    c = quantile(TDist(n-1), 1-α/2)
+    [x̄ - c*√(s²/n), x̄ + c*√(s²/n)]
+end
+
+function confint_tdist(x; α = 0.05)
+    x̄, s², n = mean(x), var(x), length(x)
+    confint_tdist(x̄, s², n; α)
+end
+
+confdist_tdist(x̄, s², n) = x̄ + √(s²/n)*TDist(n-1)
+confdist_tdist(x) = confdist_tdist(mean(x), var(x), length(x))
+
+preddist_tdist(x̄, s², n) = x̄ + √(s²*(1 + 1/n))*TDist(n-1)
+preddist_tdist(x) = preddist_tdist(mean(x), var(x), length(x))
 ```
 
 ## 正規分布モデルの共役事前分布とその応用
@@ -411,6 +441,52 @@ $$
 したがって, 前節の結果と比較すると, Jeffreys事前分布の事後分布と予測分布による区間推定よりもこの場合の区間推定は少し広くなる.
 
 
+### 平均と対数分散について一様な事前分布の場合の結果の数値的確認
+
+```julia
+@model function normaldistmodel_flat(y)
+    log_v ~ Flat()
+    σ² = exp(log_v)
+    μ ~ Flat()
+    y ~ MvNormal(fill(μ, length(y)), σ²*I)
+end
+```
+
+```julia
+μ_true, σ_true, n = 10.0, 3.0, 5
+y = rand(Normal(μ_true, σ_true), n)
+```
+
+```julia
+L = 10^5
+n_threads = min(Threads.nthreads(), 10)
+chn = sample(normaldistmodel_flat(y), NUTS(), MCMCThreads(), L, n_threads)
+```
+
+```julia
+@show confint_tdist(y);
+```
+
+```julia
+dist_conf = confdist_tdist(y)
+plot(legend=:outertop)
+stephist!(vec(chn[:μ]); norm=true, label="posterior of μ")
+plot!(dist_conf; label="ȳ+√(s²/n)TDist(n-1)", ls=:dash)
+plot!(xlim=quantile.(dist_conf, (0.002, 0.998)))
+```
+
+```julia
+pdf_pred(y_new) = mean(pdf(Normal(μ, exp(0.5log_v)), y_new)
+    for (μ, log_v) in zip(vec(chn[:μ]), vec(chn[:log_v])))
+dist_pred = preddist_tdist(y)
+
+plot(legend=:outertop)
+plot!(pdf_pred, quantile.(dist_pred, (0.002, 0.998))...;
+    label="prediction distribution")
+plot!(y_new -> pdf(dist_pred, y_new);
+    label="ȳ+√(s²(1+1/n))TDist(n-1)", ls=:dash)
+```
+
 ### 通常の信頼区間と予測区間との比較
 
 通常の $t$ 分布を使う平均の信頼区間と次の値の予測区間の構成では以下を使う:
@@ -492,6 +568,165 @@ $$
 なので, 区間推定の幅はJeffreys事前分布の場合よりも少し狭くなる.
 
 しかし, $n$ が大きければそれらの違いは小さくなる.
+
+```julia
+function posterior(y;
+        a = 2.5, b = 2.5, n = length(y), ȳ = mean(y), σ̂² = var(y; corrected=false),
+    )
+    μ_star = ȳ
+    v_star = a/(1 + n*a)
+    κ = 2 + 1/b + n/2
+    θ = σ̂²*(1 + 1/b + n/2)
+    (μ_star, v_star, κ, θ)
+end
+
+postdist_μ(μ_star, v_star, κ, θ) = μ_star + √(θ/κ * v_star) * TDist(2κ)
+preddist(μ_star, v_star, κ, θ) = μ_star + √(θ/κ * (1 + v_star)) * TDist(2κ)
+```
+
+### n = 5 ではデフォルト事前分布の場合と無情報事前分布の場合の結果が結構違う.
+
+```julia
+@model function normaldistmodel(y;
+        a = 2.5, b = 2.5, ȳ = mean(y), σ̂² = var(y; corrected=false),
+        μ_star = ȳ, v_star = a, κ = 2 + 1/b, θ = σ̂²*(1 + 1/b)
+    )
+    σ² ~ InverseGamma(κ, θ)
+    μ ~ Normal(μ_star, √(v_star * σ²))
+    y ~ MvNormal(fill(μ, length(y)), σ²*I)
+end
+```
+
+```julia
+y
+```
+
+```julia
+chn = sample(normaldistmodel(y), NUTS(), MCMCThreads(), L, n_threads)
+```
+
+```julia
+@show confint_tdist(y);
+```
+
+```julia
+dist_conf = confdist_tdist(y)
+dist_post = postdist_μ(posterior(y)...)
+plot(legend=:outertop)
+stephist!(vec(chn[:μ]); norm=true, label="MCMC")
+plot!(dist_post; label="posterior of μ", ls=:dash)
+plot!(dist_conf; label="ȳ+√(s²/n)TDist(n-1)", ls=:dashdot)
+plot!(xlim=quantile.(dist_conf, (0.002, 0.998)))
+```
+
+```julia
+pdf_pred(y_new) = mean(pdf(Normal(μ, √σ²), y_new)
+    for (μ, σ²) in zip(vec(chn[:μ]), vec(chn[:σ²])))
+dist_pred_bayes = preddist(posterior(y)...)
+dist_pred_tdist = preddist_tdist(y)
+#xlim = quantile.(dist_pred_bayes, (0.002, 0.998))
+xlim = quantile.(dist_pred_tdist, (0.002, 0.998))
+
+plot(legend=:outertop)
+plot!(pdf_pred, xlim...;
+    label="MCMC")
+plot!(dist_pred_bayes, xlim...;
+    label="prediction distribution", ls=:dash)
+plot!(dist_pred_tdist, xlim...;
+    label="ȳ+√(s²(1+1/n))TDist(n-1)", ls=:dashdot)
+```
+
+### n = 20 ではデフォルト事前分布の場合と無情報事前分布の場合の結果が近付く.
+
+```julia
+# データの数値をかなり大きくする.
+μ_true, σ_true, n = 1e4, 1e2, 20
+@show dist_true = Normal(μ_true, σ_true) n
+y = rand(dist_true, n);
+```
+
+```julia
+chn = sample(normaldistmodel(y), NUTS(), MCMCThreads(), L, n_threads)
+```
+
+```julia
+@show confint_tdist(y);
+```
+
+```julia
+dist_conf = confdist_tdist(y)
+dist_post = postdist_μ(posterior(y)...)
+plot(legend=:outertop)
+stephist!(vec(chn[:μ]); norm=true, label="MCMC")
+plot!(dist_post; label="default posterior of μ", ls=:dash)
+plot!(dist_conf; label="ȳ+√(s²/n)TDist(n-1)", ls=:dashdot)
+plot!(xlim=quantile.(Ref(vec(chn[:μ])), (0.001, 0.999)))
+```
+
+```julia
+pdf_pred(y_new) = mean(pdf(Normal(μ, √σ²), y_new)
+    for (μ, σ²) in zip(vec(chn[:μ]), vec(chn[:σ²])))
+dist_pred_bayes = preddist(posterior(y)...)
+dist_pred_tdist = preddist_tdist(y)
+xlim = quantile.(dist_pred_bayes, (0.001, 0.999))
+#xlim = quantile.(dist_pred_tdist, (0.001, 0.999))
+
+plot(legend=:outertop)
+plot!(pdf_pred, xlim...;
+    label="MCMC")
+plot!(dist_pred_bayes, xlim...;
+    label="default prediction distribution", ls=:dash)
+plot!(dist_pred_tdist, xlim...;
+    label="ȳ+√(s²(1+1/n))TDist(n-1)", ls=:dashdot)
+```
+
+### n = 20 で事前分布とデータの数値の相性が悪い場合
+
+```julia
+a, b = 10.0, 10.0
+μ_star, v_star, κ, θ = 0.0, a, 2 + 1/b, 1 + 1/b
+@show μ_star v_star κ θ
+Eμ, Ev = μ_star, θ/(κ - 1)
+var_μ, var_v = v_star*Ev, Ev^2/(κ - 2)
+@show Eμ Ev var_μ var_v
+model = normaldistmodel(y; μ_star, v_star, κ, θ)
+```
+
+```julia
+chn = sample(model, NUTS(), MCMCThreads(), L, n_threads)
+```
+
+```julia
+@show confint_tdist(y);
+```
+
+```julia
+dist_conf = confdist_tdist(y)
+dist_post = postdist_μ(posterior(y)...)
+plot(legend=:outertop)
+stephist!(vec(chn[:μ]); norm=true, label="MCMC")
+plot!(dist_post; label="default posterior of μ", ls=:dash)
+plot!(dist_conf; label="ȳ+√(s²/n)TDist(n-1)", ls=:dashdot)
+plot!(xlim=quantile.(Ref(vec(chn[:μ])), (0.002, 0.998)))
+```
+
+```julia
+pdf_pred(y_new) = mean(pdf(Normal(μ, √σ²), y_new)
+    for (μ, σ²) in zip(vec(chn[:μ]), vec(chn[:σ²])))
+dist_pred_bayes = preddist(posterior(y)...)
+dist_pred_tdist = preddist_tdist(y)
+#xlim = quantile.(dist_pred_bayes, (0.002, 0.998))
+#xlim = quantile.(dist_pred_tdist, (0.002, 0.998))
+xlim = (8500, 11500)
+
+plot(legend=:outertop)
+plot!(pdf_pred, xlim...;
+    label="MCMC")
+plot!(dist_pred_bayes, xlim...;
+    label="default prediction distribution", ls=:dash)
+plot!(dist_pred_tdist, xlim...;
+    label="ȳ+√(s²(1+1/n))TDist(n-1)", ls=:dashdot)
+```
 
 ```julia
 
