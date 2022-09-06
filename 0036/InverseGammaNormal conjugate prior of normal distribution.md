@@ -38,6 +38,7 @@ ENV["COLUMNS"] = 120
 using Distributions
 using LinearAlgebra
 using Random
+Random.seed!(4649373)
 using StatsPlots
 default(fmt=:png, size=(500, 350),
     titlefontsize=10, tickfontsize=6, guidefontsize=9,
@@ -312,7 +313,7 @@ neglogpri = (κ + 1//2 + 1)*log(v) + 1/v*(θ + 1/(2v0)*(μ-μ0)^2)
 
 ```julia
 neglogpost = (κ + n/2 + 1//2 + 1)*log(v) +  1/v*(
-    θ + n/2*(v̂ + 1/(1+n*v0)*(ȳ - μ0)^2) +
+    θ + n/2*(v̂ + (ȳ - μ0)^2/(1+n*v0)) +
     (1 + n*v0)/(2v0)*(μ - (μ0 + n*v0*ȳ)/(1 + n*v0))^2)
 ```
 
@@ -333,24 +334,75 @@ p(\mu|\mu_*,v_*,\kappa,\theta) =
 \int_{\R_{>0}} p_\op{InverseGammaNormal}(\mu,v|\mu_*,v_*,\kappa,\theta) \,dv
 $$
 
-で定義される$\mu$ の周辺事前分布は次になる:
+で定義される $\mu$ の周辺事前分布は次になる:
 
 $$
 \mu \sim
 \mu_* + \sqrt{\frac{\theta}{\kappa}v_*}\;\op{TDist}(2\kappa).
 $$
 
-確率密度函数
+なぜならば, $v\sim \op{InverseGamma}(\kappa, \theta)$ のとき,
 
 $$
-p_*(y_\op{new}|\mu_*,v_*,\kappa,\theta) =
+\frac{1}{v} \sim
+\op{Gamma}\left(\kappa,\, \frac{1}{\theta}\right) =
+\frac{1}{2\theta}\op{Gamma}\left(\frac{2\kappa}{2}, 2\right) =
+\frac{1}{2\theta}\op{Chisq}(2\kappa)
+$$
+
+より,
+
+$$
+\begin{aligned}
+\mu &\sim \mu_* + \sqrt{v_*v}\;\op{Normal}(0,1)
+\\ &\sim
+\mu_* + \sqrt{\frac{2\theta v_*}{\op{Chisq}(2\kappa)}}\;\op{Normal}(0,1)
+\\ &=
+\mu_* + \sqrt{\frac{2\theta v_*}{2\kappa}}
+\frac{\op{Normal}(0,1)}{\sqrt{\op{Chisq}(2\kappa)/(2\kappa)}}
+\\ &=
+\mu_* + \sqrt{\frac{\theta}{\kappa}v_*}\;\op{TDist}(2\kappa).
+\end{aligned}
+$$
+
+$y_\op{new}$ の事前予測分布は, 確率密度函数
+
+$$
+\begin{aligned}
+p_*(y_\op{new}|\mu_*,v_*,\kappa,\theta) &=
 \iint_{\R\times\R_{>0}}
 p_\op{Normal}(y_\op{new}|\mu,v)
 p_\op{InverseGammaNormal}(\mu,v|\mu_*,v_*,\kappa,\theta)
 \,d\mu\,dv
+\end{aligned}
 $$
 
-で定義される $y_\op{new}$ の事前予測分布は次になる:
+によって定義される. このとき
+
+$$
+\begin{aligned}
+\int_\R
+p_\op{Normal}(y_\op{new}|\mu,v) p_\op{Normal}(\mu|\mu_*, v_* v)
+\,d\mu &=
+p_\op{Normal}(y_\op{new}|\mu_*, v+v*v)
+\\ &=
+p_\op{Normal}(y_\op{new}|\mu_*, v(1+v_*))
+\end{aligned}
+$$
+
+であることより,
+
+$$
+\begin{aligned}
+p_*(y_\op{new}|\mu_*,v_*,\kappa,\theta)
+&=
+\int_{\R_{>0}}
+p_\op{InverseGammaNormal}(y_\op{new},v(1+v_*)|\mu_*,v_*,\kappa,\theta)
+\,dv.
+\end{aligned}
+$$
+
+ゆえに, $\mu$ の周辺事前分布の場合の計算より,
 
 $$
 y_\op{new} \sim
