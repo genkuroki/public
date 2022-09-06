@@ -33,6 +33,8 @@ $
 <!-- #endregion -->
 
 ```julia
+ENV["COLUMNS"] = 120
+
 using Distributions
 using LinearAlgebra
 using Random
@@ -491,6 +493,32 @@ posterior_μ_jeffreys(y) ≈ post_μ
 ### Jeffreys事前分布の場合の結果の数値的確認
 
 ```julia
+# プロット用函数
+
+function plot_posterior_μ(chn, y, postμ_theoretical;
+        xlim = quantile.(postμ_theoretical, (0.0005, 0.9995)), kwargs...)
+    postμ_ttest = posterior_μ_ttest(y)
+    plot(legend=:outertop)
+    stephist!(vec(chn[:μ]); norm=true, label="MCMC posterior of μ")
+    plot!(postμ_theoretical, xlim...; label="theoretical posterior of μ", ls=:dash)
+    plot!(postμ_ttest, xlim...; label="ȳ+√(s²/n)TDist(n-1)", ls=:dashdot)
+    plot!(; xlim, kwargs...)
+end
+
+function plot_preddist(chn, y, pred_theoretical;
+        xlim = quantile.(pred_theoretical, (0.0005, 0.9995)), kwargs...)
+    pdf_pred(y_new) = mean(pdf(Normal(μ, √σ²), y_new)
+        for (μ, σ²) in zip(vec(chn[:μ]), vec(chn[:σ²])))
+    pred_ttest = preddist_ttest(y)
+
+    plot(legend=:outertop)
+    plot!(pdf_pred, xlim...; label="MCMC prediction")
+    plot!(pred_theoretical, xlim...; label="theoretical prediction", ls=:dash)
+    plot!(pred_ttest, xlim...; label="ȳ+√(s²(1+1/n))TDist(n-1)", ls=:dashdot)
+end
+```
+
+```julia
 @model function normaldistmodel_jeffreys(y)
     σ² ~ PowerPos(-3/2)
     μ ~ Flat()
@@ -520,25 +548,12 @@ chn
 
 ```julia
 postμ_theoretical = posterior_μ_jeffreys(y)
-postμ_ttest = posterior_μ_ttest(y)
-plot(legend=:outertop)
-stephist!(vec(chn[:μ]); norm=true, label="MCMC")
-plot!(postμ_theoretical; label="theoretical", ls=:dash)
-plot!(postμ_ttest; label="ȳ+√(s²/n)TDist(n-1)", ls=:dashdot)
-plot!(xlim=quantile.(postμ_ttest, (0.001, 0.999)))
+plot_posterior_μ(chn, y, postμ_theoretical)
 ```
 
 ```julia
-pdf_pred(y_new) = mean(pdf(Normal(μ, √σ²), y_new)
-    for (μ, σ²) in zip(vec(chn[:μ]), vec(chn[:σ²])))
 pred_theoretical = preddist_jeffreys(y)
-pred_ttest = preddist_ttest(y)
-xlim = quantile.(pred_theoretical, (0.001, 0.999))
-
-plot(legend=:outertop)
-plot!(pdf_pred, xlim...; label="MCMC")
-plot!(pred_theoretical, xlim...; label="theoretical", ls=:dash)
-plot!(pred_ttest, xlim...; label="ȳ+√(s²(1+1/n))TDist(n-1)", ls=:dashdot)
+plot_preddist(chn, y, pred_theoretical)
 ```
 
 ### 平均と対数分散について一様な事前分布の場合
@@ -673,25 +688,12 @@ chn
 
 ```julia
 postμ_theoretical = posterior_μ_flat(y)
-postμ_ttest = posterior_μ_ttest(y)
-plot(legend=:outertop)
-stephist!(vec(chn[:μ]); norm=true, label="MCMC")
-plot!(postμ_theoretical; label="theoretical", ls=:dash)
-plot!(postμ_ttest; label="ȳ+√(s²/n)TDist(n-1)", ls=:dashdot)
-plot!(xlim=quantile.(postμ_ttest, (0.001, 0.999)))
+plot_posterior_μ(chn, y, postμ_theoretical)
 ```
 
 ```julia
-pdf_pred(y_new) = mean(pdf(Normal(μ, √σ²), y_new)
-    for (μ, σ²) in zip(vec(chn[:μ]), vec(chn[:σ²])))
 pred_theoretical = preddist_flat(y)
-pred_ttest = preddist_ttest(y)
-xlim = quantile.(pred_theoretical, (0.001, 0.999))
-
-plot(legend=:outertop)
-plot!(pdf_pred, xlim...; label="MCMC")
-plot!(pred_theoretical, xlim...; label="theoretical", ls=:dash)
-plot!(pred_ttest, xlim...; label="ȳ+√(s²(1+1/n))TDist(n-1)", ls=:dashdot)
+plot_preddist(chn, y, pred_theoretical)
 ```
 
 ### 通常の信頼区間と予測区間との比較
@@ -872,25 +874,12 @@ chn
 
 ```julia
 postμ_theoretical = posterior_μ(posterior_adaptive(y)...)
-postμ_ttest = posterior_μ_ttest(y)
-plot(legend=:outertop)
-stephist!(vec(chn[:μ]); norm=true, label="MCMC")
-plot!(postμ_theoretical; label="theoretical", ls=:dash)
-plot!(postμ_ttest; label="ȳ+√(s²/n)TDist(n-1)", ls=:dashdot)
-plot!(xlim=quantile.(postμ_theoretical, (0.0001, 0.9999)))
+plot_posterior_μ(chn, y, postμ_theoretical)
 ```
 
 ```julia
-pdf_pred(y_new) = mean(pdf(Normal(μ, √σ²), y_new)
-    for (μ, σ²) in zip(vec(chn[:μ]), vec(chn[:σ²])))
 pred_theoretical = preddist(posterior_adaptive(y)...)
-pred_ttest = preddist_ttest(y)
-xlim = quantile.(pred_theoretical, (0.001, 0.999))
-
-plot(legend=:outertop)
-plot!(pdf_pred, xlim...; label="MCMC")
-plot!(pred_theoretical, xlim...; label="theoretical", ls=:dash)
-plot!(pred_ttest, xlim...; label="ȳ+√(s²(1+1/n))TDist(n-1)", ls=:dashdot)
+plot_preddist(chn, y, pred_theoretical)
 ```
 
 以上のように $n=5$ の場合には, 適応事前分布の場合の結果は無情報事前分布の場合の結果(緑のdashdotライン)とかなり違う.
@@ -920,25 +909,12 @@ chn
 
 ```julia
 postμ_theoretical = posterior_μ(posterior_adaptive(y)...)
-postμ_ttest = posterior_μ_ttest(y)
-plot(legend=:outertop)
-stephist!(vec(chn[:μ]); norm=true, label="MCMC")
-plot!(postμ_theoretical; label="theoretical", ls=:dash)
-plot!(postμ_ttest; label="ȳ+√(s²/n)TDist(n-1)", ls=:dashdot)
-plot!(xlim=quantile.(postμ_theoretical, (0.0001, 0.9999)))
+plot_posterior_μ(chn, y, postμ_theoretical)
 ```
 
 ```julia
-pdf_pred(y_new) = mean(pdf(Normal(μ, √σ²), y_new)
-    for (μ, σ²) in zip(vec(chn[:μ]), vec(chn[:σ²])))
 pred_theoretical = preddist(posterior_adaptive(y)...)
-pred_ttest = preddist_ttest(y)
-xlim = quantile.(pred_theoretical, (0.0001, 0.9999))
-
-plot(legend=:outertop)
-plot!(pdf_pred, xlim...; label="MCMC")
-plot!(pred_theoretical, xlim...; label="theoretical", ls=:dash)
-plot!(pred_ttest, xlim...; label="ȳ+√(s²(1+1/n))TDist(n-1)", ls=:dashdot)
+plot_preddist(chn, y, pred_theoretical)
 ```
 
 ### n = 20 で事前分布とデータの数値の相性が悪い場合
@@ -952,7 +928,9 @@ end
 ```
 
 ```julia
-a, b = 10.0, 10.0
+# 固定された事前分布の設定
+
+a, b = 5.0^2, 5.0^2
 μstar, vstar, κ, θ = 0.0, a, 2 + 1/b, 1 + 1/b
 @show μstar vstar κ θ
 println()
@@ -962,11 +940,19 @@ var_μ, var_v = vstar*Ev, Ev^2/(κ - 2)
 @show Eμ Ev var_μ var_v;
 ```
 
+以下では以上のようにして定めた事前分布を使う.
+
+この事前分布における $\mu$ の平均と分散はそれぞれ $0$ と $5^2$ であり, $v=\sigma^2$ の平均と分散はそれぞれ $1$ と $5^2$ である.
+
 ```julia
 μ_true, σ_true, n = 1e4, 1e2, 20
 @show dist_true = Normal(μ_true, σ_true) n
 y = rand(dist_true, n);
 ```
+
+平均と分散がそれぞれ $10000$, $100^2$ の正規分布でサイズ $20$ のサンプルを生成している.
+
+平均 $10000$ と分散 $100^2$ は上で定めた事前分布と極めて相性が悪い.
 
 ```julia
 L = 10^5
@@ -984,27 +970,12 @@ chn
 
 ```julia
 postμ_theoretical = posterior_μ(bayesian_update(μstar, vstar, κ, θ, y)...)
-postμ_ttest = posterior_μ_ttest(y)
-xlim = quantile.(Ref(vec(chn[:μ])), (0.001, 0.999))
-
-plot(legend=:outertop)
-stephist!(vec(chn[:μ]); norm=true, label="MCMC")
-plot!(postμ_theoretical, xlim...; label="theoretical", ls=:dash)
-plot!(postμ_ttest, xlim...; label="ȳ+√(s²/n)TDist(n-1)", ls=:dashdot)
-plot!(; xlim)
+plot_posterior_μ(chn, y, postμ_theoretical)
 ```
 
 ```julia
-pdf_pred(y_new) = mean(pdf(Normal(μ, √σ²), y_new)
-    for (μ, σ²) in zip(vec(chn[:μ]), vec(chn[:σ²])))
 pred_theoretical = preddist(bayesian_update(μstar, vstar, κ, θ, y)...)
-pred_ttest = preddist_ttest(y)
-xlim = quantile.(pred_theoretical, (0.001, 0.999))
-
-plot(legend=:outertop)
-plot!(pdf_pred, xlim...; label="MCMC")
-plot!(pred_theoretical, xlim...; label="theoretical", ls=:dash)
-plot!(pred_ttest, xlim...; label="ȳ+√(s²(1+1/n))TDist(n-1)", ls=:dashdot)
+plot_preddist(chn, y, pred_theoretical)
 ```
 
 ```julia
