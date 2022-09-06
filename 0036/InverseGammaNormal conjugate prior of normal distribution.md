@@ -29,7 +29,7 @@ $
 
 <!-- #region toc=true -->
 <h1>目次<span class="tocSkip"></span></h1>
-<div class="toc"><ul class="toc-item"><li><span><a href="#正規分布モデルの共役事前分布とその応用" data-toc-modified-id="正規分布モデルの共役事前分布とその応用-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>正規分布モデルの共役事前分布とその応用</a></span><ul class="toc-item"><li><span><a href="#逆ガンマ正規分布" data-toc-modified-id="逆ガンマ正規分布-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>逆ガンマ正規分布</a></span></li><li><span><a href="#共役事前分布のBayes更新" data-toc-modified-id="共役事前分布のBayes更新-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>共役事前分布のBayes更新</a></span></li><li><span><a href="#μの周辺事前・事後分布および事前・事後予測分布" data-toc-modified-id="μの周辺事前・事後分布および事前・事後予測分布-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>μの周辺事前・事後分布および事前・事後予測分布</a></span></li><li><span><a href="#Jeffreys事前分布の場合" data-toc-modified-id="Jeffreys事前分布の場合-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>Jeffreys事前分布の場合</a></span></li><li><span><a href="#Jeffreys事前分布の場合の結果の数値的確認" data-toc-modified-id="Jeffreys事前分布の場合の結果の数値的確認-1.5"><span class="toc-item-num">1.5&nbsp;&nbsp;</span>Jeffreys事前分布の場合の結果の数値的確認</a></span></li><li><span><a href="#平均と対数分散について一様な事前分布の場合" data-toc-modified-id="平均と対数分散について一様な事前分布の場合-1.6"><span class="toc-item-num">1.6&nbsp;&nbsp;</span>平均と対数分散について一様な事前分布の場合</a></span></li><li><span><a href="#平均と対数分散について一様な事前分布の場合の結果の数値的確認" data-toc-modified-id="平均と対数分散について一様な事前分布の場合の結果の数値的確認-1.7"><span class="toc-item-num">1.7&nbsp;&nbsp;</span>平均と対数分散について一様な事前分布の場合の結果の数値的確認</a></span></li><li><span><a href="#通常の信頼区間と予測区間との比較" data-toc-modified-id="通常の信頼区間と予測区間との比較-1.8"><span class="toc-item-num">1.8&nbsp;&nbsp;</span>通常の信頼区間と予測区間との比較</a></span></li><li><span><a href="#データの数値から事前分布を決めた場合" data-toc-modified-id="データの数値から事前分布を決めた場合-1.9"><span class="toc-item-num">1.9&nbsp;&nbsp;</span>データの数値から事前分布を決めた場合</a></span></li><li><span><a href="#n-=-5-では適応事前分布の場合と無情報事前分布の場合の結果が結構違う." data-toc-modified-id="n-=-5-では適応事前分布の場合と無情報事前分布の場合の結果が結構違う.-1.10"><span class="toc-item-num">1.10&nbsp;&nbsp;</span>n = 5 では適応事前分布の場合と無情報事前分布の場合の結果が結構違う.</a></span></li><li><span><a href="#n-=-20-ではデフォルト事前分布の場合と無情報事前分布の場合の結果が近付く." data-toc-modified-id="n-=-20-ではデフォルト事前分布の場合と無情報事前分布の場合の結果が近付く.-1.11"><span class="toc-item-num">1.11&nbsp;&nbsp;</span>n = 20 ではデフォルト事前分布の場合と無情報事前分布の場合の結果が近付く.</a></span></li><li><span><a href="#n-=-20-で事前分布とデータの数値の相性が悪い場合" data-toc-modified-id="n-=-20-で事前分布とデータの数値の相性が悪い場合-1.12"><span class="toc-item-num">1.12&nbsp;&nbsp;</span>n = 20 で事前分布とデータの数値の相性が悪い場合</a></span></li></ul></li></ul></div>
+<div class="toc"><ul class="toc-item"><li><span><a href="#正規分布モデルの共役事前分布とその応用" data-toc-modified-id="正規分布モデルの共役事前分布とその応用-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>正規分布モデルの共役事前分布とその応用</a></span><ul class="toc-item"><li><span><a href="#逆ガンマ正規分布" data-toc-modified-id="逆ガンマ正規分布-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>逆ガンマ正規分布</a></span></li><li><span><a href="#共役事前分布のBayes更新" data-toc-modified-id="共役事前分布のBayes更新-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>共役事前分布のBayes更新</a></span></li><li><span><a href="#μの周辺事前・事後分布および事前・事後予測分布" data-toc-modified-id="μの周辺事前・事後分布および事前・事後予測分布-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>μの周辺事前・事後分布および事前・事後予測分布</a></span></li><li><span><a href="#Jeffreys事前分布の場合" data-toc-modified-id="Jeffreys事前分布の場合-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>Jeffreys事前分布の場合</a></span></li><li><span><a href="#Jeffreys事前分布の場合の結果の数値的確認" data-toc-modified-id="Jeffreys事前分布の場合の結果の数値的確認-1.5"><span class="toc-item-num">1.5&nbsp;&nbsp;</span>Jeffreys事前分布の場合の結果の数値的確認</a></span></li><li><span><a href="#平均と対数分散について一様な事前分布の場合" data-toc-modified-id="平均と対数分散について一様な事前分布の場合-1.6"><span class="toc-item-num">1.6&nbsp;&nbsp;</span>平均と対数分散について一様な事前分布の場合</a></span></li><li><span><a href="#平均と対数分散について一様な事前分布の場合の結果の数値的確認" data-toc-modified-id="平均と対数分散について一様な事前分布の場合の結果の数値的確認-1.7"><span class="toc-item-num">1.7&nbsp;&nbsp;</span>平均と対数分散について一様な事前分布の場合の結果の数値的確認</a></span></li><li><span><a href="#通常の信頼区間と予測区間との比較" data-toc-modified-id="通常の信頼区間と予測区間との比較-1.8"><span class="toc-item-num">1.8&nbsp;&nbsp;</span>通常の信頼区間と予測区間との比較</a></span></li><li><span><a href="#データの数値から事前分布を決めた場合" data-toc-modified-id="データの数値から事前分布を決めた場合-1.9"><span class="toc-item-num">1.9&nbsp;&nbsp;</span>データの数値から事前分布を決めた場合</a></span></li><li><span><a href="#n-=-5-では適応事前分布の場合と無情報事前分布の場合の結果が結構違う." data-toc-modified-id="n-=-5-では適応事前分布の場合と無情報事前分布の場合の結果が結構違う.-1.10"><span class="toc-item-num">1.10&nbsp;&nbsp;</span>n = 5 では適応事前分布の場合と無情報事前分布の場合の結果が結構違う.</a></span></li><li><span><a href="#n-=-20-ではデフォルト事前分布の場合と無情報事前分布の場合の結果が近付く." data-toc-modified-id="n-=-20-ではデフォルト事前分布の場合と無情報事前分布の場合の結果が近付く.-1.11"><span class="toc-item-num">1.11&nbsp;&nbsp;</span>n = 20 ではデフォルト事前分布の場合と無情報事前分布の場合の結果が近付く.</a></span></li><li><span><a href="#n-=-20-で事前分布とデータの数値の相性が悪い場合" data-toc-modified-id="n-=-20-で事前分布とデータの数値の相性が悪い場合-1.12"><span class="toc-item-num">1.12&nbsp;&nbsp;</span>n = 20 で事前分布とデータの数値の相性が悪い場合</a></span></li><li><span><a href="#n-=-200-で事前分布とデータの数値の相性が悪い場合" data-toc-modified-id="n-=-200-で事前分布とデータの数値の相性が悪い場合-1.13"><span class="toc-item-num">1.13&nbsp;&nbsp;</span>n = 200 で事前分布とデータの数値の相性が悪い場合</a></span></li><li><span><a href="#n-=-2000-で事前分布とデータの数値の相性が悪い場合" data-toc-modified-id="n-=-2000-で事前分布とデータの数値の相性が悪い場合-1.14"><span class="toc-item-num">1.14&nbsp;&nbsp;</span>n = 2000 で事前分布とデータの数値の相性が悪い場合</a></span></li><li><span><a href="#n-=-20000-で事前分布とデータの数値の相性が悪い場合" data-toc-modified-id="n-=-20000-で事前分布とデータの数値の相性が悪い場合-1.15"><span class="toc-item-num">1.15&nbsp;&nbsp;</span>n = 20000 で事前分布とデータの数値の相性が悪い場合</a></span></li></ul></li></ul></div>
 <!-- #endregion -->
 
 ```julia
@@ -496,25 +496,35 @@ posterior_μ_jeffreys(y) ≈ post_μ
 # プロット用函数
 
 function plot_posterior_μ(chn, y, postμ_theoretical;
-        xlim = quantile.(postμ_theoretical, (0.0005, 0.9995)), kwargs...)
+        xlim = quantile.(postμ_theoretical, (0.0001, 0.9999)), kwargs...)
     postμ_ttest = posterior_μ_ttest(y)
     plot(legend=:outertop)
-    stephist!(vec(chn[:μ]); norm=true, label="MCMC posterior of μ")
-    plot!(postμ_theoretical, xlim...; label="theoretical posterior of μ", ls=:dash)
-    plot!(postμ_ttest, xlim...; label="ȳ+√(s²/n)TDist(n-1)", ls=:dashdot)
+    if !isnothing(chn)
+        stephist!(vec(chn[:μ]); norm=true,
+            label="MCMC posterior of μ", c=1)
+    end
+    plot!(postμ_theoretical, xlim...;
+        label="theoretical posterior of μ", c=2, ls=:dash)
+    plot!(postμ_ttest, xlim...;
+        label="ȳ+√(s²/n)TDist(n-1)", c=3, ls=:dashdot)
     plot!(; xlim, kwargs...)
 end
 
 function plot_preddist(chn, y, pred_theoretical;
-        xlim = quantile.(pred_theoretical, (0.0005, 0.9995)), kwargs...)
+        xlim = quantile.(pred_theoretical, (0.0001, 0.9999)), kwargs...)
     pdf_pred(y_new) = mean(pdf(Normal(μ, √σ²), y_new)
         for (μ, σ²) in zip(vec(chn[:μ]), vec(chn[:σ²])))
     pred_ttest = preddist_ttest(y)
 
     plot(legend=:outertop)
-    plot!(pdf_pred, xlim...; label="MCMC prediction")
-    plot!(pred_theoretical, xlim...; label="theoretical prediction", ls=:dash)
-    plot!(pred_ttest, xlim...; label="ȳ+√(s²(1+1/n))TDist(n-1)", ls=:dashdot)
+    if !isnothing(chn)
+        plot!(pdf_pred, xlim...; label="MCMC prediction", c=1)
+    end
+    plot!(pred_theoretical, xlim...;
+        label="theoretical prediction", c=2, ls=:dash)
+    plot!(pred_ttest, xlim...;
+        label="ȳ+√(s²(1+1/n))TDist(n-1)", c=3, ls=:dashdot)
+    plot!(; kwargs...)
 end
 ```
 
@@ -889,8 +899,9 @@ plot_preddist(chn, y, pred_theoretical)
 
 ```julia
 μ_true, σ_true, n = 1e4, 1e2, 20
-@show dist_true = Normal(μ_true, σ_true) n
-y = rand(dist_true, n);
+@show dist_true = Normal(μ_true, σ_true)
+y = rand(dist_true, n)
+@show length(y) mean(y) var(y);
 ```
 
 ```julia
@@ -946,8 +957,9 @@ var_μ, var_v = vstar*Ev, Ev^2/(κ - 2)
 
 ```julia
 μ_true, σ_true, n = 1e4, 1e2, 20
-@show dist_true = Normal(μ_true, σ_true) n
-y = rand(dist_true, n);
+@show dist_true = Normal(μ_true, σ_true)
+y = rand(dist_true, n)
+@show length(y) mean(y) var(y);
 ```
 
 平均と分散がそれぞれ $10000$, $100^2$ の正規分布でサイズ $20$ のサンプルを生成している.
@@ -976,6 +988,69 @@ plot_posterior_μ(chn, y, postμ_theoretical)
 ```julia
 pred_theoretical = preddist(bayesian_update(μstar, vstar, κ, θ, y)...)
 plot_preddist(chn, y, pred_theoretical)
+```
+
+### n = 200 で事前分布とデータの数値の相性が悪い場合
+
+前節の続き
+
+```julia
+μ_true, σ_true, n = 1e4, 1e2, 200
+@show dist_true = Normal(μ_true, σ_true)
+y = rand(dist_true, n)
+@show length(y) mean(y) var(y);
+```
+
+```julia
+postμ_theoretical = posterior_μ(bayesian_update(μstar, vstar, κ, θ, y)...)
+plot_posterior_μ(nothing, y, postμ_theoretical)
+```
+
+```julia
+pred_theoretical = preddist(bayesian_update(μstar, vstar, κ, θ, y)...)
+plot_preddist(nothing, y, pred_theoretical)
+```
+
+### n = 2000 で事前分布とデータの数値の相性が悪い場合
+
+前節の続き
+
+```julia
+μ_true, σ_true, n = 1e4, 1e2, 2000
+@show dist_true = Normal(μ_true, σ_true)
+y = rand(dist_true, n)
+@show length(y) mean(y) var(y);
+```
+
+```julia
+postμ_theoretical = posterior_μ(bayesian_update(μstar, vstar, κ, θ, y)...)
+plot_posterior_μ(nothing, y, postμ_theoretical)
+```
+
+```julia
+pred_theoretical = preddist(bayesian_update(μstar, vstar, κ, θ, y)...)
+plot_preddist(nothing, y, pred_theoretical)
+```
+
+### n = 20000 で事前分布とデータの数値の相性が悪い場合
+
+前節の続き
+
+```julia
+μ_true, σ_true, n = 1e4, 1e2, 20000
+@show dist_true = Normal(μ_true, σ_true)
+y = rand(dist_true, n)
+@show length(y) mean(y) var(y);
+```
+
+```julia
+postμ_theoretical = posterior_μ(bayesian_update(μstar, vstar, κ, θ, y)...)
+plot_posterior_μ(nothing, y, postμ_theoretical)
+```
+
+```julia
+pred_theoretical = preddist(bayesian_update(μstar, vstar, κ, θ, y)...)
+plot_preddist(nothing, y, pred_theoretical)
 ```
 
 ```julia
