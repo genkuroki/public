@@ -19,6 +19,8 @@
 #
 # * 黒木玄
 # * 2022-09-08
+# * Copyright 2022 Gen Kuroki
+# * License: https://opensource.org/licenses/MIT
 # * [nbviewer版](https://nbviewer.org/github/genkuroki/public/blob/main/0036/P-value%20functions%20of%20proportions.ipynb)
 # * [repository版](https://github.com/genkuroki/public/blob/main/0036/P-value%20functions%20of%20proportions.ipynb)
 # * [ダウンロードPDF](https://github.com/genkuroki/public/raw/main/0036/P-value%20functions%20of%20proportions.pdf)
