@@ -151,6 +151,7 @@ R"""epiR::epi.2by2(matrix(c(16, 4, 4, 6), 2, 2, byrow=T), digits=4)"""
 @show confint_or_wald(16, 4, 4, 6);
 @show confint_rr_pearson_chisq(16, 4, 4, 6);
 @show confint_or_pearson_chisq(16, 4, 4, 6);
+@show confint_or_pearson_chisq(16, 4, 4, 6; correction=0.5);
 
 # %%
 @show pvalue_rr_wald(16, 4, 4, 6);
