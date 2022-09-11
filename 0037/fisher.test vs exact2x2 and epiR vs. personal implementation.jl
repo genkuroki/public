@@ -138,6 +138,9 @@ R"""fisher.test(matrix(c(16, 4, 4, 6), 2, 2, byrow=T))"""
 R"""exact2x2::exact2x2(matrix(c(16, 4, 4, 6), 2, 2, byrow=T), plot=T)"""
 
 # %%
+R"""fisher.test(matrix(c(16, 4, 4, 6), 2, 2, byrow=T))"""
+
+# %%
 R"""exact2x2::exact2x2(matrix(c(16, 4, 4, 6), 2, 2, byrow=T), tsmethod="central", plot=T)"""
 
 # %%
