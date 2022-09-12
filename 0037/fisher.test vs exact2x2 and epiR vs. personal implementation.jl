@@ -160,4 +160,50 @@ R"""epiR::epi.2by2(matrix(c(16, 4, 4, 6), 2, 2, byrow=T), digits=4)"""
 @show pvalue_or_pearson_chisq(16, 4, 4, 6);
 @show pvalue_or_pearson_chisq(16, 4, 4, 6; correction=0.5);
 
+# %% [markdown]
+# ## RCall.jlの使い方
+
+# %%
+A = [
+    16 4
+     4 6
+]
+@rput A
+
+# %%
+R"""result = fisher.test(A)"""
+
+# %%
+@rget result
+
+# %%
+result[:p_value]
+
+# %%
+result[:conf_int]
+
+# %%
+@rimport stats as stats
+stats.fisher_test(A, var"conf.level"=0.99)
+
+# %%
+result_r = stats.fisher_test(A)
+
+# %%
+result_julia = rcopy(result_r)
+
+# %%
+result_julia[:p_value]
+
+# %%
+result_julia[:conf_int]
+
+# %%
+@rimport exact2x2 as exact2x2
+exact2x2.exact2x2(A, plot="T")
+
+# %%
+@rimport epiR as epiR
+epiR.epi_2by2(A, digits=4)
+
 # %%
