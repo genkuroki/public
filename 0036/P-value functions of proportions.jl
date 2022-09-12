@@ -795,7 +795,40 @@ title!("n=$n, k=$k")
 # \{\,p\mid \pvalue_\op{CP}(k|n,p)\ge\alpha\,\}
 # $$
 #
-# がどうなるかを計算してみよう. 
+# が具体的にどのように表されるかを計算しよう.  Clopper-PearsonのP値の定義は
+#
+# $$
+# \pvalue_\op{CP}(k|n,p) = \min
+# \begin{pmatrix}
+# 1 \\
+# 2\cdf(\op{Binomial}(n,p), k) \\
+# 2\ccdf(\op{Binomial}(n,p), k-1) \\
+# \end{pmatrix}.
+# $$
+#
+# であった. これは二項分布とベータ分布の関係
+#
+# $$
+# \begin{aligned}
+# &
+# \cdf(\op{Binomial}(n,p), k) = \ccdf(\op{Beta}(k+1, n-k), p) \quad (0\le k < n),
+# \\ &
+# \ccdf(\op{Binomial}(n,p), k-1) = \cdf(\op{Beta}(k, n-k+1), p) \quad (0 < k \le n).
+# \end{aligned}
+# $$
+#
+# を使えば,
+#
+# $$
+# \pvalue_\op{CP}(k|n,p) = \min
+# \begin{pmatrix}
+# 1 \\
+# 2\ccdf(\op{Beta}(k+1, n-k), p) \\
+# 2\cdf(\op{Beta}(k, n-k+1), p) \\
+# \end{pmatrix}.
+# $$
+#
+# に書き直される.  ゆえに,
 #
 # $$
 # \begin{aligned}
@@ -803,9 +836,6 @@ title!("n=$n, k=$k")
 # p\in \confint_\op{CP}(k|n,\alpha)
 # \\ & \iff
 # \pvalue_\op{CP}(k|n,p)\ge\alpha
-# \\ & \iff
-# \cdf(\op{Binomial}(n,p), k) \ge \alpha/2 \;\text{and}\;
-# \ccdf(\op{Binomial}(n,p), k-1) \ge \alpha/2
 # \\ & \iff
 # \ccdf(\op{Beta}(k+1, n-k), p) \ge \alpha/2 \;\text{and}\;
 # \cdf(\op{Beta}(k, n-k+1), p) \ge \alpha/2
@@ -815,7 +845,7 @@ title!("n=$n, k=$k")
 # \end{aligned}
 # $$
 #
-# ゆえに
+# このことより, 
 #
 # $$
 # p_L = \quantile(\op{Beta}(k, n-k+1), \alpha/2), \quad
@@ -830,6 +860,8 @@ title!("n=$n, k=$k")
 
 # %% [markdown]
 # ### Clopper-PearsonのP値と信頼区間の実装例
+#
+# 以下のようにClopper-PearsonのP値と信頼区間の実装は非常にシンプルになる.
 
 # %%
 function pvalue_cp(k, n, p)
@@ -1435,14 +1467,14 @@ title!("P-value functions for n=$n, k=$k, a=$a, b=$b")
 # \end{pmatrix}
 # $$
 #
-# であり, ClopperのP値函数の定義は
+# であり, Clopper-PearsonのP値函数の定義は
 #
 # $$
 # \pvalue_\op{CP}(k|n,p) = \min
 # \begin{pmatrix}
 # 1 \\
 # 2\cdf(\op{Beta}(k, n-k+1), p) \\
-# 2\ccdf(\op{Beta}(k+1, n-k), p), k) \\
+# 2\ccdf(\op{Beta}(k+1, n-k), p) \\
 # \end{pmatrix}
 # $$
 #
@@ -1603,7 +1635,7 @@ plot!(xguide="p", yguide="probability density")
 plot!(xtick=0:0.05:1)
 title!("n=$n, k=$k, a=$a, b=$b")
 
-P2 = plot(Beta(k+a, n-k+b), 0.15, 0.5; label="Beta(k+a, n-k+b)")
+P2 = plot(Beta(k+a, n-k+b), 0.15, 0.45; label="Beta(k+a, n-k+b)")
 plot!(Beta(k+1, n-k), 0.15, 0.5; label="Beta(k, n-k+1)", ls=:dash)
 plot!(xguide="p", yguide="probability density")
 plot!(xtick=0:0.05:1)
