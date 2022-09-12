@@ -217,6 +217,7 @@ first(diamonds, 10)
 
 # %%
 using StatsPlots
+default(fmt=:png)
 @df diamonds scatter(:carat, :price; label="", xguide="catat", yguide="price", msw=0, ms=1, alpha=0.3)
 
 # %%
