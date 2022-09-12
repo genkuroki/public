@@ -9,7 +9,7 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.10.3
 #   kernelspec:
-#     display_name: Julia 1.8.0
+#     display_name: Julia 1.8.1
 #     language: julia
 #     name: julia-1.8
 # ---
@@ -18,7 +18,7 @@
 # # 比率のP値函数達
 #
 # * 黒木玄
-# * 2022-09-08～2022-09-09
+# * 2022-09-08～2022-09-12
 # * Copyright 2022 Gen Kuroki
 # * License: https://opensource.org/licenses/MIT
 # * [nbviewer版](https://nbviewer.org/github/genkuroki/public/blob/main/0036/P-value%20functions%20of%20proportions.ipynb)
@@ -42,7 +42,11 @@
 #
 # このノートでは事象 $A$ の確率を $P(A)$ と表し, 確率変数 $X$ の函数 $f(X)$ の期待値を $E[f(X)]$ と表す.
 #
-# __予備知識:__ 二項分布, 正規分布, ベータ分布. 終わりの方ではベイズ統計.
+# __予備知識:__ 二項分布, 正規分布, ベータ分布などの確率分布, P値と信頼区間.
+#
+# __終わりの方で必要になる追加の予備知識:__ 二項分布モデルのベイズ統計.
+#
+# __想定読者:__ すでに統計学入門を学習済みだが, P値や信頼区間について明瞭なイメージをまだ持てていない人達.
 
 # %% [markdown] toc=true
 # <h1>目次<span class="tocSkip"></span></h1>
@@ -1101,10 +1105,10 @@ end
 
 function pvalue_hdi(k, n, p; a=1, b=1)
     posterior = Beta(k+a, n-k+b)
-    if a ≤ 1 && k == 0
-        return cdf(posterior, p)
-    elseif b ≤ 1 && k == n
+    if k+a ≤ 1
         return ccdf(posterior, p)
+    elseif n-k+b ≤ 1
+        return cdf(posterior, p)
     end
     pvalue_hdi(posterior, p)
 end
