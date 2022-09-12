@@ -22,6 +22,10 @@ using StatsFuns
 
 safemul(x, y) = x == 0 ? x : isinf(x) ? typeof(x)(Inf) : x*y
 safediv(x, y) = x == 0 ? x : isinf(y) ? zero(y) : x/y
+x ⪅ y = x < y || x ≈ y
+
+# %%
+# odds ratio Wald test
 
 oddsratiohat(a, b, c, d) = safediv(a*d, b*c)
 stderr_logoddsratiohat(a, b, c, d) = √(1/a + 1/b + 1/c + 1/d)
@@ -38,6 +42,9 @@ function confint_or_wald(a, b, c, d; α=0.05)
     SEhat_logORhat = stderr_logoddsratiohat(a, b, c, d)
     [safemul(exp(-z*SEhat_logORhat), ORhat), safemul(exp(z*SEhat_logORhat), ORhat)]
 end
+
+# %%
+# risk ratio Wald test
 
 riskratiohat(a, b, c, d) = safediv(a*(c+d), (a+b)*c)
 stderr_logriskratiohat(a, b, c, d) = √(1/a - 1/(a+b) + 1/c - 1/(c+d))
@@ -56,6 +63,9 @@ function confint_rr_wald(a, b, c, d; α=0.05)
     SEhat_logRRhat = stderr_logriskratiohat(a, b, c, d)
     [safemul(exp(-z*SEhat_logRRhat), RRhat), safemul(exp(z*SEhat_logRRhat), RRhat)]
 end
+
+# %%
+# odds ratio Pearson's χ²-test (score test)
 
 function delta(a, b, c, d; ω=1)
     A, B, C = 1-ω, a+d+ω*(b+c), a*d-ω*b*c
@@ -91,6 +101,9 @@ function confint_or_pearson_chisq(a, b, c, d; α=0.05, correction=0.0)
         [exp(find_zero(f, log(ω_L))), exp(find_zero(f, log(ω_U)))]
     end
 end
+
+# %%
+# risk ratio Pearson's χ²-test (score test)
 
 function Delta(a, b, c, d; ρ=1)
     m, n = a+b, c+d
@@ -132,6 +145,86 @@ function confint_rr_pearson_chisq(a, b, c, d; α=0.05)
 end
 
 # %%
+# Fisher test (Clopper-Pearson)
+
+function pvalue_or_fisher_cp(a, b, c, d; ω=1)
+    fnch = if ω == 1
+        Hypergeometric(a+b, c+d, a+c)
+    else
+        FisherNoncentralHypergeometric(a+b, c+d, a+c, ω)
+    end
+    min(1, 2cdf(fnch, a), 2ccdf(fnch, a-1))
+end
+
+function confint_or_fisher_cp(a, b, c, d; α = 0.05)
+    (a+b==0 || c+d==0 || a+c==0 || b+d==0) && return [0, Inf]
+    f(ω) = logit(pvalue_or_fisher_cp(a, b, c, d; ω)) - logit(α)
+    if a == 0 || d == 0
+        [0.0, find_zero(f, 1.0)]
+    elseif b == 0 || c == 0
+        [find_zero(f, 1.0), Inf]
+    else
+        ω_L, ω_U = confint_or_wald(a, b, c, d; α = α/10)
+        find_zeros(f, ω_L, ω_U)
+    end
+end
+
+# %%
+# Fisher test (Sterne)
+
+_pdf_le(x, (dist, y)) =  pdf(dist, x) ⪅ y
+
+function _search_boundary(f, x0, Δx, param)
+    x = x0
+    if f(x, param)
+        while f(x - Δx, param) x -= Δx end
+    else
+        x += Δx
+        while !f(x, param) x += Δx end
+    end
+    x
+end
+
+function pvalue_sterne(dist::DiscreteUnivariateDistribution, x)
+    Px = pdf(dist, x)
+    Px == 0 && return Px
+    Px == 1 && return Px
+    m = mode(dist)
+    Px ≈ pdf(dist, m) && return one(Px)
+    if x < m
+        y = _search_boundary(_pdf_le, 2m - x, 1, (dist, Px))
+        cdf(dist, x) + ccdf(dist, y-1)
+    else # x > m
+        y = _search_boundary(_pdf_le, 2m - x, -1, (dist, Px))
+        cdf(dist, y) + ccdf(dist, x-1)
+    end
+end
+
+function pvalue_or_fisher_sterne(a, b, c, d; ω=1)
+    fnch = if ω == 1
+        Hypergeometric(a+b, c+d, a+c)
+    else
+        FisherNoncentralHypergeometric(a+b, c+d, a+c, ω)
+    end
+    pvalue_sterne(fnch, a)
+end
+
+function confint_or_fisher_sterne(a, b, c, d; α = 0.05)
+    (a+b==0 || c+d==0 || a+c==0 || b+d==0) && return [0, Inf]
+    f(logω) = logit(pvalue_or_fisher_sterne(a, b, c, d; ω=exp(logω))) - logit(α)
+    if a == 0 || d == 0
+        [0.0, exp(find_zero(f, 0.0))]
+    elseif b == 0 || c == 0
+        [exp(find_zero(f, 0.0)), Inf]
+    else
+        ω_L, ω_U = confint_or_wald(a, b, c, d; α = α/10)
+        ps = exp.(find_zeros(f, log(ω_L), log(ω_U)))
+        # 次の行は稀に区間にならない場合への対策
+        [first(ps), last(ps)]
+    end
+end
+
+# %%
 R"""fisher.test(matrix(c(16, 4, 4, 6), 2, 2, byrow=T))"""
 
 # %%
@@ -152,6 +245,8 @@ R"""epiR::epi.2by2(matrix(c(16, 4, 4, 6), 2, 2, byrow=T), digits=4)"""
 @show confint_rr_pearson_chisq(16, 4, 4, 6);
 @show confint_or_pearson_chisq(16, 4, 4, 6);
 @show confint_or_pearson_chisq(16, 4, 4, 6; correction=0.5);
+@show confint_or_fisher_sterne(16, 4, 4, 6);
+@show confint_or_fisher_cp(16, 4, 4, 6);
 
 # %%
 @show pvalue_rr_wald(16, 4, 4, 6);
@@ -159,6 +254,8 @@ R"""epiR::epi.2by2(matrix(c(16, 4, 4, 6), 2, 2, byrow=T), digits=4)"""
 @show pvalue_rr_pearson_chisq(16, 4, 4, 6);
 @show pvalue_or_pearson_chisq(16, 4, 4, 6);
 @show pvalue_or_pearson_chisq(16, 4, 4, 6; correction=0.5);
+@show pvalue_or_fisher_sterne(16, 4, 4, 6);
+@show pvalue_or_fisher_cp(16, 4, 4, 6);
 
 # %% [markdown]
 # ## RCall.jlの使い方
