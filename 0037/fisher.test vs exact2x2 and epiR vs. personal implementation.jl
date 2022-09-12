@@ -164,6 +164,9 @@ R"""epiR::epi.2by2(matrix(c(16, 4, 4, 6), 2, 2, byrow=T), digits=4)"""
 # ## RCall.jlの使い方
 
 # %%
+using RCall
+
+# %%
 A = [
     16 4
      4 6
@@ -205,5 +208,26 @@ exact2x2.exact2x2(A, plot="T")
 # %%
 @rimport epiR as epiR
 epiR.epi_2by2(A, digits=4)
+
+# %%
+using RCall
+
+diamonds = R"""ggplot2::diamonds""" |> rcopy
+first(diamonds, 10)
+
+# %%
+using StatsPlots
+@df diamonds scatter(:carat, :price; label="", xguide="catat", yguide="price", msw=0, ms=1, alpha=0.3)
+
+# %%
+@rlibrary ggplot2
+
+# %%
+ggplot(diamonds) +
+geom_point(aes(x=:carat, y=:price, color=:cut)) +
+geom_smooth(aes(x=:carat, y=:price, color=:cut))
+
+# %% [markdown]
+# See also https://nbviewer.org/gist/genkuroki/64602cfbdc95a2604b6b2a967eea6109
 
 # %%
