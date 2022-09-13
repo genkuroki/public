@@ -75,7 +75,7 @@ function confint_rr_wald(a, b, c, d; α=0.05)
 end
 
 # %%
-# odds ration Pearson's χ²
+# odds ratio Pearson's χ²
 
 function delta(a, b, c, d; ω=1)
     A, B, C = 1-ω, a+d+ω*(b+c), a*d-ω*b*c
@@ -113,6 +113,8 @@ function confint_or_pearson_chisq(a, b, c, d; α=0.05, correction=0.0)
 end
 
 # %%
+# risk ratio Pearson's χ²
+
 function Delta(a, b, c, d; ρ=1)
     m, n = a+b, c+d
     A, B, C = ρ-1, n-a+ρ*(m-c), a*n-ρ*m*c
@@ -153,7 +155,7 @@ function confint_rr_pearson_chisq(a, b, c, d; α=0.05)
 end
 
 # %%
-# risk ratio Pearson's χ²
+# odds ratio Fisher (Clopper-Pearson)
 
 function pvalue_or_fisher_cp(a, b, c, d; ω=1)
     fnch = if ω == 1
@@ -178,6 +180,8 @@ function confint_or_fisher_cp(a, b, c, d; α = 0.05)
 end
 
 # %%
+# odds ratio Fisher (Sterne)
+
 _pdf_le(x, (dist, y)) =  pdf(dist, x) ⪅ y
 
 function _search_boundary(f, x0, Δx, param)
