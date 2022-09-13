@@ -232,7 +232,7 @@ end
 
 # %%
 function plot_cdfpvals(m, n, q, p=q; L = 10^6,
-        f = BitVector([1,1,1,1,0]), kwargs...)
+        f = BitVector((1,1,1,1,0)), kwargs...)
     bin1 = Binomial(m, p)
     bin2 = Binomial(n, q)
     pval1 = Vector{Float64}(undef, L)
@@ -328,22 +328,22 @@ end
 
 # %%
 for q in 0.1:0.1:0.5
-    plot_cdfpvals(5, 8, q; f=BitVector([1,0,0,1,1])) |> display
+    plot_cdfpvals(5, 8, q; f=BitVector((1,0,0,1,1))) |> display
 end
 
 # %%
 for q in 0.1:0.1:0.5
-    plot_cdfpvals(10, 16, q; f=BitVector([1,0,0,1,1])) |> display
+    plot_cdfpvals(10, 16, q; f=BitVector((1,0,0,1,1))) |> display
 end
 
 # %%
 for q in 0.1:0.1:0.5
-    plot_cdfpvals(30, 48, q; f=BitVector([1,0,0,1,1])) |> display
+    plot_cdfpvals(30, 48, q; f=BitVector((1,0,0,1,1))) |> display
 end
 
 # %%
 for q in 0.1:0.1:0.5
-    plot_cdfpvals(100, 160, q; f=BitVector([1,0,0,1,1])) |> display
+    plot_cdfpvals(100, 160, q; f=BitVector((1,0,0,1,1))) |> display
 end
 
 # %% [markdown]
@@ -374,22 +374,22 @@ end
 
 # %%
 for q in 0.1:0.1:0.5
-    plot_cdfpvals_or(5, 8, q, 54.0; f=BitVector([1,0,0,1,1])) |> display
+    plot_cdfpvals_or(5, 8, q, 54.0; f=BitVector((1,0,0,1,1))) |> display
 end
 
 # %%
 for q in 0.1:0.1:0.5
-    plot_cdfpvals_or(10, 16, q, 12.0; f=BitVector([1,0,0,1,1])) |> display
+    plot_cdfpvals_or(10, 16, q, 12.0; f=BitVector((1,0,0,1,1))) |> display
 end
 
 # %%
 for q in 0.1:0.1:0.5
-    plot_cdfpvals_or(30, 48, q, 3.7; f=BitVector([1,0,0,1,1])) |> display
+    plot_cdfpvals_or(30, 48, q, 3.7; f=BitVector((1,0,0,1,1))) |> display
 end
 
 # %%
 for q in 0.1:0.1:0.5
-    plot_cdfpvals_or(100, 160, q, 2.0; f=BitVector([1,0,0,1,1])) |> display
+    plot_cdfpvals_or(100, 160, q, 2.0; f=BitVector((1,0,0,1,1))) |> display
 end
 
 # %%
