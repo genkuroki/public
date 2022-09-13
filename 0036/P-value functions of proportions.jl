@@ -1858,3 +1858,8 @@ plot_cdfpval(n, p; f=Bool[1,1,0,0])
 
 # %%
 plot_cdfpval(n, p; f=Bool[0,0,1,1])
+
+# %% [markdown]
+# 2×2の分割表に関する同様の計算については以下のリンク先を参照せよ:
+#
+# * https://github.com/genkuroki/public/blob/main/0037/power%20of%20tests%20for%202x2%20contingency%20table.ipynb
