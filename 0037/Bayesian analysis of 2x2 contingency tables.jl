@@ -415,16 +415,6 @@ plot!(ci, fill(α, 2); label="", c=1)
 title!("a=$a, b=$b, c=$c, d=$d, prior=$prior")
 
 # %%
-a, b, c, d = 8, 32, 16, 8
-prior = (1//3, 1//3)
-α = 0.05
-ci = confint_rd_bayes_cp(a, b, c, d; α, prior)
-plot(Δ -> pvalue_rd_bayes_cp(a, b, c, d; Δ, prior), -1, 0.2; label="RD Bayesian")
-plot!(Δ -> pvalue_rd_zou_donner(a, b, c, d; Δ), -1, 0.2; label="RD Zou-Donner", ls=:dash)
-plot!(ci, fill(α, 2); label="", c=1)
-title!("a=$a, b=$b, c=$c, d=$d, prior=$prior")
-
-# %%
 a, b, c, d = 32, 8, 8, 16
 prior = (1//3, 1//3)
 α = 0.05
