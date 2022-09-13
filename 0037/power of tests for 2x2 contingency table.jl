@@ -16,7 +16,7 @@
 
 # %% [markdown] toc=true
 # <h1>目次<span class="tocSkip"></span></h1>
-# <div class="toc"><ul class="toc-item"><li><span><a href="#第一種の過誤の確率の比較" data-toc-modified-id="第一種の過誤の確率の比較-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>第一種の過誤の確率の比較</a></span></li><li><span><a href="#Yatesの連続性補正版χ²検定は片側確率の2倍版のFisher検定をよく近似する" data-toc-modified-id="Yatesの連続性補正版χ²検定は片側確率の2倍版のFisher検定をよく近似する-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Yatesの連続性補正版χ²検定は片側確率の2倍版のFisher検定をよく近似する</a></span></li><li><span><a href="#パワーの比較" data-toc-modified-id="パワーの比較-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>パワーの比較</a></span></li></ul></div>
+# <div class="toc"><ul class="toc-item"><li><span><a href="#第一種の過誤の確率の比較" data-toc-modified-id="第一種の過誤の確率の比較-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>第一種の過誤の確率の比較</a></span></li><li><span><a href="#Yatesの連続性補正版χ²検定は片側確率の2倍版のFisher検定をよく近似する" data-toc-modified-id="Yatesの連続性補正版χ²検定は片側確率の2倍版のFisher検定をよく近似する-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Yatesの連続性補正版χ²検定は片側確率の2倍版のFisher検定をよく近似する</a></span></li><li><span><a href="#パワーの比較" data-toc-modified-id="パワーの比較-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>パワーの比較</a></span></li><li><span><a href="#Yatesの連続補正版のχ²検定とのパワーの比較" data-toc-modified-id="Yatesの連続補正版のχ²検定とのパワーの比較-4"><span class="toc-item-num">4&nbsp;&nbsp;</span>Yatesの連続補正版のχ²検定とのパワーの比較</a></span></li></ul></div>
 
 # %%
 using Printf
@@ -367,6 +367,29 @@ end
 # %%
 for q in 0.1:0.1:0.5
     plot_cdfpvals_or(100, 160, q, 2.0) |> display
+end
+
+# %% [markdown]
+# ## Yatesの連続補正版のχ²検定とのパワーの比較
+
+# %%
+for q in 0.1:0.1:0.5
+    plot_cdfpvals_or(5, 8, q, 54.0; f=BitVector([1,0,0,1,1])) |> display
+end
+
+# %%
+for q in 0.1:0.1:0.5
+    plot_cdfpvals_or(10, 16, q, 12.0; f=BitVector([1,0,0,1,1])) |> display
+end
+
+# %%
+for q in 0.1:0.1:0.5
+    plot_cdfpvals_or(30, 48, q, 3.7; f=BitVector([1,0,0,1,1])) |> display
+end
+
+# %%
+for q in 0.1:0.1:0.5
+    plot_cdfpvals_or(100, 160, q, 2.0; f=BitVector([1,0,0,1,1])) |> display
 end
 
 # %%
