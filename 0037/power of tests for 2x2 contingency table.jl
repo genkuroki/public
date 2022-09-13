@@ -16,7 +16,7 @@
 
 # %% [markdown] toc=true
 # <h1>目次<span class="tocSkip"></span></h1>
-# <div class="toc"><ul class="toc-item"><li><span><a href="#第一種の過誤の確率の比較" data-toc-modified-id="第一種の過誤の確率の比較-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>第一種の過誤の確率の比較</a></span></li><li><span><a href="#パワーの比較" data-toc-modified-id="パワーの比較-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>パワーの比較</a></span></li></ul></div>
+# <div class="toc"><ul class="toc-item"><li><span><a href="#第一種の過誤の確率の比較" data-toc-modified-id="第一種の過誤の確率の比較-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>第一種の過誤の確率の比較</a></span></li><li><span><a href="#Yatesの連続性補正版χ²検定は片側確率の2倍版のFisher検定をよく近似する" data-toc-modified-id="Yatesの連続性補正版χ²検定は片側確率の2倍版のFisher検定をよく近似する-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Yatesの連続性補正版χ²検定は片側確率の2倍版のFisher検定をよく近似する</a></span></li><li><span><a href="#パワーの比較" data-toc-modified-id="パワーの比較-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>パワーの比較</a></span></li></ul></div>
 
 # %%
 using Printf
@@ -231,13 +231,15 @@ function confint_or_fisher_sterne(a, b, c, d; α = 0.05)
 end
 
 # %%
-function plot_cdfpvals(m, n, q, p=q; L = 10^6, kwargs...)
+function plot_cdfpvals(m, n, q, p=q; L = 10^6,
+        f = BitVector([1,1,1,1,0]), kwargs...)
     bin1 = Binomial(m, p)
     bin2 = Binomial(n, q)
     pval1 = Vector{Float64}(undef, L)
     pval2 = Vector{Float64}(undef, L)
     pval3 = Vector{Float64}(undef, L)
     pval4 = Vector{Float64}(undef, L)
+    pval5 = Vector{Float64}(undef, L)
     Threads.@threads for i in 1:L
         a, c = rand(bin1), rand(bin2)
         b, d = m-a, n-c
@@ -245,35 +247,43 @@ function plot_cdfpvals(m, n, q, p=q; L = 10^6, kwargs...)
         pval2[i] = pvalue_or_wald(a, b, c, d)
         pval3[i] = pvalue_or_fisher_sterne(a, b, c, d)
         pval4[i] = pvalue_or_fisher_cp(a, b, c, d)
+        pval5[i] = pvalue_or_pearson_chisq(a, b, c, d; correction=0.5)
     end
     ecdf1 = ecdf(pval1)
     ecdf2 = ecdf(pval2)
     ecdf3 = ecdf(pval3)
     ecdf4 = ecdf(pval4)
+    ecdf5 = ecdf(pval5)
     f1(x) = ecdf1(x)
     f2(x) = ecdf2(x)
     f3(x) = ecdf3(x)
     f4(x) = ecdf4(x)
+    f5(x) = ecdf5(x)
     name1 = "Pearson χ²"
     name2 = "Wald"
     name3 = "Fisher (Sterne)"
     name4 = "Fisher (CP)"
+    name5 = "Yates χ²"
 
+    αmax = 1.0
     P1 = plot(legend=:topleft)
-    plot!(f1, 0, 1; label=name1)
-    plot!(f2, 0, 1; label=name2, ls=:dash)
-    plot!(f3, 0, 1; label=name3, ls=:dashdot)
-    plot!(f4, 0, 1; label=name4, ls=:dot, lw=1.2)
-    plot!([0,1], [0,1]; label="", c=:black, ls=:dot, lw=0.5)
+    f[1] && plot!(f1, 0, αmax; label=name1, c=1)
+    f[2] && plot!(f2, 0, αmax; label=name2, ls=:dash, c=2)
+    f[3] && plot!(f3, 0, αmax; label=name3, ls=:dashdot, c=3)
+    f[4] && plot!(f4, 0, αmax; label=name4, ls=:dot, lw=1.2, c=4)
+    f[5] && plot!(f5, 0, αmax; label=name5, ls=:dashdotdot, c=5)
+    plot!([0, αmax], [0, αmax]; label="", c=:black, ls=:dot, lw=0.5)
     plot!(xtick=0:0.1:1, ytick=0:0.1:1)
     plot!(xguide="α", yguide="probability of P-value ≤ α")
 
+    αmax = 0.1
     P2 = plot(legend=:topleft)
-    plot!(f1, 0, 0.1; label=name1)
-    plot!(f2, 0, 0.1; label=name2, ls=:dash)
-    plot!(f3, 0, 0.1; label=name3, ls=:dashdot)
-    plot!(f4, 0, 0.1; label=name4, ls=:dot, lw=1.2)
-    plot!([0,0.1], [0,0.1]; label="", c=:black, ls=:dot, lw=0.5)
+    f[1] && plot!(f1, 0, αmax; label=name1, c=1)
+    f[2] && plot!(f2, 0, αmax; label=name2, ls=:dash, c=2)
+    f[3] && plot!(f3, 0, αmax; label=name3, ls=:dashdot, c=3)
+    f[4] && plot!(f4, 0, αmax; label=name4, ls=:dot, lw=1.2, c=4)
+    f[5] && plot!(f5, 0, αmax; label=name5, ls=:dashdotdot, c=5)
+    plot!([0, αmax], [0, αmax]; label="", c=:black, ls=:dot, lw=0.5)
     plot!(xtick=0:0.01:1,
         ytick=f1(0.1) < 0.2 ? (0:0.01:1) : f1(0.1) < 0.5 ? (0:0.05:1) : (0:0.1:1))
     plot!(xguide="α", yguide="probability of P-value ≤ α")
@@ -289,10 +299,6 @@ function plot_cdfpvals_or(m, n, q, ω = 1; L = 10^6, kwargs...)
     p = logistic(log(ω) + logit(q))
     plot_cdfpvals(m, n, q, p; L, legend=:bottomright, kwargs...)
 end
-
-# %%
-using Random
-Random.seed!(4649373)
 
 # %% [markdown]
 # ## 第一種の過誤の確率の比較
@@ -318,16 +324,39 @@ for q in 0.1:0.1:0.5
 end
 
 # %% [markdown]
-# ## パワーの比較
+# ## Yatesの連続性補正版χ²検定は片側確率の2倍版のFisher検定をよく近似する
 
 # %%
 for q in 0.1:0.1:0.5
-    plot_cdfpvals_or(5, 8, q, 54) |> display
+    plot_cdfpvals(5, 8, q; f=BitVector([1,0,0,1,1])) |> display
 end
 
 # %%
 for q in 0.1:0.1:0.5
-    plot_cdfpvals_or(10, 16, q, 12) |> display
+    plot_cdfpvals(10, 16, q; f=BitVector([1,0,0,1,1])) |> display
+end
+
+# %%
+for q in 0.1:0.1:0.5
+    plot_cdfpvals(30, 48, q; f=BitVector([1,0,0,1,1])) |> display
+end
+
+# %%
+for q in 0.1:0.1:0.5
+    plot_cdfpvals(100, 160, q; f=BitVector([1,0,0,1,1])) |> display
+end
+
+# %% [markdown]
+# ## パワーの比較
+
+# %%
+for q in 0.1:0.1:0.5
+    plot_cdfpvals_or(5, 8, q, 54.0) |> display
+end
+
+# %%
+for q in 0.1:0.1:0.5
+    plot_cdfpvals_or(10, 16, q, 12.0) |> display
 end
 
 # %%
@@ -337,7 +366,7 @@ end
 
 # %%
 for q in 0.1:0.1:0.5
-    plot_cdfpvals_or(100, 160, q, 2) |> display
+    plot_cdfpvals_or(100, 160, q, 2.0) |> display
 end
 
 # %%
