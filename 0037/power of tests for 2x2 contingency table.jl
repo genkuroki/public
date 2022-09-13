@@ -275,7 +275,7 @@ function plot_cdfpvals(m, n, q, p=q; L = 10^6, kwargs...)
     plot!(f4, 0, 0.1; label=name4, ls=:dot, lw=1.2)
     plot!([0,0.1], [0,0.1]; label="", c=:black, ls=:dot, lw=0.5)
     plot!(xtick=0:0.01:1,
-        ytick=f1(0.1)<0.1 ? (0:0.01:1) : f1(0.1)<0.5 ? (0:0.05:1) : (0:0.1:1))
+        ytick=f1(0.1) < 0.2 ? (0:0.01:1) : f1(0.1) < 0.5 ? (0:0.05:1) : (0:0.1:1))
     plot!(xguide="α", yguide="probability of P-value ≤ α")
 
     p_str = @sprintf("%.3f", p)
@@ -289,6 +289,10 @@ function plot_cdfpvals_or(m, n, q, ω = 1; L = 10^6, kwargs...)
     p = logistic(log(ω) + logit(q))
     plot_cdfpvals(m, n, q, p; L, legend=:bottomright, kwargs...)
 end
+
+# %%
+using Random
+Random.seed!(4649373)
 
 # %% [markdown]
 # ## 第一種の過誤の確率の比較
@@ -333,7 +337,7 @@ end
 
 # %%
 for q in 0.1:0.1:0.5
-    plot_cdfpvals_or(100, 160, q, 2.0) |> display
+    plot_cdfpvals_or(100, 160, q, 2) |> display
 end
 
 # %%
