@@ -72,8 +72,7 @@ title!("X, Y ~ Uniform(-1, 1), independently")
 
 # %%
 n, L = 10, 10^5
-tmpX, tmpY = Vector{Float64}(undef, n), Vector{Float64}(undef, n)
-@time meanZ = [mean(((x, y),) -> x/y, zip(rand!(Uniform(-1, 1), tmpX), rand!(Uniform(-1, 1), tmpY))) for _ in 1:L]
+@time meanZ = [mean(rand(Uniform(-1, 1), n) ./ rand(Uniform(-1, 1), n)) for _ in 1:L]
 
 stephist(meanZ; norm=true, bin=[-Inf; -10^4:0.1:10^4; Inf], label="mean(X/Y), n=$n")
 plot!(Cauchy(0, 0.8), -10, 10; label="Cauchy(0, 0.8)", ls=:dashdot)
@@ -82,8 +81,7 @@ title!("X, Y ~ Uniform(-1, 1), independently")
 
 # %%
 n, L = 100, 10^5
-tmpX, tmpY = Vector{Float64}(undef, n), Vector{Float64}(undef, n)
-@time meanZ = [mean(((x, y),) -> x/y, zip(rand!(Uniform(-1, 1), tmpX), rand!(Uniform(-1, 1), tmpY))) for _ in 1:L]
+@time meanZ = [mean(rand(Uniform(-1, 1), n) ./ rand(Uniform(-1, 1), n)) for _ in 1:L]
 
 stephist(meanZ; norm=true, bin=[-Inf; -10^4:0.1:10^4; Inf], label="mean(X/Y), n=$n")
 plot!(Cauchy(0, 0.8), -10, 10; label="Cauchy(0, 0.8)", ls=:dashdot)
@@ -92,8 +90,7 @@ title!("X, Y ~ Uniform(-1, 1), independently")
 
 # %%
 n, L = 1000, 10^5
-tmpX, tmpY = Vector{Float64}(undef, n), Vector{Float64}(undef, n)
-@time meanZ = [mean(((x, y),) -> x/y, zip(rand!(Uniform(-1, 1), tmpX), rand!(Uniform(-1, 1), tmpY))) for _ in 1:L]
+@time meanZ = [mean(rand(Uniform(-1, 1), n) ./ rand(Uniform(-1, 1), n)) for _ in 1:L]
 
 stephist(meanZ; norm=true, bin=[-Inf; -10^4:0.1:10^4; Inf], label="mean(X/Y), n=$n")
 plot!(Cauchy(0, 0.8), -10, 10; label="Cauchy(0, 0.8)", ls=:dashdot)
@@ -102,8 +99,7 @@ title!("X, Y ~ Uniform(-1, 1), independently")
 
 # %%
 n, L = 10000, 10^5
-tmpX, tmpY = Vector{Float64}(undef, n), Vector{Float64}(undef, n)
-@time meanZ = [mean(((x, y),) -> x/y, zip(rand!(Uniform(-1, 1), tmpX), rand!(Uniform(-1, 1), tmpY))) for _ in 1:L]
+@time meanZ = [mean(rand(Uniform(-1, 1), n) ./ rand(Uniform(-1, 1), n)) for _ in 1:L]
 
 stephist(meanZ; norm=true, bin=[-Inf; -10^4:0.1:10^4; Inf], label="mean(X/Y), n=$n")
 plot!(Cauchy(0, 0.8), -10, 10; label="Cauchy(0, 0.8)", ls=:dashdot)
@@ -116,16 +112,65 @@ X = rand(Uniform(-1, 1), n)
 Y = rand(Uniform(-1, 1), n)
 Z = X ./ Y
 
-o = optimize(w -> -loglikelihood(Cauchy(w...), Z), [0.0, 1.0])
+@time o = optimize(w -> -loglikelihood(Cauchy(w[1], w[2]), Z), [0.0, 1.0])
 @show o
 @show o.minimizer;
 
 # %%
+# 計算効率を度外視のコード (巨大なメモリアロケーション！非常に遅い！)
+
+n, L = 10^4, 10^6
+@time meanZ = [mean(rand(Uniform(-1, 1), n) ./ rand(Uniform(-1, 1), n)) for _ in 1:L]
+
+@time o = optimize(w -> -loglikelihood(Cauchy(w[1], w[2]), meanZ), [0.0, 1.0])
+@show o
+@show o.minimizer;
+
+# %%
+# 巨大なメモリアロケーションを防いだコード
+
 n, L = 10^4, 10^6
 tmpX, tmpY = Vector{Float64}(undef, n), Vector{Float64}(undef, n)
 @time meanZ = [mean(((x, y),) -> x/y, zip(rand!(Uniform(-1, 1), tmpX), rand!(Uniform(-1, 1), tmpY))) for _ in 1:L]
 
-@time o = optimize(w -> -loglikelihood(Cauchy(w...), meanZ), [0.0, 1.0])
+@time o = optimize(w -> -loglikelihood(Cauchy(w[1], w[2]), meanZ), [0.0, 1.0])
+@show o
+@show o.minimizer;
+
+# %%
+# 巨大なメモリアロケーションを防いでかつスレッド並列化
+
+n, L = 10^4, 10^6
+tmpX = [Vector{Float64}(undef, n) for _ in 1:Threads.nthreads()]
+tmpY = [Vector{Float64}(undef, n) for _ in 1:Threads.nthreads()]
+meanZ = Vector{Float64}(undef, L)
+@time Threads.@threads for i in 1:L
+    X = rand!(Uniform(-1, 1), tmpX[Threads.threadid()])
+    Y = rand!(Uniform(-1, 1), tmpY[Threads.threadid()])
+    meanZ[i] = mean(((x, y),) -> x/y, zip(X, Y))
+end
+
+@time o = optimize(w -> -loglikelihood(Cauchy(w[1], w[2]), meanZ), [0.0, 1.0])
+@show o
+@show o.minimizer;
+
+# %%
+# さらに函数化
+
+function rand_Unif_over_Unif(; n=10^4, L=10^6)
+    tmpX = [Vector{Float64}(undef, n) for _ in 1:Threads.nthreads()]
+    tmpY = [Vector{Float64}(undef, n) for _ in 1:Threads.nthreads()]
+    meanZ = Vector{Float64}(undef, L)
+    Threads.@threads for i in 1:L
+        X = rand!(Uniform(-1, 1), tmpX[Threads.threadid()])
+        Y = rand!(Uniform(-1, 1), tmpY[Threads.threadid()])
+        meanZ[i] = mean(((x, y),) -> x/y, zip(X, Y))
+    end
+    meanZ
+end
+@time meanZ = rand_Unif_over_Unif(; n=10^4, L=10^6)
+
+@time o = optimize(w -> -loglikelihood(Cauchy(w[1], w[2]), meanZ), [0.0, 1.0])
 @show o
 @show o.minimizer;
 
