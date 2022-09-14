@@ -72,3 +72,9 @@ plot_mean_and_var(dist = Poisson(1), n = 100, binX̄=0.6:0.01:1.5, binS²=0.3:0.
 plot_mean_and_var(dist = LogNormal(), n = 20, xlimX̄=(0.5, 4), binS²=0:0.05:20)
 
 # %%
+plot_mean_and_var(dist = LogNormal(), n = 100, xlimX̄=(0.9, 2.4), binS²=0:0.05:20)
+
+# %%
+plot_mean_and_var(dist = LogNormal(), n = 500, xlimX̄=(1.3, 2.0), binS²=0:0.05:12)
+
+# %%
