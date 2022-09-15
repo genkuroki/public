@@ -354,7 +354,7 @@ function plot_pvals(; ȳ=1.0, n=10, κ_eti=1//3, λ₀_eti=0, κ_hdi=1, λ₀_h
     plot!(λ -> pvalue_bayesian_eti(ȳ, n, λ; κ=κ_eti, λ₀=λ₀_eti), xlim...;
         label="Bayesian ETI", ls=:dash)
     plot!(λ -> pvalue_bayesian_hdi(ȳ, n, λ; κ=κ_hdi, λ₀=λ₀_hdi), xlim...;
-        label="Bayesian ETI", ls=:dashdot)
+        label="Bayesian HDI", ls=:dashdot)
     plot!(λ -> pvalue_cp(ȳ, n, λ), xlim...;
         label="Clopper-Pearson type", ls=:dot, lw=1.5)
     title!("ȳ = $ȳ, n = $n, κ_eti = $κ_eti, " *
