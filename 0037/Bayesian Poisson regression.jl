@@ -95,21 +95,21 @@ P1 = scatter(B0[1:m], B1[1:m]; label="MCMC", ms=2, msw=0, alpha=0.3)
 plot!(; xguide="β₀", yguide="β₁", xlim, ylim)
 P2 = scatter(MV[1,:], MV[2,:]; label="mvnormal approx", ms=2, msw=0, alpha=0.3)
 plot!(; xguide="β₀", yguide="β₁", xlim, ylim)
-plot(P1, P2; size=(800, 400), plot_title="posterior of (β₀, β₁)  (flat prior case)")
+plot(P1, P2; size=(800, 400), plot_title="posterior of (β₀, β₁)  (n=$n, flat prior case)")
 
 # %%
 β̂, Σ̂ = params(mvnormal_approx)
 normal_approx0 = Normal(β̂[1], √Σ̂[1,1])
 stephist(B0; norm=true, label="MCMC")
 plot!(normal_approx0; label="normal approx", ls=:dash, lw=1.5)
-title!("posterior of β₀  (flat prior case)")
+title!("posterior of β₀  (n=$n, flat prior case)")
 
 # %%
 β̂, Σ̂ = params(mvnormal_approx)
 normal_approx1 = Normal(β̂[2], √Σ̂[2,2])
 stephist(B1; norm=true, label="MCMC")
 plot!(normal_approx1; label="normal approx", ls=:dash, lw=1.5)
-title!("posterior of β₁  (flat prior case)")
+title!("posterior of β₁  (n=$n, flat prior case)")
 
 # %% [markdown]
 # ## 正規事前分布の場合
@@ -143,20 +143,20 @@ P1 = scatter(B0[1:m], B1[1:m]; label="MCMC", ms=2, msw=0, alpha=0.3)
 plot!(; xguide="β₀", yguide="β₁", xlim, ylim)
 P2 = scatter(MV[1,:], MV[2,:]; label="mvnormal approx", ms=2, msw=0, alpha=0.3)
 plot!(; xguide="β₀", yguide="β₁", xlim, ylim)
-plot(P1, P2; size=(800, 400), plot_title="posterior of (β₀, β₁)  (normal prior case)")
+plot(P1, P2; size=(800, 400), plot_title="posterior of (β₀, β₁)  (n=$n, normal prior case)")
 
 # %%
 β̂, Σ̂ = params(mvnormal_approx)
 normal_approx0 = Normal(β̂[1], √Σ̂[1,1])
 stephist(B0; norm=true, label="MCMC")
 plot!(normal_approx0; label="normal approx", ls=:dash, lw=1.5)
-title!("posterior of β₀  (normal prior case)")
+title!("posterior of β₀  (n=$n, normal prior case)")
 
 # %%
 β̂, Σ̂ = params(mvnormal_approx)
 normal_approx1 = Normal(β̂[2], √Σ̂[2,2])
 stephist(B1; norm=true, label="MCMC")
 plot!(normal_approx1; label="normal approx", ls=:dash, lw=1.5)
-title!("posterior of β₁  (normal prior case)")
+title!("posterior of β₁  (n=$n, normal prior case)")
 
 # %%
