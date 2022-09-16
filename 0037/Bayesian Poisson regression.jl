@@ -37,6 +37,9 @@ using StatsPlots
 default(fmt=:png, titlefontsize=10, plot_titlefontsize=10)
 using Turing
 
+# %% [markdown]
+# ![poissonreg.jpg](attachment:poissonreg.jpg)
+
 # %%
 # Poisson回帰の対数尤度函数の-1倍とその1階と2階の導函数達
 # 1階の導函数はスコア統計量と呼ばれ, 2階の導函数の期待値はFisher情報量と呼ばれる.
