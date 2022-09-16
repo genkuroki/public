@@ -24,6 +24,7 @@
 
 # %%
 using Distributions
+using QuadGK
 using Random
 Random.seed!(4649373)
 using StatsBase: ecdf
@@ -152,12 +153,22 @@ function rand_posterior_Δμ(x, y; L=10^6,
 end
 
 # %%
+# X ~ distx, Y ~ disty のときの X - Y が従う分布の密度函数
+
+function pdf_diff(distx, disty, Δ)
+    K(y) = pdf(distx, y+Δ) * pdf(disty, y)
+    quadgk(K, extrema(disty)...)[1]
+end
+
+# %%
 function plot_bayesian_welch(x, y; L=10^6, title="m=$(length(x)), n=$(length(y))")
-    Δμ = rand_posterior_Δμ(x, y; L)
-    xlim = quantile.(Ref(Δμ), (0.0001, 0.9999))
+    posterior_μx, posterior_μy = posterior_μxμy(x, y)
+    pdf_Δμ(Δμ) = pdf_diff(posterior_μx, posterior_μy, Δμ)
+    post_welch = posterior_welch(x, y)
+    xlim = quantile.(post_welch, (0.0001, 0.9999))
     plot(legend=:outertop)
-    stephist!(Δμ; norm=true, label="posterior of Δμ w.r.t. the flat prior")
-    plot!(posterior_welch(x, y); label="\"posterior\" reproducing Welch t-test")
+    plot!(pdf_Δμ, xlim...; norm=true, label="posterior of Δμ w.r.t. the flat prior")
+    plot!(post_welch, xlim...; label="\"posterior\" reproducing Welch t-test", ls=:dash)
     plot!(xguide="Δμ")
     plot!(; title, xlim)
 end
@@ -174,7 +185,7 @@ distx = Gamma(5, 3)
 disty = Gamma(3, 3)
 @show Δμ_true = mean(distx) - mean(disty)
 plot(distx; label="distx")
-plot!(disty; label="disty")
+plot!(disty; label="disty", ls=:dash)
 
 # %%
 plot_bayesian_welch(distx, 7, disty, 7)
