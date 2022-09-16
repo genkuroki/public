@@ -86,30 +86,30 @@ plot(chn[1001:5000]; lw=0.5, leftmargin=4Plots.mm, bottommargin=4Plots.mm)
 
 # %%
 B0, B1 = vec(chn[:β₀]), vec(chn[:β₁])
-
-# %%
+xlim, ylim = quantile.(Ref(B0), (0.0001, 0.9999)), quantile.(Ref(B1), (0.001, 0.999))
 mvnormal_approx = mvnormal_approx_posterior(x, y)
 m = 5000
 MV = rand(mvnormal_approx, m)
+
 P1 = scatter(B0[1:m], B1[1:m]; label="MCMC", ms=2, msw=0, alpha=0.3)
-plot!(xguide="β₀", yguide="β₁")
+plot!(; xguide="β₀", yguide="β₁", xlim, ylim)
 P2 = scatter(MV[1,:], MV[2,:]; label="mvnormal approx", ms=2, msw=0, alpha=0.3)
-plot!(xguide="β₀", yguide="β₁")
-plot(P1, P2; size=(800, 400), plot_title="posterior of (β₀, β₁)")
+plot!(; xguide="β₀", yguide="β₁", xlim, ylim)
+plot(P1, P2; size=(800, 400), plot_title="posterior of (β₀, β₁)  (flat prior case)")
 
 # %%
 β̂, Σ̂ = params(mvnormal_approx)
 normal_approx0 = Normal(β̂[1], √Σ̂[1,1])
 stephist(B0; norm=true, label="MCMC")
 plot!(normal_approx0; label="normal approx", ls=:dash, lw=1.5)
-title!("posterior of β₀")
+title!("posterior of β₀  (flat prior case)")
 
 # %%
 β̂, Σ̂ = params(mvnormal_approx)
 normal_approx1 = Normal(β̂[2], √Σ̂[2,2])
 stephist(B1; norm=true, label="MCMC")
 plot!(normal_approx1; label="normal approx", ls=:dash, lw=1.5)
-title!("posterior of β₁")
+title!("posterior of β₁  (flat prior case)")
 
 # %% [markdown]
 # ## 正規事前分布の場合
@@ -134,29 +134,29 @@ plot(chn_np[1001:5000]; lw=0.5, leftmargin=4Plots.mm, bottommargin=4Plots.mm)
 
 # %%
 B0, B1 = vec(chn_np[:β₀]), vec(chn_np[:β₁])
-
-# %%
+xlim, ylim = quantile.(Ref(B0), (0.0001, 0.9999)), quantile.(Ref(B1), (0.001, 0.999))
 mvnormal_approx = mvnormal_approx_posterior(x, y)
 m = 5000
 MV = rand(mvnormal_approx, m)
+
 P1 = scatter(B0[1:m], B1[1:m]; label="MCMC", ms=2, msw=0, alpha=0.3)
-plot!(xguide="β₀", yguide="β₁")
+plot!(; xguide="β₀", yguide="β₁", xlim, ylim)
 P2 = scatter(MV[1,:], MV[2,:]; label="mvnormal approx", ms=2, msw=0, alpha=0.3)
-plot!(xguide="β₀", yguide="β₁")
-plot(P1, P2; size=(800, 400), plot_title="posterior of (β₀, β₁)")
+plot!(; xguide="β₀", yguide="β₁", xlim, ylim)
+plot(P1, P2; size=(800, 400), plot_title="posterior of (β₀, β₁)  (normal prior case)")
 
 # %%
 β̂, Σ̂ = params(mvnormal_approx)
 normal_approx0 = Normal(β̂[1], √Σ̂[1,1])
 stephist(B0; norm=true, label="MCMC")
 plot!(normal_approx0; label="normal approx", ls=:dash, lw=1.5)
-title!("posterior of β₀")
+title!("posterior of β₀  (normal prior case)")
 
 # %%
 β̂, Σ̂ = params(mvnormal_approx)
 normal_approx1 = Normal(β̂[2], √Σ̂[2,2])
 stephist(B1; norm=true, label="MCMC")
 plot!(normal_approx1; label="normal approx", ls=:dash, lw=1.5)
-title!("posterior of β₁")
+title!("posterior of β₁  (normal prior case)")
 
 # %%
