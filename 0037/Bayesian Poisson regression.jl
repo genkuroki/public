@@ -14,10 +14,6 @@
 #     name: julia-1.8
 # ---
 
-# %% [markdown] toc=true
-# <h1>目次<span class="tocSkip"></span></h1>
-# <div class="toc"><ul class="toc-item"><li><span><a href="#データ生成" data-toc-modified-id="データ生成-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>データ生成</a></span></li><li><span><a href="#平坦事前分布の場合" data-toc-modified-id="平坦事前分布の場合-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>平坦事前分布の場合</a></span></li><li><span><a href="#正規事前分布の場合" data-toc-modified-id="正規事前分布の場合-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>正規事前分布の場合</a></span></li></ul></div>
-
 # %% [markdown]
 # # Bayesian Poisson回帰
 #
@@ -25,6 +21,10 @@
 # * 2020-09-16
 #
 # Bayesian Poisson回帰と最尤法(+ Wald検定で使う正規分布近似)によるPoisson回帰の結果が近似的に一致することを数値的に確認する.
+
+# %% [markdown] toc=true
+# <h1>目次<span class="tocSkip"></span></h1>
+# <div class="toc"><ul class="toc-item"><li><span><a href="#データ生成" data-toc-modified-id="データ生成-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>データ生成</a></span></li><li><span><a href="#平坦事前分布の場合" data-toc-modified-id="平坦事前分布の場合-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>平坦事前分布の場合</a></span></li><li><span><a href="#正規事前分布の場合" data-toc-modified-id="正規事前分布の場合-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>正規事前分布の場合</a></span></li></ul></div>
 
 # %%
 using Distributions
