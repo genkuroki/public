@@ -9,7 +9,7 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.10.3
 #   kernelspec:
-#     display_name: Julia 1.8.0
+#     display_name: Julia 1.8.1
 #     language: julia
 #     name: julia-1.8
 # ---
@@ -68,8 +68,8 @@ end
 # %%
 @model function ols(x, y)
     σ² ~ PowerPos(-1)
-    β₀ ~ Flat()
-    β₁ ~ Flat()
+    β₀ ~ Turing.Flat()
+    β₁ ~ Turing.Flat()
     y ~ MvNormal(β₀ .+ β₁*x, σ²*I)
 end
 
