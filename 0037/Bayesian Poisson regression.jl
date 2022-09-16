@@ -28,39 +28,98 @@
 
 # %%
 using Distributions
+using ForwardDiff
+using LinearAlgebra
 using Optim
 using Random
-Random.seed!(4649373)
-using StaticArrays
 using StatsPlots
 default(fmt=:png, titlefontsize=10, plot_titlefontsize=10)
 using Turing
 
 # %%
-# 最尤推定 + Wald法で使う正規分布近似のβとβ̂の役割を交換したもの
+# Poisson回帰の対数尤度函数の-1倍とその1階と2階の導函数達
+# 1階の導函数はスコア統計量と呼ばれ, 2階の導函数の期待値はFisher情報量と呼ばれる.
+# この場合に2階の導函数は確率変数の y を含まないので,
+# 2階の導函数がそのままFisher情報量になる.
 
-function mvnormal_approx_posterior(x, y)
-    λ(β₀, β₁, xᵢ) = exp(β₀ + β₁*xᵢ)
-    f(w) = -sum(logpdf(Poisson(λ(w[1], w[2], x)), y) for (x, y) in zip(x, y))
-    o = optimize(f, zeros(2), LBFGS())
-    β̂₀, β̂₁ = β̂ = o.minimizer # maximum likelihood estimate
-    λ̂(i) = λ(β̂₀, β̂₁, x[i])
-    â = sum(λ̂(i) for i in eachindex(x))
-    b̂ = sum(λ̂(i)*x[i] for i in eachindex(x))
-    ĉ = sum(λ̂(i)*x[i]^2 for i in eachindex(x))
-    Î = SMatrix{2,2}(â, b̂, b̂, ĉ) # Fisher information at β̂
+function negloglik_poissonreg(x, y, β)
+    -sum(logpdf(Poisson(exp(β[1] + β[2]*x)), y) for (x, y) in zip(x, y))
+end
+
+function scorestat_poissonreg(x, y, β)
+    ForwardDiff.gradient(β -> negloglik_poissonreg(x, y, β), β)
+end
+
+function scorestat_poissonreg_explicit(x, y, β)
+    λ(i) = exp(β[1] + β[2]*x[i])
+    A = sum(λ(i) - y[i] for i in eachindex(x, y))
+    B = sum((λ(i) - y[i])*x[i] for i in eachindex(x, y))
+    [A, B]
+end
+
+function fisherinfo_poissonreg(x, y, β)
+    ForwardDiff.hessian(β -> negloglik_poissonreg(x, y, β), β)
+end
+
+function fisherinfo_poissonreg_explicit(x, y, β)
+    λ(i) = exp(β[1] + β[2]*x[i])
+    a = sum(λ(i) for i in eachindex(x))
+    b = sum(λ(i)*x[i] for i in eachindex(x))
+    c = sum(λ(i)*x[i]^2 for i in eachindex(x))
+    Symmetric([a b; b c])
+end
+
+# %%
+# 最尤推定 + Wald法で使う正規分布近似における
+# 定数パラメータβと確率変数β̂の役割を交換したもの.
+# 以下ではβ̂の側は定数とみなされており, βの側が確率変数とみなされている.
+# これは本質的にBayes統計での事後分布の対数の2次近似になっている.
+
+function mvnormal_approx_posterior_poissonreg(x, y)
+    o = optimize(β->negloglik_poissonreg(x, y, β), zeros(2), LBFGS())
+    β̂ = o.minimizer # maximum likelihood estimate
+    Î = fisherinfo_poissonreg_explicit(x, y, β̂) # Fisher information matrix
     MvNormal(β̂, inv(Î)) # mvnormal approximation of the posterior of β
 end
+
+# %%
+# data
+Random.seed!(4649373)
+n = 20
+x = sort(rand(Uniform(0, 3), n))
+y = @. rand(Poisson(exp(-0.2 + 1.0x)))
+
+# maximum likelihood estimate
+o = optimize(β->negloglik_poissonreg(x, y, β), zeros(2), LBFGS())
+β̂ = o.minimizer
+
+# %%
+scorestat_poissonreg(x, y, β̂)
+
+# %%
+scorestat_poissonreg_explicit(x, y, β̂)
+
+# %%
+fisherinfo_poissonreg(x, y, β̂)
+
+# %%
+Î = fisherinfo_poissonreg_explicit(x, y, β̂)
+
+# %%
+@show β̂ inv(Î);
+
+# %%
+mvnormal_approx_posterior_poissonreg(x, y)
 
 # %% [markdown]
 # ## データ生成
 
 # %%
+Random.seed!(4649373)
 n = 20
-x = sort(rand(Uniform(0, 3), n))
 β₀, β₁ = -0.2, 1.0
-pois = @. Poisson(exp(β₀ + β₁*x))
-y = rand.(pois)
+x = sort(rand(Uniform(0, 3), n))
+y = @. rand(Poisson(exp(β₀ + β₁*x)))
 scatter(x, y; label="data (x, y)", msw=0, legend=:topleft)
 
 # %% [markdown]
@@ -87,7 +146,7 @@ plot(chn[1001:5000]; lw=0.5, leftmargin=4Plots.mm, bottommargin=4Plots.mm)
 # %%
 B0, B1 = vec(chn[:β₀]), vec(chn[:β₁])
 xlim, ylim = quantile.(Ref(B0), (0.0001, 0.9999)), quantile.(Ref(B1), (0.001, 0.999))
-mvnormal_approx = mvnormal_approx_posterior(x, y)
+mvnormal_approx = mvnormal_approx_posterior_poissonreg(x, y)
 m = 5000
 MV = rand(mvnormal_approx, m)
 
@@ -135,7 +194,7 @@ plot(chn_np[1001:5000]; lw=0.5, leftmargin=4Plots.mm, bottommargin=4Plots.mm)
 # %%
 B0, B1 = vec(chn_np[:β₀]), vec(chn_np[:β₁])
 xlim, ylim = quantile.(Ref(B0), (0.0001, 0.9999)), quantile.(Ref(B1), (0.001, 0.999))
-mvnormal_approx = mvnormal_approx_posterior(x, y)
+mvnormal_approx = mvnormal_approx_posterior_poissonreg(x, y)
 m = 5000
 MV = rand(mvnormal_approx, m)
 
