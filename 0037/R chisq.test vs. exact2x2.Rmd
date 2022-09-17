@@ -1,0 +1,38 @@
+---
+jupyter:
+  jupytext:
+    formats: ipynb,Rmd
+    text_representation:
+      extension: .Rmd
+      format_name: rmarkdown
+      format_version: '1.2'
+      jupytext_version: 1.10.3
+  kernelspec:
+    display_name: R
+    language: R
+    name: ir
+---
+
+```{r}
+chisq.test(matrix(c(2, 5, 1, 8), nrow=2), correct=F)
+```
+
+```{r}
+chisq.test(matrix(c(2, 5, 1, 8), nrow=2), correct=T)
+```
+
+```{r}
+fisher.test(matrix(c(2, 5, 1, 8), nrow=2))
+```
+
+```{r}
+exact2x2::exact2x2(matrix(c(2, 5, 1, 8), nrow=2), tsmethod="central", plot=T)
+```
+
+```{r}
+exact2x2::exact2x2(matrix(c(2, 5, 1, 8), nrow=2), plot=T)
+```
+
+```{r}
+
+```
