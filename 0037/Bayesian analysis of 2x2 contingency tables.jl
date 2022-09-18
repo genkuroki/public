@@ -264,22 +264,22 @@ end
 
 riskdiffhat(a, b, c, d) = safediv(a, a+b) - safediv(c, c+d)
 
-function stderr_riskdiffhat(a, b, c, d)
+function stderr_riskdiffhat(a, b, c, d; u=0)
     m, n = a+b, c+d
     p̂, q̂ = safediv(a, m), safediv(c, n)
-    √(safediv(p̂*(1-p̂), m) + safediv(q̂*(1-q̂), n))
+    √(safediv(p̂*(1-p̂), m-u) + safediv(q̂*(1-q̂), n-u))
 end
 
-function pvalue_rd_wald(a, b, c, d; Δ=0)
+function pvalue_rd_wald(a, b, c, d; Δ=0, u=0)
     RDhat = riskdiffhat(a, b, c, d)
-    SEhat_riskdiffhat = stderr_riskdiffhat(a, b, c, d)
+    SEhat_riskdiffhat = stderr_riskdiffhat(a, b, c, d; u)
     2ccdf(Normal(0, 1), safediv(abs(RDhat - Δ), SEhat_riskdiffhat))
 end
 
-function confint_rd_wald(a, b, c, d; α=0.05)
+function confint_rd_wald(a, b, c, d; α=0.05, u=0)
     z = quantile(Normal(), 1-α/2)
     RDhat = riskdiffhat(a, b, c, d)
-    SEhat_riskdiffhat = stderr_riskdiffhat(a, b, c, d)
+    SEhat_riskdiffhat = stderr_riskdiffhat(a, b, c, d; u)
     [RDhat - z*SEhat_riskdiffhat, RDhat + z*SEhat_riskdiffhat]
 end
 
@@ -289,26 +289,26 @@ end
 # %%
 # risk difference Zou-Donner
 
-riskdiffhat(a, b, c, d) = safediv(a, a+b) - safediv(c, c+d)
+riskdiffhat_zou_donner(a, b, c, d) = safediv(a, a+b) - safediv(c, c+d)
 
-function stderr_riskdiffhat_zou_donner(a, b, c, d)
+function stderr_riskdiffhat_zou_donner(a, b, c, d; u=1)
     m, n = a+b, c+d
     p̂, q̂ = safediv(a, m), safediv(c, n)
-    √(safediv(p̂*(1-p̂), m-1) + safediv(q̂*(1-q̂), n-1))
+    √(safediv(p̂*(1-p̂), m-u) + safediv(q̂*(1-q̂), n-u))
 end
 
-function pvalue_rd_zou_donner(a, b, c, d; Δ=0)
+function pvalue_rd_zou_donner(a, b, c, d; Δ=0, u=1)
     ((a==0 && d==0) || (b==0 && c==0)) && return 1.0
-    RDhat = riskdiffhat(a, b, c, d)
-    SEhat_riskdiffhat = stderr_riskdiffhat_zou_donner(a, b, c, d)
+    RDhat = riskdiffhat_zou_donner(a, b, c, d)
+    SEhat_riskdiffhat = stderr_riskdiffhat_zou_donner(a, b, c, d; u)
     Z = safediv((1 - RDhat^2)*abs(atanh(RDhat) - atanh(Δ)), SEhat_riskdiffhat)
     2ccdf(Normal(), abs(Z))
 end
 
-function confint_rd_zou_donner(a, b, c, d; α=0.05)
+function confint_rd_zou_donner(a, b, c, d; α=0.05, u=1)
     z = quantile(Normal(), 1-α/2)
-    RDhat = riskdiffhat(a, b, c, d)
-    SEhat_riskdiffhat = stderr_riskdiffhat(a, b, c, d)
+    RDhat = riskdiffhat_zou_donner(a, b, c, d)
+    SEhat_riskdiffhat = stderr_riskdiffhat_zou_donner(a, b, c, d; u)
     m = atanh(RDhat)
     d = safediv(z*SEhat_riskdiffhat, 1 - RDhat^2)
     [tanh(m-d), tanh(m+d)]
@@ -401,6 +401,7 @@ prior = (1, 1)
 ci = confint_rd_bayes_cp(a, b, c, d; α, prior)
 plot(Δ -> pvalue_rd_bayes_cp(a, b, c, d; Δ, prior), -1, 0.2; label="RD Bayesian")
 plot!(Δ -> pvalue_rd_zou_donner(a, b, c, d; Δ), -1, 0.2; label="RD Zou-Donner", ls=:dash)
+plot!(Δ -> pvalue_rd_wald(a, b, c, d; Δ), -1, 0.2; label="RD Wald", ls=:dashdot)
 plot!(ci, fill(α, 2); label="", c=1)
 title!("a=$a, b=$b, c=$c, d=$d, prior=$prior")
 
@@ -411,6 +412,7 @@ prior = (1//3, 1//3)
 ci = confint_rd_bayes_cp(a, b, c, d; α, prior)
 plot(Δ -> pvalue_rd_bayes_cp(a, b, c, d; Δ, prior), -1, 0.2; label="RD Bayesian")
 plot!(Δ -> pvalue_rd_zou_donner(a, b, c, d; Δ), -1, 0.2; label="RD Zou-Donner", ls=:dash)
+plot!(Δ -> pvalue_rd_wald(a, b, c, d; Δ), -1, 0.2; label="RD Wald", ls=:dashdot)
 plot!(ci, fill(α, 2); label="", c=1)
 title!("a=$a, b=$b, c=$c, d=$d, prior=$prior")
 
@@ -421,6 +423,7 @@ prior = (1//3, 1//3)
 ci = confint_rd_bayes_cp(a, b, c, d; α, prior)
 plot(Δ -> pvalue_rd_bayes_cp(a, b, c, d; Δ, prior), -0.2, 1; label="RD Bayesian")
 plot!(Δ -> pvalue_rd_zou_donner(a, b, c, d; Δ), -0.2, 1; label="RD Zou-Donner", ls=:dash)
+plot!(Δ -> pvalue_rd_wald(a, b, c, d; Δ), -0.1, 1; label="RD Wald", ls=:dashdot)
 plot!(ci, fill(α, 2); label="", c=1)
 title!("a=$a, b=$b, c=$c, d=$d, prior=$prior")
 
