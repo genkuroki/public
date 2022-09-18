@@ -291,7 +291,7 @@ end
 
 riskdiffhat(a, b, c, d) = safediv(a, a+b) - safediv(c, c+d)
 
-function stderr_riskdiffhat(a, b, c, d)
+function stderr_riskdiffhat_zou_donner(a, b, c, d)
     m, n = a+b, c+d
     p̂, q̂ = safediv(a, m), safediv(c, n)
     √(safediv(p̂*(1-p̂), m-1) + safediv(q̂*(1-q̂), n-1))
@@ -300,7 +300,7 @@ end
 function pvalue_rd_zou_donner(a, b, c, d; Δ=0)
     ((a==0 && d==0) || (b==0 && c==0)) && return 1.0
     RDhat = riskdiffhat(a, b, c, d)
-    SEhat_riskdiffhat = stderr_riskdiffhat(a, b, c, d)
+    SEhat_riskdiffhat = stderr_riskdiffhat_zou_donner(a, b, c, d)
     Z = safediv((1 - RDhat^2)*abs(atanh(RDhat) - atanh(Δ)), SEhat_riskdiffhat)
     2ccdf(Normal(), abs(Z))
 end
