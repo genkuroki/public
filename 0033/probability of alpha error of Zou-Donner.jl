@@ -9,9 +9,9 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.10.3
 #   kernelspec:
-#     display_name: Julia 1.7.3
+#     display_name: Julia 1.8.1
 #     language: julia
-#     name: julia-1.7
+#     name: julia-1.8
 # ---
 
 # %%
@@ -41,25 +41,31 @@ safediv(x, y) = x == 0 ? x : isinf(y) ? zero(y) : x/y
 # A simple alternative confidence interval for the difference between two proportions
 # Controlled Clinical Trials, Volume 25, Issue 1, February 2004, Pages 3-12
 # https://doi.org/10.1016/j.cct.2003.08.010
+#
+# Zou-Donnerの信頼区間に対応するP値函数の実装については
+#
+# https://github.com/genkuroki/public/blob/main/0033/probability%20of%20alpha%20error%20of%20Zou-Donner.ipynb
+#
+# を参照せよ.
 
 riskdiffhat(a, b, c, d) = safediv(a, a+b) - safediv(c, c+d)
 
-function stderr_riskdiffhat(a, b, c, d)
+function stderr_riskdiffhat(a, b, c, d; u=0)
     m, n = a+b, c+d
     p̂, q̂ = safediv(a, m), safediv(c, n)
-    √(safediv(p̂*(1-p̂), m-1) + safediv(q̂*(1-q̂), n-1))
+    √(safediv(p̂*(1-p̂), m-u) + safediv(q̂*(1-q̂), n-u))
 end
 
-function pvalue_rd_wald(a, b, c, d; Δ=0)
+function pvalue_rd_wald(a, b, c, d; Δ=0, u=0)
     RDhat = riskdiffhat(a, b, c, d)
-    SEhat_riskdiffhat = stderr_riskdiffhat(a, b, c, d)
+    SEhat_riskdiffhat = stderr_riskdiffhat(a, b, c, d; u)
     2ccdf(Normal(0, 1), safediv(abs(RDhat - Δ), SEhat_riskdiffhat))
 end
 
-function confint_rd_wald(a, b, c, d; α=0.05)
+function confint_rd_wald(a, b, c, d; α=0.05, u=0)
     z = quantile(Normal(), 1-α/2)
     RDhat = riskdiffhat(a, b, c, d)
-    SEhat_riskdiffhat = stderr_riskdiffhat(a, b, c, d)
+    SEhat_riskdiffhat = stderr_riskdiffhat(a, b, c, d; u)
     [RDhat - z*SEhat_riskdiffhat, RDhat + z*SEhat_riskdiffhat]
 end
 
@@ -76,18 +82,28 @@ end
 @show confint_rd_wald(1, 0, 0, 1) confint_rd_wald(1, 1e-4, 1e-8, 1);
 
 # %%
-function pvalue_rd_zou_donner(a, b, c, d; Δ=0)
+# risk difference Zou-Donner
+
+riskdiffhat_zou_donner(a, b, c, d) = safediv(a, a+b) - safediv(c, c+d)
+
+function stderr_riskdiffhat_zou_donner(a, b, c, d; u=1)
+    m, n = a+b, c+d
+    p̂, q̂ = safediv(a, m), safediv(c, n)
+    √(safediv(p̂*(1-p̂), m-u) + safediv(q̂*(1-q̂), n-u))
+end
+
+function pvalue_rd_zou_donner(a, b, c, d; Δ=0, u=1)
     ((a==0 && d==0) || (b==0 && c==0)) && return 1.0
-    RDhat = riskdiffhat(a, b, c, d)
-    SEhat_riskdiffhat = stderr_riskdiffhat(a, b, c, d)
+    RDhat = riskdiffhat_zou_donner(a, b, c, d)
+    SEhat_riskdiffhat = stderr_riskdiffhat_zou_donner(a, b, c, d; u)
     Z = safediv((1 - RDhat^2)*abs(atanh(RDhat) - atanh(Δ)), SEhat_riskdiffhat)
     2ccdf(Normal(), abs(Z))
 end
 
-function confint_rd_zou_donner(a, b, c, d; α=0.05)
+function confint_rd_zou_donner(a, b, c, d; α=0.05, u=1)
     z = quantile(Normal(), 1-α/2)
-    RDhat = riskdiffhat(a, b, c, d)
-    SEhat_riskdiffhat = stderr_riskdiffhat(a, b, c, d)
+    RDhat = riskdiffhat_zou_donner(a, b, c, d)
+    SEhat_riskdiffhat = stderr_riskdiffhat_zou_donner(a, b, c, d; u)
     m = atanh(RDhat)
     d = safediv(z*SEhat_riskdiffhat, 1 - RDhat^2)
     [tanh(m-d), tanh(m+d)]
