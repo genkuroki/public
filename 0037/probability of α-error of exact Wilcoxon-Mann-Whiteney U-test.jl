@@ -24,6 +24,16 @@ default(fmt=:png, titlefontsize=10, tickfontsize=6,
     guidefontsize=9, plot_titlefontsize=10)
 
 # %%
+distname(dist) = replace(string(dist), r"{[^}]*}"=>"")
+
+function distname(dist::LocationScale)
+    μ, σ, ρ = params(dist)
+    μ = round(μ; digits=3)
+    σ = round(σ; digits=3)
+    μ == 0 ? "$σ $(distname(ρ))" : "$μ + $σ $(distname(ρ))"
+end
+
+# %%
 """
     nextcombination!(n, t, c = typeof(t)[min(t-1, i) for i in 1:t])
 
@@ -178,31 +188,39 @@ function sim(;
         disty = Normal(50, 1),
         m = 5,
         n = 5,
-        L = 10^5
+        L = 10^5,
+        calc_exact = true
     )
     tmpx = [Vector{Float64}(undef, m) for _ in 1:Threads.nthreads()]
     tmpy = [Vector{Float64}(undef, n) for _ in 1:Threads.nthreads()]
-    tmpxy = [Vector{Float64}(undef, m+n) for _ in 1:Threads.nthreads()]
-    tmprankxy = [Vector{Float64}(undef, m+n) for _ in 1:Threads.nthreads()]
-    tmpplace = [Vector{Int}(undef, m+n) for _ in 1:Threads.nthreads()]
-    tmpcomb = [Vector{Int}(undef, min(m,n)) for _ in 1:Threads.nthreads()]
+    if calc_exact
+        tmpxy = [Vector{Float64}(undef, m+n) for _ in 1:Threads.nthreads()]
+        tmprankxy = [Vector{Float64}(undef, m+n) for _ in 1:Threads.nthreads()]
+        tmpplace = [Vector{Int}(undef, m+n) for _ in 1:Threads.nthreads()]
+        tmpcomb = [Vector{Int}(undef, min(m,n)) for _ in 1:Threads.nthreads()]
+    end
     pval_ewmw = Vector{Float64}(undef, L)
     pval_awmw = Vector{Float64}(undef, L)
     Threads.@threads for i in 1:L
         x = rand!(distx, tmpx[Threads.threadid()])
         y = rand!(disty, tmpy[Threads.threadid()])
-        result_ewmw = exact_mann_whitney_u(x, y,
-            tmpxy[Threads.threadid()],
-            tmprankxy[Threads.threadid()],
-            tmpplace[Threads.threadid()],
-            tmpcomb[Threads.threadid()]
-        )
-        pval_ewmw[i] = result_ewmw[4]
+        if calc_exact
+            result_ewmw = exact_mann_whitney_u(x, y,
+                tmpxy[Threads.threadid()],
+                tmprankxy[Threads.threadid()],
+                tmpplace[Threads.threadid()],
+                tmpcomb[Threads.threadid()]
+            )
+            pval_ewmw[i] = result_ewmw[4]
+        end
         result_amwm = ApproximateMannWhitneyUTest(x, y)
         pval_awmw[i] = pvalue(result_amwm)
     end
     pval_ewmw, pval_awmw
 end
+
+# %% [markdown]
+# ## 等分布の場合
 
 # %%
 Random.seed!(4649373)
@@ -225,7 +243,7 @@ plot!(xtick=tick, ytick=tick)
 plot!(xguide="α", yguide="probability of p-value ≤ α")
 
 xmax = 0.1
-tick = 0:xmax/10:xmax
+tick = 0:xmax/10:1
 x = 0:xmax/1000:xmax
 P2 = plot(legend=:topleft)
 plot!(x, f; label="exact WMW")
@@ -263,5 +281,325 @@ P1 = plot(legend=:outertop)
 stephist!(pval_ewmw; norm=true, bin, label="exact WMW")
 stephist!(pval_awmw; norm=true, bin, label="approx WMW", ls=:dash)
 plot!(xtick=tick, size=(400, 250))
+
+# %% [markdown]
+# ## 不等分散の場合
+
+# %%
+Random.seed!(4649373)
+m, n = 100, 100
+distx, disty = Normal(0, 4), Normal()
+plot(distx; label=distname(distx))
+plot!(disty; label=distname(disty))
+plot!(size=(400, 250), legend=:outertop) |> display
+
+pval_ewmw, pval_awmw = @time sim(; distx, disty, m, n, L=10^5, calc_exact=false)
+#ecdf_ewmw = ecdf(pval_ewmw)
+#f(x) = ecdf_ewmw(x)
+ecdf_awmw = ecdf(pval_awmw)
+g(x) = ecdf_awmw(x)
+
+xmax = 1
+tick = 0:xmax/10:xmax
+x = 0:xmax/1000:xmax
+P1 = plot(legend=:topleft)
+#plot!(x, f; label="exact WMW", c=1)
+plot!(x, g; label="approx WMW")#, ls=:dash, c=2)
+plot!([0, xmax], [0, xmax]; label="", c=:black, ls=:dot)
+plot!(xtick=tick, ytick=tick)
+plot!(xguide="α", yguide="probability of p-value ≤ α")
+
+xmax = 0.1
+tick = 0:xmax/10:1
+x = 0:xmax/1000:xmax
+P2 = plot(legend=:topleft)
+#plot!(x, f; label="exact WMW", c=1)
+plot!(x, g; label="approx WMW")#, ls=:dash, c=2)
+plot!([0, xmax], [0, xmax]; label="", c=:black, ls=:dot)
+plot!(xtick=tick, ytick=tick)
+plot!(xguide="α", yguide="probability of p-value ≤ α")
+
+plot(P1, P2; size=(600, 300))
+plot!(plot_title="$(distname(distx)), m=$m vs. $(distname(disty)), n=$n")
+
+# %%
+Random.seed!(4649373)
+m, n = 50, 100
+distx, disty = Normal(0, 4), Normal()
+plot(distx; label=distname(distx))
+plot!(disty; label=distname(disty))
+plot!(size=(400, 250), legend=:outertop) |> display
+
+pval_ewmw, pval_awmw = @time sim(; distx, disty, m, n, L=10^5, calc_exact=false)
+#ecdf_ewmw = ecdf(pval_ewmw)
+#f(x) = ecdf_ewmw(x)
+ecdf_awmw = ecdf(pval_awmw)
+g(x) = ecdf_awmw(x)
+
+xmax = 1
+tick = 0:xmax/10:xmax
+x = 0:xmax/1000:xmax
+P1 = plot(legend=:topleft)
+#plot!(x, f; label="exact WMW", c=1)
+plot!(x, g; label="approx WMW")#, ls=:dash, c=2)
+plot!([0, xmax], [0, xmax]; label="", c=:black, ls=:dot)
+plot!(xtick=tick, ytick=tick)
+plot!(xguide="α", yguide="probability of p-value ≤ α")
+
+xmax = 0.1
+tick = 0:xmax/10:1
+x = 0:xmax/1000:xmax
+P2 = plot(legend=:topleft)
+#plot!(x, f; label="exact WMW", c=1)
+plot!(x, g; label="approx WMW")#, ls=:dash, c=2)
+plot!([0, xmax], [0, xmax]; label="", c=:black, ls=:dot)
+plot!(xtick=tick, ytick=tick)
+plot!(xguide="α", yguide="probability of p-value ≤ α")
+
+plot(P1, P2; size=(600, 300))
+plot!(plot_title="$(distname(distx)), m=$m vs. $(distname(disty)), n=$n")
+
+# %% [markdown]
+# ## 等分散かつ不等分布の場合
+
+# %%
+Random.seed!(4649373)
+m, n = 50, 50
+ν = 2.1
+distx, disty = Normal(), √((ν-2)/ν)*TDist(ν)
+plot(distx; label=distname(distx))
+plot!(disty; label=distname(disty))
+plot!(size=(400, 250), legend=:outertop) |> display
+
+@show mean(distx), std(distx)
+@show mean(disty), std(disty)
+pval_ewmw, pval_awmw = @time sim(; distx, disty, m, n, L=10^5, calc_exact=false)
+#ecdf_ewmw = ecdf(pval_ewmw)
+#f(x) = ecdf_ewmw(x)
+ecdf_awmw = ecdf(pval_awmw)
+g(x) = ecdf_awmw(x)
+
+xmax = 1
+tick = 0:xmax/10:xmax
+x = 0:xmax/1000:xmax
+P1 = plot(legend=:topleft)
+#plot!(x, f; label="exact WMW", c=1)
+plot!(x, g; label="approx WMW")#, ls=:dash, c=2)
+plot!([0, xmax], [0, xmax]; label="", c=:black, ls=:dot)
+plot!(xtick=tick, ytick=tick)
+plot!(xguide="α", yguide="probability of p-value ≤ α")
+
+xmax = 0.1
+tick = 0:xmax/10:1
+x = 0:xmax/1000:xmax
+P2 = plot(legend=:topleft)
+#plot!(x, f; label="exact WMW", c=1)
+plot!(x, g; label="approx WMW")#, ls=:dash, c=2)
+plot!([0, xmax], [0, xmax]; label="", c=:black, ls=:dot)
+plot!(xtick=tick, ytick=tick)
+plot!(xguide="α", yguide="probability of p-value ≤ α")
+
+plot(P1, P2; size=(600, 300))
+plot!(plot_title="$(distname(distx)), m=$m vs. $(distname(disty)), n=$n")
+
+# %%
+Random.seed!(4649373)
+m, n = 50, 100
+ν = 2.1
+distx, disty = Normal(), √((ν-2)/ν)*TDist(ν)
+plot(distx; label=distname(distx))
+plot!(disty; label=distname(disty))
+plot!(size=(400, 250), legend=:outertop) |> display
+
+@show mean(distx), std(distx)
+@show mean(disty), std(disty)
+pval_ewmw, pval_awmw = @time sim(; distx, disty, m, n, L=10^5, calc_exact=false)
+#ecdf_ewmw = ecdf(pval_ewmw)
+#f(x) = ecdf_ewmw(x)
+ecdf_awmw = ecdf(pval_awmw)
+g(x) = ecdf_awmw(x)
+
+xmax = 1
+tick = 0:xmax/10:xmax
+x = 0:xmax/1000:xmax
+P1 = plot(legend=:topleft)
+#plot!(x, f; label="exact WMW", c=1)
+plot!(x, g; label="approx WMW")#, ls=:dash, c=2)
+plot!([0, xmax], [0, xmax]; label="", c=:black, ls=:dot)
+plot!(xtick=tick, ytick=tick)
+plot!(xguide="α", yguide="probability of p-value ≤ α")
+
+xmax = 0.1
+tick = 0:xmax/10:1
+x = 0:xmax/1000:xmax
+P2 = plot(legend=:topleft)
+#plot!(x, f; label="exact WMW", c=1)
+plot!(x, g; label="approx WMW")#, ls=:dash, c=2)
+plot!([0, xmax], [0, xmax]; label="", c=:black, ls=:dot)
+plot!(xtick=tick, ytick=tick)
+plot!(xguide="α", yguide="probability of p-value ≤ α")
+
+plot(P1, P2; size=(600, 300))
+plot!(plot_title="$(distname(distx)), m=$m vs. $(distname(disty)), n=$n")
+
+# %%
+Random.seed!(4649373)
+m, n = 50, 50
+ν = 2.01
+distx, disty = Normal(), √((ν-2)/ν)*TDist(ν)
+plot(distx; label=distname(distx))
+plot!(disty; label=distname(disty))
+plot!(size=(400, 250), legend=:outertop) |> display
+
+@show mean(distx), std(distx)
+@show mean(disty), std(disty)
+pval_ewmw, pval_awmw = @time sim(; distx, disty, m, n, L=10^5, calc_exact=false)
+#ecdf_ewmw = ecdf(pval_ewmw)
+#f(x) = ecdf_ewmw(x)
+ecdf_awmw = ecdf(pval_awmw)
+g(x) = ecdf_awmw(x)
+
+xmax = 1
+tick = 0:xmax/10:xmax
+x = 0:xmax/1000:xmax
+P1 = plot(legend=:topleft)
+#plot!(x, f; label="exact WMW", c=1)
+plot!(x, g; label="approx WMW")#, ls=:dash, c=2)
+plot!([0, xmax], [0, xmax]; label="", c=:black, ls=:dot)
+plot!(xtick=tick, ytick=tick)
+plot!(xguide="α", yguide="probability of p-value ≤ α")
+
+xmax = 0.1
+tick = 0:xmax/10:1
+x = 0:xmax/1000:xmax
+P2 = plot(legend=:topleft)
+#plot!(x, f; label="exact WMW", c=1)
+plot!(x, g; label="approx WMW")#, ls=:dash, c=2)
+plot!([0, xmax], [0, xmax]; label="", c=:black, ls=:dot)
+plot!(xtick=tick, ytick=tick)
+plot!(xguide="α", yguide="probability of p-value ≤ α")
+
+plot(P1, P2; size=(600, 300))
+plot!(plot_title="$(distname(distx)), m=$m vs. $(distname(disty)), n=$n")
+
+# %%
+Random.seed!(4649373)
+m, n = 50, 100
+ν = 2.01
+distx, disty = Normal(), √((ν-2)/ν)*TDist(ν)
+plot(distx; label=distname(distx))
+plot!(disty; label=distname(disty))
+plot!(size=(400, 250), legend=:outertop) |> display
+
+@show mean(distx), std(distx)
+@show mean(disty), std(disty)
+pval_ewmw, pval_awmw = @time sim(; distx, disty, m, n, L=10^5, calc_exact=false)
+#ecdf_ewmw = ecdf(pval_ewmw)
+#f(x) = ecdf_ewmw(x)
+ecdf_awmw = ecdf(pval_awmw)
+g(x) = ecdf_awmw(x)
+
+xmax = 1
+tick = 0:xmax/10:xmax
+x = 0:xmax/1000:xmax
+P1 = plot(legend=:topleft)
+#plot!(x, f; label="exact WMW", c=1)
+plot!(x, g; label="approx WMW")#, ls=:dash, c=2)
+plot!([0, xmax], [0, xmax]; label="", c=:black, ls=:dot)
+plot!(xtick=tick, ytick=tick)
+plot!(xguide="α", yguide="probability of p-value ≤ α")
+
+xmax = 0.1
+tick = 0:xmax/10:1
+x = 0:xmax/1000:xmax
+P2 = plot(legend=:topleft)
+#plot!(x, f; label="exact WMW", c=1)
+plot!(x, g; label="approx WMW")#, ls=:dash, c=2)
+plot!([0, xmax], [0, xmax]; label="", c=:black, ls=:dot)
+plot!(xtick=tick, ytick=tick)
+plot!(xguide="α", yguide="probability of p-value ≤ α")
+
+plot(P1, P2; size=(600, 300))
+plot!(plot_title="$(distname(distx)), m=$m vs. $(distname(disty)), n=$n")
+
+# %%
+Random.seed!(4649373)
+m, n = 50, 50
+ν = 2.0001
+distx, disty = Normal(), √((ν-2)/ν)*TDist(ν)
+plot(distx; label=distname(distx))
+plot!(disty; label=distname(disty))
+plot!(size=(400, 250), legend=:outertop) |> display
+
+@show mean(distx), std(distx)
+@show mean(disty), std(disty)
+pval_ewmw, pval_awmw = @time sim(; distx, disty, m, n, L=10^5, calc_exact=false)
+#ecdf_ewmw = ecdf(pval_ewmw)
+#f(x) = ecdf_ewmw(x)
+ecdf_awmw = ecdf(pval_awmw)
+g(x) = ecdf_awmw(x)
+
+xmax = 1
+tick = 0:xmax/10:xmax
+x = 0:xmax/1000:xmax
+P1 = plot(legend=:topleft)
+#plot!(x, f; label="exact WMW", c=1)
+plot!(x, g; label="approx WMW")#, ls=:dash, c=2)
+plot!([0, xmax], [0, xmax]; label="", c=:black, ls=:dot)
+plot!(xtick=tick, ytick=tick)
+plot!(xguide="α", yguide="probability of p-value ≤ α")
+
+xmax = 0.1
+tick = 0:xmax/10:1
+x = 0:xmax/1000:xmax
+P2 = plot(legend=:topleft)
+#plot!(x, f; label="exact WMW", c=1)
+plot!(x, g; label="approx WMW")#, ls=:dash, c=2)
+plot!([0, xmax], [0, xmax]; label="", c=:black, ls=:dot)
+plot!(xtick=tick, ytick=tick)
+plot!(xguide="α", yguide="probability of p-value ≤ α")
+
+plot(P1, P2; size=(600, 300))
+plot!(plot_title="$(distname(distx)), m=$m vs. $(distname(disty)), n=$n")
+
+# %%
+Random.seed!(4649373)
+m, n = 50, 100
+ν = 2.0001
+distx, disty = Normal(), √((ν-2)/ν)*TDist(ν)
+plot(distx; label=distname(distx))
+plot!(disty; label=distname(disty))
+plot!(size=(400, 250), legend=:outertop) |> display
+
+@show mean(distx), std(distx)
+@show mean(disty), std(disty)
+pval_ewmw, pval_awmw = @time sim(; distx, disty, m, n, L=10^5, calc_exact=false)
+#ecdf_ewmw = ecdf(pval_ewmw)
+#f(x) = ecdf_ewmw(x)
+ecdf_awmw = ecdf(pval_awmw)
+g(x) = ecdf_awmw(x)
+
+xmax = 1
+tick = 0:xmax/10:xmax
+x = 0:xmax/1000:xmax
+P1 = plot(legend=:topleft)
+#plot!(x, f; label="exact WMW", c=1)
+plot!(x, g; label="approx WMW")#, ls=:dash, c=2)
+plot!([0, xmax], [0, xmax]; label="", c=:black, ls=:dot)
+plot!(xtick=tick, ytick=tick)
+plot!(xguide="α", yguide="probability of p-value ≤ α")
+
+xmax = 0.1
+tick = 0:xmax/10:1
+x = 0:xmax/1000:xmax
+P2 = plot(legend=:topleft)
+#plot!(x, f; label="exact WMW", c=1)
+plot!(x, g; label="approx WMW")#, ls=:dash, c=2)
+plot!([0, xmax], [0, xmax]; label="", c=:black, ls=:dot)
+plot!(xtick=tick, ytick=tick)
+plot!(xguide="α", yguide="probability of p-value ≤ α")
+
+plot(P1, P2; size=(600, 300))
+plot!(plot_title="$(distname(distx)), m=$m vs. $(distname(disty)), n=$n")
 
 # %%
