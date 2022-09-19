@@ -23,6 +23,8 @@ using StatsPlots
 default(fmt=:png, titlefontsize=10, tickfontsize=6,
     guidefontsize=9, plot_titlefontsize=10)
 
+safediv(x, y) = x == 0 ? x : isinf(y) ? zero(y) : x/y
+
 # %%
 distname(dist) = replace(string(dist), r"{[^}]*}"=>"")
 
@@ -183,40 +185,283 @@ end
 @doc exact_mann_whitney_u
 
 # %%
+"""
+    h_brunner_munzel(x, y)
+
+この函数は, x < y のとき 1.0 を, x = y のとき 0.5 を返す.
+"""
+h_brunner_munzel(x, y) = (x < y) + (x == y)/2
+
+@doc raw"""
+    phat_brunner_munzel(X, Y)
+
+まず以下のようにおく:
+
+```math
+\begin{aligned}
+&
+H(x, y) = \begin{cases} 1 & (x < y) \\ 1/2 & (x = y), \end{cases}
+\\ &
+m = \mathrm{length}(X), \quad
+n = \mathrm{length}(Y), \quad
+x_i = X[i], \quad
+y_j = Y[j]
+\end{aligned}
+```
+
+この函数は次の $\hat{p}$ を返す:
+
+```math
+\hat{p} = \frac{1}{mn}\sum_{i=1}^m \sum_{j=1}^n H(x_i, y_j).
+```
+"""
+phat_brunner_munzel(X, Y) = mean(h_brunner_munzel(x, y) for x in X, y in Y)
+
+@doc raw"""
+    statistics_brunner_munzel(X, Y,
+        Hx = similar(X, Float64),
+        Hy = similar(Y, Float64);
+        p = 1/2
+    )
+
+この函数はデータ `X`, `Y` について, Brunner-Munzel検定関係の統計量達を計算する. 詳細は以下の通り.
+
+函数 $H(x, y)$ と $\hat{p}$, $H^x_i$, $H^y_j$, $\bar{H}^x$, $\bar{H}^y$ を次のように定める:
+
+```math
+\begin{aligned}
+&
+m = \mathrm{length}(X), \quad
+n = \mathrm{length}(Y), \quad
+x_i = X[i], \quad
+y_j = Y[j],
+\\ &
+\hat{p} = \frac{1}{mn}\sum_{i=1}^m \sum_{j=1}^n H(x_i, y_j),
+\\ &
+H(x, y) = \begin{cases} 1 & (x < y) \\ 1/2 & (x = y), \end{cases}
+\\ &
+H^x_i = \sum_{j=1}^n H(y_j, x_i), \quad
+H^y_j = \sum_{i=1}^m H(x_i, y_j),
+\\ &
+\bar{H}^x = \frac{1}{m} \sum_{i=1}^m H^x_i = n - n\hat{p},
+\\ &
+\bar{H}^y = \frac{1}{n} \sum_{j=1}^n H^y_j = m\hat{p}.
+\end{aligned}
+```
+
+この函数は以下達の named tuple で返す:
+
+```math
+\begin{aligned}
+&
+\mathrm{phat} = 
+\hat{p} = \frac{\bar{H}^x - \bar{H}^y + n}{m + n},
+\\ &
+\mathrm{sx2} =
+\hat{\sigma}_x^2 = \frac{1}{n^2}\frac{1}{m-1}\sum_{i=1}^m (H^x_i - \bar{H}^x)^2,
+\\ &
+\mathrm{sy2} =
+\hat{\sigma}_y^2 = \frac{1}{m^2}\frac{1}{n-1}\sum_{j=1}^n (H^y_j - \bar{H}^y)^2,
+\\ &
+\mathrm{sehat} = 
+\widehat{\mathrm{se}} = \sqrt{\frac{\hat{\sigma}_x^2}{m} + \frac{\hat{\sigma}_y^2}{n}}, 
+\\ &
+\mathrm{tvalue} = t = \frac{\hat{p} - p}{\widehat{\mathrm{se}}},
+\\ &
+\mathrm{df} =
+\nu = 
+\frac
+{\left(\hat{\sigma}_x^2/m + \hat{\sigma}_y^2/n\right)^2}
+{
+\dfrac{\left(\hat{\sigma}_x^2/m\right)^2}{m-1} +
+\dfrac{\left(\hat{\sigma}_y^2/n\right)^2}{n-1}
+},
+\\ &
+\mathrm{pvalue} =
+2\mathrm{ccdf}(\mathrm{TDist}(\nu), |t|).
+\end{aligned}
+```
+"""
+function statistics_brunner_munzel(X, Y,
+        Hx = similar(X, Float64),
+        Hy = similar(Y, Float64);
+        p = 1/2
+    )
+    m, n = length(X), length(Y)
+    for (i, x) in pairs(X)
+        Hx[i] = sum(h_brunner_munzel(y, x) for y in Y)
+    end
+    for (j, y) in pairs(Y)
+        Hy[j] = sum(h_brunner_munzel(x, y) for x in X)
+    end
+    phat = (mean(Hy) - mean(Hx) + n)/(m + n)
+    sx2, sy2 = var(Hx)/n^2, var(Hy)/m^2
+    sehat = √(sx2/m + sy2/n)
+    tvalue = (phat - p)/sehat
+    df = safediv((sx2/m + sy2/n)^2, (sx2/m)^2/(m-1) + (sy2/n)^2/(n-1))
+    pvalue = (df != 0 && isfinite(df)) ? 2ccdf(TDist(df), abs(tvalue)) : zero(df)
+    (; phat, sx2, sy2, sehat, tvalue, df, pvalue)
+end
+
+@doc raw"""
+    pvalue_brunner_munzel(X, Y,
+        Hx = similar(X, Float64),
+        Hy = similar(Y, Float64);
+        p = 1/2
+    )
+
+この函数はBrunner-Munzel検定のP値 `pvalue` を返す.
+"""
+function pvalue_brunner_munzel(X, Y,
+        Hx = similar(X, Float64),
+        Hy = similar(Y, Float64);
+        p = 1/2
+    )
+    statistics_brunner_munzel(X, Y, Hx, Hy; p).pvalue
+end
+
+"""
+    tieshift(X::AbstractVector, Y::AbstractVector; p = 1/2)
+
+この函数は `phat_brunner_munzel(X, Y .+ a)` の値が `p` に等しくなる `a` を返す.
+"""
+function tieshift(X::AbstractVector, Y::AbstractVector; p = 1/2)
+    shiftmin = minimum(X) - maximum(Y) - 0.1
+    shiftmax = maximum(X) - minimum(Y) + 0.1
+    find_zero(a -> phat_brunner_munzel(X, Y .+ a) - p, (shiftmin, shiftmax))
+end
+
+@doc raw"""
+    brunner_munzel(X, Y,
+        Hx = similar(X, Float64),
+        Hy = similar(Y, Float64),
+        Ytmp = similar(Y, Float64);
+        p = 1/2,
+        α = 0.05,
+        maxsplit = 30
+    )
+
+この函数はBrunner-Munzel検定を実行する. 詳細は以下の通り.
+
+この函数は `phat`, `sehat`, `tvalue`, `df`, `p`, `pvalue`, `α` および\
+以下達の named tuple を返す.
+
+```math
+\begin{aligned}
+&
+\mathrm{confint\_p} = (\text{$p$ の信頼度 $1-\alpha$ の信頼区間}),
+\\ &
+\mathrm{confint\_shift} = (\text{2つの集団が互角になるようなシフトの信頼度 $1-\alpha$ の信頼区間}),
+\\ &
+\mathrm{pvalue\_shift} = ($\mathrm{confint\_shift}$ の計算で使われたP値函数),
+\\ &
+\mathrm{shifthat} = (\text{2つの集団が互角になるようなシフトの点推定値}).
+\end{aligned}
+```
+
+さらに, $\mathrm{shiftmin}$, $\mathrm{shiftmax}$ はデータから推定されるシフトの下限と上限.
+
+"""
+function brunner_munzel(X, Y,
+        Hx = similar(X, Float64),
+        Hy = similar(Y, Float64),
+        Ytmp = similar(Y, Float64);
+        p = 1/2,
+        α = 0.05,
+        maxsplit = 30
+    )
+    (; phat, sehat, tvalue, df, pvalue) = statistics_brunner_munzel(X, Y, Hx, Hy; p)
+    
+    c = df == 0 ? Inf : quantile(TDist(df), 1 - α/2)
+    confint_p = [max(0, phat - c*sehat), min(1, phat + c*sehat)]
+    
+    function pvalue_shift(a)
+        @. Ytmp = Y + a
+        pvalue_brunner_munzel(X, Ytmp, Hx, Hy; p)
+    end
+    shiftmin = minimum(X) - maximum(Y) - 0.1
+    shiftmax = maximum(X) - minimum(Y) + 0.1
+    shifthat = tieshift(X, Y; p)
+    confint_shift = [
+        find_zero(a -> pvalue_shift(a) - α, (shiftmin, shifthat))
+        find_zero(a -> pvalue_shift(a) - α, (shifthat, shiftmax))
+    ]
+    
+    (; phat, sehat, tvalue, df, p, pvalue, α, confint_p,
+        confint_shift, pvalue_shift, shifthat, shiftmin, shiftmax)
+end
+
+function show_plot_brunner_munzel(X, Y,
+        Hx = similar(X, Float64),
+        Hy = similar(Y, Float64),
+        Ytmp = similar(Y, Float64);
+        p = 1/2,
+        α = 0.05,
+        showXY = false,
+        kwargs...
+    )
+    showXY && (@show X Y)
+    (; phat, sehat, tvalue, df, p, pvalue, α, confint_p, 
+        confint_shift, pvalue_shift, shifthat, shiftmin, shiftmax) =
+        brunner_munzel(X, Y, Hx, Hy, Ytmp; p, α)
+    pprint((; phat, sehat, tvalue, df, p, pvalue, α, confint_p,
+            confint_shift, shifthat))
+    println()
+    @show median(X) median(Y)
+    plot(pvalue_shift, shiftmin, shiftmax; label="")
+    vline!([tieshift(X, Y)]; label="", ls=:dash)    
+    title!("P-value function of shift")
+    plot!(ytick=0:0.05:1)
+    plot!(; kwargs...)
+end
+
+# %%
 function sim(;
         distx = Normal(50, 1),
         disty = Normal(50, 1),
         m = 5,
         n = 5,
         L = 10^5,
-        calc_exact = true
+        calc_bm = false
     )
     tmpx = [Vector{Float64}(undef, m) for _ in 1:Threads.nthreads()]
     tmpy = [Vector{Float64}(undef, n) for _ in 1:Threads.nthreads()]
-    if calc_exact
+    if calc_bm
+        tmpHx = [Vector{Float64}(undef, m) for _ in 1:Threads.nthreads()]
+        tmpHy = [Vector{Float64}(undef, n) for _ in 1:Threads.nthreads()]
+        tmpYtmp = [Vector{Float64}(undef, n) for _ in 1:Threads.nthreads()]
+        pval_bm = Vector{Float64}(undef, L)
+    else
         tmpxy = [Vector{Float64}(undef, m+n) for _ in 1:Threads.nthreads()]
         tmprankxy = [Vector{Float64}(undef, m+n) for _ in 1:Threads.nthreads()]
         tmpplace = [Vector{Int}(undef, m+n) for _ in 1:Threads.nthreads()]
         tmpcomb = [Vector{Int}(undef, min(m,n)) for _ in 1:Threads.nthreads()]
+        pval_ewmw = Vector{Float64}(undef, L)
     end
-    pval_ewmw = Vector{Float64}(undef, L)
     pval_awmw = Vector{Float64}(undef, L)
     Threads.@threads for i in 1:L
         x = rand!(distx, tmpx[Threads.threadid()])
         y = rand!(disty, tmpy[Threads.threadid()])
-        if calc_exact
+        if calc_bm
+            pval_bm[i] = pvalue_brunner_munzel(x, y,
+                tmpHx[Threads.threadid()],
+                tmpHy[Threads.threadid()])
+        else
             result_ewmw = exact_mann_whitney_u(x, y,
                 tmpxy[Threads.threadid()],
                 tmprankxy[Threads.threadid()],
                 tmpplace[Threads.threadid()],
-                tmpcomb[Threads.threadid()]
-            )
+                tmpcomb[Threads.threadid()])
             pval_ewmw[i] = result_ewmw[4]
         end
         result_amwm = ApproximateMannWhitneyUTest(x, y)
         pval_awmw[i] = pvalue(result_amwm)
     end
-    pval_ewmw, pval_awmw
+    if calc_bm
+        pval_bm, pval_awmw
+    else
+        pval_ewmw, pval_awmw
+    end
 end
 
 # %% [markdown]
@@ -225,13 +470,17 @@ end
 # %%
 Random.seed!(4649373)
 m, n = 5, 5
-pval_ewmw, pval_awmw = @time sim(; m, n, L=10^6)
+distx, disty = Normal(50, 1), Normal(50, 1)
+plot(distx; label=distname(distx))
+plot!(disty; label=distname(disty), ls=:dash)
+plot!(size=(400, 250), legend=:outertop) |> display
+
+pval_ewmw, pval_awmw = @time sim(; distx, disty, m, n, L=10^6)
 ecdf_ewmw = ecdf(pval_ewmw)
 f(x) = ecdf_ewmw(x)
 ecdf_awmw = ecdf(pval_awmw)
 g(x) = ecdf_awmw(x)
 
-# %%
 xmax = 1
 tick = 0:xmax/10:xmax
 x = 0:xmax/1000:xmax
@@ -283,323 +532,74 @@ stephist!(pval_awmw; norm=true, bin, label="approx WMW", ls=:dash)
 plot!(xtick=tick, size=(400, 250))
 
 # %% [markdown]
-# ## 不等分散の場合
+# ## Brunner-Munzel と Wilcoxon-Mann-Whitney の比較
 
 # %%
-Random.seed!(4649373)
-m, n = 100, 100
-distx, disty = Normal(0, 4), Normal()
-plot(distx; label=distname(distx))
-plot!(disty; label=distname(disty))
-plot!(size=(400, 250), legend=:outertop) |> display
+function plot_bm_vs_wmw(; distx=Normal(), disty=Normal(), m=50, n=50, kwargs...)
+    plot(distx; label=distname(distx))
+    plot!(disty; label=distname(disty), ls=:dash)
+    plot!(size=(400, 250), legend=:outertop)
+    plot!(; kwargs...) |> display
 
-pval_ewmw, pval_awmw = @time sim(; distx, disty, m, n, L=10^5, calc_exact=false)
-#ecdf_ewmw = ecdf(pval_ewmw)
-#f(x) = ecdf_ewmw(x)
-ecdf_awmw = ecdf(pval_awmw)
-g(x) = ecdf_awmw(x)
+    @show mean(distx), std(distx)
+    @show mean(disty), std(disty)
+    
+    pval_bm, pval_awmw = @time sim(; distx, disty, m, n, L=10^5, calc_bm=true)
+    ecdf_bm = ecdf(pval_bm)
+    f(x) = ecdf_bm(x)
+    ecdf_awmw = ecdf(pval_awmw)
+    g(x) = ecdf_awmw(x)
 
-xmax = 1
-tick = 0:xmax/10:xmax
-x = 0:xmax/1000:xmax
-P1 = plot(legend=:topleft)
-#plot!(x, f; label="exact WMW", c=1)
-plot!(x, g; label="approx WMW")#, ls=:dash, c=2)
-plot!([0, xmax], [0, xmax]; label="", c=:black, ls=:dot)
-plot!(xtick=tick, ytick=tick)
-plot!(xguide="α", yguide="probability of p-value ≤ α")
+    xmax = 1
+    tick = 0:xmax/10:xmax
+    x = 0:xmax/1000:xmax
+    P1 = plot(legend=:topleft)
+    plot!(x, f; label="Brunner-Munzel", c=1)
+    plot!(x, g; label="approx WMW", ls=:dash, c=2)
+    plot!([0, xmax], [0, xmax]; label="", c=:black, ls=:dot)
+    plot!(xtick=tick, ytick=tick)
+    plot!(xguide="α", yguide="probability of p-value ≤ α")
 
-xmax = 0.1
-tick = 0:xmax/10:1
-x = 0:xmax/1000:xmax
-P2 = plot(legend=:topleft)
-#plot!(x, f; label="exact WMW", c=1)
-plot!(x, g; label="approx WMW")#, ls=:dash, c=2)
-plot!([0, xmax], [0, xmax]; label="", c=:black, ls=:dot)
-plot!(xtick=tick, ytick=tick)
-plot!(xguide="α", yguide="probability of p-value ≤ α")
+    xmax = 0.1
+    tick = 0:xmax/10:1
+    x = 0:xmax/1000:xmax
+    P2 = plot(legend=:topleft)
+    plot!(x, f; label="Brunner-Munzel", c=1)
+    plot!(x, g; label="approx WMW", ls=:dash, c=2)
+    plot!([0, xmax], [0, xmax]; label="", c=:black, ls=:dot)
+    plot!(xtick=tick, ytick=tick)
+    plot!(xguide="α", yguide="probability of p-value ≤ α")
 
-plot(P1, P2; size=(600, 300))
-plot!(plot_title="$(distname(distx)), m=$m vs. $(distname(disty)), n=$n")
+    plot(P1, P2; size=(600, 300))
+    plot!(plot_title="$(distname(distx)), m=$m vs. $(distname(disty)), n=$n")
+end
+
+# %% [markdown]
+# ### 不等分散の場合
 
 # %%
-Random.seed!(4649373)
-m, n = 50, 100
-distx, disty = Normal(0, 4), Normal()
-plot(distx; label=distname(distx))
-plot!(disty; label=distname(disty))
-plot!(size=(400, 250), legend=:outertop) |> display
+plot_bm_vs_wmw(; distx=Normal(0,4), disty=Normal(), m=50, n=50)
 
-pval_ewmw, pval_awmw = @time sim(; distx, disty, m, n, L=10^5, calc_exact=false)
-#ecdf_ewmw = ecdf(pval_ewmw)
-#f(x) = ecdf_ewmw(x)
-ecdf_awmw = ecdf(pval_awmw)
-g(x) = ecdf_awmw(x)
-
-xmax = 1
-tick = 0:xmax/10:xmax
-x = 0:xmax/1000:xmax
-P1 = plot(legend=:topleft)
-#plot!(x, f; label="exact WMW", c=1)
-plot!(x, g; label="approx WMW")#, ls=:dash, c=2)
-plot!([0, xmax], [0, xmax]; label="", c=:black, ls=:dot)
-plot!(xtick=tick, ytick=tick)
-plot!(xguide="α", yguide="probability of p-value ≤ α")
-
-xmax = 0.1
-tick = 0:xmax/10:1
-x = 0:xmax/1000:xmax
-P2 = plot(legend=:topleft)
-#plot!(x, f; label="exact WMW", c=1)
-plot!(x, g; label="approx WMW")#, ls=:dash, c=2)
-plot!([0, xmax], [0, xmax]; label="", c=:black, ls=:dot)
-plot!(xtick=tick, ytick=tick)
-plot!(xguide="α", yguide="probability of p-value ≤ α")
-
-plot(P1, P2; size=(600, 300))
-plot!(plot_title="$(distname(distx)), m=$m vs. $(distname(disty)), n=$n")
+# %%
+plot_bm_vs_wmw(; distx=Normal(0,4), disty=Normal(), m=50, n=100)
 
 # %% [markdown]
 # ## 等分散かつ不等分布の場合
 
 # %%
-Random.seed!(4649373)
-m, n = 50, 50
 ν = 2.1
-distx, disty = Normal(), √((ν-2)/ν)*TDist(ν)
-plot(distx; label=distname(distx))
-plot!(disty; label=distname(disty))
-plot!(size=(400, 250), legend=:outertop) |> display
-
-@show mean(distx), std(distx)
-@show mean(disty), std(disty)
-pval_ewmw, pval_awmw = @time sim(; distx, disty, m, n, L=10^5, calc_exact=false)
-#ecdf_ewmw = ecdf(pval_ewmw)
-#f(x) = ecdf_ewmw(x)
-ecdf_awmw = ecdf(pval_awmw)
-g(x) = ecdf_awmw(x)
-
-xmax = 1
-tick = 0:xmax/10:xmax
-x = 0:xmax/1000:xmax
-P1 = plot(legend=:topleft)
-#plot!(x, f; label="exact WMW", c=1)
-plot!(x, g; label="approx WMW")#, ls=:dash, c=2)
-plot!([0, xmax], [0, xmax]; label="", c=:black, ls=:dot)
-plot!(xtick=tick, ytick=tick)
-plot!(xguide="α", yguide="probability of p-value ≤ α")
-
-xmax = 0.1
-tick = 0:xmax/10:1
-x = 0:xmax/1000:xmax
-P2 = plot(legend=:topleft)
-#plot!(x, f; label="exact WMW", c=1)
-plot!(x, g; label="approx WMW")#, ls=:dash, c=2)
-plot!([0, xmax], [0, xmax]; label="", c=:black, ls=:dot)
-plot!(xtick=tick, ytick=tick)
-plot!(xguide="α", yguide="probability of p-value ≤ α")
-
-plot(P1, P2; size=(600, 300))
-plot!(plot_title="$(distname(distx)), m=$m vs. $(distname(disty)), n=$n")
+plot_bm_vs_wmw(; distx=Normal(), disty=√((ν-2)/ν)*TDist(ν), m=50, n=50, xlim=(-4, 4))
 
 # %%
-Random.seed!(4649373)
-m, n = 50, 100
 ν = 2.1
-distx, disty = Normal(), √((ν-2)/ν)*TDist(ν)
-plot(distx; label=distname(distx))
-plot!(disty; label=distname(disty))
-plot!(size=(400, 250), legend=:outertop) |> display
-
-@show mean(distx), std(distx)
-@show mean(disty), std(disty)
-pval_ewmw, pval_awmw = @time sim(; distx, disty, m, n, L=10^5, calc_exact=false)
-#ecdf_ewmw = ecdf(pval_ewmw)
-#f(x) = ecdf_ewmw(x)
-ecdf_awmw = ecdf(pval_awmw)
-g(x) = ecdf_awmw(x)
-
-xmax = 1
-tick = 0:xmax/10:xmax
-x = 0:xmax/1000:xmax
-P1 = plot(legend=:topleft)
-#plot!(x, f; label="exact WMW", c=1)
-plot!(x, g; label="approx WMW")#, ls=:dash, c=2)
-plot!([0, xmax], [0, xmax]; label="", c=:black, ls=:dot)
-plot!(xtick=tick, ytick=tick)
-plot!(xguide="α", yguide="probability of p-value ≤ α")
-
-xmax = 0.1
-tick = 0:xmax/10:1
-x = 0:xmax/1000:xmax
-P2 = plot(legend=:topleft)
-#plot!(x, f; label="exact WMW", c=1)
-plot!(x, g; label="approx WMW")#, ls=:dash, c=2)
-plot!([0, xmax], [0, xmax]; label="", c=:black, ls=:dot)
-plot!(xtick=tick, ytick=tick)
-plot!(xguide="α", yguide="probability of p-value ≤ α")
-
-plot(P1, P2; size=(600, 300))
-plot!(plot_title="$(distname(distx)), m=$m vs. $(distname(disty)), n=$n")
+plot_bm_vs_wmw(; distx=Normal(), disty=√((ν-2)/ν)*TDist(ν), m=50, n=100, xlim=(-4, 4))
 
 # %%
-Random.seed!(4649373)
-m, n = 50, 50
 ν = 2.01
-distx, disty = Normal(), √((ν-2)/ν)*TDist(ν)
-plot(distx; label=distname(distx))
-plot!(disty; label=distname(disty))
-plot!(size=(400, 250), legend=:outertop) |> display
-
-@show mean(distx), std(distx)
-@show mean(disty), std(disty)
-pval_ewmw, pval_awmw = @time sim(; distx, disty, m, n, L=10^5, calc_exact=false)
-#ecdf_ewmw = ecdf(pval_ewmw)
-#f(x) = ecdf_ewmw(x)
-ecdf_awmw = ecdf(pval_awmw)
-g(x) = ecdf_awmw(x)
-
-xmax = 1
-tick = 0:xmax/10:xmax
-x = 0:xmax/1000:xmax
-P1 = plot(legend=:topleft)
-#plot!(x, f; label="exact WMW", c=1)
-plot!(x, g; label="approx WMW")#, ls=:dash, c=2)
-plot!([0, xmax], [0, xmax]; label="", c=:black, ls=:dot)
-plot!(xtick=tick, ytick=tick)
-plot!(xguide="α", yguide="probability of p-value ≤ α")
-
-xmax = 0.1
-tick = 0:xmax/10:1
-x = 0:xmax/1000:xmax
-P2 = plot(legend=:topleft)
-#plot!(x, f; label="exact WMW", c=1)
-plot!(x, g; label="approx WMW")#, ls=:dash, c=2)
-plot!([0, xmax], [0, xmax]; label="", c=:black, ls=:dot)
-plot!(xtick=tick, ytick=tick)
-plot!(xguide="α", yguide="probability of p-value ≤ α")
-
-plot(P1, P2; size=(600, 300))
-plot!(plot_title="$(distname(distx)), m=$m vs. $(distname(disty)), n=$n")
+plot_bm_vs_wmw(; distx=Normal(), disty=√((ν-2)/ν)*TDist(ν), m=50, n=50, xlim=(-4, 4))
 
 # %%
-Random.seed!(4649373)
-m, n = 50, 100
 ν = 2.01
-distx, disty = Normal(), √((ν-2)/ν)*TDist(ν)
-plot(distx; label=distname(distx))
-plot!(disty; label=distname(disty))
-plot!(size=(400, 250), legend=:outertop) |> display
-
-@show mean(distx), std(distx)
-@show mean(disty), std(disty)
-pval_ewmw, pval_awmw = @time sim(; distx, disty, m, n, L=10^5, calc_exact=false)
-#ecdf_ewmw = ecdf(pval_ewmw)
-#f(x) = ecdf_ewmw(x)
-ecdf_awmw = ecdf(pval_awmw)
-g(x) = ecdf_awmw(x)
-
-xmax = 1
-tick = 0:xmax/10:xmax
-x = 0:xmax/1000:xmax
-P1 = plot(legend=:topleft)
-#plot!(x, f; label="exact WMW", c=1)
-plot!(x, g; label="approx WMW")#, ls=:dash, c=2)
-plot!([0, xmax], [0, xmax]; label="", c=:black, ls=:dot)
-plot!(xtick=tick, ytick=tick)
-plot!(xguide="α", yguide="probability of p-value ≤ α")
-
-xmax = 0.1
-tick = 0:xmax/10:1
-x = 0:xmax/1000:xmax
-P2 = plot(legend=:topleft)
-#plot!(x, f; label="exact WMW", c=1)
-plot!(x, g; label="approx WMW")#, ls=:dash, c=2)
-plot!([0, xmax], [0, xmax]; label="", c=:black, ls=:dot)
-plot!(xtick=tick, ytick=tick)
-plot!(xguide="α", yguide="probability of p-value ≤ α")
-
-plot(P1, P2; size=(600, 300))
-plot!(plot_title="$(distname(distx)), m=$m vs. $(distname(disty)), n=$n")
-
-# %%
-Random.seed!(4649373)
-m, n = 50, 50
-ν = 2.0001
-distx, disty = Normal(), √((ν-2)/ν)*TDist(ν)
-plot(distx; label=distname(distx))
-plot!(disty; label=distname(disty))
-plot!(size=(400, 250), legend=:outertop) |> display
-
-@show mean(distx), std(distx)
-@show mean(disty), std(disty)
-pval_ewmw, pval_awmw = @time sim(; distx, disty, m, n, L=10^5, calc_exact=false)
-#ecdf_ewmw = ecdf(pval_ewmw)
-#f(x) = ecdf_ewmw(x)
-ecdf_awmw = ecdf(pval_awmw)
-g(x) = ecdf_awmw(x)
-
-xmax = 1
-tick = 0:xmax/10:xmax
-x = 0:xmax/1000:xmax
-P1 = plot(legend=:topleft)
-#plot!(x, f; label="exact WMW", c=1)
-plot!(x, g; label="approx WMW")#, ls=:dash, c=2)
-plot!([0, xmax], [0, xmax]; label="", c=:black, ls=:dot)
-plot!(xtick=tick, ytick=tick)
-plot!(xguide="α", yguide="probability of p-value ≤ α")
-
-xmax = 0.1
-tick = 0:xmax/10:1
-x = 0:xmax/1000:xmax
-P2 = plot(legend=:topleft)
-#plot!(x, f; label="exact WMW", c=1)
-plot!(x, g; label="approx WMW")#, ls=:dash, c=2)
-plot!([0, xmax], [0, xmax]; label="", c=:black, ls=:dot)
-plot!(xtick=tick, ytick=tick)
-plot!(xguide="α", yguide="probability of p-value ≤ α")
-
-plot(P1, P2; size=(600, 300))
-plot!(plot_title="$(distname(distx)), m=$m vs. $(distname(disty)), n=$n")
-
-# %%
-Random.seed!(4649373)
-m, n = 50, 100
-ν = 2.0001
-distx, disty = Normal(), √((ν-2)/ν)*TDist(ν)
-plot(distx; label=distname(distx))
-plot!(disty; label=distname(disty))
-plot!(size=(400, 250), legend=:outertop) |> display
-
-@show mean(distx), std(distx)
-@show mean(disty), std(disty)
-pval_ewmw, pval_awmw = @time sim(; distx, disty, m, n, L=10^5, calc_exact=false)
-#ecdf_ewmw = ecdf(pval_ewmw)
-#f(x) = ecdf_ewmw(x)
-ecdf_awmw = ecdf(pval_awmw)
-g(x) = ecdf_awmw(x)
-
-xmax = 1
-tick = 0:xmax/10:xmax
-x = 0:xmax/1000:xmax
-P1 = plot(legend=:topleft)
-#plot!(x, f; label="exact WMW", c=1)
-plot!(x, g; label="approx WMW")#, ls=:dash, c=2)
-plot!([0, xmax], [0, xmax]; label="", c=:black, ls=:dot)
-plot!(xtick=tick, ytick=tick)
-plot!(xguide="α", yguide="probability of p-value ≤ α")
-
-xmax = 0.1
-tick = 0:xmax/10:1
-x = 0:xmax/1000:xmax
-P2 = plot(legend=:topleft)
-#plot!(x, f; label="exact WMW", c=1)
-plot!(x, g; label="approx WMW")#, ls=:dash, c=2)
-plot!([0, xmax], [0, xmax]; label="", c=:black, ls=:dot)
-plot!(xtick=tick, ytick=tick)
-plot!(xguide="α", yguide="probability of p-value ≤ α")
-
-plot(P1, P2; size=(600, 300))
-plot!(plot_title="$(distname(distx)), m=$m vs. $(distname(disty)), n=$n")
+plot_bm_vs_wmw(; distx=Normal(), disty=√((ν-2)/ν)*TDist(ν), m=50, n=100, xlim=(-4, 4))
 
 # %%
