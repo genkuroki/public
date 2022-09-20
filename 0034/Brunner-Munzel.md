@@ -71,7 +71,8 @@ safediv(x, y) = x == 0 ? x : isinf(y) ? zero(y) : x/y
 
 `nextcombination!(n, t, c)` は配列で表現された組み合わせ `c` をその次の組み合わせに書き換えて, `c` を返す.
 
-初期条件を `c = typeof(t)[min(t-1, i) for i in 1:t]` にすると, `binomial(n, t)` 回の `nextcombination!(n, t, c)` ですべての組み合わせが生成される.
+初期条件を `c = typeof(t)[min(t-1, i) for i in 1:t]` にすると, 
+`binomial(n, t)` 回の `nextcombination!(n, t, c)` ですべての組み合わせが生成される.
 """
 function nextcombination!(n, t, c = typeof(t)[min(t-1, i) for i in 1:t])
     t == 0 && return c
@@ -89,7 +90,8 @@ end
 """
     mycombinations!(n::Integer, t, c)
 
-事前に割り当てられた組み合わせを格納する配列 `c` を使って, `[1,2,…,n]` からの重複無しの `t` 個の組み合わせのすべてを生成する生成子を返す.
+事前に割り当てられた組み合わせを格納する配列 `c` を使って, 
+`[1,2,…,n]` からの重複無しの `t` 個の組み合わせのすべてを生成する生成子を返す.
 """
 function mycombinations!(n::Integer, t, c)
     for i in 1:t c[i] = min(t - 1, i) end
@@ -99,7 +101,8 @@ end
 """
     mycombinations!(a, t, c)
 
-事前に割り当てられた組み合わせを格納する配列 `c` を使って, 配列 `a` からのインデックスに重複がない `t` 個の組み合わせのすべてを生成する生成子を返す.
+事前に割り当てられた組み合わせを格納する配列 `c` を使って, 
+配列 `a` からのインデックスに重複がない `t` 個の組み合わせのすべてを生成する生成子を返す.
 """
 function mycombinations!(a, t, c)
     t < 0 && (t = length(a) + 1)
@@ -109,7 +112,8 @@ end
 """
     mycombinations(x, t)
 
-`x` が整数ならば `[1,2,…,x]` からの, `x` が配列ならば `x` からのインデックスに重複がない `t` 個の組み合わせのすべてを生成する生成子を返す.
+`x` が整数ならば `[1,2,…,x]` からの, `x` が配列ならば `x` からの, 
+インデックスに重複がない `t` 個の組み合わせのすべてを生成する生成子を返す.
 """
 mycombinations(x, t) = mycombinations!(x, t, Vector{typeof(t)}(undef, t))
 ```
@@ -534,7 +538,8 @@ brunner.munzel.test(X, Y)
 """
     complementcomb!(complcomb::AbstractVector, comb::AbstractVector)
 
-`comb` が {1,2,…,N} から重複無しに m 個を選ぶ組み合わせを表す配列であり, `comb` の中で数は小さな順に並んでいるとし, `complcomb` は長さ N - m の配列であると仮定する.
+`comb` が {1,2,…,N} から重複無しに m 個を選ぶ組み合わせを表す配列であり, 
+`comb` の中で数は小さな順に並んでいるとし, `complcomb` は長さ N - m の配列であると仮定する.
 
 このとき, この函数は配列 `complcomb` に配列 `comb` の補集合を格納し, `complcomb` を返す.
 
@@ -561,7 +566,8 @@ end
 """
     complementcomb(N, comb::AbstractVector)
 
-`comb` が {1,2,…,N} から重複無しに m 個を選ぶ組み合わせを表す配列であり, `comb` の中で数は小さな順に並んでいると仮定する.
+`comb` が {1,2,…,N} から重複無しに m 個を選ぶ組み合わせを表す配列であり, 
+`comb` の中で数は小さな順に並んでいると仮定する.
 
 この函数は `comb` の補集合の配列を返す.
 
@@ -1021,15 +1027,27 @@ plot_pvals(; distx = Normal(0, 1), disty = Normal(0, 1), m = 10, n = 10)
 ```
 
 ```julia
+plot_pvals(; distx = Normal(0, 1), disty = Normal(0, 1), m = 40, n = 40)
+```
+
+```julia
 plot_pvals(; distx = Normal(0, 1), disty = Normal(0, 2), m = 10, n = 10)
 ```
 
 ```julia
-plot_pvals(; distx = LogNormal(), disty = LogNormal(1), m = 10, n = 10)
+plot_pvals(; distx = Normal(0, 1), disty = Normal(0, 2), m = 40, n = 40)
 ```
 
 ```julia
-plot_pvals(; distx = LogNormal(), disty = LogNormal(1), m = 20, n = 20)
+plot_pvals(; distx = Normal(0, 1), disty = Normal(0, 4), m = 10, n = 10)
+```
+
+```julia
+plot_pvals(; distx = Normal(0, 1), disty = Normal(0, 4), m = 40, n = 40)
+```
+
+```julia
+plot_pvals(; distx = LogNormal(), disty = LogNormal(1), m = 10, n = 10)
 ```
 
 ```julia
@@ -1041,7 +1059,15 @@ plot_pvals(; distx = TDist(2), disty = TDist(2), m = 10, n = 10, Δμ = 0.0)
 ```
 
 ```julia
+plot_pvals(; distx = TDist(2), disty = TDist(2), m = 40, n = 40, Δμ = 0.0)
+```
+
+```julia
 plot_pvals(; distx = TDist(2), disty = TDist(1.1), m = 10, n = 10, Δμ = 0.0)
+```
+
+```julia
+plot_pvals(; distx = TDist(2), disty = TDist(1.1), m = 40, n = 40, Δμ = 0.0)
 ```
 
 ### Brunner-Munzel検定は中央値に関する検定ではないことの証拠
@@ -1196,11 +1222,39 @@ end
 ```
 
 ```julia
+plot_confints(distx = Normal(0, 1), disty = Normal(0, 1), m = 10, n = 10)
+```
+
+```julia
+plot_confints(distx = Normal(0, 1), disty = Normal(0, 1), m = 40, n = 40)
+```
+
+```julia
+plot_confints(distx = Normal(0, 1), disty = Normal(0, 1), m = 160, n = 160)
+```
+
+```julia
 plot_confints(distx = Normal(0, 1), disty = Normal(0, 2), m = 10, n = 10)
 ```
 
 ```julia
-plot_confints(distx = Normal(2, 1), disty = Normal(0, 2), m = 10, n = 10)
+plot_confints(distx = Normal(0, 1), disty = Normal(0, 2), m = 40, n = 40)
+```
+
+```julia
+plot_confints(distx = Normal(0, 1), disty = Normal(0, 2), m = 160, n = 160)
+```
+
+```julia
+plot_confints(distx = Normal(0, 1), disty = Normal(0, 4), m = 10, n = 10)
+```
+
+```julia
+plot_confints(distx = Normal(0, 1), disty = Normal(0, 4), m = 40, n = 40)
+```
+
+```julia
+plot_confints(distx = Normal(0, 1), disty = Normal(0, 4), m = 160, n = 160)
 ```
 
 ```julia
@@ -1220,7 +1274,23 @@ plot_confints(distx = TDist(2), disty = TDist(2), m = 10, n = 10)
 ```
 
 ```julia
+plot_confints(distx = TDist(2), disty = TDist(2), m = 40, n = 40)
+```
+
+```julia
+plot_confints(distx = TDist(2), disty = TDist(2), m = 160, n = 160)
+```
+
+```julia
 plot_confints(distx = TDist(2), disty = TDist(1.1), m = 10, n = 10)
+```
+
+```julia
+plot_confints(distx = TDist(2), disty = TDist(1.1), m = 40, n = 40)
+```
+
+```julia
+plot_confints(distx = TDist(2), disty = TDist(1.1), m = 160, n = 160)
 ```
 
 ```julia
@@ -1261,11 +1331,39 @@ end
 ```
 
 ```julia
+plot_limits(distx = Normal(0, 1), disty = Normal(0, 1), m = 10, n = 10)
+```
+
+```julia
+plot_limits(distx = Normal(0, 1), disty = Normal(0, 1), m = 40, n = 40)
+```
+
+```julia
+plot_limits(distx = Normal(0, 1), disty = Normal(0, 1), m = 160, n = 160)
+```
+
+```julia
 plot_limits(distx = Normal(0, 1), disty = Normal(0, 2), m = 10, n = 10)
 ```
 
 ```julia
-plot_limits(distx = Normal(2, 1), disty = Normal(0, 2), m = 10, n = 10)
+plot_limits(distx = Normal(0, 1), disty = Normal(0, 2), m = 40, n = 40)
+```
+
+```julia
+plot_limits(distx = Normal(0, 1), disty = Normal(0, 2), m = 160, n = 160)
+```
+
+```julia
+plot_limits(distx = Normal(0, 1), disty = Normal(0, 4), m = 10, n = 10)
+```
+
+```julia
+plot_limits(distx = Normal(0, 1), disty = Normal(0, 4), m = 40, n = 40)
+```
+
+```julia
+plot_limits(distx = Normal(0, 1), disty = Normal(0, 4), m = 160, n = 160)
 ```
 
 ```julia
@@ -1285,7 +1383,23 @@ plot_limits(distx = TDist(2), disty = TDist(2), m = 10, n = 10)
 ```
 
 ```julia
+plot_limits(distx = TDist(2), disty = TDist(2), m = 40, n = 40)
+```
+
+```julia
+plot_limits(distx = TDist(2), disty = TDist(2), m = 160, n = 160)
+```
+
+```julia
 plot_limits(distx = TDist(2), disty = TDist(1.1), m = 10, n = 10)
+```
+
+```julia
+plot_limits(distx = TDist(2), disty = TDist(1.1), m = 40, n = 40)
+```
+
+```julia
+plot_limits(distx = TDist(2), disty = TDist(1.1), m = 160, n = 160)
 ```
 
 ## 小サンプルでのpermutation版の検定とBM検定とWelchのt検定の比較
