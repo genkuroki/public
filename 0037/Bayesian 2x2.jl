@@ -16,7 +16,8 @@
 
 # %%
 using Distributions
-using StatsBase: ecdf
+using LinearAlgebra
+using StatsBase: ecdf, Histogram
 using StatsPlots
 default(fmt=:png)
 
@@ -54,6 +55,21 @@ diff = p - q
 stephist(diff; norm=true, label="posterior of p - q")
 plot!([lower, upper], zeros(2); label="95% interval estimate of p - q", lw=4)
 scatter!([pointestimate], zeros(1); label="point estimate of p - q", ls=:dash)
+plot!(legend=:topleft)
+
+# %%
+h = fit(Histogram, diff, range(minimum(diff)-0.01, maximum(diff)+0.01, 401))
+x = (h.edges[1][begin+1:end] + h.edges[1][begin:end-1])/2
+dx = h.edges[1][begin+1:end] - h.edges[1][begin:end-1]
+y = h.weights ./ length(diff) ./ dx
+plot(x, y; label="posterior of p - q")
+i_L = findlast(≤(lower), x)
+i_U = findfirst(>(upper), x)
+plot!(x[begin:i_L], y[begin:i_L]; label="2.5%", fillrange=0, fa=0.3)
+plot!(x[i_U:end], y[i_U:end]; label="2.5%", fillrange=0, fa=0.3)
+plot!([lower, upper], zeros(2); label="95% interval estimate of p - q", lw=4)
+scatter!([pointestimate], zeros(1); label="point estimate of p - q", ls=:dash)
+plot!(xtick=-1:0.1:1, xguide="p - q")
 plot!(legend=:topleft)
 
 # %%
