@@ -18,9 +18,13 @@
 # # 2つの正規分布の直積モデルのベイズ統計によるWelchのt検定の再現
 #
 # * 黒木玄
-# * 2022-09-16
+# * 2022-09-16, 2022-09-22
 #
 # 2つの正規分布の直積モデルのベイズ統計でWelchのt検定が近似的に再現されることを確認する.
+
+# %% [markdown] toc=true
+# <h1>目次<span class="tocSkip"></span></h1>
+# <div class="toc"><ul class="toc-item"><li><span><a href="#分散が異なる２つの正規分布でデータを生成した場合" data-toc-modified-id="分散が異なる２つの正規分布でデータを生成した場合-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>分散が異なる２つの正規分布でデータを生成した場合</a></span></li><li><span><a href="#異なる２つのガンマ分布でデータを生成した場合" data-toc-modified-id="異なる２つのガンマ分布でデータを生成した場合-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>異なる２つのガンマ分布でデータを生成した場合</a></span></li><li><span><a href="#Welchのt検定での自由度の分布" data-toc-modified-id="Welchのt検定での自由度の分布-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>Welchのt検定での自由度の分布</a></span></li></ul></div>
 
 # %%
 using Distributions
@@ -29,7 +33,8 @@ using Random
 Random.seed!(4649373)
 using StatsBase: ecdf
 using StatsPlots
-default(fmt=:png, titlefontsize=10, plot_titlefontsize=10)
+default(fmt=:png, titlefontsize=10, plot_titlefontsize=10,
+    tickfontsize=6, guidefontsize=9)
 
 distname(dist) = replace(string(dist), r"{[^}]*}"=>"")
 
@@ -107,11 +112,11 @@ end
 # %%
 # 1つの正規分布モデルの共役事前分布のベイズ更新
 
-function bayesian_update(μ₀, v₀, κ, θ, n, ȳ, σ̂²)
-    μ₀_new = (μ₀/v₀ + n*ȳ)/(1/v₀ + n)
+function bayesian_update(μ₀, v₀, κ, θ, n, x̄, σ̂²)
+    μ₀_new = (μ₀/v₀ + n*x̄)/(1/v₀ + n)
     v₀_new = 1/(1/v₀ + n)
     κ_new = κ + n/2
-    θ_new = θ + (n/2)*(σ̂² + ((ȳ - μ₀)^2/v₀)/(1/v₀ + n))
+    θ_new = θ + (n/2)*(σ̂² + ((x̄ - μ₀)^2/v₀)/(1/v₀ + n))
     μ₀_new, v₀_new, κ_new, θ_new
 end
 
@@ -173,17 +178,24 @@ function plot_bayesian_welch(x, y; L=10^6, title="m=$(length(x)), n=$(length(y))
     plot!(; title, xlim)
 end
 
-function plot_bayesian_welch(distx, m, disty, n; L=10^6)
-    x = rand(distx, m)
-    y = rand(disty, n)
+function plot_bayesian_welch(distx, m, disty, n; L=10^6,
+        x = rand(distx, m), y = rand(disty, n))
+    @show mean(distx) - mean(disty)
+    @show var(distx) var(disty)
+    @show mean(x) - mean(y)
+    @show var(x) var(y)
+    @show degree_of_freedom_welch(x, y)
+    @show min(m,n) - 1, m + n - 2
     title="$(distname(distx)), m=$m\n$(distname(disty)), n=$n"
     plot_bayesian_welch(x, y; L, title)
 end
 
+# %% [markdown]
+# ## 分散が異なる２つの正規分布でデータを生成した場合
+
 # %%
-distx = Gamma(5, 3)
-disty = Gamma(3, 3)
-@show Δμ_true = mean(distx) - mean(disty)
+distx = Normal(0, 4)
+disty = Normal(0, 1)
 plot(distx; label="distx")
 plot!(disty; label="disty", ls=:dash)
 
@@ -213,5 +225,126 @@ plot_bayesian_welch(distx, 40, disty, 20)
 
 # %%
 plot_bayesian_welch(distx, 20, disty, 40)
+
+# %%
+plot_bayesian_welch(distx, 60, disty, 60)
+
+# %%
+plot_bayesian_welch(distx, 80, disty, 40)
+
+# %%
+plot_bayesian_welch(distx, 40, disty, 80)
+
+# %% [markdown]
+# ## 異なる２つのガンマ分布でデータを生成した場合
+
+# %%
+distx = Gamma(5, 3)
+disty = Gamma(3, 1)
+plot(distx; label="distx")
+plot!(disty; label="disty", ls=:dash)
+
+# %%
+plot_bayesian_welch(distx, 7, disty, 7)
+
+# %%
+plot_bayesian_welch(distx, 10, disty, 5)
+
+# %%
+plot_bayesian_welch(distx, 5, disty, 10)
+
+# %%
+plot_bayesian_welch(distx, 15, disty, 15)
+
+# %%
+plot_bayesian_welch(distx, 20, disty, 10)
+
+# %%
+plot_bayesian_welch(distx, 10, disty, 20)
+
+# %%
+plot_bayesian_welch(distx, 30, disty, 30)
+
+# %%
+plot_bayesian_welch(distx, 40, disty, 20)
+
+# %%
+plot_bayesian_welch(distx, 20, disty, 40)
+
+# %%
+plot_bayesian_welch(distx, 60, disty, 60)
+
+# %%
+plot_bayesian_welch(distx, 80, disty, 40)
+
+# %%
+plot_bayesian_welch(distx, 40, disty, 80)
+
+# %% [markdown]
+# ## Welchのt検定での自由度の分布
+
+# %%
+using Random: rand!
+
+function plot_dist_df_welch(distx, m, disty, n; L=10^6,
+        title="m=$m, n=$n", kwargs...)
+    tmpx = [Vector{Float64}(undef, m) for _ in 1:Threads.nthreads()]
+    tmpy = [Vector{Float64}(undef, n) for _ in 1:Threads.nthreads()]
+    df = Vector{Float64}(undef, L)
+    Threads.@threads for i in 1:L
+        x = rand!(distx, tmpx[Threads.threadid()])
+        y = rand!(distx, tmpy[Threads.threadid()])
+        df[i] = degree_of_freedom_welch(x, y)
+    end
+    
+    stephist(df; norm=true, label="df")
+    plot!(xlim = (min(m,n)-1-0.5, m+n-2+0.5))
+    plot!(legend=:topleft)
+    title!(title)
+    plot!(; kwargs...)
+end
+
+function plot_dists_df_welch(distx, disty, mns; L=10^6, kwargs...)
+    @assert length(mns) == 6
+    PP = []
+    for (m, n) in mns
+        P = plot_dist_df_welch(distx, m, disty, n; L, kwargs...)
+        push!(PP, P)
+    end
+    plot(PP...; layout=(2, 3), size=(800, 400))
+    plot!(plot_title="distx=$(distname(distx)),  disty=$(distname(disty))")
+end
+
+# %%
+mns = [(10-i, 5+i) for i in 0:5]
+plot_dists_df_welch(Normal(0,4), Normal(0,1), mns)
+
+# %%
+mns = [(20-i, 10+i) for i in 0:2:10]
+plot_dists_df_welch(Normal(0,4), Normal(0,1), mns)
+
+# %%
+mns = [(40-i, 20+i) for i in 0:4:20]
+plot_dists_df_welch(Normal(0,4), Normal(0,1), mns)
+
+# %%
+mns = [(80-i, 40+i) for i in 0:8:40]
+plot_dists_df_welch(Normal(0,4), Normal(0,1), mns)
+
+# %%
+mns = [(10-i, 5+i) for i in 0:5]
+plot_dists_df_welch(Gamma(5,3), Gamma(3,1), mns)
+
+# %%
+mns = [(20-i, 10+i) for i in 0:2:10]
+plot_dists_df_welch(Gamma(5,3), Gamma(3,1), mns)
+
+# %%
+mns = [(40-i, 20+i) for i in 0:4:20]
+plot_dists_df_welch(Gamma(5,3), Gamma(3,1), mns)
+
+# %%
+mns = [(80-i, 40+i) for i in 0:8:40]
+plot_dists_df_welch(Gamma(5,3), Gamma(3,1), mns)
 
 # %%
