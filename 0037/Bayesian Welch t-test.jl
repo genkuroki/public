@@ -24,7 +24,7 @@
 
 # %% [markdown] toc=true
 # <h1>目次<span class="tocSkip"></span></h1>
-# <div class="toc"><ul class="toc-item"><li><span><a href="#分散が異なる２つの正規分布でデータを生成した場合" data-toc-modified-id="分散が異なる２つの正規分布でデータを生成した場合-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>分散が異なる２つの正規分布でデータを生成した場合</a></span></li><li><span><a href="#異なる２つのガンマ分布でデータを生成した場合" data-toc-modified-id="異なる２つのガンマ分布でデータを生成した場合-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>異なる２つのガンマ分布でデータを生成した場合</a></span></li><li><span><a href="#Welchのt検定での自由度の分布" data-toc-modified-id="Welchのt検定での自由度の分布-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>Welchのt検定での自由度の分布</a></span></li></ul></div>
+# <div class="toc"><ul class="toc-item"><li><span><a href="#μの事後分布の比較" data-toc-modified-id="μの事後分布の比較-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>μの事後分布の比較</a></span><ul class="toc-item"><li><span><a href="#分散が異なる２つの正規分布でデータを生成した場合" data-toc-modified-id="分散が異なる２つの正規分布でデータを生成した場合-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>分散が異なる２つの正規分布でデータを生成した場合</a></span></li><li><span><a href="#異なる２つのガンマ分布でデータを生成した場合" data-toc-modified-id="異なる２つのガンマ分布でデータを生成した場合-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>異なる２つのガンマ分布でデータを生成した場合</a></span></li></ul></li><li><span><a href="#Welchのt検定での自由度の分布" data-toc-modified-id="Welchのt検定での自由度の分布-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Welchのt検定での自由度の分布</a></span><ul class="toc-item"><li><span><a href="#分散が異なる２つの正規分布でデータを生成した場合" data-toc-modified-id="分散が異なる２つの正規分布でデータを生成した場合-2.1"><span class="toc-item-num">2.1&nbsp;&nbsp;</span>分散が異なる２つの正規分布でデータを生成した場合</a></span></li><li><span><a href="#異なる２つのガンマ分布でデータを生成した場合" data-toc-modified-id="異なる２つのガンマ分布でデータを生成した場合-2.2"><span class="toc-item-num">2.2&nbsp;&nbsp;</span>異なる２つのガンマ分布でデータを生成した場合</a></span></li></ul></li></ul></div>
 
 # %%
 using Distributions
@@ -125,10 +125,10 @@ function bayesian_update(μ₀, v₀, κ, θ, y)
     bayesian_update(μ₀, v₀, κ, θ, n, ȳ, σ̂²)
 end
 
-# μに関する事前事後分布
+# μに関する周辺事前分布
 posterior_μ(μ₀, v₀, κ, θ) = μ₀ + √(θ/κ*v₀)*TDist(2κ)
 
-# 事前予測分布
+# x_new に関する事前予測分布
 preddist(μ₀, v₀, κ, θ) = μ₀ + √(θ/κ*(1 + v₀))*TDist(2κ)
 
 # %%
@@ -191,7 +191,10 @@ function plot_bayesian_welch(distx, m, disty, n; L=10^6,
 end
 
 # %% [markdown]
-# ## 分散が異なる２つの正規分布でデータを生成した場合
+# ## μの事後分布の比較
+
+# %% [markdown]
+# ### 分散が異なる２つの正規分布でデータを生成した場合
 
 # %%
 distx = Normal(0, 4)
@@ -200,43 +203,43 @@ plot(distx; label="distx")
 plot!(disty; label="disty", ls=:dash)
 
 # %%
-plot_bayesian_welch(distx, 7, disty, 7)
+plot_bayesian_welch(distx, 8, disty, 8)
 
 # %%
-plot_bayesian_welch(distx, 10, disty, 5)
+plot_bayesian_welch(distx, 10, disty, 6)
 
 # %%
-plot_bayesian_welch(distx, 5, disty, 10)
+plot_bayesian_welch(distx, 6, disty, 10)
 
 # %%
-plot_bayesian_welch(distx, 15, disty, 15)
+plot_bayesian_welch(distx, 16, disty, 16)
 
 # %%
-plot_bayesian_welch(distx, 20, disty, 10)
+plot_bayesian_welch(distx, 20, disty, 12)
 
 # %%
-plot_bayesian_welch(distx, 10, disty, 20)
+plot_bayesian_welch(distx, 12, disty, 20)
 
 # %%
-plot_bayesian_welch(distx, 30, disty, 30)
+plot_bayesian_welch(distx, 32, disty, 32)
 
 # %%
-plot_bayesian_welch(distx, 40, disty, 20)
+plot_bayesian_welch(distx, 40, disty, 24)
 
 # %%
-plot_bayesian_welch(distx, 20, disty, 40)
+plot_bayesian_welch(distx, 24, disty, 40)
 
 # %%
-plot_bayesian_welch(distx, 60, disty, 60)
+plot_bayesian_welch(distx, 64, disty, 64)
 
 # %%
-plot_bayesian_welch(distx, 80, disty, 40)
+plot_bayesian_welch(distx, 80, disty, 48)
 
 # %%
-plot_bayesian_welch(distx, 40, disty, 80)
+plot_bayesian_welch(distx, 48, disty, 80)
 
 # %% [markdown]
-# ## 異なる２つのガンマ分布でデータを生成した場合
+# ### 異なる２つのガンマ分布でデータを生成した場合
 
 # %%
 distx = Gamma(5, 3)
@@ -245,40 +248,40 @@ plot(distx; label="distx")
 plot!(disty; label="disty", ls=:dash)
 
 # %%
-plot_bayesian_welch(distx, 7, disty, 7)
+plot_bayesian_welch(distx, 8, disty, 8)
 
 # %%
-plot_bayesian_welch(distx, 10, disty, 5)
+plot_bayesian_welch(distx, 10, disty, 6)
 
 # %%
-plot_bayesian_welch(distx, 5, disty, 10)
+plot_bayesian_welch(distx, 6, disty, 10)
 
 # %%
-plot_bayesian_welch(distx, 15, disty, 15)
+plot_bayesian_welch(distx, 16, disty, 16)
 
 # %%
-plot_bayesian_welch(distx, 20, disty, 10)
+plot_bayesian_welch(distx, 20, disty, 12)
 
 # %%
-plot_bayesian_welch(distx, 10, disty, 20)
+plot_bayesian_welch(distx, 12, disty, 20)
 
 # %%
-plot_bayesian_welch(distx, 30, disty, 30)
+plot_bayesian_welch(distx, 32, disty, 32)
 
 # %%
-plot_bayesian_welch(distx, 40, disty, 20)
+plot_bayesian_welch(distx, 40, disty, 24)
 
 # %%
-plot_bayesian_welch(distx, 20, disty, 40)
+plot_bayesian_welch(distx, 24, disty, 40)
 
 # %%
-plot_bayesian_welch(distx, 60, disty, 60)
+plot_bayesian_welch(distx, 64, disty, 64)
 
 # %%
-plot_bayesian_welch(distx, 80, disty, 40)
+plot_bayesian_welch(distx, 80, disty, 48)
 
 # %%
-plot_bayesian_welch(distx, 40, disty, 80)
+plot_bayesian_welch(distx, 48, disty, 80)
 
 # %% [markdown]
 # ## Welchのt検定での自由度の分布
@@ -297,7 +300,7 @@ function plot_dist_df_welch(distx, m, disty, n; L=10^6,
         df[i] = degree_of_freedom_welch(x, y)
     end
     
-    stephist(df; norm=true, label="df")
+    stephist(df; norm=true, label="")
     plot!(xlim = (min(m,n)-1-0.5, m+n-2+0.5))
     plot!(legend=:topleft)
     title!(title)
@@ -305,46 +308,52 @@ function plot_dist_df_welch(distx, m, disty, n; L=10^6,
 end
 
 function plot_dists_df_welch(distx, disty, mns; L=10^6, kwargs...)
-    @assert length(mns) == 6
+    @assert length(mns) == 9
     PP = []
     for (m, n) in mns
         P = plot_dist_df_welch(distx, m, disty, n; L, kwargs...)
         push!(PP, P)
     end
-    plot(PP...; layout=(2, 3), size=(800, 400))
-    plot!(plot_title="distx=$(distname(distx)),  disty=$(distname(disty))")
+    plot(PP...; layout=(3, 3), size=(800, 600))
+    plot!(plot_title="distributions of df for distx=$(distname(distx)),  disty=$(distname(disty))")
 end
 
+# %% [markdown]
+# ### 分散が異なる２つの正規分布でデータを生成した場合
+
 # %%
-mns = [(10-i, 5+i) for i in 0:5]
+mns = [(8-i, 8+i) for i in -4:4]
 plot_dists_df_welch(Normal(0,4), Normal(0,1), mns)
 
 # %%
-mns = [(20-i, 10+i) for i in 0:2:10]
+mns = [2 .* (8-i, 8+i) for i in -4:4]
 plot_dists_df_welch(Normal(0,4), Normal(0,1), mns)
 
 # %%
-mns = [(40-i, 20+i) for i in 0:4:20]
+mns = [4 .* (8-i, 8+i) for i in -4:4]
 plot_dists_df_welch(Normal(0,4), Normal(0,1), mns)
 
 # %%
-mns = [(80-i, 40+i) for i in 0:8:40]
+mns = [8 .* (8-i, 8+i) for i in -4:4]
 plot_dists_df_welch(Normal(0,4), Normal(0,1), mns)
 
+# %% [markdown]
+# ### 異なる２つのガンマ分布でデータを生成した場合
+
 # %%
-mns = [(10-i, 5+i) for i in 0:5]
+mns = [(8-i, 8+i) for i in -4:4]
 plot_dists_df_welch(Gamma(5,3), Gamma(3,1), mns)
 
 # %%
-mns = [(20-i, 10+i) for i in 0:2:10]
+mns = [2 .* (8-i, 8+i) for i in -4:4]
 plot_dists_df_welch(Gamma(5,3), Gamma(3,1), mns)
 
 # %%
-mns = [(40-i, 20+i) for i in 0:4:20]
+mns = [4 .* (8-i, 8+i) for i in -4:4]
 plot_dists_df_welch(Gamma(5,3), Gamma(3,1), mns)
 
 # %%
-mns = [(80-i, 40+i) for i in 0:8:40]
+mns = [8 .* (8-i, 8+i) for i in -4:4]
 plot_dists_df_welch(Gamma(5,3), Gamma(3,1), mns)
 
 # %%
