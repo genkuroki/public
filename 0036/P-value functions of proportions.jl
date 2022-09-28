@@ -18,7 +18,7 @@
 # # 比率のP値函数達
 #
 # * 黒木玄
-# * 2022-09-08～2022-09-12
+# * 2022-09-08～2022-09-26
 # * Copyright 2022 Gen Kuroki
 # * License: https://opensource.org/licenses/MIT
 # * [nbviewer版](https://nbviewer.org/github/genkuroki/public/blob/main/0036/P-value%20functions%20of%20proportions.ipynb)
@@ -56,7 +56,7 @@
 
 # %% [markdown] toc=true
 # <h1>目次<span class="tocSkip"></span></h1>
-# <div class="toc"><ul class="toc-item"><li><span><a href="#データと統計モデルの設定" data-toc-modified-id="データと統計モデルの設定-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>データと統計モデルの設定</a></span></li><li><span><a href="#P値函数と信頼区間の一般論" data-toc-modified-id="P値函数と信頼区間の一般論-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>P値函数と信頼区間の一般論</a></span></li><li><span><a href="#累積分布函数-cdf-と分位点函数-quantile" data-toc-modified-id="累積分布函数-cdf-と分位点函数-quantile-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>累積分布函数 cdf と分位点函数 quantile</a></span></li><li><span><a href="#補累積分布函数-ccdf-と補分位点函数-cquantile" data-toc-modified-id="補累積分布函数-ccdf-と補分位点函数-cquantile-4"><span class="toc-item-num">4&nbsp;&nbsp;</span>補累積分布函数 ccdf と補分位点函数 cquantile</a></span></li><li><span><a href="#WilsonのP値と信頼区間" data-toc-modified-id="WilsonのP値と信頼区間-5"><span class="toc-item-num">5&nbsp;&nbsp;</span>WilsonのP値と信頼区間</a></span><ul class="toc-item"><li><span><a href="#WilsonのP値" data-toc-modified-id="WilsonのP値-5.1"><span class="toc-item-num">5.1&nbsp;&nbsp;</span>WilsonのP値</a></span></li><li><span><a href="#Wilsonの信頼区間" data-toc-modified-id="Wilsonの信頼区間-5.2"><span class="toc-item-num">5.2&nbsp;&nbsp;</span>Wilsonの信頼区間</a></span></li><li><span><a href="#WilsonのP値と信頼区間の実装例" data-toc-modified-id="WilsonのP値と信頼区間の実装例-5.3"><span class="toc-item-num">5.3&nbsp;&nbsp;</span>WilsonのP値と信頼区間の実装例</a></span></li><li><span><a href="#P値函数のcompatibilityの指標としての解釈の仕方" data-toc-modified-id="P値函数のcompatibilityの指標としての解釈の仕方-5.4"><span class="toc-item-num">5.4&nbsp;&nbsp;</span>P値函数のcompatibilityの指標としての解釈の仕方</a></span></li></ul></li><li><span><a href="#WaldのP値と信頼区間" data-toc-modified-id="WaldのP値と信頼区間-6"><span class="toc-item-num">6&nbsp;&nbsp;</span>WaldのP値と信頼区間</a></span><ul class="toc-item"><li><span><a href="#WaldのP値" data-toc-modified-id="WaldのP値-6.1"><span class="toc-item-num">6.1&nbsp;&nbsp;</span>WaldのP値</a></span></li><li><span><a href="#Waldの信頼区間" data-toc-modified-id="Waldの信頼区間-6.2"><span class="toc-item-num">6.2&nbsp;&nbsp;</span>Waldの信頼区間</a></span></li><li><span><a href="#WaldのP値と信頼区間の実装例" data-toc-modified-id="WaldのP値と信頼区間の実装例-6.3"><span class="toc-item-num">6.3&nbsp;&nbsp;</span>WaldのP値と信頼区間の実装例</a></span></li><li><span><a href="#WaldのP値と信頼区間の構成で使った正規分布近似の粗さの視覚化" data-toc-modified-id="WaldのP値と信頼区間の構成で使った正規分布近似の粗さの視覚化-6.4"><span class="toc-item-num">6.4&nbsp;&nbsp;</span>WaldのP値と信頼区間の構成で使った正規分布近似の粗さの視覚化</a></span></li></ul></li><li><span><a href="#Clopper-PearsonのP値と信頼区間" data-toc-modified-id="Clopper-PearsonのP値と信頼区間-7"><span class="toc-item-num">7&nbsp;&nbsp;</span>Clopper-PearsonのP値と信頼区間</a></span><ul class="toc-item"><li><span><a href="#Clopper-PearsonのP値" data-toc-modified-id="Clopper-PearsonのP値-7.1"><span class="toc-item-num">7.1&nbsp;&nbsp;</span>Clopper-PearsonのP値</a></span></li><li><span><a href="#二項分布とベータ分布の関係" data-toc-modified-id="二項分布とベータ分布の関係-7.2"><span class="toc-item-num">7.2&nbsp;&nbsp;</span>二項分布とベータ分布の関係</a></span></li><li><span><a href="#Clopper-Pearsonの信頼区間" data-toc-modified-id="Clopper-Pearsonの信頼区間-7.3"><span class="toc-item-num">7.3&nbsp;&nbsp;</span>Clopper-Pearsonの信頼区間</a></span></li><li><span><a href="#Clopper-PearsonのP値と信頼区間の実装例" data-toc-modified-id="Clopper-PearsonのP値と信頼区間の実装例-7.4"><span class="toc-item-num">7.4&nbsp;&nbsp;</span>Clopper-PearsonのP値と信頼区間の実装例</a></span></li></ul></li><li><span><a href="#SterneのP値と信頼区間" data-toc-modified-id="SterneのP値と信頼区間-8"><span class="toc-item-num">8&nbsp;&nbsp;</span>SterneのP値と信頼区間</a></span><ul class="toc-item"><li><span><a href="#SterneのP値と信頼区間" data-toc-modified-id="SterneのP値と信頼区間-8.1"><span class="toc-item-num">8.1&nbsp;&nbsp;</span>SterneのP値と信頼区間</a></span></li><li><span><a href="#SterneのP値と信頼区間の実装例" data-toc-modified-id="SterneのP値と信頼区間の実装例-8.2"><span class="toc-item-num">8.2&nbsp;&nbsp;</span>SterneのP値と信頼区間の実装例</a></span></li></ul></li><li><span><a href="#4種のP値函数と信頼区間を同時にプロット" data-toc-modified-id="4種のP値函数と信頼区間を同時にプロット-9"><span class="toc-item-num">9&nbsp;&nbsp;</span>4種のP値函数と信頼区間を同時にプロット</a></span></li><li><span><a href="#ベイズ統計での信用区間に対応するP値函数" data-toc-modified-id="ベイズ統計での信用区間に対応するP値函数-10"><span class="toc-item-num">10&nbsp;&nbsp;</span>ベイズ統計での信用区間に対応するP値函数</a></span><ul class="toc-item"><li><span><a href="#二項分布モデルのHDI版信用区間" data-toc-modified-id="二項分布モデルのHDI版信用区間-10.1"><span class="toc-item-num">10.1&nbsp;&nbsp;</span>二項分布モデルのHDI版信用区間</a></span></li><li><span><a href="#HDI版信用区間に対応するP値函数" data-toc-modified-id="HDI版信用区間に対応するP値函数-10.2"><span class="toc-item-num">10.2&nbsp;&nbsp;</span>HDI版信用区間に対応するP値函数</a></span></li><li><span><a href="#HDI版の信用区間とそれに対応するベイズ版P値函数の実装例" data-toc-modified-id="HDI版の信用区間とそれに対応するベイズ版P値函数の実装例-10.3"><span class="toc-item-num">10.3&nbsp;&nbsp;</span>HDI版の信用区間とそれに対応するベイズ版P値函数の実装例</a></span></li><li><span><a href="#WilsonのP値函数とベイズ版P値函数のHDI版の比較" data-toc-modified-id="WilsonのP値函数とベイズ版P値函数のHDI版の比較-10.4"><span class="toc-item-num">10.4&nbsp;&nbsp;</span>WilsonのP値函数とベイズ版P値函数のHDI版の比較</a></span></li><li><span><a href="#二項分布モデルのETI版の信用区間とそれに対応するP値" data-toc-modified-id="二項分布モデルのETI版の信用区間とそれに対応するP値-10.5"><span class="toc-item-num">10.5&nbsp;&nbsp;</span>二項分布モデルのETI版の信用区間とそれに対応するP値</a></span></li><li><span><a href="#ETI版の信用区間とそれに対応するベイズ版P値函数の実装例" data-toc-modified-id="ETI版の信用区間とそれに対応するベイズ版P値函数の実装例-10.6"><span class="toc-item-num">10.6&nbsp;&nbsp;</span>ETI版の信用区間とそれに対応するベイズ版P値函数の実装例</a></span></li><li><span><a href="#WilsonのP値函数とベイズ版P値函数のETI版の比較" data-toc-modified-id="WilsonのP値函数とベイズ版P値函数のETI版の比較-10.7"><span class="toc-item-num">10.7&nbsp;&nbsp;</span>WilsonのP値函数とベイズ版P値函数のETI版の比較</a></span></li><li><span><a href="#ETI版信用区間とClopper-Pearsonの信頼区間の類似と比較" data-toc-modified-id="ETI版信用区間とClopper-Pearsonの信頼区間の類似と比較-10.8"><span class="toc-item-num">10.8&nbsp;&nbsp;</span>ETI版信用区間とClopper-Pearsonの信頼区間の類似と比較</a></span></li><li><span><a href="#主義の押し付けをやめよう" data-toc-modified-id="主義の押し付けをやめよう-10.9"><span class="toc-item-num">10.9&nbsp;&nbsp;</span>主義の押し付けをやめよう</a></span></li></ul></li><li><span><a href="#被覆確率の比較" data-toc-modified-id="被覆確率の比較-11"><span class="toc-item-num">11&nbsp;&nbsp;</span>被覆確率の比較</a></span></li><li><span><a href="#P値の累積分布函数の比較" data-toc-modified-id="P値の累積分布函数の比較-12"><span class="toc-item-num">12&nbsp;&nbsp;</span>P値の累積分布函数の比較</a></span></li></ul></div>
+# <div class="toc"><ul class="toc-item"><li><span><a href="#データと統計モデルの設定" data-toc-modified-id="データと統計モデルの設定-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>データと統計モデルの設定</a></span></li><li><span><a href="#P値函数と信頼区間の一般論" data-toc-modified-id="P値函数と信頼区間の一般論-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>P値函数と信頼区間の一般論</a></span></li><li><span><a href="#累積分布函数-cdf-と分位点函数-quantile" data-toc-modified-id="累積分布函数-cdf-と分位点函数-quantile-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>累積分布函数 cdf と分位点函数 quantile</a></span></li><li><span><a href="#補累積分布函数-ccdf-と補分位点函数-cquantile" data-toc-modified-id="補累積分布函数-ccdf-と補分位点函数-cquantile-4"><span class="toc-item-num">4&nbsp;&nbsp;</span>補累積分布函数 ccdf と補分位点函数 cquantile</a></span></li><li><span><a href="#WilsonのP値と信頼区間" data-toc-modified-id="WilsonのP値と信頼区間-5"><span class="toc-item-num">5&nbsp;&nbsp;</span>WilsonのP値と信頼区間</a></span><ul class="toc-item"><li><span><a href="#WilsonのP値" data-toc-modified-id="WilsonのP値-5.1"><span class="toc-item-num">5.1&nbsp;&nbsp;</span>WilsonのP値</a></span></li><li><span><a href="#Wilsonの信頼区間" data-toc-modified-id="Wilsonの信頼区間-5.2"><span class="toc-item-num">5.2&nbsp;&nbsp;</span>Wilsonの信頼区間</a></span></li><li><span><a href="#WilsonのP値と信頼区間の実装例" data-toc-modified-id="WilsonのP値と信頼区間の実装例-5.3"><span class="toc-item-num">5.3&nbsp;&nbsp;</span>WilsonのP値と信頼区間の実装例</a></span></li><li><span><a href="#P値函数のcompatibilityの指標としての解釈の仕方" data-toc-modified-id="P値函数のcompatibilityの指標としての解釈の仕方-5.4"><span class="toc-item-num">5.4&nbsp;&nbsp;</span>P値函数のcompatibilityの指標としての解釈の仕方</a></span></li></ul></li><li><span><a href="#WaldのP値と信頼区間" data-toc-modified-id="WaldのP値と信頼区間-6"><span class="toc-item-num">6&nbsp;&nbsp;</span>WaldのP値と信頼区間</a></span><ul class="toc-item"><li><span><a href="#WaldのP値" data-toc-modified-id="WaldのP値-6.1"><span class="toc-item-num">6.1&nbsp;&nbsp;</span>WaldのP値</a></span></li><li><span><a href="#Waldの信頼区間" data-toc-modified-id="Waldの信頼区間-6.2"><span class="toc-item-num">6.2&nbsp;&nbsp;</span>Waldの信頼区間</a></span></li><li><span><a href="#WaldのP値と信頼区間の実装例" data-toc-modified-id="WaldのP値と信頼区間の実装例-6.3"><span class="toc-item-num">6.3&nbsp;&nbsp;</span>WaldのP値と信頼区間の実装例</a></span></li><li><span><a href="#WaldのP値と信頼区間の構成で使った正規分布近似の粗さの視覚化" data-toc-modified-id="WaldのP値と信頼区間の構成で使った正規分布近似の粗さの視覚化-6.4"><span class="toc-item-num">6.4&nbsp;&nbsp;</span>WaldのP値と信頼区間の構成で使った正規分布近似の粗さの視覚化</a></span></li></ul></li><li><span><a href="#Clopper-PearsonのP値と信頼区間" data-toc-modified-id="Clopper-PearsonのP値と信頼区間-7"><span class="toc-item-num">7&nbsp;&nbsp;</span>Clopper-PearsonのP値と信頼区間</a></span><ul class="toc-item"><li><span><a href="#Clopper-PearsonのP値" data-toc-modified-id="Clopper-PearsonのP値-7.1"><span class="toc-item-num">7.1&nbsp;&nbsp;</span>Clopper-PearsonのP値</a></span></li><li><span><a href="#二項分布とベータ分布の関係" data-toc-modified-id="二項分布とベータ分布の関係-7.2"><span class="toc-item-num">7.2&nbsp;&nbsp;</span>二項分布とベータ分布の関係</a></span></li><li><span><a href="#Clopper-Pearsonの信頼区間" data-toc-modified-id="Clopper-Pearsonの信頼区間-7.3"><span class="toc-item-num">7.3&nbsp;&nbsp;</span>Clopper-Pearsonの信頼区間</a></span></li><li><span><a href="#Clopper-PearsonのP値と信頼区間の実装例" data-toc-modified-id="Clopper-PearsonのP値と信頼区間の実装例-7.4"><span class="toc-item-num">7.4&nbsp;&nbsp;</span>Clopper-PearsonのP値と信頼区間の実装例</a></span></li></ul></li><li><span><a href="#SterneのP値と信頼区間" data-toc-modified-id="SterneのP値と信頼区間-8"><span class="toc-item-num">8&nbsp;&nbsp;</span>SterneのP値と信頼区間</a></span><ul class="toc-item"><li><span><a href="#SterneのP値と信頼区間" data-toc-modified-id="SterneのP値と信頼区間-8.1"><span class="toc-item-num">8.1&nbsp;&nbsp;</span>SterneのP値と信頼区間</a></span></li><li><span><a href="#SterneのP値と信頼区間の実装例" data-toc-modified-id="SterneのP値と信頼区間の実装例-8.2"><span class="toc-item-num">8.2&nbsp;&nbsp;</span>SterneのP値と信頼区間の実装例</a></span></li></ul></li><li><span><a href="#4種のP値函数と信頼区間を同時にプロット" data-toc-modified-id="4種のP値函数と信頼区間を同時にプロット-9"><span class="toc-item-num">9&nbsp;&nbsp;</span>4種のP値函数と信頼区間を同時にプロット</a></span></li><li><span><a href="#ベイズ統計での信用区間に対応するP値函数" data-toc-modified-id="ベイズ統計での信用区間に対応するP値函数-10"><span class="toc-item-num">10&nbsp;&nbsp;</span>ベイズ統計での信用区間に対応するP値函数</a></span><ul class="toc-item"><li><span><a href="#二項分布モデルのHDI版信用区間" data-toc-modified-id="二項分布モデルのHDI版信用区間-10.1"><span class="toc-item-num">10.1&nbsp;&nbsp;</span>二項分布モデルのHDI版信用区間</a></span></li><li><span><a href="#HDI版信用区間に対応するP値函数" data-toc-modified-id="HDI版信用区間に対応するP値函数-10.2"><span class="toc-item-num">10.2&nbsp;&nbsp;</span>HDI版信用区間に対応するP値函数</a></span></li><li><span><a href="#HDI版の信用区間とそれに対応するベイズ版P値函数の実装例" data-toc-modified-id="HDI版の信用区間とそれに対応するベイズ版P値函数の実装例-10.3"><span class="toc-item-num">10.3&nbsp;&nbsp;</span>HDI版の信用区間とそれに対応するベイズ版P値函数の実装例</a></span></li><li><span><a href="#WilsonのP値函数とベイズ版P値函数のHDI版の比較" data-toc-modified-id="WilsonのP値函数とベイズ版P値函数のHDI版の比較-10.4"><span class="toc-item-num">10.4&nbsp;&nbsp;</span>WilsonのP値函数とベイズ版P値函数のHDI版の比較</a></span></li><li><span><a href="#二項分布モデルのETI版の信用区間とそれに対応するP値" data-toc-modified-id="二項分布モデルのETI版の信用区間とそれに対応するP値-10.5"><span class="toc-item-num">10.5&nbsp;&nbsp;</span>二項分布モデルのETI版の信用区間とそれに対応するP値</a></span></li><li><span><a href="#ETI版の信用区間とそれに対応するベイズ版P値函数の実装例" data-toc-modified-id="ETI版の信用区間とそれに対応するベイズ版P値函数の実装例-10.6"><span class="toc-item-num">10.6&nbsp;&nbsp;</span>ETI版の信用区間とそれに対応するベイズ版P値函数の実装例</a></span></li><li><span><a href="#WilsonのP値函数とベイズ版P値函数のETI版の比較" data-toc-modified-id="WilsonのP値函数とベイズ版P値函数のETI版の比較-10.7"><span class="toc-item-num">10.7&nbsp;&nbsp;</span>WilsonのP値函数とベイズ版P値函数のETI版の比較</a></span></li><li><span><a href="#ETI版信用区間とClopper-Pearsonの信頼区間の類似と比較" data-toc-modified-id="ETI版信用区間とClopper-Pearsonの信頼区間の類似と比較-10.8"><span class="toc-item-num">10.8&nbsp;&nbsp;</span>ETI版信用区間とClopper-Pearsonの信頼区間の類似と比較</a></span></li><li><span><a href="#主義の押し付けをやめよう" data-toc-modified-id="主義の押し付けをやめよう-10.9"><span class="toc-item-num">10.9&nbsp;&nbsp;</span>主義の押し付けをやめよう</a></span></li></ul></li><li><span><a href="#被覆確率の比較" data-toc-modified-id="被覆確率の比較-11"><span class="toc-item-num">11&nbsp;&nbsp;</span>被覆確率の比較</a></span></li><li><span><a href="#P値の累積分布函数の比較" data-toc-modified-id="P値の累積分布函数の比較-12"><span class="toc-item-num">12&nbsp;&nbsp;</span>P値の累積分布函数の比較</a></span></li><li><span><a href="#k=0という極端な場合のP値函数のグラフ" data-toc-modified-id="k=0という極端な場合のP値函数のグラフ-13"><span class="toc-item-num">13&nbsp;&nbsp;</span>k=0という極端な場合のP値函数のグラフ</a></span></li></ul></div>
 
 # %%
 using Printf
@@ -397,10 +397,12 @@ title!("Normal(0,1)"; legend=:topleft)
 # 以下はほぼ以上で説明した公式通りの実装になっている.
 
 # %%
+safediv(x, y) = x == 0 ? x : y == Inf ? zero(y) : x/y
+
 function pvalue_wilson(k, n, p)
     p̂ = k/n
     se = √(p*(1 - p)/n)
-    2ccdf(Normal(0,1), abs(p̂ - p)/se)
+    2ccdf(Normal(0,1), safediv(abs(p̂ - p), se))
 end
 
 function confint_wilson(k, n, α)
@@ -1350,12 +1352,12 @@ title!("P-value functions for n=$n, k=$k, a=$a, b=$b")
 # ### ETI版の信用区間とそれに対応するベイズ版P値函数の実装例
 
 # %%
-function pvalue_eti(k, n, p; a=1/2, b=1/2)
+function pvalue_eti(k, n, p; a=1//3, b=1//3)
     posterior = Beta(k+a, n-k+a)
     min(1, 2cdf(posterior, p), 2ccdf(posterior, p))
 end
 
-function credint_eti(k, n, α; a=1/2, b=1/2)
+function credint_eti(k, n, α; a=1//3, b=1//3)
     posterior = Beta(k+a, n-k+a)
     quantile(posterior, α/2), cquantile(posterior, α/2)
 end
@@ -1863,3 +1865,92 @@ plot_cdfpval(n, p; f=Bool[0,0,1,1])
 # 2×2の分割表に関する同様の計算については以下のリンク先を参照せよ:
 #
 # * https://github.com/genkuroki/public/blob/main/0037/power%20of%20tests%20for%202x2%20contingency%20table.ipynb
+
+# %% [markdown]
+# ## k=0という極端な場合のP値函数のグラフ
+
+# %%
+@show n, k, α = 10, 0, 0.05
+@show a_eti, b_eti = 1//3, 1//3
+@show a_hdi, b_hdi = 1, 1
+pmin, pmax = 0, 0.56
+pstep = 0.05
+
+plot(p -> pvalue_wilson(k, n, p), pmin, pmax;
+    label="Wilson score", ls=:solid)
+plot!(p -> pvalue_cp(k, n, p), pmin, pmax;
+    label="Clopper-Pearson", ls=:dot)
+plot!(p -> pvalue_sterne(k, n, p), pmin, pmax;
+    label="Sterne", ls=:dashdotdot)
+plot!(p -> pvalue_hdi(k, n, p; a=a_hdi, b=b_hdi), pmin, pmax;
+    label="Bayesian (HDI), prior=Beta($a_hdi, $b_hdi)", ls=:dash)
+plot!(p -> pvalue_eti(k, n, p; a=a_eti, b=b_eti), pmin, pmax;
+    label="Bayesian (ETI), prior=Beta($a_eti, $b_eti)", ls=:dashdot)
+plot!(xguide="p", yguide="P-value")
+plot!(xtick=0:pstep:1, ytick=0:0.05:1)
+title!("P-value functions for n=$n, k=$k")
+
+# %%
+@show n, k, α = 40, 0, 0.05
+@show a_eti, b_eti = 1//3, 1//3
+@show a_hdi, b_hdi = 1, 1
+pmin, pmax = 0, 0.16
+pstep = 0.01
+
+plot(p -> pvalue_wilson(k, n, p), pmin, pmax;
+    label="Wilson score", ls=:solid)
+plot!(p -> pvalue_cp(k, n, p), pmin, pmax;
+    label="Clopper-Pearson", ls=:dot)
+plot!(p -> pvalue_sterne(k, n, p), pmin, pmax;
+    label="Sterne", ls=:dashdotdot)
+plot!(p -> pvalue_hdi(k, n, p; a=a_hdi, b=b_hdi), pmin, pmax;
+    label="Bayesian (HDI), prior=Beta($a_hdi, $b_hdi)", ls=:dash)
+plot!(p -> pvalue_eti(k, n, p; a=a_eti, b=b_eti), pmin, pmax;
+    label="Bayesian (ETI), prior=Beta($a_eti, $b_eti)", ls=:dashdot)
+plot!(xguide="p", yguide="P-value")
+plot!(xtick=0:pstep:1, ytick=0:0.05:1)
+title!("P-value functions for n=$n, k=$k")
+
+# %%
+@show n, k, α = 160, 0, 0.05
+@show a_eti, b_eti = 1//3, 1//3
+@show a_hdi, b_hdi = 1, 1
+pmin, pmax = 0, 0.04
+pstep = 0.005
+
+plot(p -> pvalue_wilson(k, n, p), pmin, pmax;
+    label="Wilson score", ls=:solid)
+plot!(p -> pvalue_cp(k, n, p), pmin, pmax;
+    label="Clopper-Pearson", ls=:dot)
+plot!(p -> pvalue_sterne(k, n, p), pmin, pmax;
+    label="Sterne", ls=:dashdotdot)
+plot!(p -> pvalue_hdi(k, n, p; a=a_hdi, b=b_hdi), pmin, pmax;
+    label="Bayesian (HDI), prior=Beta($a_hdi, $b_hdi)", ls=:dash)
+plot!(p -> pvalue_eti(k, n, p; a=a_eti, b=b_eti), pmin, pmax;
+    label="Bayesian (ETI), prior=Beta($a_eti, $b_eti)", ls=:dashdot)
+plot!(xguide="p", yguide="P-value")
+plot!(xtick=0:pstep:1, ytick=0:0.05:1)
+title!("P-value functions for n=$n, k=$k")
+
+# %%
+@show n, k, α = 640, 0, 0.05
+@show a_eti, b_eti = 1//3, 1//3
+@show a_hdi, b_hdi = 1, 1
+pmin, pmax = 0, 0.01
+pstep = 0.001
+
+plot(p -> pvalue_wilson(k, n, p), pmin, pmax;
+    label="Wilson score", ls=:solid)
+plot!(p -> pvalue_cp(k, n, p), pmin, pmax;
+    label="Clopper-Pearson", ls=:dot)
+plot!(p -> pvalue_sterne(k, n, p), pmin, pmax;
+    label="Sterne", ls=:dashdotdot)
+plot!(p -> pvalue_hdi(k, n, p; a=a_hdi, b=b_hdi), pmin, pmax;
+    label="Bayesian (HDI), prior=Beta($a_hdi, $b_hdi)", ls=:dash)
+plot!(p -> pvalue_eti(k, n, p; a=a_eti, b=b_eti), pmin, pmax;
+    label="Bayesian (ETI), prior=Beta($a_eti, $b_eti)", ls=:dashdot)
+plot!(xguide="p", yguide="P-value")
+plot!(xtick=0:pstep:1, ytick=0:0.05:1)
+title!("P-value functions for n=$n, k=$k")
+
+# %%
