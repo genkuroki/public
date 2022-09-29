@@ -40,13 +40,15 @@
 
 # %% [markdown] toc=true
 # <h1>目次<span class="tocSkip"></span></h1>
-# <div class="toc"><ul class="toc-item"><li><span><a href="#切断指数分布モデルのBayes統計" data-toc-modified-id="切断指数分布モデルのBayes統計-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>切断指数分布モデルのBayes統計</a></span></li><li><span><a href="#Jaynesによる不適切な信頼区間の構成" data-toc-modified-id="Jaynesによる不適切な信頼区間の構成-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Jaynesによる不適切な信頼区間の構成</a></span></li><li><span><a href="#適切な信頼区間の構成法" data-toc-modified-id="適切な信頼区間の構成法-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>適切な信頼区間の構成法</a></span></li></ul></div>
+# <div class="toc"><ul class="toc-item"><li><span><a href="#切断指数分布モデルのBayes統計" data-toc-modified-id="切断指数分布モデルのBayes統計-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>切断指数分布モデルのBayes統計</a></span></li><li><span><a href="#Jaynesによる不適切な信頼区間の構成" data-toc-modified-id="Jaynesによる不適切な信頼区間の構成-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Jaynesによる不適切な信頼区間の構成</a></span></li><li><span><a href="#適切な信頼区間の構成法" data-toc-modified-id="適切な信頼区間の構成法-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>適切な信頼区間の構成法</a></span></li><li><span><a href="#アルファエラーの確率の数値的確認" data-toc-modified-id="アルファエラーの確率の数値的確認-4"><span class="toc-item-num">4&nbsp;&nbsp;</span>アルファエラーの確率の数値的確認</a></span></li></ul></div>
 
 # %%
 using Distributions
 using Optim
 using QuadGK
+using Random
 using SpecialFunctions
+using StatsBase: ecdf
 using StatsPlots
 default(fmt=:png, titlefontsize=10, plot_titlefontsize=10,
     guidefontsize=9, tickfontsize=6)
@@ -390,5 +392,41 @@ plot!(legend=:topleft)
 # %%
 plot(P_post, P_pval; size=(800, 300))
 plot!(titlefontsize=9, guidefontsize=8, bottommargin=4Plots.mm)
+
+# %% [markdown]
+# ## アルファエラーの確率の数値的確認
+
+# %%
+function sim_pval(θ, n; L=10^6)
+    dist = θ + Exponential()
+    pval = Vector{Float64}(undef, L)
+    Xtmp = [Vector{Float64}(undef, n) for _ in 1:Threads.nthreads()]
+    Threads.@threads for i in 1:L
+        X = rand!(dist, Xtmp[Threads.threadid()])
+        pval[i] = pvalue_truncexp(X, θ)
+    end
+    _ecdf_pval = ecdf(pval)
+    ecdf_pval(x) = _ecdf_pval(x)
+    ecdf_pval
+end
+
+function plot_pval(θ, n; L=10^6)
+    ecdf_pval = sim_pval(θ, n; L)
+    plot(ecdf_pval, 0, 1; label="")
+    plot!([0,1], [0,1]; label="", ls=:dash)
+    plot!(xtick=0:0.1:1, ytick=0:0.1:1)
+    plot!(xguide="α", yguide="probability of P-value ≤ α")
+    title!("θ=$θ, n=$n")
+    plot!(size=(300, 300))
+end
+
+# %%
+plot_pval(0, 1)
+
+# %%
+plot_pval(0, 3)
+
+# %%
+plot_pval(0, 10)
 
 # %%
