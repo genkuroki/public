@@ -21,9 +21,9 @@
 using Distributions
 using Random
 using StatsPlots
+Random.seed!(4649373)
 
-dice = '⚀':'⚅'
-ntrials = 10^4
+ntrials = 10^5
 ss = samplesize = 6
 tmp = Vector{Float64}(undef, samplesize)
 dist = Categorical(0.5, 0.01, 0.01, 0.08, 0.4, 0.0)
@@ -36,9 +36,9 @@ plot!(; title)
 using Distributions
 using Random
 using StatsPlots
+Random.seed!(4649373)
 
-dice = '⚀':'⚅'
-ntrials = 10^4
+ntrials = 10^5
 ss = samplesize = 6
 tmp = Vector{Float64}(undef, samplesize)
 dist = Categorical(0.5, 0.01, 0.01, 0.08, 0.4, 0.0)
@@ -51,6 +51,7 @@ plot!(; title)
 using Distributions
 using Random
 using StatsPlots
+Random.seed!(4649373)
 
 dice = '⚀':'⚅'
 ntrials = 1000
@@ -63,7 +64,7 @@ means = mean.(Xs)
     @views histogram(means[1:t]; norm=true, bin=1-1/(2ss):1/ss:6+1/(2ss), label="")
     title = "$((dist.p...,)), ss=$ss\n"
     title *= "$t times: "
-    title *= "($(dice[X[1]])" * prod("+$(dice[X[i]])" for i in 2:ss) * ")/6"
+    title *= "($(dice[X[1]])" * prod("+$(dice[X[i]])" for i in 2:ss) * ")/$ss"
     plot!(; title, ylim=(0.0, 1.2))
 end
 
@@ -73,6 +74,7 @@ gif(anim, "result6.gif")
 using Distributions
 using Random
 using StatsPlots
+Random.seed!(4649373)
 
 dice = '⚀':'⚅'
 ntrials = 1000
@@ -85,10 +87,42 @@ means = mean.(Xs)
     @views histogram(means[1:t]; norm=true, bin=1-1/(2ss):1/ss:6+1/(2ss), label="")
     title = "$((dist.p...,)), ss=$ss\n"
     title *= "$t times: "
-    title *= "($(dice[X[1]])" * prod("+$(dice[X[i]])" for i in 2:ss) * ")/6"
+    title *= "($(dice[X[1]])" * prod("+$(dice[X[i]])" for i in 2:ss) * ")/$ss"
     plot!(; title, ylim=(0.0, 1.2))
 end
 
 gif(anim, "result.gif")
+
+# %%
+using Distributions
+using Random
+using StatsPlots
+Random.seed!(4649373)
+
+ntrials = 10^6
+ss = samplesize = 6
+tmp = Vector{Float64}(undef, samplesize)
+dist = Categorical(0.5, 0.01, 0.01, 0.07, 0.01, 0.4)
+@show dist
+plot(x -> pdf(dist, round(x)), -0.5, 7.5; label="", title="dist") |> display
+means = [mean(rand!(dist, tmp)) for _ in 1:ntrials]
+histogram(means; norm=true, alpha=0.5, bin=1-1/(2ss):1/ss:6+1/(2ss), label="")
+title!("sample means (sample size = $ss)")
+
+# %%
+using Distributions
+using Random
+using StatsPlots
+Random.seed!(4649373)
+
+ntrials = 10^6
+ss = samplesize = 6
+tmp = Vector{Float64}(undef, samplesize)
+dist = MixtureModel([Normal(0,1), Normal(12,1), Normal(20,1)], [0.5, 0.1, 0.4])
+@show dist
+plot(x -> pdf(dist, x), -5, 25; label="", title="dist") |> display
+means = [mean(rand!(dist, tmp)) for _ in 1:ntrials]
+stephist(means; norm=true, bin=1000, label="")
+title!("sample means (sample size = $ss)")
 
 # %%
