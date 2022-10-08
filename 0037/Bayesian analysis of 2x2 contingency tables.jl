@@ -9,7 +9,7 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.10.3
 #   kernelspec:
-#     display_name: Julia 1.8.1
+#     display_name: Julia 1.8.2
 #     language: julia
 #     name: julia-1.8
 # ---
@@ -607,5 +607,50 @@ plot(ω -> pvalue_or_bayes_cp(a, b, c, d; ω, prior), 0, 40; label="OR Bayesian"
 plot!(ω -> pvalue_or_pearson_chisq(a, b, c, d; ω), 0, 40; label="OR Pearson χ²", ls=:dash)
 plot!(ci, fill(α, 2); label="", c=1)
 title!("a=$a, b=$b, c=$c, d=$d, prior=$prior")
+
+# %% [markdown]
+# https://twitter.com/philomyu/status/1578694497349038081
+
+# %%
+# https://twitter.com/philomyu/status/1578694497349038081
+
+a, b, c, d = 237, 65, 159, 77
+prior = (1//3, 1//3)
+α = 0.05
+ci = confint_or_bayes_cp(a, b, c, d; α, prior)
+plot(ω -> pvalue_or_bayes_cp(a, b, c, d; ω, prior), 0, 5; label="OR Bayesian")
+plot!(ω -> pvalue_or_pearson_chisq(a, b, c, d; ω), 0, 5; label="OR Pearson χ²", ls=:dash)
+plot!(ci, fill(α, 2); label="", c=1)
+title!("a=$a, b=$b, c=$c, d=$d, prior=$prior")
+plot!(xguide="hypothesized odds ratio", yguide="P-value")
+
+# %%
+# https://twitter.com/philomyu/status/1578694497349038081
+
+a, b, c, d = 237, 65, 159, 77
+prior = (1//3, 1//3)
+α = 0.05
+ci = confint_or_bayes_cp(a, b, c, d; α, prior)
+plot(ω -> pvalue_or_bayes_cp(a, b, c, d; ω, prior), 0, 5; label="OR Bayesian")
+plot!(ω -> pvalue_or_pearson_chisq(a, b, c, d; ω), 0, 5; label="OR Pearson χ²", ls=:dash)
+plot!(ci, fill(α, 2); label="", c=1)
+title!("a=$a, b=$b, c=$c, d=$d, prior=$prior")
+plot!(xguide="hypothesized odds ratio", yguide="P-value")
+
+# %%
+# https://twitter.com/philomyu/status/1578694497349038081
+
+a, b, c, d = 237, 65, 159, 77
+prior = (1//3, 1//3)
+α = 0.05
+@show ci_wald = confint_rd_wald(a, b, c, d; α)
+@show ci_zd = confint_rd_zou_donner(a, b, c, d; α)
+@show ci_bayes = confint_rd_bayes_cp(a, b, c, d; α, prior)
+plot(Δ -> pvalue_rd_bayes_cp(a, b, c, d; Δ, prior), -0.1, 0.4; label="RD Bayesian")
+plot!(Δ -> pvalue_rd_zou_donner(a, b, c, d; Δ), -0.1, 0.4; label="RD Zou-Donner", ls=:dash)
+plot!(Δ -> pvalue_rd_wald(a, b, c, d; Δ), -0.1, 0.4; label="RD Wald", ls=:dashdot)
+plot!(ci_bayes, fill(α, 2); label="", c=1)
+title!("a=$a, b=$b, c=$c, d=$d, prior=$prior")
+plot!(xguide="hypothesized difference of ratios", yguide="P-value")
 
 # %%
