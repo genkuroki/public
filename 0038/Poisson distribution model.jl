@@ -39,7 +39,9 @@ using Random
 using SpecialFunctions
 using StatsBase: ecdf
 using StatsPlots
-default(fmt=:png, titlefontsize=10, plot_titlefontsize=10, guidefontsize=9)
+default(fmt=:png, size=(500, 300),
+    titlefontsize=10, plot_titlefontsize=10, 
+    guidefontsize=9, tickfontsize=6)
 
 # %% [markdown]
 # ## Poisson分布モデル
@@ -125,15 +127,19 @@ function plot_ecdf_LLR(; λ₀ = 1, n = 100, L = 10^5)
     P1 = plot(ecdf_LLR, -eps(), 8; label="ecdf of LLR")
     plot!(x -> cdf(Chisq(1), x); label="cdf of Chisq(1)", ls=:dash)
     plot!(legend=:bottomright)
+    plot!(xguide="x", yguide="probability of LLR ≤ x")
     title!("λ₀=$λ₀, n=$n")
     
     pval_LLR = ccdf.(Chisq(1), ecdf_LLR._ecdf_LLR.sorted_values)
-    P2 = plot(ecdf_pval, 0, 1; label="P-value")
+    P2 = plot(ecdf_pval, 0, 1; label="ecdf of P-value")
     plot!([0,1], [0,1]; label="", ls=:dash)
+    plot!(xtick=0:0.1:1, ytick=0:0.1:1)
+    plot!(xguide="α", yguide="probability of P-value ≤ α")
     plot!(legend=:bottomright)
     title!("λ₀=$λ₀, n=$n")
     
     plot(P1, P2; size=(800, 300), layout=@layout[a{0.625w} b])
+    plot!(leftmargin=4Plots.mm, bottommargin=4Plots.mm)
 end
 
 # %%
@@ -182,7 +188,7 @@ plot_ecdf_LLR(; λ₀ = 10, n = 10)
 # %% [markdown]
 # ### 対数尤度比とBayes因子の関係
 #
-# 対数尤度比
+# データの数値 $k=(k_1,\ldots,k_n)$ の対数尤度比
 #
 # $$
 # \op{LLR} = 2\log\frac{P(k|\kbar)}{P(k|\lambda_0)}, \quad
@@ -190,14 +196,14 @@ plot_ecdf_LLR(; λ₀ = 10, n = 10)
 # \kbar = \frac{1}{n}\sum_{i=1}^n k_i
 # $$
 #
-# と
+# とBayes因子
 #
 # $$
 # \op{BF} = \frac{Z_1}{Z_0} =
 # \int_0^\infty \frac{P(k|\lambda)}{P(k|\lambda_0)}\varphi(\lambda)\,d\lambda
 # $$
 #
-# の $n$ が大きなときの関係をLaplace近似によって示そう.
+# の $n$ が大きなときの近似的な関係式をLaplace近似によって示そう.
 #
 # 以上の設定の下で, 
 #
@@ -214,7 +220,7 @@ plot_ecdf_LLR(; λ₀ = 10, n = 10)
 # 2n\left(\kbar\log\frac{\lambda}{\lambda_0} - (\lambda-\lambda_0)\right)
 # $$
 #
-# ゆえに, 対数尤度比は次のように書き直される:
+# とおくと, 対数尤度比は次のように書き直される:
 #
 # $$
 # \begin{aligned}
@@ -223,7 +229,7 @@ plot_ecdf_LLR(; λ₀ = 10, n = 10)
 # \end{aligned}
 # $$
 #
-# 対数尤度比 $\op{LLR}$ は $f(\lambda)$ の最大値になっている.
+# 対数尤度比 $\op{LLR}$ は $f(\lambda)$ の最大値になっている.  そして,
 #
 # $$
 # f'(\lambda) = 2n\left(\frac{\kbar}{\lambda} - 1\right), \quad
@@ -232,7 +238,7 @@ plot_ecdf_LLR(; λ₀ = 10, n = 10)
 # f''(\kbar) = -2n\frac{1}{\kbar}
 # $$
 #
-# なので, $\lambda$ が $\kbar$ に近いとき, $f(\lambda)$ の $\lambda=\kbar$ でのTaylor展開によって, 
+# なので, $\lambda$ が $\kbar$ に近いとき, $f(\lambda)$ の $\lambda=\kbar$ でのTaylor展開によって次を得る:
 #
 # $$
 # f(\lambda) \approx \op{LLR} - 2\frac{(\lambda-\kbar)^2}{2\kbar/n}.
@@ -241,8 +247,8 @@ plot_ecdf_LLR(; λ₀ = 10, n = 10)
 # このとき,
 #
 # $$
-# \frac{P(k|\lambda)}{P(k|\lambda_0)} = e^{2f(\lambda)}
-# \approx e^{\op{LLR}/2}e^{-(\lambda-\kbar)^2/(\kbar/n)}.
+# \frac{P(k|\lambda)}{P(k|\lambda_0)} = e^{f(\lambda)/2}
+# \approx e^{\op{LLR}/2}e^{-(\lambda-\kbar)^2/(2\kbar/n)}.
 # $$
 #
 # したがって, $n$ が大きなとき, 次のLaplace近似が得られる:
@@ -253,7 +259,7 @@ plot_ecdf_LLR(; λ₀ = 10, n = 10)
 # \approx e^{\op{LLR}/2} \varphi(\kbar) \sqrt{\frac{2\pi\kbar}{n}}.
 # $$
 #
-# 実際に数値的に確認すると, この近似は非常に良い近似になり易い.
+# この近似は非常に良い近似になり易いことを数値的に確認できる.
 #
 # さらに, $\kbar$ が $\lambda_0$ に近いならば次の近似も成立する(近似は粗くなる):
 #
@@ -262,7 +268,7 @@ plot_ecdf_LLR(; λ₀ = 10, n = 10)
 # \approx e^{\op{LLR}/2} \varphi(\lambda_0) \sqrt{\frac{2\pi\lambda_0}{n}}.
 # $$
 #
-# すなわち,
+# このとき,
 #
 # $$
 # 2\log\op{BF}
@@ -370,6 +376,29 @@ end
 # %%
 @show alpha2C(C2alpha(10, 100), 100) ≈ 10
 @show C2alpha(alpha2C(0.1, 100), 100) ≈ 0.1;
+
+# %%
+# 2σ case
+@show α = 2ccdf(Normal(), 2)
+[(n=n, C=alpha2C(α, n)) for n in 10 .^ (1:8)]
+
+# %%
+# 3σ case
+@show α = 2ccdf(Normal(), 3)
+[(n=n, C=alpha2C(α, n)) for n in 10 .^ (1:8)]
+
+# %%
+# 4σ case
+@show α = 2ccdf(Normal(), 4)
+[(n=n, C=alpha2C(α, n)) for n in 10 .^ (1:8)]
+
+# %%
+# 5σ case
+@show α = 2ccdf(Normal(), 5)
+[(n=n, C=alpha2C(α, n)) for n in 10 .^ (1:8)]
+
+# %% [markdown]
+# この場合には, $5\sigma$ の有意水準に対応する $\op{BF} > C$ という条件における $C$ は $n=10^8$ のような巨大な $n$ の下であっても十分に大きくなる.
 
 # %%
 function plot_C2alpha(C; n=10:1000, λ₀=1, α₀=1, τ₀=α₀/λ₀, kwargs...)
