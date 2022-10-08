@@ -82,7 +82,7 @@ default(fmt=:png, titlefontsize=10, plot_titlefontsize=10, guidefontsize=9)
 #
 # このP値に基く検定を対数尤度比検定と呼ぶ. (最尤法に付随する漸近的に同値な検定としてスコア検定とWald検定もよく使われる.)
 #
-# 対数尤度比検定のP値は統計モデルの尤度函数 $\lambda\mapsto P(k|\lambda)$ だけで決まり, 尤度函数に $\lambda$ によらない正の定数をかけたものを尤度函数の代わりに使ってP値を定義し直してもP値は不変である.
+# 対数尤度比検定のP値は統計モデルの尤度函数 $\lambda\mapsto P(k|\lambda)$ だけで決まり, 尤度函数にパラメータ $\lambda$ によらない正の定数をかけたものを尤度函数の代わりに使って定義し直してもP値は不変である.
 
 # %%
 """
@@ -177,7 +177,7 @@ plot_ecdf_LLR(; λ₀ = 10, n = 10)
 #
 # Bayes因子 $\op{BF}$ が大きいほど, 統計モデル1＋事前分布の方が統計モデル0よりもデータによく適合していると解釈可能である.
 #
-# Beyes因子は統計モデルの尤度函数 $\lambda\mapsto P(k|\lambda)$ と事前分布 $\varphi(\lambda)$ だけで決まり, 尤度函数に $\lambda$ によらない正の定数をかけたものを尤度函数の代わりに使ってBayes因子を定義し直してもBayes因子は不変である.
+# Beyes因子は統計モデルの尤度函数 $\lambda\mapsto P(k|\lambda)$ と事前分布 $\varphi(\lambda)$ だけで決まり, 尤度函数にパラメータ $\lambda$ によらない正の定数をかけたものを尤度函数の代わりに使って定義し直してもBayes因子は不変である.
 
 # %% [markdown]
 # ### 対数尤度比とBayes因子の関係
