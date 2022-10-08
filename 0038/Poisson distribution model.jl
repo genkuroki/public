@@ -15,7 +15,7 @@
 # ---
 
 # %% [markdown]
-# # Poisson分布モデル
+# # Poisson分布モデルでの対数尤度比検定のP値とBayes因子の関係
 #
 # * 黒木玄
 # * 2022-10-08
@@ -28,6 +28,10 @@
 # \newcommand\ccdf{\op{ccdf}}
 # \newcommand\quantile{\op{quantile}}
 # $
+#
+# 関連:
+#
+# * [二項分布モデルの場合のベイズ検定と通常の検定の関係](https://github.com/genkuroki/public/blob/main/0033/%E3%83%99%E3%82%A4%E3%82%BA%E6%A4%9C%E5%AE%9A%E3%81%A8%E9%80%9A%E5%B8%B8%E3%81%AE%E6%A4%9C%E5%AE%9A%E3%81%AE%E9%96%A2%E4%BF%82.ipynb)
 
 # %% [markdown] toc=true
 # <h1>目次<span class="tocSkip"></span></h1>
