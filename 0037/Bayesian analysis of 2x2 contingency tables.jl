@@ -617,25 +617,13 @@ title!("a=$a, b=$b, c=$c, d=$d, prior=$prior")
 a, b, c, d = 237, 65, 159, 77
 prior = (1//3, 1//3)
 α = 0.05
-ci = confint_or_bayes_cp(a, b, c, d; α, prior)
-plot(ω -> pvalue_or_bayes_cp(a, b, c, d; ω, prior), 0, 5; label="OR Bayesian")
-plot!(ω -> pvalue_or_pearson_chisq(a, b, c, d; ω), 0, 5; label="OR Pearson χ²", ls=:dash)
-plot!(ci, fill(α, 2); label="", c=1)
-title!("a=$a, b=$b, c=$c, d=$d, prior=$prior")
-plot!(xguide="hypothesized odds ratio", yguide="P-value")
-
-# %%
-# https://twitter.com/philomyu/status/1578694497349038081
-
-a, b, c, d = 237, 65, 159, 77
-prior = (1//3, 1//3)
-α = 0.05
+@show (a/b)/(c/d)
 @show ci_chisq = confint_or_pearson_chisq(a, b, c, d; α)
 @show ci_bayes = confint_or_bayes_cp(a, b, c, d; α, prior)
 plot(ω -> pvalue_or_bayes_cp(a, b, c, d; ω, prior), 0.8, 3.2; label="OR Bayesian")
 plot!(ω -> pvalue_or_pearson_chisq(a, b, c, d; ω), 0.8, 3.2; label="OR Pearson χ²", ls=:dash)
 plot!(ci_bayes, fill(α, 2); label="", c=1)
-title!("a=$a, b=$b, c=$c, d=$d, prior=$prior")
+title!("a=$a, b=$b, c=$c, d=$d, priors=Beta$prior")
 plot!(xguide="hypothesized odds ratio", yguide="P-value")
 plot!(xtick=0:0.2:10, ytick=0:0.05:1)
 
@@ -645,6 +633,8 @@ plot!(xtick=0:0.2:10, ytick=0:0.05:1)
 a, b, c, d = 237, 65, 159, 77
 prior = (1//3, 1//3)
 α = 0.05
+@show a/(a+b) c/(c+d)
+@show a/(a+b) - c/(c+d)
 @show ci_wald = confint_rd_wald(a, b, c, d; α)
 @show ci_zd = confint_rd_zou_donner(a, b, c, d; α)
 @show ci_bayes = confint_rd_bayes_cp(a, b, c, d; α, prior)
@@ -652,8 +642,42 @@ plot(Δ -> pvalue_rd_bayes_cp(a, b, c, d; Δ, prior), -0.02, 0.24; label="RD Bay
 plot!(Δ -> pvalue_rd_zou_donner(a, b, c, d; Δ), -0.02, 0.24; label="RD Zou-Donner", ls=:dash)
 plot!(Δ -> pvalue_rd_wald(a, b, c, d; Δ), -0.02, 0.24; label="RD Wald", ls=:dashdot)
 plot!(ci_bayes, fill(α, 2); label="", c=1)
-title!("a=$a, b=$b, c=$c, d=$d, prior=$prior")
+title!("a=$a, b=$b, c=$c, d=$d, priors=Beta$prior")
 plot!(xguide="hypothesized difference of ratios", yguide="P-value")
 plot!(xtick=-1:0.02:1, ytick=0:0.05:1)
+
+# %%
+# https://twitter.com/philomyu/status/1578694497349038081
+
+a, b, c, d = 237, 65, 159, 77
+prior = (1//3, 1//3)
+α = 0.05
+@show a/(a+b) c/(c+d)
+@show (a/(a+b))/(c/(c+d))
+@show ci_chisq = confint_rr_pearson_chisq(a, b, c, d; α)
+@show ci_bayes = confint_rr_bayes_cp(a, b, c, d; α, prior)
+plot(ρ -> pvalue_rr_bayes_cp(a, b, c, d; ρ, prior), 0.9, 1.5; label="RR Bayesian")
+plot!(ρ -> pvalue_rr_pearson_chisq(a, b, c, d; ρ), 0.9, 1.5; label="RR Pearson χ²", ls=:dash)
+plot!(ci_bayes, fill(α, 2); label="", c=1)
+title!("a=$a, b=$b, c=$c, d=$d, priors=Beta$prior")
+plot!(xguide="hypothesized percentage ratio", yguide="P-value")
+plot!(xtick=0:0.05:10, ytick=0:0.05:1)
+
+# %%
+a, b, c, d = 237, 65, 159, 77
+prior = (1//3, 1//3)
+α = 0.05
+@show a/(a+b) c/(c+d)
+@show (a/(a+b))/(c/(c+d))
+@show ci_chisq = confint_rr_pearson_chisq(a, b, c, d; α)
+@show ci_bayes = confint_rr_bayes_cp(a, b, c, d; α, prior)
+plot(ρ -> pvalue_rr_bayes_cp(a, b, c, d; ρ, prior), 0.1, 20; label="RR Bayesian")
+plot!(ρ -> pvalue_rr_pearson_chisq(a, b, c, d; ρ), 0.1, 20; label="RR Pearson χ²", ls=:dash)
+plot!(ci_bayes, fill(α, 2); label="", c=1)
+title!("a=$a, b=$b, c=$c, d=$d, priors=Beta$prior")
+plot!(xguide="hypothesized percentage ratio", yguide="P-value")
+xtick = Any[0.1, 0.2, 0.5, 1, 2, 5, 10, 20]
+xtick = (xtick, string.(xtick))
+plot!(; xtick, ytick=0:0.05:1, xscale=:log10)
 
 # %%
