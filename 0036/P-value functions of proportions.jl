@@ -1034,6 +1034,20 @@ title!("Sterne's P-value function for n=$n, k=$k")
 # %%
 plot(P_Wilson, P_Wald, P_CP, P_Sterne; layout=(2, 2), size=(800, 500))
 
+# %% [markdown]
+# P値函数のグラフの形は以下のようになる:
+#
+# * 正規分布近似(中心極限定理)を使って構成されたWilsonのP値函数とWaldのP値函数のグラフは「とんがり帽子」の形になる.
+# * WaldのP値函数のグラフは頂点について左右対称になるが, WilsonのP値函数はそうならない.
+# * Clopper-PearsonのP値函数は人為的に値が $1$ を超えないようにしているので, そのグラフは「天辺が切れて平らになったとんがり帽子」の形になる.
+# * SterneのP値函数は連続にもならないし, 広義でも単峰型にならない.
+#
+# このようにP値を定義する手法によってP値函数のグラフは異なる形になる.
+#
+# しかし, $n$ が十分に大きければ, これらのP値函数は近似的に一致するようになる.  そのような場合には, どのP値函数を使っても結果はほぼ同じになる.
+#
+# 信頼度 $1-\alpha$ の信頼区間(CI, confidence interval)はP値函数のグラフを高さ $\alpha$ で切断する線分になる.
+
 # %%
 @show n, k, α = 10, 3, 0.05
 @show confint_wilson(k, n, α)
@@ -1131,15 +1145,13 @@ title!("P-value functions for n=$n, k=$k")
 #
 # このとき, パラメータ $p$ に関する $100(1-\alpha)\%$ 信用区間が次のように定義される.
 #
-# (4) 事後分布を
-#
-# $[0,1]$ に含まれる区間 $[p_L, p_U]$ で事後分布で測ったその区間に含まれる確率が
+# (4) $[0,1]$ に含まれる区間 $[p_L, p_U]$ で事後分布で測ったその区間に含まれる確率が
 #
 # $$
 # \cdf(\op{posterior}, p_U) - \cdf(\op{posterior}, p_L) = 1 - \alpha
 # $$
 #
-# となるものの中で長さ $p_U - p_L$ が最小のものを highest density interval (HDI)として定義された信用度 $1-\alpha$ の __信用区間__ と呼び, 次のように表す:
+# となるものの中で長さ $p_U - p_L$ が最小のものを highest density interval (HDI, 最高密度区間)として定義された信用度 $1-\alpha$ の __信用区間__ と呼び, 次のように表す:
 #
 # $$
 # \credint_\op{HDI}(k|n,p,a,b) = [p_L, p_U].
@@ -1203,7 +1215,7 @@ title!("P-value functions for n=$n, k=$k")
 
 # %%
 function hdi(dist::ContinuousUnivariateDistribution, α = 0.05; alg = Brent())
-    f(p) = quantile(dist, p + (1 - α)) - quantile(dist, p)
+    f(t) = quantile(dist, t + (1 - α)) - quantile(dist, t)
     o = optimize(f, 0, α, alg)
     p = o.minimizer
     quantile.(dist, (p, p + (1 - α)))
@@ -1328,7 +1340,7 @@ title!("P-value functions for n=$n, k=$k, a=$a, b=$b")
 # \op{posterior} = \op{Beta}(k+a, n-k+b).
 # $$
 #
-# HDI版ではなく, equal tailed interval (ETI)版の信用区間も定義しておこう:
+# HDI版ではなく, equal tailed interval (ETI, 等裾区間, とうきょくかん)版の信用区間も定義しておこう:
 #
 # $$
 # \credint_\op{ETI}(k|n,p,a,b) =
