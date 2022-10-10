@@ -9,7 +9,7 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.10.3
 #   kernelspec:
-#     display_name: Julia 1.8.1
+#     display_name: Julia 1.8.2
 #     language: julia
 #     name: julia-1.8
 # ---
@@ -18,7 +18,7 @@
 # # 比率のP値函数達
 #
 # * 黒木玄
-# * 2022-09-08～2022-09-26
+# * 2022-09-08～2022-10-10
 # * Copyright 2022 Gen Kuroki
 # * License: https://opensource.org/licenses/MIT
 # * [nbviewer版](https://nbviewer.org/github/genkuroki/public/blob/main/0036/P-value%20functions%20of%20proportions.ipynb)
@@ -457,7 +457,7 @@ title!("Wilson's P-value function for n=$n, k=$k")
 #
 # 例えば, 上で述べた「棄却」という強い響きを持つ言い方に実質的な力を持たせるためには, P値の計算以外に沢山の議論が必要になる.
 #
-# なお, P値をデータの数値と統計モデルの矛盾の無さ(整合性(consistency), 両立性(combatibility),相性の良さ)の指標とみなすこの解説ノートの立場は
+# なお, P値をデータの数値と統計モデルの矛盾の無さ(整合性(consistency), 両立性(combatibility), 相性の良さ)の指標とみなすこの解説ノートの立場は
 #
 # * [P値に関する米国統計学会による声明(ASA声明)の日本語版](https://www.biometrics.gr.jp/news/all/ASA.pdf)
 #
@@ -467,17 +467,17 @@ title!("Wilson's P-value function for n=$n, k=$k")
 #
 # 次の有名な記事でもP値の解釈の説明について __compatibility__ がキーワードになっている:
 #
-# * Valentin Amrhein , Sander Greenland, and  Blake McShane.  Scientists rise up against statistical significance.  Valentin Amrhein, Sander Greenland, Blake McShane and more than 800 signatories call for an end to hyped claims and the dismissal of possibly crucial effects.  \[[DOI](https://doi.org/10.1038/d41586-019-00857-9)\]
+# * Valentin Amrhein, Sander Greenland, and  Blake McShane.  Scientists rise up against statistical significance.  Valentin Amrhein, Sander Greenland, Blake McShane and more than 800 signatories call for an end to hyped claims and the dismissal of possibly crucial effects.  \[[DOI](https://doi.org/10.1038/d41586-019-00857-9)\]
 #
-# P値函数や信頼区間の解釈については次の論文が非常にわかりやすい:
+# P値函数や信頼区間の解釈については, 上の記事の共著者のうちの2人が書いた次の論文が非常にわかりやすい:
 #
-# * Discuss practical importance of results based on interval estimates and p-value functions, not only on point estimates and null p-values.  Journal of Information Technology, First Published June 3, 2022.  Nature 567, 305-307 (2019)  \[[DOI](https://doi.org/10.1177%2F02683962221105904)\]
+# * Valentin Amrhein and Sander Greenland. Discuss practical importance of results based on interval estimates and p-value functions, not only on point estimates and null p-values.  Journal of Information Technology, First Published June 3, 2022.  Nature 567, 305-307 (2019)  \[[DOI](https://doi.org/10.1177%2F02683962221105904)\]
 #
 # この論文には次の図がある:
 #
 # ![10.1177_02683962221105904-fig1.gif](attachment:10.1177_02683962221105904-fig1.gif)
 #
-# この図ではP値は __compatibility__ (両立性)の指標とみなされており, confidence interval (信頼区間)は compatibility interval (両立性区間)に言い換えられている.
+# この図でP値は __compatibility__ (両立性, 相性の良さ)の指標とみなされており, confidence interval (信頼区間)は compatibility interval (両立区間)に言い換えられている.
 
 # %%
 n = 10
