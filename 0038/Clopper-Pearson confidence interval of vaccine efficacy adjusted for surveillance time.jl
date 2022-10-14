@@ -176,7 +176,7 @@ function efficacyhat(c1, T1, c0, T0)
     1 - (c1/T1)/(c0/T0)
 end
 
-function confint_efficacy_cp_adjusted_for_surveillance_time(c1, T1, c0, T0; α=0.05)
+function confint_efficacy_clopper_pearson(c1, T1, c0, T0; α=0.05)
     Lπ = c1 == 0 ? 0.0 : quantile(Beta(c1, c0+1), α/2)
     Uπ = c0 == 0 ? 1.0 : quantile(Beta(c1+1, c0), 1-α/2)
     r = T1/T0
@@ -205,7 +205,7 @@ data = Any[
 for i in axes(data, 1)
     c1, T1, n1, c0, T0, n0, ve, ci_L, ci_U = data[i, :]
     VE = efficacyhat(c1, T1, c0, T0)
-    CI = confint_efficacy_cp_adjusted_for_surveillance_time(c1, T1, c0, T0)
+    CI = confint_efficacy_clopper_pearson(c1, T1, c0, T0)
     @printf("%5d  %5.3f (%5d)  %5d  %5.3f (%5d)  %5.1f (%5.1f -- %5.1f)  %5.1f (%5.1f -- %5.1f)  %5.1f (%5.1f -- %5.1f)\n",
         c1, T1, n1, c0, T0, n0, ve, ci_L, ci_U, 100VE, 100CI[begin], 100CI[end],
         100VE-ve, 100CI[begin]-ci_L, 100CI[end]-ci_U)
