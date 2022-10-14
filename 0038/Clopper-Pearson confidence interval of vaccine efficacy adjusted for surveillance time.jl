@@ -103,6 +103,12 @@
 # \end{pmatrix}.
 # $$
 #
+# このように定義されたP値については次の保守性(conservativity)が成立している:
+#
+# * ${T_1\lambda_1}/({T_1\lambda_1 + T_0\lambda_0})$ の値が $\pi$ に等しいという条件の下での統計モデル内でこのP値が $\alpha$ 以下になる確率は $\alpha$ 以下になる.
+#
+# この性質はSterneのP値函数についても成立している.
+#
 # __Clopper-Pearsonの信頼区間:__ 上のP値函数を使って, $\pi$ に関するClopper-Pearsonの信頼区間が次のように定義される:
 #
 # $$
