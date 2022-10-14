@@ -90,18 +90,18 @@
 #
 # 以下において, $0\le\alpha\le 1$ と仮定する. $\alpha$ は有意水準と呼ばれ, $1-\alpha$ は信頼度(信頼水準)と呼ばれる.
 #
-# 以下において, $\cdf(D, x)$ は分布 $D$ の累積分布函数を表すことにし, $\ccdf(D, x) = 1 - \cdf(D, x)$ とおく.
-#
 # __Clopper-PearsonのP値函数:__ $\pi$ に関するClopper-PearsonのP値函数が次のように定義される:
 #
 # $$
-# \pvalue(c_1, c_0|T_1, T_0, \pi) =
+# \pvalue(c_1, c_0|\pi) =
 # \min\begin{pmatrix}
 # 1 \\
 # 2\cdf(\op{Binomial}(c_1+c_0, \pi), c_1) \\
 # 2\ccdf(\op{Binomial}(c_1+c_0, \pi), c_1-1) \\
 # \end{pmatrix}.
 # $$
+#
+# ここで, $\cdf(D, x)$ は分布 $D$ の累積分布函数を表すとし, $\ccdf(D, x) = 1 - \cdf(D, x)$ とおいた.
 #
 # このように定義されたP値については次の保守性(conservativity)が成立している:
 #
@@ -112,8 +112,8 @@
 # __Clopper-Pearsonの信頼区間:__ 上のP値函数を使って, $\pi$ に関するClopper-Pearsonの信頼区間が次のように定義される:
 #
 # $$
-# \confint(c_1, c_0|T_1, T_0, \alpha) = 
-# \{\,\pi\in[0,1]\mid \pvalue(c_1, c_0|T_1, T_0, \pi) \ge \alpha\,\}.
+# \confint(c_1, c_0|\alpha) = 
+# \{\,\pi\in[0,1]\mid \pvalue(c_1, c_0|\pi) \ge \alpha\,\}.
 # $$
 #
 # $\pi$ に関するClopper-Pearsonの信頼区間のベータ分布表示: 二項分布とベータ分布の関係式
@@ -130,7 +130,7 @@
 # より,
 #
 # $$
-# \pvalue(c_1, c_0|T_1, T_0, \pi) =
+# \pvalue(c_1, c_0|\pi) =
 # \min\begin{pmatrix}
 # 1 \\
 # 2\ccdf(\op{Beta}(c_1+1, c_0), \pi) \\
@@ -141,13 +141,13 @@
 # となることを使うと, 次が成立することがわかる:
 #
 # $$
-# \confint(c_1, c_0|T_1, T_0, \alpha) =
+# \confint(c_1, c_0|\alpha) =
 # [\quantile(\op{Beta}(c_1, c_0+1), \alpha/2), \quantile(\op{Beta}(c_1+1, c_0), 1-\alpha/2)].
 # $$
 #
 # ここで $\quantile(D, p)$ は分布 $D$ の分位点函数(累積分布函数の逆函数)を表す.
 #
-# $[L_\pi, U_\pi] = \confint(c_1, c_0|T_1, T_0, \alpha)$ とおく.
+# __IRRとVEに関するClopper-Pearsonの信頼区間:__ $[L_\pi, U_\pi] = \confint(c_1, c_0|\alpha)$ とおく.
 #
 # $\IRR$ に関するClopper-Pearsonの信頼区間:
 #
