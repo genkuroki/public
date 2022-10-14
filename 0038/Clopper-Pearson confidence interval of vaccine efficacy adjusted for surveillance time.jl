@@ -86,7 +86,7 @@
 # \VE = 1 - \frac{\pi}{r(1-\pi)}.
 # $$
 #
-# 上の条件付き確率分布を使って, $\pi$ に関するP値と信頼区間を二項検定の方法で定義できるので, そのことから $\IRR$ と $\VE$ に関するP値と信頼区間の定義も自然に得られる.
+# 上の条件付き確率分布を使って, $\pi$ に関するP値と信頼区間を二項検定の方法で定義できるので, そのことから $\IRR$ と $\VE$ に関するP値と信頼区間の定義も自然に得られる.  $\pi$ に関するP値と信頼区間の定義ごとに, $\IRR$ と $\VE$ に関するP値と信頼区間の定義が得られる.
 #
 # 以下において, $0\le\alpha\le 1$ と仮定する. $\alpha$ は有意水準と呼ばれ, $1-\alpha$ は信頼度(信頼水準)と呼ばれる.
 #
@@ -109,6 +109,16 @@
 #
 # この性質はSterneのP値函数についても成立している.
 #
+# 二項分布モデルについてはClopper-Pearsonの方法やSterneの方法以外にもP値函数の定義の仕方が沢山ある.  例えば, それらのmid-P版, Wilsonの方法(スコア検定の方法), Waldの方法, Bayesianの方法などがある.  ただし, Wilsonの方法, Waldの方法, Bayesianの方法では上の保守性の条件は成立しない.  (その代わりに得られるメリットもある.)
+#
+# 条件付き確率分布として出て来る二項分布モデルの場合に帰着する方法は, 2×2の分割表の独立性に関するFisher検定の方法の類似になっている.  このように条件付き確率分布に帰着して得られる検定法を条件付き検定(conditional test)と呼ぶことがある.  
+#
+# 条件付き検定の方法を使わずにP値を定義することもできる.
+#
+# このようにP値の定義の仕方は沢山あり, それぞれ異なる利点と欠点を持っている.
+#
+# 以上で挙げた方法の中でClopper-Pearsonの方法で構成されたP値は大まかな傾向として最も大きくなりやすいという性質を持っている.  すなわち, Clopper-PearsonのP値函数(およ
+#
 # __Clopper-Pearsonの信頼区間:__ 上のP値函数を使って, $\pi$ に関するClopper-Pearsonの信頼区間が次のように定義される:
 #
 # $$
@@ -116,7 +126,9 @@
 # \{\,\pi\in[0,1]\mid \pvalue(c_1, c_0|\pi) \ge \alpha\,\}.
 # $$
 #
-# $\pi$ に関するClopper-Pearsonの信頼区間のベータ分布表示: 二項分布とベータ分布の関係式
+# 一般にP値函数が与えられればこの方法によって信頼区間も自動的に定義される.
+#
+# __Clopper-Pearsonの信頼区間のベータ分布表示:__ 二項分布とベータ分布の関係式
 #
 # $$
 # \begin{aligned}
@@ -147,7 +159,18 @@
 #
 # ここで $\quantile(D, p)$ は分布 $D$ の分位点函数(累積分布函数の逆函数)を表す.
 #
-# __IRRとVEに関するClopper-Pearsonの信頼区間:__ $[L_\pi, U_\pi] = \confint(c_1, c_0|\alpha)$ とおく.
+# __IRRとVEに関するClopper-Pearsonの信頼区間:__ $[L_\pi, U_\pi] = \confint(c_1, c_0|\alpha)$ とおく:
+#
+# $$
+# \begin{aligned}
+# &
+# L_\pi = \quantile(\op{Beta}(c_1, c_0+1), \alpha/2),
+# \\ &
+# U_\pi = \quantile(\op{Beta}(c_1+1, c_0), 1-\alpha/2).
+# \end{aligned}
+# $$
+#
+# このとき $\IRR$ と $\VE$ に関するClopper-Pearsonの信頼区間は以下のように表される:
 #
 # $\IRR$ に関するClopper-Pearsonの信頼区間:
 #
@@ -166,8 +189,7 @@
 # 1 - \frac{L_\pi}{r(1 - L_\pi)}
 # \right].
 # $$
-
-# %% [markdown]
+#
 # __参照文献:__
 #
 # * Qinyu Wei, Peng Wang and Ping Yin. Confidence interval estimation for vaccine efficacy against COVID-19. Front. Public Health, 12 August 2022, Sec. Infectious Diseases – Surveillance, Prevention and Treatment. https://doi.org/10.3389/fpubh.2022.848120
