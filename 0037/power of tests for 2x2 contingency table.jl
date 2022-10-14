@@ -9,14 +9,14 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.10.3
 #   kernelspec:
-#     display_name: Julia 1.8.1
+#     display_name: Julia 1.8.2
 #     language: julia
 #     name: julia-1.8
 # ---
 
 # %% [markdown] toc=true
 # <h1>目次<span class="tocSkip"></span></h1>
-# <div class="toc"><ul class="toc-item"><li><span><a href="#第一種の過誤の確率の比較" data-toc-modified-id="第一種の過誤の確率の比較-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>第一種の過誤の確率の比較</a></span></li><li><span><a href="#Yatesの連続性補正版χ²検定は片側確率の2倍版のFisher検定をよく近似する" data-toc-modified-id="Yatesの連続性補正版χ²検定は片側確率の2倍版のFisher検定をよく近似する-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Yatesの連続性補正版χ²検定は片側確率の2倍版のFisher検定をよく近似する</a></span></li><li><span><a href="#パワーの比較" data-toc-modified-id="パワーの比較-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>パワーの比較</a></span></li><li><span><a href="#Yatesの連続補正版のχ²検定とのパワーの比較" data-toc-modified-id="Yatesの連続補正版のχ²検定とのパワーの比較-4"><span class="toc-item-num">4&nbsp;&nbsp;</span>Yatesの連続補正版のχ²検定とのパワーの比較</a></span></li></ul></div>
+# <div class="toc"><ul class="toc-item"><li><span><a href="#第一種の過誤の確率の比較" data-toc-modified-id="第一種の過誤の確率の比較-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>第一種の過誤の確率の比較</a></span></li><li><span><a href="#Yatesの連続性補正版χ²検定は片側確率の2倍版のFisher検定をよく近似する" data-toc-modified-id="Yatesの連続性補正版χ²検定は片側確率の2倍版のFisher検定をよく近似する-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Yatesの連続性補正版χ²検定は片側確率の2倍版のFisher検定をよく近似する</a></span></li><li><span><a href="#パワーの比較" data-toc-modified-id="パワーの比較-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>パワーの比較</a></span></li><li><span><a href="#Yatesの連続補正版のχ²検定とのパワーの比較" data-toc-modified-id="Yatesの連続補正版のχ²検定とのパワーの比較-4"><span class="toc-item-num">4&nbsp;&nbsp;</span>Yatesの連続補正版のχ²検定とのパワーの比較</a></span></li><li><span><a href="#例" data-toc-modified-id="例-5"><span class="toc-item-num">5&nbsp;&nbsp;</span>例</a></span></li></ul></div>
 
 # %%
 using Printf
@@ -155,31 +155,6 @@ function confint_rr_pearson_chisq(a, b, c, d; α=0.05)
 end
 
 # %%
-# odds ratio Fisher (Clopper-Pearson)
-
-function pvalue_or_fisher_cp(a, b, c, d; ω=1)
-    fnch = if ω == 1
-        Hypergeometric(a+b, c+d, a+c)
-    else
-        FisherNoncentralHypergeometric(a+b, c+d, a+c, ω)
-    end
-    min(1, 2cdf(fnch, a), 2ccdf(fnch, a-1))
-end
-
-function confint_or_fisher_cp(a, b, c, d; α = 0.05)
-    (a+b==0 || c+d==0 || a+c==0 || b+d==0) && return [0, Inf]
-    f(ω) = logit(pvalue_or_fisher_cp(a, b, c, d; ω)) - logit(α)
-    if a == 0 || d == 0
-        [0.0, find_zero(f, 1.0)]
-    elseif b == 0 || c == 0
-        [find_zero(f, 1.0), Inf]
-    else
-        ω_L, ω_U = confint_or_wald(a, b, c, d; α = α/10)
-        find_zeros(f, ω_L, ω_U)
-    end
-end
-
-# %%
 # odds ratio Fisher (Sterne)
 
 _pdf_le(x, (dist, y)) =  pdf(dist, x) ⪅ y
@@ -231,6 +206,31 @@ function confint_or_fisher_sterne(a, b, c, d; α = 0.05)
         ps = exp.(find_zeros(f, log(ω_L), log(ω_U)))
         # 次の行は稀に区間にならない場合への対策
         [first(ps), last(ps)]
+    end
+end
+
+# %%
+# odds ratio Fisher (Clopper-Pearson)
+
+function pvalue_or_fisher_cp(a, b, c, d; ω=1)
+    fnch = if ω == 1
+        Hypergeometric(a+b, c+d, a+c)
+    else
+        FisherNoncentralHypergeometric(a+b, c+d, a+c, ω)
+    end
+    min(1, 2cdf(fnch, a), 2ccdf(fnch, a-1))
+end
+
+function confint_or_fisher_cp(a, b, c, d; α = 0.05)
+    (a+b==0 || c+d==0 || a+c==0 || b+d==0) && return [0, Inf]
+    f(ω) = logit(pvalue_or_fisher_cp(a, b, c, d; ω)) - logit(α)
+    if a == 0 || d == 0
+        [0.0, find_zero(f, 1.0)]
+    elseif b == 0 || c == 0
+        [find_zero(f, 1.0), Inf]
+    else
+        ω_L, ω_U = confint_or_wald(a, b, c, d; α = α/1000)
+        find_zeros(f, ω_L, ω_U)
     end
 end
 
