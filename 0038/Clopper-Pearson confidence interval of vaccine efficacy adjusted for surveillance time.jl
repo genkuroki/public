@@ -244,7 +244,7 @@
 #
 # 二項分布の共役事前分布を $\op{Beta}(\gamma, \delta)$ について, データ $(c_1, c_0)$ の事後分布は $\op{Beta}(c_1+\gamma, c_0+\delta)$ になる. 
 #
-# その事後分布における等裾信用区間(とうきょしんようくかｎ, equal-tailed credible interval)は次のように定義される:
+# その事後分布における等裾信用区間(とうきょしんようくかん, equal-tailed credible interval)は次のように定義される:
 #
 # $$
 # \credint_{\op{ETI}}(c_1, c_0|\alpha, \gamma, \delta) =
@@ -285,6 +285,10 @@
 # * Qinyu Wei, Peng Wang and Ping Yin. Confidence interval estimation for vaccine efficacy against COVID-19. Front. Public Health, 12 August 2022, Sec. Infectious Diseases – Surveillance, Prevention and Treatment. https://doi.org/10.3389/fpubh.2022.848120
 # * C4591001 Clinical Trial Group. Safety and Efficacy of the BNT162b2 mRNA Covid-19 Vaccine. December 31, 2020
 # N Engl J Med 2020; 383:2603-2615. https://doi.org/10.1056/NEJMoa2034577
+#
+# __参考動画:__ リスクや治療効果の指標については次の講義動画で学べる:
+#
+# * 田中司朗（医学研究科 臨床統計学/臨床統計家育成コース 特定教授). リスクの指標と治療効果の指標. 京都大学大学院医学研究科 聴講コース 臨床研究者のための生物統計学, 2017年7月20日. https://youtu.be/OO9X1SXy_vE
 
 # %%
 # 二項分布の累積分布函数がベータ分布の累積分布函数で表されることの数値的確認
