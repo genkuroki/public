@@ -405,6 +405,7 @@ for i in axes(data, 1)
     plot!([CI_L, CI_U], fill(0.05, 2); label="95% CI")
     scatter!([VEhat], [0.05]; label="point estimate", ms=3, msw=0)
     plot!(xguide="VE", yguide="P-value")
+    plot!(ytick=0:0.1:1)
     plot!(legend=:topleft)
     push!(PP, P)
 end
