@@ -501,10 +501,12 @@ end
 # %% [markdown]
 # ### P値函数と信頼区間の関係
 
-# %%
-# P値函数と信頼区間の関係:
-# 95%信頼区間はP値函数のグラフを高さ5%で切断して得られる線分になる.
+# %% [markdown]
+# P値函数が与えられたとき, 95%信頼区間は概念的には以下の手続きで計算されると考えられる.
+#
+# $\VE$ のClopper-Pearsonの信頼区間に対応するP値函数は次のようにシンプルに実装される.
 
+# %%
 function pvalue_efficacy_clopper_pearson(c1, T1, c0, T0; VE=1)
     r = T1/T0
     IRR = 1 - VE
@@ -513,6 +515,40 @@ function pvalue_efficacy_clopper_pearson(c1, T1, c0, T0; VE=1)
     bin = Binomial(c1+c0, p)
     min(1, 2cdf(bin, c1), 2ccdf(bin, c1-1))
 end
+
+# %% [markdown]
+# 例として, $(c_1, T_1, c_0, T_0) = (8, 2.214, 162, 2.222)$ の場合を扱おう.
+
+# %%
+c1, T1, c0, T0 = 8, 2.214, 162, 2.222;
+
+# %% [markdown]
+# (1) $\VE$ を連続的に動かしてP値を計算する.
+
+# %%
+P = plot(legend=:topleft)
+plot!(VE -> pvalue_efficacy_clopper_pearson(c1, T1, c0, T0; VE), 0.85, 1.0;
+    label="P-value function")
+plot!(xguide="VE", ytick=0:0.05:1)
+title!("c1=$c1, T1=$T1, c0=$c0, T0=$T0")
+
+# %% [markdown]
+# (2) P値が5%以上になるVEの値全体の集合として95%信頼区間が求まる.
+
+# %%
+@show CI = confint_efficacy_clopper_pearson(c1, T1, c0, T0; α=0.05)
+plot!(CI, fill(0.05, 2); label="95% confidence interval")
+
+# %% [markdown]
+# すなわち, $\VE$ に関する95%信頼区間は仮説 $\VE = a$ が有意水準5%で棄却されない値 $a$ 全体の集合として求まる.
+#
+# 通常の仮説検定の手続きでは, 特別な帰無仮説(多くの場合に効果がないことを意味する仮説)のP値だけを計算して, その特別な帰無仮説だけを検定する.
+#
+# 信頼区間を計算することは「効果は $a$ である」($a$ は具体的な数値)の形の無数の仮説達の検定を一斉に行うことと同等である.  棄却されなかった仮説の値 $a$ 全体の集合が信頼区間になる.
+
+# %%
+# P値函数と信頼区間の関係:
+# 95%信頼区間はP値函数のグラフを高さ5%で切断して得られる線分になる.
 
 PP = []
 for i in axes(data, 1)
