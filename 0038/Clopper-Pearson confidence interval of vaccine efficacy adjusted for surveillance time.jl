@@ -327,14 +327,28 @@ using StatsPlots
 default(fmt=:png, titlefontsize=10, size=(500, 300))
 
 c1, c0 = 5, 6
-plot(Beta(c1, c0+1); label="Beta(c1, c0+1)")
-plot!(Beta(c1+0.5, c0+1); label="Beta(c1+0.5, c0+1)", ls=:dash)
-title!("c1 = $c1,  c0 = $c0") |> display
+γ, δ = 1, 1
+plot(Beta(c1, c0+1); label="Beta(c1, c0+1)", ls=:dash, c=1)
+plot!(Beta(c1+1, c0); label="Beta(c1+1, c0)", ls=:dashdot, c=1)
+plot!(Beta(c1+γ, c0+δ); label="Beta(c1+$γ, c0+$δ)", ls=:solid, c=2)
+title!("c1=$c1, c0=$c0, γ=$γ, δ=$δ")
 
-c1, c0 = 10, 6
-plot(Beta(c1+1, c0); label="Beta(c1+1, c0)")
-plot!(Beta(c1+1, c0+0.5); label="Beta(c1+1, c0+0.5)", ls=:dash)
-title!("c1 = $c1,  c0 = $c0"; legend=:topleft) |> display
+# %%
+c1, c0 = 5, 6
+γ, δ = 1//3, 1//3
+plot(Beta(c1, c0+1); label="Beta(c1, c0+1)", ls=:dash, c=1)
+plot!(Beta(c1+1, c0); label="Beta(c1+1, c0)", ls=:dashdot, c=1)
+plot!(Beta(c1+γ, c0+δ); label="Beta(c1+γ, c0+δ)", ls=:solid, c=2)
+title!("c1=$c1, c0=$c0, γ=$γ, δ=$δ")
+
+# %%
+c1, c0 = 2, 100
+γ, δ = 1//3, 1//3
+xlim = (0.0, 0.1)
+plot(Beta(c1, c0+1), xlim...; label="Beta(c1, c0+1)", ls=:dash, c=1)
+plot!(Beta(c1+1, c0), xlim...; label="Beta(c1+1, c0)", ls=:dashdot, c=1)
+plot!(Beta(c1+γ, c0+δ), xlim...; label="Beta(c1+γ, c0+δ)", ls=:solid, c=2)
+title!("c1=$c1, c0=$c0, γ=$γ, δ=$δ")
 
 # %%
 using Distributions
