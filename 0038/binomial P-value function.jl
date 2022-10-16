@@ -122,7 +122,7 @@ function plot_pvalue_functions(; n=20, k=6, γ=1, δ=1, kwargs...)
 end
 
 # %%
-plot_pvalue_functions_3(; n=20, k=6, γ=1, δ=1)
+plot_pvalue_functions(; n=20, k=6, γ=1, δ=1)
 
 # %%
 PP = []
