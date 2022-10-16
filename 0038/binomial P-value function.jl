@@ -114,7 +114,7 @@ function plot_pvalue_functions(; n=20, k=6, γ=1, δ=1, kwargs...)
     p = range(0, 1, 500)
     plot(p, p -> pvalue_bin_wilson(k, p; n); label="Wilson")
     plot!(p, p -> pvalue_bin_cp(k, p; n); label="Clopper-Pearson", ls=:dash)
-    plot!(p, p -> pvalue_bin_bayesian_eti(k, p; n, γ, δ); label="Bayesian", ls=:dashdot)
+    plot!(p, p -> pvalue_bin_bayesian_eti(k, p; n, γ, δ); label="Bayesian (ETI)", ls=:dashdot)
     plot!(xguide="parameter p", yguide="P-value")
     plot!(xtick=0:0.1:1, ytick=0:0.1:1)
     title!("P-value functions for n=$n, k=$k, prior=Beta($γ, $δ)")
@@ -122,7 +122,7 @@ function plot_pvalue_functions(; n=20, k=6, γ=1, δ=1, kwargs...)
 end
 
 # %%
-plot_pvalue_functions(; n=20, k=6, γ=1, δ=1)
+plot_pvalue_functions_3(; n=20, k=6, γ=1, δ=1)
 
 # %%
 PP = []
@@ -140,6 +140,61 @@ plot_pvalue_functions(; n=20, k=6, γ=1//3, δ=1//3)
 PP = []
 for k in 0:11
     P = plot_pvalue_functions(; n=20, k, γ=1//3, δ=1//3, title="n=$n, k=$k", legend=false)
+    push!(PP, P)
+end
+plot(PP...; size=(1000, 1000), layout=(4, 3))
+plot!(legend=false)
+
+# %% [markdown]
+# ## highest density interval 版のP値函数
+
+# %%
+using Roots
+
+function pvalue_hdi(dist::ContinuousUnivariateDistribution, x₀; xlim = extrema(dist))
+    p₀ = pdf(dist, x₀)
+    m = mode(dist)
+    f(x) = pdf(dist, x) - p₀
+    if x₀ == m
+        1.0
+    elseif x₀ > m
+        x₁ = find_zero(f, (xlim[begin], m))
+        cdf(dist, x₁) + ccdf(dist, x₀)
+    else
+        x₁ = find_zero(f, (m, xlim[end]))
+        cdf(dist, x₀) + ccdf(dist, x₁)
+    end
+end
+
+# 事前分布Beta(γ, δ)によるBayes版のP値函数(highest density interval版)
+function pvalue_bin_bayesian_hdi(k, p; n=20, γ=1, δ=1)
+    beta = Beta(k+γ, n-k+δ)
+    if k+γ ≤ 1
+        return ccdf(beta, p)
+    elseif n-k+δ ≤ 1
+        return cdf(beta, p)
+    end
+    pvalue_hdi(beta, p)
+end
+
+function plot_pvalue_functions_hdi(; n=20, k=6, γ=1, δ=1, kwargs...)
+    p = range(0, 1, 500)
+    plot(p, p -> pvalue_bin_wilson(k, p; n); label="Wilson")
+    plot!(p, p -> pvalue_bin_cp(k, p; n); label="Clopper-Pearson", ls=:dash)
+    plot!(p, p -> pvalue_bin_bayesian_hdi(k, p; n, γ, δ); label="Bayesian (HDI)", ls=:dashdot)
+    plot!(xguide="parameter p", yguide="P-value")
+    plot!(xtick=0:0.1:1, ytick=0:0.1:1)
+    title!("P-value functions for n=$n, k=$k, prior=Beta($γ, $δ)")
+    plot!(; kwargs...)
+end
+
+# %%
+plot_pvalue_functions_hdi(; n=20, k=6, γ=1, δ=1)
+
+# %%
+PP = []
+for k in 0:11
+    P = plot_pvalue_functions_hdi(; n=20, k, γ=1, δ=1, title="n=$n, k=$k", legend=false)
     push!(PP, P)
 end
 plot(PP...; size=(1000, 1000), layout=(4, 3))
