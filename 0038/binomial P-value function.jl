@@ -16,15 +16,35 @@
 
 # %% [markdown]
 # # 二項分布モデルでのP値函数のグラフ
+#
+# * 黒木玄
+# * 2020-10-17
+# $
+# \newcommand\op{\operatorname}
+# \newcommand\pvalue{\op{pvalue}}
+# \newcommand\pdf{\op{pdf}}
+# \newcommand\cdf{\op{cdf}}
+# \newcommand\ccdf{\op{ccdf}}
+# \newcommand\confint{\op{confint}}
+# \newcommand\credint{\op{credint}}
+# $
+
+# %% [markdown] toc=true
+# <h1>目次<span class="tocSkip"></span></h1>
+# <div class="toc"><ul class="toc-item"><li><span><a href="#WilsonのP値函数の場合" data-toc-modified-id="WilsonのP値函数の場合-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>WilsonのP値函数の場合</a></span></li><li><span><a href="#WilsonのP値函数とClopper-PeasonのP値函数とベイズ版P値函数の比較" data-toc-modified-id="WilsonのP値函数とClopper-PeasonのP値函数とベイズ版P値函数の比較-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>WilsonのP値函数とClopper-PeasonのP値函数とベイズ版P値函数の比較</a></span></li><li><span><a href="#highest-density-interval-版のP値函数" data-toc-modified-id="highest-density-interval-版のP値函数-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>highest density interval 版のP値函数</a></span></li><li><span><a href="#信用区間にベイズ信用区間と同様の意味で「真の値」が含まれる確率" data-toc-modified-id="信用区間にベイズ信用区間と同様の意味で「真の値」が含まれる確率-4"><span class="toc-item-num">4&nbsp;&nbsp;</span>信用区間にベイズ信用区間と同様の意味で「真の値」が含まれる確率</a></span></li></ul></div>
+
+# %%
+using DataFrames
+using Distributions
+using Roots
+using StatsPlots
+default(fmt=:png,
+    titlefontsize=10, tickfontsize=6, guidefontsize=9, legendfontsize=9)
 
 # %% [markdown]
 # ## WilsonのP値函数の場合
 
 # %%
-using Distributions
-using StatsPlots
-default(fmt=:png, titlefontsize=10, tickfontsize=6, guidefontsize=9)
-
 function pvalue_bin_wilson(k, p; n=20)
     z = (k - n*p)/√(n*p*(1 - p))
     2ccdf(Normal(), abs(z))
@@ -86,11 +106,7 @@ gif(anim, "Wilson's P-value function n=$n (45).gif")
 # ## WilsonのP値函数とClopper-PeasonのP値函数とベイズ版P値函数の比較
 
 # %%
-using Distributions
-using StatsPlots
-default(fmt=:png,
-    titlefontsize=10, tickfontsize=6, guidefontsize=9, legendfontsize=9)
-safediv(x, y) = x==0 ? x : y==0 ? oftype(x, Inf) : x/y
+safediv(x, y) = x==0 ? x : y==Inf ? zero(y) : x/y
 
 # WilsonのP値函数
 function pvalue_bin_wilson(k, p; n=20)
@@ -147,10 +163,32 @@ plot!(legend=false)
 
 # %% [markdown]
 # ## highest density interval 版のP値函数
+#
+# 事後分布 $\op{Beta}(k+\gamma, n-k+\delta)$ の累積分布函数と確率密度函数をそれぞれ
+#
+# $$
+# \Psi(p) = \cdf(\op{Beta}(k+\gamma, n-k+\delta), p), \quad
+# \psi(p) = \pdf(\op{Beta}(k+\gamma, n-k+\delta), p)
+# $$
+#
+# と書くとき, 仮説「成功確率は $p$ である」の highest density interval 版のP値が次のように定義される:
+#
+# $$
+# \pvalue_{\op{Bayesian}\op{HDI}}(k|n,p,\gamma,\delta) = \Psi(p) + \Psi(p').
+# $$
+#
+# ここで $p'$ は $\psi(p)=\psi(p')$ を満たす $p$ 以外のパラメータ値 $p'$ である.
+#
+# このP値の定義に対応する区間
+#
+# $$
+# \credint_{\op{Bayesian}\op{HDI}}(k|n,\alpha,\gamma,\delta) =
+# \{\, p\in[0,1] \mid \pvalue_{\op{Bayesian}\op{HDI}}(k|n,p,\gamma,\delta) \ge \alpha\,\}
+# $$
+#
+# はhighest density interval 版の $100(1-\alpha)\%$ ベイズ信用区間, すなわち, 事後分布で測った確率が $1-\alpha$ になるようなパラメータの区間で長さが最短のものになる.
 
 # %%
-using Roots
-
 function pvalue_hdi(dist::ContinuousUnivariateDistribution, x₀; xlim = extrema(dist))
     p₀ = pdf(dist, x₀)
     m = mode(dist)
@@ -199,5 +237,68 @@ for k in 0:11
 end
 plot(PP...; size=(1000, 1000), layout=(4, 3))
 plot!(legend=false)
+
+# %% [markdown]
+# ## 信用区間にベイズ信用区間と同様の意味で「真の値」が含まれる確率
+#
+# 結構頻繁に次のようなことを言う人をみかける:
+#
+# * 95%信頼区間に真の値が含まれる確率が95%になると考えるのは誤解であるが, ベイズ統計における95%信用区間であれば真の値が95%の確率で含まれると考えてよい.
+#
+# 事後分布にしたがってランダムに生成されたパラメータ値 $p$ が95%ベイズ信用区間に含まれる確率は95%になる.  これが「ベイズ統計における95%信用区間であれば真の値が95%の確率で含まれる」の正確な内容である.
+#
+# すなわち, 「ベイズ統計における95%信用区間であれば真の値が95%の確率で含まれる」における「真の値」は統計分析において真に興味がある現実における何かの値ではなく, 数学的フィクションである統計モデルの条件付き確率分布として定義される事後分布で生成された値に過ぎない.
+#
+# 「ベイズ統計における95%信用区間であれば真の値が95%の確率で含まれる」という発言を目にして, 「これこそ, 私が欲しかった性質である. 信頼区間よりもベイズ信用区間の方が解釈がわかりやすいし, 優れている!」のように思った人は, 過剰広告に騙されていることになる.
+#
+# 一様事前分布に関する事後分布については「事後分布にしたがってランダムに生成されたパラメータ値 $p$ が含まれる確率は95%になる」という性質は95%信頼区間についても近似的に成立している.  (注意: 実際には一様事前分布の場合に限らず, おとなしめの任意の事前分布についても同様である.)
+#
+# そのことを以下で数値的に確認しよう.
+
+# %%
+# Wilsonの信頼区間
+function confint_bin_wilson(k; n=20, α=0.05)
+    z = cquantile(Normal(0,1), α/2)
+    p̂ = k/n
+    a, b, c = 1 + z^2/n, p̂ + z^2/(2n), p̂^2
+    sqrtD = √(b^2 - a*c)
+    (b - sqrtD)/a, (b + sqrtD)/a
+end
+
+# 事後分布で測ったWilsonの信頼区間にpが含まれる確率
+function prob_of_p_in_ci_wrt_posterior(k; n=20, α=0.05, γ=1, δ=1)
+    beta = Beta(k+γ, n-k+δ)
+    p_L, p_U = confint_bin_wilson(k; n, α)
+    cdf(beta, p_U) - cdf(beta, p_L)
+end
+
+# 事後分布で測ったWilsonの信頼区間にpが含まれる確率のプロット
+function plot_prob_of_p_in_ci_wrt_posterior(; n=20, γ=1, δ=1, kwargs...)
+    α = 0.05
+    ks = 0:n
+    probs = prob_of_p_in_ci_wrt_posterior.(ks; n, α, γ, δ)
+
+    plot(ks, probs; label="")
+    hline!([0.95]; label="", ls=:dash)
+    plot!(ylim=(0.9, 1.002))
+    plot!(xtick=0:n, ytick=0:0.01:1)
+    plot!(xguide="k", yguide="probability")
+    title!("prob. of p ∈ 95% conf. int. w.r.t. posterior for n=$n, prior=Beta($γ, $δ)")
+    plot!(; kwargs...)
+end
+
+# %%
+plot_prob_of_p_in_ci_wrt_posterior(; n=20)
+
+# %%
+plot_prob_of_p_in_ci_wrt_posterior(; n=100, xtick=0:5:100)
+
+# %%
+plot_prob_of_p_in_ci_wrt_posterior(; n=1000, xtick=0:50:1000)
+
+# %% [markdown]
+# このように一様事前分布から得られる事後分布で測った95%信頼区間(Wilson)に含まれる確率は95%でよく近似されている.
+#
+# ただし, $k/n$ または $1-k/n$ が小さ過ぎる場合にはその確率は95%よりも大きめになることには注意が必要である.
 
 # %%
