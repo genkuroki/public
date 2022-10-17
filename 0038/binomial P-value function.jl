@@ -31,7 +31,7 @@
 
 # %% [markdown] toc=true
 # <h1>目次<span class="tocSkip"></span></h1>
-# <div class="toc"><ul class="toc-item"><li><span><a href="#WilsonのP値函数の場合" data-toc-modified-id="WilsonのP値函数の場合-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>WilsonのP値函数の場合</a></span></li><li><span><a href="#WilsonのP値函数とClopper-PeasonのP値函数とベイズ版P値函数の比較" data-toc-modified-id="WilsonのP値函数とClopper-PeasonのP値函数とベイズ版P値函数の比較-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>WilsonのP値函数とClopper-PeasonのP値函数とベイズ版P値函数の比較</a></span></li><li><span><a href="#highest-density-interval-版のP値函数" data-toc-modified-id="highest-density-interval-版のP値函数-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>highest density interval 版のP値函数</a></span></li><li><span><a href="#信頼区間にベイズ信用区間と同様の意味で「真の値」が含まれる確率" data-toc-modified-id="信頼区間にベイズ信用区間と同様の意味で「真の値」が含まれる確率-4"><span class="toc-item-num">4&nbsp;&nbsp;</span>信頼区間にベイズ信用区間と同様の意味で「真の値」が含まれる確率</a></span></li></ul></div>
+# <div class="toc"><ul class="toc-item"><li><span><a href="#WilsonのP値函数の場合" data-toc-modified-id="WilsonのP値函数の場合-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>WilsonのP値函数の場合</a></span></li><li><span><a href="#WilsonのP値函数とClopper-PeasonのP値函数とベイズ版P値函数の比較" data-toc-modified-id="WilsonのP値函数とClopper-PeasonのP値函数とベイズ版P値函数の比較-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>WilsonのP値函数とClopper-PeasonのP値函数とベイズ版P値函数の比較</a></span></li><li><span><a href="#highest-density-interval-版のP値函数" data-toc-modified-id="highest-density-interval-版のP値函数-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>highest density interval 版のP値函数</a></span></li><li><span><a href="#信頼区間にベイズ信用区間と同様の意味で「真の値」が含まれる確率" data-toc-modified-id="信頼区間にベイズ信用区間と同様の意味で「真の値」が含まれる確率-4"><span class="toc-item-num">4&nbsp;&nbsp;</span>信頼区間にベイズ信用区間と同様の意味で「真の値」が含まれる確率</a></span></li><li><span><a href="#ベイズ信用区間の信頼区間と同様の意味での被覆確率" data-toc-modified-id="ベイズ信用区間の信頼区間と同様の意味での被覆確率-5"><span class="toc-item-num">5&nbsp;&nbsp;</span>ベイズ信用区間の信頼区間と同様の意味での被覆確率</a></span></li></ul></div>
 
 # %%
 using DataFrames
@@ -273,15 +273,14 @@ function prob_of_p_in_ci_wrt_posterior(k; n=20, α=0.05, γ=1, δ=1)
 end
 
 # 事後分布で測ったWilsonの信頼区間にpが含まれる確率のプロット
-function plot_prob_of_p_in_ci_wrt_posterior(; n=20, γ=1, δ=1, kwargs...)
-    α = 0.05
+function plot_prob_of_p_in_ci_wrt_posterior(; n=20, α=0.05, γ=1, δ=1, kwargs...)
     ks = 0:n
     probs = prob_of_p_in_ci_wrt_posterior.(ks; n, α, γ, δ)
 
     plot(ks, probs; label="")
-    hline!([0.95]; label="", ls=:dash)
-    plot!(ylim=(0.9, 1.002))
-    plot!(xtick=0:n, ytick=0:0.01:1)
+    hline!([1-α]; label="", ls=:dash)
+    plot!(ylim=(1-2α, 1+α/25))
+    plot!(xtick=0:n, ytick=0:α/5:1)
     plot!(xguide="k", yguide="probability")
     title!("prob. of p ∈ 95% conf. int. w.r.t. posterior for n=$n, prior=Beta($γ, $δ)")
     plot!(; kwargs...)
@@ -300,5 +299,82 @@ plot_prob_of_p_in_ci_wrt_posterior(; n=1000, xtick=0:50:1000)
 # このように一様事前分布から得られる事後分布で測った95%信頼区間(Wilson)に含まれる確率は95%でよく近似されている.
 #
 # ただし, $k/n$ または $1-k/n$ が小さ過ぎる場合にはその確率は95%よりも大きめになることには注意が必要である.
+
+# %%
+plot_prob_of_p_in_ci_wrt_posterior(; n=100, xtick=0:5:100, α=0.01)
+
+# %%
+plot_prob_of_p_in_ci_wrt_posterior(; n=1000, xtick=0:50:1000, α=0.01)
+
+# %% [markdown]
+# ## ベイズ信用区間の信頼区間と同様の意味での被覆確率
+#
+# 前節と逆に, ベイズ信用区間の信頼区間と同様の意味での被覆確率を計算してみよう.
+
+# %%
+# 二項分布モデルでの被覆確率
+# 引数として函数 pvalue(k, p, n) を与える.
+function coverage_probability(pvalue, p; n=20, α=0.05)
+    bin = Binomial(n, p)
+    μ, σ = mean(bin), std(bin)
+    kmin, kmax = max(0, round(Int, μ-5σ)), min(round(Int, μ+5σ), n)
+    supp = kmin:kmax
+    sum(0:n) do k
+        (pvalue(k, p, n) ≥ α) * pdf(bin, k)
+    end
+end
+
+# 被覆確率をプロット
+function plot_coverage_probability(pvalue; n=20, α=0.05)
+    p = range(0, 1, round(Int, 100√n))
+    P0 = plot(p, p -> coverage_probability(pvalue, p; n, α); label="")
+    hline!([1-α]; label="", ls=:dash)
+    plot!(xtick=0:0.1:1, ytick=0:α/5:1)
+    plot!(xguide="p", yguide="coverage probability")
+    plot!(ylim=(1-2α, 1+α/25))
+end
+
+function plot_coverage_probabilities(; n=20, α=0.05, γ=1, δ=1)
+    pvalue0(k, p, n) = pvalue_bin_wilson(k, p; n)
+    pvalue1(k, p, n) = pvalue_bin_bayesian_hdi(k, p; n, γ, δ)
+
+    P0 = plot_coverage_probability(pvalue0; n, α)
+    title!("Wilson's confidence interval for n=$n, α=$α")
+
+    P1 = plot_coverage_probability(pvalue1; n, α)
+    title!("Bayesian cred int. for n=$n, α=$α, prior=Beta($γ,$δ)")
+
+    plot(P0, P1; size=(1000, 300))
+    plot!(leftmargin=4Plots.mm, bottommargin=4Plots.mm)
+end
+
+# %%
+@time plot_coverage_probabilities(n = 20)
+
+# %%
+@time plot_coverage_probabilities(n = 100)
+
+# %%
+@time plot_coverage_probabilities(n = 1000)
+
+# %% [markdown]
+# ベイズ信用区間(平坦事前分布に関するhighest density版)の被覆確率は通常の信頼区間(Wilson版)の被覆確率とそう変わらないことが分かった.
+#
+# ベイズ信用区間も通常の信頼区間も $k/n$ または $1-k/n$ が小さ過ぎる場合の被覆確率の $1-\alpha$ からのずれについては注意した方が良いかもしれない.
+
+# %%
+@time plot_coverage_probabilities(n = 100, α = 0.01)
+
+# %%
+@time plot_coverage_probabilities(n = 1000, α = 0.01)
+
+# %%
+@time plot_coverage_probabilities(n = 20, γ = 1.5, δ = 1.5)
+
+# %%
+@time plot_coverage_probabilities(n = 100, γ = 1.5, δ = 1.5)
+
+# %%
+@time plot_coverage_probabilities(n = 1000, γ = 1.5, δ = 1.5)
 
 # %%
