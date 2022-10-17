@@ -31,7 +31,7 @@
 
 # %% [markdown] toc=true
 # <h1>目次<span class="tocSkip"></span></h1>
-# <div class="toc"><ul class="toc-item"><li><span><a href="#WilsonのP値函数の場合" data-toc-modified-id="WilsonのP値函数の場合-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>WilsonのP値函数の場合</a></span></li><li><span><a href="#WilsonのP値函数とClopper-PeasonのP値函数とベイズ版P値函数の比較" data-toc-modified-id="WilsonのP値函数とClopper-PeasonのP値函数とベイズ版P値函数の比較-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>WilsonのP値函数とClopper-PeasonのP値函数とベイズ版P値函数の比較</a></span></li><li><span><a href="#highest-density-interval-版のP値函数" data-toc-modified-id="highest-density-interval-版のP値函数-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>highest density interval 版のP値函数</a></span></li><li><span><a href="#信用区間にベイズ信用区間と同様の意味で「真の値」が含まれる確率" data-toc-modified-id="信用区間にベイズ信用区間と同様の意味で「真の値」が含まれる確率-4"><span class="toc-item-num">4&nbsp;&nbsp;</span>信用区間にベイズ信用区間と同様の意味で「真の値」が含まれる確率</a></span></li></ul></div>
+# <div class="toc"><ul class="toc-item"><li><span><a href="#WilsonのP値函数の場合" data-toc-modified-id="WilsonのP値函数の場合-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>WilsonのP値函数の場合</a></span></li><li><span><a href="#WilsonのP値函数とClopper-PeasonのP値函数とベイズ版P値函数の比較" data-toc-modified-id="WilsonのP値函数とClopper-PeasonのP値函数とベイズ版P値函数の比較-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>WilsonのP値函数とClopper-PeasonのP値函数とベイズ版P値函数の比較</a></span></li><li><span><a href="#highest-density-interval-版のP値函数" data-toc-modified-id="highest-density-interval-版のP値函数-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>highest density interval 版のP値函数</a></span></li><li><span><a href="#信頼区間にベイズ信用区間と同様の意味で「真の値」が含まれる確率" data-toc-modified-id="信頼区間にベイズ信用区間と同様の意味で「真の値」が含まれる確率-4"><span class="toc-item-num">4&nbsp;&nbsp;</span>信頼区間にベイズ信用区間と同様の意味で「真の値」が含まれる確率</a></span></li></ul></div>
 
 # %%
 using DataFrames
@@ -239,7 +239,7 @@ plot(PP...; size=(1000, 1000), layout=(4, 3))
 plot!(legend=false)
 
 # %% [markdown]
-# ## 信用区間にベイズ信用区間と同様の意味で「真の値」が含まれる確率
+# ## 信頼区間にベイズ信用区間と同様の意味で「真の値」が含まれる確率
 #
 # 結構頻繁に次のようなことを言う人をみかける:
 #
