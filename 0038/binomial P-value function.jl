@@ -36,6 +36,7 @@
 # %%
 using DataFrames
 using Distributions
+using Optim
 using Roots
 using StatsPlots
 default(fmt=:png,
@@ -48,6 +49,14 @@ default(fmt=:png,
 function pvalue_bin_wilson(k, p; n=20)
     z = (k - n*p)/√(n*p*(1 - p))
     2ccdf(Normal(), abs(z))
+end
+
+function confint_bin_wilson(k; n=20, α=0.05)
+    z = cquantile(Normal(0,1), α/2)
+    p̂ = k/n
+    a, b, c = 1 + z^2/n, p̂ + z^2/(2n), p̂^2
+    sqrtD = √(b^2 - a*c)
+    (b - sqrtD)/a, (b + sqrtD)/a
 end
 
 # %%
@@ -74,11 +83,41 @@ plot!(size=(640, 500))
 
 # %%
 n, k = 20, 6
+@show p_L, p_U = confint_bin_wilson(k; n)
 p = range(0, 1, 500)
+t = range(0, 2π, 100)
 plot(p, p -> pvalue_bin_wilson(k, p; n); label="")
-plot!(xguide="parameter p", yguide="P-value")
+plot!([p_L, p_U], fill(0.05, 2); lw=3, c=:red, label="")
+annotate!([(0.32, 0.09, ("95% confidence interval", 8, :center, :red))])
+plot!(@.(0.3+0.02cos(t)), @.(1+0.03sin(t)), lw=2.5, c=:red, label="")
+annotate!([(0.34, 1.0, ("point estimate", 9, :left, :red))])
+plot!(xguide="parameter p",
+    yguide="P-value\ncompatibility of data and model+parameter")
 plot!(xtick=0:0.1:1, ytick=0:0.1:1)
-title!("Wilson's P-value function for n=$n, k=$k")
+title!("Wilson's P-value function for data=(n=$n, k=$k)")
+
+# %%
+function hdi(dist::ContinuousUnivariateDistribution, α = 0.05; alg = Brent())
+    f(p) = quantile(dist, p + (1 - α)) - quantile(dist, p)
+    o = optimize(f, 0, α, alg)
+    p = o.minimizer
+    quantile.(dist, (p, p + (1 - α)))
+end
+
+n, k = 20, 6
+@show beta = Beta(k+1, n-k+1)
+@show p_L, p_U = hdi(beta)
+p = range(0, 1, 500)
+t = range(0, 2π, 100)
+plot(p, p -> pdf(beta, p); label="")
+plot!([p_L, p_U], fill(pdf(beta, p_L), 2); lw=3, c=:red, label="")
+annotate!([(0.32, 0.8, ("95% credible interval", 8, :center, :red))])
+plot!(@.(0.3+0.02cos(t)), @.(4+0.12sin(t)), lw=2.5, c=:red, label="")
+annotate!([(0.34, 4.0, ("point estimate", 9, :left, :red))])
+plot!(xguide="parameter p",
+    yguide="probabilty density\ncompatibility of data and model+parameter")
+plot!(xtick=0:0.1:1)
+title!("posterior density function for data=(n=$n, k=$k), prior=Beta(1,1)")
 
 # %%
 n = 20
