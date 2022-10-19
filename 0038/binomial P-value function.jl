@@ -21,20 +21,21 @@
 # * 2020-10-17
 # $
 # \newcommand\op{\operatorname}
-# \newcommand\pvalue{\op{pvalue}}
 # \newcommand\pdf{\op{pdf}}
 # \newcommand\cdf{\op{cdf}}
 # \newcommand\ccdf{\op{ccdf}}
+# \newcommand\quantile{\op{quantile}}
+# \newcommand\cquantile{\op{cquantile}}
+# \newcommand\pvalue{\op{pvalue}}
 # \newcommand\confint{\op{confint}}
 # \newcommand\credint{\op{credint}}
 # $
 
 # %% [markdown] toc=true
 # <h1>目次<span class="tocSkip"></span></h1>
-# <div class="toc"><ul class="toc-item"><li><span><a href="#WilsonのP値函数の場合" data-toc-modified-id="WilsonのP値函数の場合-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>WilsonのP値函数の場合</a></span></li><li><span><a href="#WilsonのP値函数とClopper-PeasonのP値函数とベイズ版P値函数の比較" data-toc-modified-id="WilsonのP値函数とClopper-PeasonのP値函数とベイズ版P値函数の比較-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>WilsonのP値函数とClopper-PeasonのP値函数とベイズ版P値函数の比較</a></span></li><li><span><a href="#highest-density-interval-版のP値函数" data-toc-modified-id="highest-density-interval-版のP値函数-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>highest density interval 版のP値函数</a></span></li><li><span><a href="#信頼区間にベイズ信用区間と同様の意味で「真の値」が含まれる確率" data-toc-modified-id="信頼区間にベイズ信用区間と同様の意味で「真の値」が含まれる確率-4"><span class="toc-item-num">4&nbsp;&nbsp;</span>信頼区間にベイズ信用区間と同様の意味で「真の値」が含まれる確率</a></span></li><li><span><a href="#ベイズ信用区間の信頼区間と同様の意味での被覆確率" data-toc-modified-id="ベイズ信用区間の信頼区間と同様の意味での被覆確率-5"><span class="toc-item-num">5&nbsp;&nbsp;</span>ベイズ信用区間の信頼区間と同様の意味での被覆確率</a></span></li></ul></div>
+# <div class="toc"><ul class="toc-item"><li><span><a href="#WilsonのP値函数の場合" data-toc-modified-id="WilsonのP値函数の場合-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>WilsonのP値函数の場合</a></span></li><li><span><a href="#WilsonのP値函数とClopper-PeasonのP値函数とベイズ版P値函数の比較" data-toc-modified-id="WilsonのP値函数とClopper-PeasonのP値函数とベイズ版P値函数の比較-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>WilsonのP値函数とClopper-PeasonのP値函数とベイズ版P値函数の比較</a></span></li><li><span><a href="#highest-density-interval-版のP値函数" data-toc-modified-id="highest-density-interval-版のP値函数-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>highest density interval 版のP値函数</a></span></li><li><span><a href="#信頼区間にベイズ信用区間と同様の意味で「真の値」が含まれる確率" data-toc-modified-id="信頼区間にベイズ信用区間と同様の意味で「真の値」が含まれる確率-4"><span class="toc-item-num">4&nbsp;&nbsp;</span>信頼区間にベイズ信用区間と同様の意味で「真の値」が含まれる確率</a></span></li><li><span><a href="#ベイズ信用区間の信頼区間と同様の意味での被覆確率" data-toc-modified-id="ベイズ信用区間の信頼区間と同様の意味での被覆確率-5"><span class="toc-item-num">5&nbsp;&nbsp;</span>ベイズ信用区間の信頼区間と同様の意味での被覆確率</a></span></li><li><span><a href="#P値とBayes因子の比較" data-toc-modified-id="P値とBayes因子の比較-6"><span class="toc-item-num">6&nbsp;&nbsp;</span>P値とBayes因子の比較</a></span><ul class="toc-item"><li><span><a href="#P値とBayes因子の関係の導出" data-toc-modified-id="P値とBayes因子の関係の導出-6.1"><span class="toc-item-num">6.1&nbsp;&nbsp;</span>P値とBayes因子の関係の導出</a></span></li><li><span><a href="#Bayes-factor経由で計算したP値と通常のP値の比較" data-toc-modified-id="Bayes-factor経由で計算したP値と通常のP値の比較-6.2"><span class="toc-item-num">6.2&nbsp;&nbsp;</span>Bayes factor経由で計算したP値と通常のP値の比較</a></span></li><li><span><a href="#一定のBayes因子に対応するP値の値の漸近挙動" data-toc-modified-id="一定のBayes因子に対応するP値の値の漸近挙動-6.3"><span class="toc-item-num">6.3&nbsp;&nbsp;</span>一定のBayes因子に対応するP値の値の漸近挙動</a></span></li></ul></li></ul></div>
 
 # %%
-using DataFrames
 using Distributions
 using Optim
 using Roots
@@ -51,6 +52,7 @@ function pvalue_bin_wilson(k, p; n=20)
     2ccdf(Normal(), abs(z))
 end
 
+# Wilsonの信頼区間
 function confint_bin_wilson(k; n=20, α=0.05)
     z = cquantile(Normal(0,1), α/2)
     p̂ = k/n
@@ -465,5 +467,189 @@ end
 
 # %%
 @time plot_coverage_probabilities(n = 1000, γ = 1.5, δ = 1.5)
+
+# %% [markdown]
+# ## P値とBayes因子の比較
+#
+# 以上では, P値と事前分布のそれぞれから作られる信頼区間とBayes信用区間を比較して, 互いに相手を近似する関係になっていることを示した.
+#
+# 以下では, P値とBayes因子を比較してみよう.
+#
+# P値とBayes因子のあいだには近似的な変換関係があり, P値を使った方法はBayes因子を使った方法に翻訳可能であり, 逆向きの翻訳も可能である.
+
+# %% [markdown]
+# ### P値とBayes因子の関係の導出
+#
+# 二項分布モデルでのWilsonのP値と一様事前分布と $p$ に台を持つデルタ事前分布のBayes因子のあいだの近似的な変換関係を導出しよう.
+#
+# 仮説「成功確率は $p$ である」を考え, データの数値「$n$ 回中 $k$ 回成功」が与えられているとしよう.
+#
+# $$
+# z = \frac{k - np}{\sqrt{np(1-p)}}.
+# $$
+#
+# とおく. このとき,
+#
+# $$
+# z^2 = \frac{(k - np)}{np(1-p)}.
+# $$
+#
+# WilsonのP値は次のように定義される:
+#
+# $$
+# \pvalue(k|n,p) = 2(1 - \cdf(\op{Normal}(0,1), |z|)).
+# $$
+#
+# このとき,
+#
+# $$
+# \op{pval} = \pvalue(k|n,p)
+# \iff
+# |z| = \quantile(\op{Normal}(0,1), 1-\op{pval}/2).
+# $$
+#
+#
+# $p$ に台を持つデルタ事前分布の周辺尤度 $Z_0$ は成功確率が $p$ の二項分布モデルの尤度に等しい:
+#
+# $$
+# Z_0 = \binom{n}{k} p^k (1 - p)^{n-k}.
+# $$
+#
+# $k$ が $np$ に近ければ中心極限定理によってこれは次のように近似される:
+#
+# $$
+# Z_0 \approx \frac{1}{\sqrt{np(1-p)}}\exp(-z^2/2).
+# $$
+#
+# 一様事前分布の周辺尤度 $Z_1$ は次のように定義され, 計算される:
+#
+# $$
+# Z_1 = \int_0^1 \binom{n}{k} t^k (1 - t)^{n-k}\,dt =
+# \binom{n}{k}B(k+1, n-k+1) = \frac{n!}{k!(n-k)!} \frac{k!(n-k)!}{(n+1)!} = \frac{1}{n+1}.
+# $$
+#
+# Bayes因子 $\op{BF}$ を次のように定義する:
+#
+# $$
+# \op{BF} = \frac{Z_0}{Z_1}.
+# $$
+#
+# これは次のように近似される:
+#
+# $$
+# \op{BF} \approx \frac{n+1}{\sqrt{np(1-p)}}\exp(-z^2/2).
+# $$
+#
+# これに $z^2 = \quantile(\op{Normal}(0,1), 1-\op{pval}/2)^2$ を適用すればP値 $\op{pval}$ に近似的に対応するBayes因子の値が得られる.
+#
+# さらに上の近似は次と同値である:
+#
+# $$
+# z^2 \approx -2\log\op{BF} + \log\frac{(n+1)^2}{n} - \log(2\pi p(1-p)).
+# $$
+#
+# この近似を $\op{pval} = 2\left(1 - \cdf\left(\op{Normal}(0,1), \sqrt{z^2}\right)\right)$ に適用すれば, Bayes因子の値 $\op{BF}$ に近似的に対応するP値が得られる.
+#
+# $z^2$ が大きなほど対応するP値は小さくなるので, 同一のBayes因子 $\op{BF}$ の値に近似的に対応するP値は $n$ について単調減少函数になる.
+#
+# このことから, Bayes因子を使ったBayes検定は $n$ が大きなほど保守的な検定になることがわかる.
+#
+# ゆえに, Bayes検定ではその分だけ検出力は下がることになる.
+
+# %%
+# log Bayes factor for the uniform prior
+function log_bayes_factor(k, p; n=20)
+    logZ1 = -log(n+1)
+    logZ0 = logpdf(Binomial(n, p), k)
+    logZ0 - logZ1
+end
+
+# Bayes factor for the uniform prior
+bayes_factor(k, p; n=20) = exp(log_bayes_factor(k, p; n))
+
+# Bayes factorのP値への近似的変換
+function bf2pval(BF, p; n=20)
+    z² = max(0, -2log(BF) + log((n+2)^2/n) - log(2π*p*(1-p)))
+    2ccdf(Normal(), √z²)
+end
+
+# Bayes factor経由で計算したP値
+pvalue_bin_bf(k, p; n=20) = bf2pval(bayes_factor(k, p; n), p; n)
+
+# P値のBayes factorへの近似的変換
+function pval2bf(pval, p; n=20)
+    z = quantile(Normal(), 1 - pval/2)
+    neg2logBF = z^2 - log((n+1)^2/n) + log(2π*p*(1-p))
+    exp(-neg2logBF/2)
+end
+
+# %% [markdown]
+# ### Bayes factor経由で計算したP値と通常のP値の比較
+
+# %%
+function plot_pvalue_function_bf(; n = 20, k = 6, kwargs...)
+    p = range(0, 1, 1000)
+    plot(p, p -> pvalue_bin_bf(k, p; n);
+        label="P-values via Bayes factor")
+    plot!(p, p -> pvalue_bin_wilson(k, p; n); ls=:dash,
+        label="Wilson's P-value function")
+    plot!(xtick=0:0.1:1, ytick=0:0.05:1)
+    title!("n=$n, k=$k")
+    plot!(; kwargs...)
+end
+
+# %%
+plot_pvalue_function_bf(n = 20, k = 6)
+
+# %% [markdown]
+# 値が小さな部分で通常のWilsonのP値とBayes因子経由で計算したP値はほぼ一致している.
+
+# %%
+plot_pvalue_function_bf(n = 100, k = 30, xlim=(0.15, 0.5), xtick=0:0.02:1)
+
+# %%
+plot_pvalue_function_bf(n = 400, k = 120, xlim=(0.22, 0.38), xtick=0:0.01:1)
+
+# %% [markdown]
+# $n$ と $k$ を大きくすると, 値が小さくない部分でもWilsonのP値とBayes因子経由で計算したP値はほぼ一致するようになる.
+
+# %% [markdown]
+# ### 一定のBayes因子に対応するP値の値の漸近挙動
+
+# %%
+function plot_bf2pval(BF, p;
+        nmin=10, nstep=1, nmax=1000, xtick=0:100:1000, kwargs...)
+    n = nmin:nstep:nmax
+    plot(n, n -> bf2pval(BF, p; n); label="")
+    plot!(xguide="$nmin ≤ n ≤ $nmax", yguide="P-value")
+    title!("P-values corresponding to BF = $BF, p = $p")
+    plot!(leftmargin=4Plots.mm, bottommargin=4Plots.mm)
+    plot!(; xtick, kwargs...)
+end
+
+# %% [markdown]
+# 以下のように, 同一のBayes因子の値に近似的に対応するP値は $n$ について単調減少函数になる.
+#
+# ゆえに, Bayes因子を使ったBayes検定は $n$ が大きいほど保守的な検定になり, 検出力は下がる.
+
+# %%
+P1 = plot_bf2pval(1, 0.3; ytick=0:0.01:1, nmin=10, nstep=1, nmax=100, xtick=10:10:100)
+P2 = plot_bf2pval(1, 0.3; ytick=0:0.01:1)
+plot(P1, P2; size=(1000, 300))
+
+# %%
+P1 = plot_bf2pval(1//3, 0.3; ytick=0:0.002:1, nmin=10, nstep=1, nmax=100, xtick=10:10:100)
+P2 = plot_bf2pval(1//3, 0.3; ytick=0:0.002:1)
+plot(P1, P2; size=(1000, 300))
+
+# %%
+P1 = plot_bf2pval(1//10, 0.3; ytick=0:0.001:1, nmin=10, nstep=1, nmax=100, xtick=10:10:100)
+P2 = plot_bf2pval(1//10, 0.3; ytick=0:0.001:1)
+plot(P1, P2; size=(1000, 300))
+
+# %%
+P1 = plot_bf2pval(1//30, 0.3; ytick=0:0.0002:1, nmin=10, nstep=1, nmax=100, xtick=10:10:100)
+P2 = plot_bf2pval(1//30, 0.3; ytick=0:0.0002:1)
+plot(P1, P2; size=(1000, 300))
 
 # %%
