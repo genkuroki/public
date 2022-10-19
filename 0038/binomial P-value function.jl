@@ -36,6 +36,7 @@
 # %%
 using DataFrames
 using Distributions
+using Optim
 using Roots
 using StatsPlots
 default(fmt=:png,
@@ -82,16 +83,18 @@ plot!(size=(640, 500))
 
 # %%
 n, k = 20, 6
-p_L, p_U = confint_bin_wilson(k; n)
+@show p_L, p_U = confint_bin_wilson(k; n)
 p = range(0, 1, 500)
+t = range(0, 2π, 100)
 plot(p, p -> pvalue_bin_wilson(k, p; n); label="")
-plot!([p_L, p_U], fill(0.05, 2); lw=3, c=:red, lab)
-plot!(xguide="parameter p", yguide="P-value\ncompatibility of data and model+parameter")
+plot!([p_L, p_U], fill(0.05, 2); lw=3, c=:red, label="")
+annotate!([(0.32, 0.09, ("95% confidence interval", 8, :center, :red))])
+plot!(@.(0.3+0.02cos(t)), @.(1+0.03sin(t)), lw=2.5, c=:red, label="")
+annotate!([(0.34, 1.0, ("point estimate", 9, :left, :red))])
+plot!(xguide="parameter p",
+    yguide="P-value\ncompatibility of data and model+parameter")
 plot!(xtick=0:0.1:1, ytick=0:0.1:1)
-title!("Wilson's P-value function for data n=$n, k=$k")
-
-# %% [markdown]
-# ![P-value%20function.png](attachment:P-value%20function.png)
+title!("Wilson's P-value function for data=(n=$n, k=$k)")
 
 # %%
 function hdi(dist::ContinuousUnivariateDistribution, α = 0.05; alg = Brent())
@@ -102,16 +105,69 @@ function hdi(dist::ContinuousUnivariateDistribution, α = 0.05; alg = Brent())
 end
 
 n, k = 20, 6
-beta = Beta(k+1, n-k+1)
-p_L, p_U = hdi(beta)
+@show beta = Beta(k+1, n-k+1)
+@show p_L, p_U = hdi(beta)
 p = range(0, 1, 500)
+t = range(0, 2π, 100)
 plot(p, p -> pdf(beta, p); label="")
-plot!(xguide="parameter p", yguide="probabilty density")
+plot!([p_L, p_U], fill(pdf(beta, p_L), 2); lw=3, c=:red, label="")
+annotate!([(0.32, 0.8, ("95% credible interval", 8, :center, :red))])
+plot!(@.(0.3+0.02cos(t)), @.(4+0.12sin(t)), lw=2.5, c=:red, label="")
+annotate!([(0.34, 4.0, ("point estimate", 9, :left, :red))])
+plot!(xguide="parameter p",
+    yguide="probabilty density\ncompatibility of data and model+parameter")
 plot!(xtick=0:0.1:1)
-title!("posterior density function for n=$n, k=$k, prior=Beta(1,1)")
+title!("posterior density function for data=(n=$n, k=$k), prior=Beta(1,1)")
 
-# %% [markdown]
-#
+# %%
+function pvalue2density(pval; n=20, k=6)
+    z = quantile(Normal(), 1 - pval/2)
+    pdf(Normal(), z) / std(Beta(k+1, n-k+1))
+end
+
+n, k = 20, 6
+@show beta = Beta(k+1, n-k+1)
+@show p_BCIL, p_BCIU = hdi(beta)
+@show p_CIL, p_CIU = confint_bin_wilson(k; n)
+p = range(0, 1, 500)
+t = range(0, 2π, 100)
+plot(p, p -> pdf(beta, p); c=1,
+    label="posterior density function")
+plot!([p_BCIL, p_BCIU], fill(pdf(beta, p_BCIL), 2); lw=3, c=1,
+    label="95% credible interval (Bayesian)")
+plot!(p, p -> pvalue2density(pvalue_bin_wilson(k, p; n); n, k); c=2,
+    ls=:dot, lw=1.5, label="scaled Wilson's P-value function")
+plot!([p_CIL, p_CIU], fill(pvalue2density(0.05; n, k), 2); lw=3, c=2,
+    ls=:dot, label="95% confidence interval")
+plot!(xguide="parameter p",
+    yguide="probabilty density\ncompatibility of data and model+parameter")
+plot!(xtick=0:0.1:1)
+title!("data=(n=$n, k=$k), prior=Beta(1,1)")
+
+# %%
+function pvalue2density(pval; n=20, k=6)
+    z = quantile(Normal(), 1 - pval/2)
+    pdf(Normal(), z) / std(Beta(k+1, n-k+1))
+end
+
+n, k = 100, 30
+@show beta = Beta(k+1, n-k+1)
+@show p_BCIL, p_BCIU = hdi(beta)
+@show p_CIL, p_CIU = confint_bin_wilson(k; n)
+p = range(0, 1, 500)
+t = range(0, 2π, 100)
+plot(p, p -> pdf(beta, p); c=1,
+    label="posterior density function")
+plot!([p_BCIL, p_BCIU], fill(pdf(beta, p_BCIL), 2); lw=3, c=1,
+    label="95% credible interval (Bayesian)")
+plot!(p, p -> pvalue2density(pvalue_bin_wilson(k, p; n); n, k); c=2,
+    ls=:dot, lw=1.5, label="scaled Wilson's P-value function")
+plot!([p_CIL, p_CIU], fill(pvalue2density(0.05; n, k), 2); lw=3, c=2,
+    ls=:dot, label="95% confidence interval")
+plot!(xguide="parameter p",
+    yguide="probabilty density\ncompatibility of data and model+parameter")
+plot!(xtick=0:0.1:1)
+title!("data=(n=$n, k=$k), prior=Beta(1,1)")
 
 # %%
 n = 20
