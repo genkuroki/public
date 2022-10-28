@@ -115,6 +115,18 @@ b = sparse([q;;])
 Base.promote_op(LinearAlgebra.matprod, Polynomial{Rational{Int}, :h}, Polynomial{Rational{Int}, :h})
 ```
 
+```julia
+qq = Polynomial([0, 1//1], :h)
+```
+
+```julia
+typeof(qq)
+```
+
+```julia
+qq == q
+```
+
 他の例も示しておこう.
 
 ```julia
