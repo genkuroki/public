@@ -91,11 +91,12 @@ t = range(0, 2π, 100)
 plot(p, p -> pvalue_bin_wilson(k, p; n); label="")
 plot!([p_L, p_U], fill(0.05, 2); lw=3, c=:red, label="")
 annotate!([(0.32, 0.09, ("95% confidence interval", 8, :center, :red))])
+hline!([0.05]; ls=:dot, c=:red, label="height 5%")
 plot!(@.(0.3+0.02cos(t)), @.(1+0.03sin(t)), lw=2.5, c=:red, label="")
 annotate!([(0.34, 1.0, ("point estimate", 9, :left, :red))])
 plot!(xguide="parameter p",
     yguide="P-value\ncompatibility of data and model+parameter")
-plot!(xtick=0:0.1:1, ytick=0:0.1:1)
+plot!(xtick=0:0.1:1, ytick=0:0.05:1)
 title!("Wilson's P-value function for data=(n=$n, k=$k)")
 
 # %%
@@ -109,11 +110,12 @@ end
 n, k = 20, 6
 @show beta = Beta(k+1, n-k+1)
 @show p_L, p_U = hdi(beta)
-p = range(0, 1, 500)
 t = range(0, 2π, 100)
-plot(p, p -> pdf(beta, p); label="")
+plot(p -> pdf(beta, p), 0, 1; label="")
 plot!([p_L, p_U], fill(pdf(beta, p_L), 2); lw=3, c=:red, label="")
 annotate!([(0.32, 0.8, ("95% credible interval", 8, :center, :red))])
+plot!(p -> pdf(beta, p), 0, p_L; label="area 5%", c=1, lw=0, fc=:red, fa=0.3, fillrange=0)
+plot!(p -> pdf(beta, p), p_U, 1; label="", c=1, fc=:red, fa=0.3, fillrange=0)
 plot!(@.(0.3+0.02cos(t)), @.(4+0.12sin(t)), lw=2.5, c=:red, label="")
 annotate!([(0.34, 4.0, ("point estimate", 9, :left, :red))])
 plot!(xguide="parameter p",
