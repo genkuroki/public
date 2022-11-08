@@ -151,3 +151,43 @@ end
 @time plog_lik_regtanh(; a=0, b=1, n=1000)
 
 # %%
+regtanhptanh(a, b, x, y) = Normal(tanh(tanh(a*x)+b*tanh(a*x)), 1)
+loglik_regtanhptanh(a, b, X, Y) = sum(logpdf(regtanh(a, b, x), y) for (x, y) in zip(X, Y))
+
+function plog_lik_regtanhptanh(; a=1, b=1, n=100)
+    PP = Vector{Any}(undef, 20)
+    X = range(-1, 1, n)
+    as = range(-4, 4, 400)
+    bs = range(-4, 4, 400)
+    Threads.@threads for i in 1:20
+        Y = [rand(regtanhptanh(a, b, x)) for x in X]
+        logz = loglik_regtanhptanh.(as, bs', Ref(X), Ref(Y))
+        maxlogz = maximum(logz)
+        w = @. exp(logz - maxlogz)
+        P = heatmap(bs, as, w; colorbar=false, tickfontsize=5)
+        plot!(xtick=-10:10, ytick=-10:10)
+        PP[i] = P
+    end
+    plot(PP...; layout=(4, 5), size=(1000, 800))
+    plot!(plot_title="true a = $a,  true b = $b,  n = $n")
+end
+
+# %%
+@time plog_lik_regtanhptanh(; a=0, b=1, n=100)
+
+# %%
+@time plog_lik_regtanhptanh(; a=-0.5, b=1, n=100)
+
+# %%
+plog_lik_regtanhptanh(; a=0.5, b=0.5, n=100)
+
+# %%
+plog_lik_regtanhptanh(; a=0.2, b=0.2, n=100)
+
+# %%
+plog_lik_regtanhptanh(; a=0.1, b=0.1, n=100)
+
+# %%
+plog_lik_regtanhptanh(; a=-0.1, b=0.2, n=100)
+
+# %%
