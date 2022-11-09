@@ -16,6 +16,7 @@
 
 # %%
 using Distributions
+using Random
 using StatsBase: ecdf
 using StatsFuns: logsumexp
 using StatsPlots
@@ -67,21 +68,27 @@ plot!(; xtick=-10:10)
 
 # %%
 function plot_lik_mixnormal(; a = 0.5, b = 1.0, n = 100)
-    PP = Vector{Any}(undef, 20)
     as = range(0, 1, 400)
     bs = range(-4, 4, 400)
+    ws = Vector{Matrix{Float64}}(undef, 20)
     Threads.@threads for i in 1:20
         X = rand(mixnormal(a, b), n)
         logz = loglik_mixnormal.(as, bs', Ref(X))
         maxlogz = maximum(logz)
-        w = @. exp(logz - maxlogz)
-        P = heatmap(bs, as, w; colorbar=false, tickfontsize=5)
+        ws[i] = @. exp(logz - maxlogz)
+    end
+    PP = Vector{Any}(undef, 20)
+    for i in 1:20
+        P = heatmap(bs, as, ws[i]; colorbar=false, tickfontsize=5)
         plot!(xtick=-10:10, ytick=-0:0.1:1)
         PP[i] = P
     end
     plot(PP...; layout=(4, 5), size=(1000, 800))
     plot!(plot_title="true a = $a,  true b = $b,  n = $n")
 end
+
+# %%
+Random.seed!(4649373)
 
 # %%
 @time plot_lik_mixnormal(; a = 0.5, b = 1.0, n = 100)
@@ -103,22 +110,28 @@ regtanh(a, b, x) = Normal(b*tanh(a*x), 1)
 loglik_regtanh(a, b, X, Y) = sum(logpdf(regtanh(a, b, x), y) for (x, y) in zip(X, Y))
 
 function plog_lik_regtanh(; a=1, b=1, n=100)
-    PP = Vector{Any}(undef, 20)
     X = range(-1, 1, n)
     as = range(-3, 3, 400)
     bs = range(-3, 3, 400)
+    ws = Vector{Matrix{Float64}}(undef, 20)
     Threads.@threads for i in 1:20
         Y = [rand(regtanh(a, b, x)) for x in X]
         logz = loglik_regtanh.(as, bs', Ref(X), Ref(Y))
         maxlogz = maximum(logz)
-        w = @. exp(logz - maxlogz)
-        P = heatmap(bs, as, w; colorbar=false, tickfontsize=5)
+        ws[i] = @. exp(logz - maxlogz)
+    end
+    PP = Vector{Any}(undef, 20)
+    for i in 1:20
+        P = heatmap(bs, as, ws[i]; colorbar=false, tickfontsize=5)
         plot!(xtick=-10:10, ytick=-10:10)
         PP[i] = P
     end
     plot(PP...; layout=(4, 5), size=(1000, 800))
     plot!(plot_title="true a = $a,  true b = $b,  n = $n")
 end
+
+# %%
+Random.seed!(4649373)
 
 # %%
 @time plog_lik_regtanh(; a=1, b=1, n=100)
