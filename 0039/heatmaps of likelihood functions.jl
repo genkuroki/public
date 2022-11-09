@@ -16,7 +16,6 @@
 
 # %%
 using Distributions
-using Random
 using StatsBase: ecdf
 using StatsFuns: logsumexp
 using StatsPlots
@@ -26,12 +25,18 @@ default(fmt=:png,
 
 # %% [markdown]
 # $$
+# \begin{aligned}
 # p(x|a,b)
-# = (1-a)\frac{e^{-x^2/2}}{\sqrt{2\pi}} + a\frac{e^{-(x-b)^2/2}}{\sqrt{2\pi}}
-# = \frac{e^{-x^2/2}}{\sqrt{2\pi}}
+# &= (1-a)\frac{e^{-x^2/2}}{\sqrt{2\pi}} + a\frac{e^{-(x-b)^2/2}}{\sqrt{2\pi}}
+# \\ &= \frac{e^{-x^2/2}}{\sqrt{2\pi}}
 # \left(
 # 1 - a + a e^{bx-b^2/2}
 # \right)
+# \\ &= \frac{e^{-x^2/2}}{\sqrt{2\pi}}
+# \left(
+# 1 + a\left(e^{bx-b^2/2} - 1\right)
+# \right)
+# \end{aligned}
 # $$
 #
 # のとき
@@ -40,15 +45,27 @@ default(fmt=:png,
 # \log p(x|a,b) 
 # = -\frac{x^2}{2} - \log\sqrt{2\pi}
 # + \log\left(
-# 1 - a + a e^{bx-b^2/2}
-# \right)
+# 1 + a\left(e^{bx-b^2/2} - 1\right)
+# \right).
 # $$
+#
+# データ $X=(x_1,\ldots,x_n)$ の対数尤度:
+#
+# $$
+# L(a,b|X) = \sum_{i=1}^n \log p(x_i|a,b).
+# $$
+
+# %%
+?log1p
+
+# %%
+?expm1
 
 # %%
 mixnormal(a, b) = MixtureModel([Normal(), Normal(b, 1)], [1-a, a])
 
 function logpdf_mixnormal(a, b, x)
-    -x^2/2 - log(√(2π)) + log1p(-a*(1 - exp(b*x - b^2/2)))
+    -x^2/2 - log(√(2π)) + log1p(a*expm1(b*x - b^2/2))
 end
 
 function pdf_mixnormal(a, b, x)
@@ -88,9 +105,6 @@ function plot_lik_mixnormal(; a = 0.5, b = 1.0, n = 100)
 end
 
 # %%
-Random.seed!(4649373)
-
-# %%
 @time plot_lik_mixnormal(; a = 0.5, b = 1.0, n = 100)
 
 # %%
@@ -105,10 +119,78 @@ Random.seed!(4649373)
 # %%
 @time plot_lik_mixnormal(; a = 0.5, b = 0.0, n = 100)
 
+# %% [markdown]
+# モデル:
+#
+# $$
+# p(y|a,b,x) = \frac{1}{\sqrt{2\pi}}\exp\left(\frac{(y - b\tanh ax)^2}{2}\right).
+# $$
+#
+# データ $X=(x_1,\ldots,x_n)$, $Y=(y_1,\ldots,y_n)$ の対数尤度:
+#
+# $$
+# \log L(a,b|X,Y) = \sum_{i=1}^n \log p(y_i|a,b,x_i).
+# $$
+
 # %%
 regtanh(a, b, x) = Normal(b*tanh(a*x), 1)
 loglik_regtanh(a, b, X, Y) = sum(logpdf(regtanh(a, b, x), y) for (x, y) in zip(X, Y))
 
+# %%
+a, b, n = 3, 1, 100
+X = range(-1, 1, n)
+Y = [rand(regtanh(a, b, x)) for x in X]
+plot(X, Y; label="data")
+plot!(; xguide="X", yguide="Y")
+plot!(x -> b*tanh(a*x), -1, 1; label="$(b==1 ? "" : "$b ")tanh($(a)x)")
+plot!(legend=:topleft)
+
+# %%
+a, b, n = 1, 1, 100
+X = range(-1, 1, n)
+Y = [rand(regtanh(a, b, x)) for x in X]
+plot(X, Y; label="data")
+plot!(; xguide="X", yguide="Y")
+plot!(x -> b*tanh(a*x), -1, 1; label="$(b==1 ? "" : "$b ")tanh($(a)x)")
+plot!(legend=:topleft)
+
+# %%
+a, b, n = 0.5, 1, 100
+X = range(-1, 1, n)
+Y = [rand(regtanh(a, b, x)) for x in X]
+plot(X, Y; label="data")
+plot!(; xguide="X", yguide="Y")
+plot!(x -> b*tanh(a*x), -1, 1; label="$(b==1 ? "" : "$b ")tanh($(a)x)")
+plot!(legend=:topleft)
+
+# %%
+a, b, n = 0.2, 1, 100
+X = range(-1, 1, n)
+Y = [rand(regtanh(a, b, x)) for x in X]
+plot(X, Y; label="data")
+plot!(; xguide="X", yguide="Y")
+plot!(x -> b*tanh(a*x), -1, 1; label="$(b==1 ? "" : "$b ")tanh($(a)x)")
+plot!(legend=:topleft)
+
+# %%
+a, b, n = 0.1, 1, 100
+X = range(-1, 1, n)
+Y = [rand(regtanh(a, b, x)) for x in X]
+plot(X, Y; label="data")
+plot!(; xguide="X", yguide="Y")
+plot!(x -> b*tanh(a*x), -1, 1; label="$(b==1 ? "" : "$b ")tanh($(a)x)")
+plot!(legend=:topleft)
+
+# %%
+a, b, n = 0, 1, 100
+X = range(-1, 1, n)
+Y = [rand(regtanh(a, b, x)) for x in X]
+plot(X, Y; label="data")
+plot!(; xguide="X", yguide="Y")
+plot!(x -> b*tanh(a*x), -1, 1; label="$(b==1 ? "" : "$b ")tanh($(a)x)")
+plot!(legend=:topleft)
+
+# %%
 function plog_lik_regtanh(; a=1, b=1, n=100)
     X = range(-1, 1, n)
     as = range(-3, 3, 400)
@@ -129,9 +211,6 @@ function plog_lik_regtanh(; a=1, b=1, n=100)
     plot(PP...; layout=(4, 5), size=(1000, 800))
     plot!(plot_title="true a = $a,  true b = $b,  n = $n")
 end
-
-# %%
-Random.seed!(4649373)
 
 # %%
 @time plog_lik_regtanh(; a=1, b=1, n=100)
