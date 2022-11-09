@@ -34,7 +34,7 @@ default(fmt=:png,
 # \right)
 # \\ &= \frac{e^{-x^2/2}}{\sqrt{2\pi}}
 # \left(
-# 1 + a\left(e^{bx-b^2/2} - 1\right)
+# 1 + a\left(e^{b(x-b/2)} - 1\right)
 # \right)
 # \end{aligned}
 # $$
@@ -45,7 +45,7 @@ default(fmt=:png,
 # \log p(x|a,b) 
 # = -\frac{x^2}{2} - \log\sqrt{2\pi}
 # + \log\left(
-# 1 + a\left(e^{bx-b^2/2} - 1\right)
+# 1 + a\left(e^{b(x-b/2)} - 1\right)
 # \right).
 # $$
 #
@@ -65,7 +65,7 @@ default(fmt=:png,
 mixnormal(a, b) = MixtureModel([Normal(), Normal(b, 1)], [1-a, a])
 
 function logpdf_mixnormal(a, b, x)
-    -x^2/2 - log(√(2π)) + log1p(a*expm1(b*x - b^2/2))
+    -x^2/2 - log(√(2π)) + log1p(a*expm1(b*(x - b/2)))
 end
 
 function pdf_mixnormal(a, b, x)
