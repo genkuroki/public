@@ -121,6 +121,30 @@ end
 # %%
 @time plot_lik_mixnormal(; a = 0.5, b = 0.0, n = 100)
 
+# %%
+function anim_lik_mixnormal(; a = 0.5, b = 0.2, n = 100, nrepl=20, nframes=400)
+    as = range(0, 1, 400)
+    bs = range(-4, 4, 400)
+    Xall = rand(mixnormal(a, b), n + nframes*nrepl)
+    ws = Vector{Matrix{Float64}}(undef, nframes+1)
+    Threads.@threads for i in 0:nframes
+        X = @view Xall[i*nrepl+1:i*nrepl+n]
+        logz = loglik_mixnormal.(as, bs', Ref(X))
+        maxlogz = maximum(logz)
+        ws[1+i] = @. exp(logz - maxlogz)
+    end
+    @gif for i in [fill(0, 20); 0:nframes; fill(nframes, 20)]
+        P = heatmap(bs, as, ws[1+i]; colorbar=false, tickfontsize=5)
+        plot!(xtick=-10:10, ytick=-0:0.1:1)
+        plot!(xguide="b", yguide="a")
+        plot!(plot_title="true a = $a,  true b = $b,  n = $n")
+        plot!(size=(400, 400))
+    end
+end
+
+# %%
+@time anim_lik_mixnormal(; a = 0.5, b = 0.2, n = 100)
+
 # %% [markdown]
 # モデル:
 #
@@ -198,7 +222,7 @@ plot!(legend=:topleft)
 title!("a = $a,  b = $b,  n = $n")
 
 # %%
-function plog_lik_regtanh(; a=1, b=1, n=100)
+function plot_lik_regtanh(; a=1, b=1, n=100)
     X = range(-1, 1, n)
     as = range(-3, 3, 400)
     bs = range(-3, 3, 400)
@@ -220,34 +244,66 @@ function plog_lik_regtanh(; a=1, b=1, n=100)
 end
 
 # %%
-@time plog_lik_regtanh(; a=1, b=1, n=100)
+@time plot_lik_regtanh(; a=1, b=1, n=100)
 
 # %%
-@time plog_lik_regtanh(; a=0.5, b=1, n=100)
+@time plot_lik_regtanh(; a=0.5, b=1, n=100)
 
 # %%
-@time plog_lik_regtanh(; a=0.2, b=1, n=100)
+@time plot_lik_regtanh(; a=0.2, b=1, n=100)
 
 # %%
-@time plog_lik_regtanh(; a=0.1, b=1, n=100)
+@time plot_lik_regtanh(; a=0.1, b=1, n=100)
 
 # %%
-@time plog_lik_regtanh(; a=0, b=1, n=100)
+@time plot_lik_regtanh(; a=0, b=1, n=100)
 
 # %%
-@time plog_lik_regtanh(; a=1, b=1, n=1000)
+@time plot_lik_regtanh(; a=1, b=1, n=1000)
 
 # %%
-@time plog_lik_regtanh(; a=0.5, b=1, n=1000)
+@time plot_lik_regtanh(; a=0.5, b=1, n=1000)
 
 # %%
-@time plog_lik_regtanh(; a=0.2, b=1, n=1000)
+@time plot_lik_regtanh(; a=0.2, b=1, n=1000)
 
 # %%
-@time plog_lik_regtanh(; a=0.1, b=1, n=1000)
+@time plot_lik_regtanh(; a=0.1, b=1, n=1000)
 
 # %%
-@time plog_lik_regtanh(; a=0, b=1, n=1000)
+@time plot_lik_regtanh(; a=0, b=1, n=1000)
+
+# %%
+function anim_lik_regtanh(; a = 0.2, b = 1.0, n = 100, nrepl=20, nframes=400)
+    X = range(-1, 1, n)
+    as = range(-3, 3, 400)
+    bs = range(-3, 3, 400)
+    Yall = Vector{Vector{Float64}}(undef, nframes+1)
+    Y = [rand(regtanh(a, b, x)) for x in X]
+    Yall[1] = copy(Y)
+    for i in 1:nframes
+        n0 = mod((i-1)*nrepl, n)
+        Y[n0+1:n0+nrepl] .= (rand(regtanh(a, b, x)) for x in @view X[n0+1:n0+nrepl])
+        Yall[i+1] = copy(Y)
+    end
+    ws = Vector{Matrix{Float64}}(undef, nframes+1)
+    Threads.@threads for i in 0:nframes
+        Y = Yall[i+1]
+        logz = loglik_regtanh.(as, bs', Ref(X), Ref(Y))
+        maxlogz = maximum(logz)
+        ws[i+1] = @. exp(logz - maxlogz)
+    end
+    @gif for i in [fill(0, 20); 0:nframes; fill(nframes, 20)]
+        P = heatmap(bs, as, ws[i+1]; colorbar=false, tickfontsize=5)
+        plot!(xtick=-10:10, ytick=-10:10)
+        plot!(xguide="b", yguide="a")
+        plot!(plot_title="true a = $a,  true b = $b,  n = $n")
+        plot!(size=(400, 400))
+    end
+end
+
+# %%
+@time anim_lik_regtanh(; a=0.2, b=1, n=100)
 
 # %% [markdown]
 # モデル:
@@ -323,7 +379,7 @@ plot!(legend=:topleft)
 title!("a = $a,  b = $b,  n = $n")
 
 # %%
-function plog_lik_modeltanh3(; a=1, b=1, n=100)
+function plot_lik_modeltanh3(; a=1, b=1, n=100)
     X = range(-1, 1, n)
     as = range(-4, 4, 400)
     bs = range(-4, 4, 400)
@@ -345,18 +401,68 @@ function plog_lik_modeltanh3(; a=1, b=1, n=100)
 end
 
 # %%
-@time plog_lik_modeltanh3(; a=1, b=1, n=100)
+@time plot_lik_modeltanh3(; a=1, b=1, n=100)
 
 # %%
-@time plog_lik_modeltanh3(; a=0.5, b=0.5, n=100)
+@time plot_lik_modeltanh3(; a=0.9, b=0.9, n=100)
 
 # %%
-@time plog_lik_modeltanh3(; a=0.2, b=0.2, n=100)
+@time plot_lik_modeltanh3(; a=0.8, b=0.8, n=100)
 
 # %%
-@time plog_lik_modeltanh3(; a=0.1, b=0.1, n=100)
+@time plot_lik_modeltanh3(; a=0.7, b=0.7, n=100)
 
 # %%
-@time plog_lik_modeltanh3(; a=0, b=0, n=100)
+@time plot_lik_modeltanh3(; a=0.6, b=0.6, n=100)
+
+# %%
+@time plot_lik_modeltanh3(; a=0.5, b=0.5, n=100)
+
+# %%
+@time plot_lik_modeltanh3(; a=0.4, b=0.4, n=100)
+
+# %%
+@time plot_lik_modeltanh3(; a=0.3, b=0.3, n=100)
+
+# %%
+@time plot_lik_modeltanh3(; a=0.2, b=0.2, n=100)
+
+# %%
+@time plot_lik_modeltanh3(; a=0.1, b=0.1, n=100)
+
+# %%
+@time plot_lik_modeltanh3(; a=0, b=0, n=100)
+
+# %%
+function anim_lik_modeltanh3(; a = 0.7, b = 0.7, n = 100, nrepl=20, nframes=400)
+    X = range(-1, 1, n)
+    as = range(-3, 3, 400)
+    bs = range(-3, 3, 400)
+    Yall = Vector{Vector{Float64}}(undef, nframes+1)
+    Y = [rand(modeltanh3(a, b, x)) for x in X]
+    Yall[1] = copy(Y)
+    for i in 1:nframes
+        n0 = mod((i-1)*nrepl, n)
+        Y[n0+1:n0+nrepl] .= (rand(modeltanh3(a, b, x)) for x in @view X[n0+1:n0+nrepl])
+        Yall[i+1] = copy(Y)
+    end
+    ws = Vector{Matrix{Float64}}(undef, nframes+1)
+    Threads.@threads for i in 0:nframes
+        Y = Yall[i+1]
+        logz = loglik_modeltanh3.(as, bs', Ref(X), Ref(Y))
+        maxlogz = maximum(logz)
+        ws[i+1] = @. exp(logz - maxlogz)
+    end
+    @gif for i in [fill(0, 20); 0:nframes; fill(nframes, 20)]
+        P = heatmap(bs, as, ws[i+1]; colorbar=false, tickfontsize=5)
+        plot!(xtick=-10:10, ytick=-10:10)
+        plot!(xguide="b", yguide="a")
+        plot!(plot_title="true a = $a,  true b = $b,  n = $n")
+        plot!(size=(400, 400), titlefontsize=8)
+    end
+end
+
+# %%
+@time anim_lik_modeltanh3(; a=0.7, b=0.7, n=100)
 
 # %%
