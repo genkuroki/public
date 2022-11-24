@@ -9,7 +9,7 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.10.3
 #   kernelspec:
-#     display_name: Julia 1.8.2
+#     display_name: Julia 1.8.3
 #     language: julia
 #     name: julia-1.8
 # ---
@@ -18,7 +18,7 @@
 # # 比率のP値函数達
 #
 # * 黒木玄
-# * 2022-09-08～2022-10-10
+# * 2022-09-08～2022-11-24
 # * Copyright 2022 Gen Kuroki
 # * License: https://opensource.org/licenses/MIT
 # * [nbviewer版](https://nbviewer.org/github/genkuroki/public/blob/main/0036/P-value%20functions%20of%20proportions.ipynb)
@@ -487,7 +487,7 @@ heatmap(k, p, (k,p)->pvalue_wilson(k, n, p); clim=(0,1))
 plot!(xtick=0:n, ytick=0:0.1:1)
 plot!(xguide="k", yguide="p")
 plot!(size=(350, 320))
-title!("P-value")
+title!("P-value (n=$n)")
 
 # %% [markdown]
 # 上のグラフは, $n=10$ とし, 横軸を $k=0,1,\ldots,10$ とし, 縦軸を区間 $p\in[0,1]$ としたときの, P値函数 $\pvalue_\op{Wilson}(k|n,p)$ の値のヒートマップである. ヒートマップでは値が大きな所ほど明るくプロットされる.
@@ -648,6 +648,9 @@ end
 gif(anim, "Wald_normal_approx.gif")
 
 # %% [markdown]
+# $p$ の値が $0$ または $1$ に近付くと, Wald版の正規分布近似の精度は容易にかつ大幅に悪化することがわかる.  その理由はWald版の正規分布近似で使う正規分布の分散が $p$ を動かしても一定の値になっているからである.
+
+# %% [markdown]
 # 上の動画は以下の場所で見ることができる:
 #
 # * https://github.com/genkuroki/public/blob/main/0036/Wald_normal_approx.gif
@@ -663,6 +666,9 @@ anim = @animate for p in ps
         titlehead="Wilson: ")
 end
 gif(anim, "Wilson_normal_approx.gif")
+
+# %% [markdown]
+# Wilson版の正規分布近似は $p$ が $0$ または $1$ に近付いても精度が大きく悪化し難い.
 
 # %% [markdown]
 # 上の動画は以下の場所で見ることができる:
@@ -1365,12 +1371,12 @@ title!("P-value functions for n=$n, k=$k, a=$a, b=$b")
 
 # %%
 function pvalue_eti(k, n, p; a=1//3, b=1//3)
-    posterior = Beta(k+a, n-k+a)
+    posterior = Beta(k+a, n-k+b)
     min(1, 2cdf(posterior, p), 2ccdf(posterior, p))
 end
 
 function credint_eti(k, n, α; a=1//3, b=1//3)
-    posterior = Beta(k+a, n-k+a)
+    posterior = Beta(k+a, n-k+b)
     quantile(posterior, α/2), cquantile(posterior, α/2)
 end
 
