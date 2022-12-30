@@ -30,6 +30,39 @@
 #
 # ![2022-12-30 (1).png](attachment:a70fc865-0e23-4bee-abf5-350ffc427416.png)
 
+# %% [markdown]
+# Lotka-Volterra方程式
+#
+# $$
+# \frac{dS}{dt} = S(\alpha_1 - \beta_1 W), \quad
+# \frac{dW}{dt} = -W(\alpha_2 - \beta_2 S)
+# $$
+#
+# が成立しているとき,
+#
+# $$
+# H = \beta_2 S - \alpha_2\log S + \beta_1 W - \alpha_1\log W
+# $$
+#
+# とおくと,
+#
+# $$
+# \begin{aligned}
+# \frac{dH}{dt}
+# &= \left(\beta_2 - \frac{\alpha_2}{S}\right)\frac{dS}{dt}
+# +  \left(\beta_1 - \frac{\alpha_1}{W}\right)\frac{dW}{dt}
+# \\
+# &= \left(\beta_2 - \frac{\alpha_2}{S}\right)S(\alpha_1 - \beta_1 W)
+# -  \left(\beta_1 - \frac{\alpha_1}{W}\right)W(\alpha_2 - \beta_2 S)
+# \\
+# &= \left(\beta_2 S - \alpha_2\right)(\alpha_1 - \beta_1 W)
+# -  \left(\beta_1 W - \alpha_1\right)(\alpha_2 - \beta_2 S)
+# = 0.
+# \end{aligned}
+# $$
+#
+# すなわち $H$ はLotka-Volterra方程式の保存料になる.
+
 # %%
 # See http://tomo-kumagai.eco.coocan.jp/2016_math_text_kenlo.pdf, pp.20-21
 
@@ -40,10 +73,16 @@ default(fmt=:png, titlefontsize=12)
 
 function LotkaVolterra(u, param, t)
     S, W = u
-    (; α₁, α₁, β₁, β₂) = param
+    (; α₁, α₂, β₁, β₂) = param
     dS =  α₁*S - β₁*S*W
-    dW = -α₁*W + β₂*S*W
+    dW = -α₂*W + β₂*S*W
     SVector(dS, dW)
+end
+
+function H(u, param)
+    S, W = u
+    (; α₁, α₂, β₁, β₂) = param
+    β₂*S - α₂*log(S) + β₁*W - α₁*log(W)
 end
 
 param = (α₁=1.2, α₂=1.1, β₁=0.6, β₂=0.7)
@@ -55,7 +94,11 @@ prob = ODEProblem(LotkaVolterra, u0, tspan, param)
 # %%
 dt = 0.1
 sol = solve(prob, Euler(); dt)
-plot(sol; label=["S(t)" "W(t)"], ls=[:solid :dash], title="Euler(), dt=$dt")
+P1 = plot(sol; label=["S(t)" "W(t)"], ls=[:solid :dash], title="Euler(), dt=$dt")
+P2 = hline([H(u0, param)]; label="", ls=:dot, lw=0.5, c=:black)
+plot!(sol.t, H.(sol.u, Ref(param)); label="H(t)", ylim=(0.5, 7.5), c=1)
+title!("conserved quantity")
+plot!(P1, P2; size=(1000, 300))
 
 # %% [markdown]
 # このグラフと件の次のグラフが一致しているように見える.
@@ -68,18 +111,40 @@ plot(sol; label=["S(t)" "W(t)"], ls=[:solid :dash], title="Euler(), dt=$dt")
 # %%
 dt = 0.01
 sol = solve(prob, Euler(); dt)
-plot(sol; label=["S(t)" "W(t)"], ls=[:solid :dash], title="Euler(), dt=$dt")
+P1 = plot(sol; label=["S(t)" "W(t)"], ls=[:solid :dash], title="Euler(), dt=$dt")
+P2 = hline([H(u0, param)]; label="", ls=:dot, lw=0.5, c=:black)
+plot!(sol.t, H.(sol.u, Ref(param)); label="H(t)", ylim=(1.2, 1.4), c=1)
+title!("conserved quantity")
+plot!(P1, P2; size=(1000, 300))
 
 # %%
 dt = 0.001
 sol = solve(prob, Euler(); dt)
-plot(sol; label=["S(t)" "W(t)"], ls=[:solid :dash], title="Euler(), dt=$dt")
+P1 = plot(sol; label=["S(t)" "W(t)"], ls=[:solid :dash], title="Euler(), dt=$dt")
+P2 = hline([H(u0, param)]; label="", ls=:dot, lw=0.5, c=:black)
+plot!(sol.t, H.(sol.u, Ref(param)); label="H(t)", ylim=(1.2, 1.4), c=1)
+title!("conserved quantity")
+plot!(P1, P2; size=(1000, 300))
+
+# %%
+dt = 0.0001
+sol = solve(prob, Euler(); dt)
+P1 = plot(sol; label=["S(t)" "W(t)"], ls=[:solid :dash], title="Euler(), dt=$dt")
+P2 = hline([H(u0, param)]; label="", ls=:dot, lw=0.5, c=:black)
+plot!(sol.t, H.(sol.u, Ref(param)); label="H(t)", ylim=(1.2, 1.4), c=1)
+title!("conserved quantity")
+plot!(P1, P2; size=(1000, 300))
 
 # %%
 sol = solve(prob, Vern7())
-plot(sol; label=["S(t)" "W(t)"], ls=[:solid :dash], title="Vern7()")
+P1 = plot(sol; label=["S(t)" "W(t)"], ls=[:solid :dash], title="Vern7()")
+P2 = hline([H(u0, param)]; label="", ls=:dot, lw=0.5, c=:black)
+plot!(sol.t, H.(sol.u, Ref(param)); label="H(t)", ylim=(1.2, 1.4), c=1)
+title!("conserved quantity")
+plot!(P1, P2; size=(1000, 300))
 
 # %% [markdown]
+# ---
 # 以下は古いバージョン
 
 # %% tags=[]
