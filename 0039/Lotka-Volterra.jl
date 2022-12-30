@@ -24,7 +24,7 @@
 using OrdinaryDiffEq
 using StaticArrays
 using Plots
-default(fmt=:png)
+default(fmt=:png, titlefontsize=12)
 
 function LotkaVolterra(u, param, t)
     S, W = u
@@ -41,10 +41,10 @@ prob = ODEProblem(LotkaVolterra, u0, tspan, param)
 
 # %%
 sol = solve(prob, Euler(); dt=0.05)
-plot(sol; legend=false, ls=[:solid :dash])
+plot(sol; legend=false, ls=[:solid :dash], title="Euler dt=0.05")
 
 # %%
 sol = solve(prob, Vern7())
-plot(sol; legend=false, ls=[:solid :dash])
+plot(sol; legend=false, ls=[:solid :dash], title="Vern7()")
 
 # %%
