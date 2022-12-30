@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # ---
 # jupyter:
 #   jupytext:
@@ -41,10 +42,35 @@ prob = ODEProblem(LotkaVolterra, u0, tspan, param)
 
 # %%
 sol = solve(prob, Euler(); dt=0.05)
-plot(sol; legend=false, ls=[:solid :dash], title="Euler dt=0.05")
+plot(sol; legend=false, ls=[:solid :dash], title="Euler(), dt=0.05")
 
 # %%
 sol = solve(prob, Vern7())
 plot(sol; legend=false, ls=[:solid :dash], title="Vern7()")
+
+# %%
+# See http://tomo-kumagai.eco.coocan.jp/2016_math_text_kenlo.pdf, pp.20-21
+
+using OrdinaryDiffEq
+using StaticArrays
+using Plots
+default(fmt=:png, titlefontsize=12)
+
+function LotkaVolterra2(u, param, t)
+    S, W = u
+    (; α₁, α₁, β₁, β₂) = param
+    dS =  α₁*S - β₁*S*W
+    dW = -α₁*W + β₂*S*W
+    SVector(dS, dW)
+end
+
+param = (α₁=1.2, α₂=1.1, β₁=0.6, β₂=0.7)
+S0, W0 = 2.0, 1.0
+u0 = SVector(S0, W0)
+tspan = (0, 25)
+prob = ODEProblem(LotkaVolterra, u0, tspan, param)
+dt = 0.1
+sol = solve(prob, Euler(); dt)
+plot(sol; legend=false, ls=[:solid :dash], title="Euler(), dt=$dt")
 
 # %%
