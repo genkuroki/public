@@ -14,6 +14,9 @@
 #     name: julia-1.8
 # ---
 
+# %% [markdown]
+# cf. https://nbviewer.org/github/genkuroki/public/blob/main/0036/P-value%20functions%20of%20proportions.ipynb
+
 # %%
 using Distributions
 using StatsPlots
