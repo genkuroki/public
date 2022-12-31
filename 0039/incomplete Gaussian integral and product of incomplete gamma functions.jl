@@ -246,7 +246,7 @@
 #
 # このとき, $Z = X+Y$, $P = X/(X+Y)$ とおくと, $Z, P$ は独立な確率変数になり, $Z$ はガンマ分布 $\operatorname{Gamma}(a+b, 1$ に従い, $P$ はベータ分布 $\operatorname{Beta}(a, b)$ に従うことを示せる.
 #
-# さらに, $S = P/(1-P) = X/Y$ とおくと, $S$ は[ベータプライム分布](https://en.wikipedia.org/wiki/Beta_prime_distribution) $\operatorname{BetaPrime}(a,b)$ に従う確率変数になることも示される. $S$ の逆数 $S^{-1}=Y/X$ は分布 $\operatorname{BetaPrime}(b,a)$ に従う. ($
+# さらに, $S = P/(1-P) = X/Y$ とおくと, $S$ は[ベータプライム分布](https://en.wikipedia.org/wiki/Beta_prime_distribution) $\operatorname{BetaPrime}(a,b)$ に従う確率変数になることも示される. $S$ の逆数 $S^{-1}=Y/X$ は分布 $\operatorname{BetaPrime}(b,a)$ に従う. ($S$, $S^{-1}$ が $Z=X+Y$ と独立なことにも注意せよ.
 #
 # これらはガンマ分布とベータ分布及びベータプライム分布の基本的な関係であり, 統計学の分野ではよく知られている結果である.
 #
