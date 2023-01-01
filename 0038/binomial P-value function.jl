@@ -9,7 +9,7 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.10.3
 #   kernelspec:
-#     display_name: Julia 1.8.2
+#     display_name: Julia 1.8.4
 #     language: julia
 #     name: julia-1.8
 # ---
@@ -33,7 +33,7 @@
 
 # %% [markdown] toc=true
 # <h1>目次<span class="tocSkip"></span></h1>
-# <div class="toc"><ul class="toc-item"><li><span><a href="#WilsonのP値函数の場合" data-toc-modified-id="WilsonのP値函数の場合-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>WilsonのP値函数の場合</a></span></li><li><span><a href="#WilsonのP値函数とClopper-PeasonのP値函数とベイズ版P値函数の比較" data-toc-modified-id="WilsonのP値函数とClopper-PeasonのP値函数とベイズ版P値函数の比較-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>WilsonのP値函数とClopper-PeasonのP値函数とベイズ版P値函数の比較</a></span></li><li><span><a href="#highest-density-interval-版のP値函数" data-toc-modified-id="highest-density-interval-版のP値函数-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>highest density interval 版のP値函数</a></span></li><li><span><a href="#信頼区間にベイズ信用区間と同様の意味で「真の値」が含まれる確率" data-toc-modified-id="信頼区間にベイズ信用区間と同様の意味で「真の値」が含まれる確率-4"><span class="toc-item-num">4&nbsp;&nbsp;</span>信頼区間にベイズ信用区間と同様の意味で「真の値」が含まれる確率</a></span></li><li><span><a href="#ベイズ信用区間の信頼区間と同様の意味での被覆確率" data-toc-modified-id="ベイズ信用区間の信頼区間と同様の意味での被覆確率-5"><span class="toc-item-num">5&nbsp;&nbsp;</span>ベイズ信用区間の信頼区間と同様の意味での被覆確率</a></span></li><li><span><a href="#P値とBayes因子の比較" data-toc-modified-id="P値とBayes因子の比較-6"><span class="toc-item-num">6&nbsp;&nbsp;</span>P値とBayes因子の比較</a></span><ul class="toc-item"><li><span><a href="#P値とBayes因子の関係の導出" data-toc-modified-id="P値とBayes因子の関係の導出-6.1"><span class="toc-item-num">6.1&nbsp;&nbsp;</span>P値とBayes因子の関係の導出</a></span></li><li><span><a href="#Bayes-factor経由で計算したP値と通常のP値の比較" data-toc-modified-id="Bayes-factor経由で計算したP値と通常のP値の比較-6.2"><span class="toc-item-num">6.2&nbsp;&nbsp;</span>Bayes factor経由で計算したP値と通常のP値の比較</a></span></li><li><span><a href="#一定のBayes因子に対応するP値の値の漸近挙動" data-toc-modified-id="一定のBayes因子に対応するP値の値の漸近挙動-6.3"><span class="toc-item-num">6.3&nbsp;&nbsp;</span>一定のBayes因子に対応するP値の値の漸近挙動</a></span></li></ul></li></ul></div>
+# <div class="toc"><ul class="toc-item"><li><span><a href="#WilsonのP値函数の場合" data-toc-modified-id="WilsonのP値函数の場合-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>WilsonのP値函数の場合</a></span></li><li><span><a href="#WilsonのP値函数とClopper-PeasonのP値函数とベイズ版P値函数の比較" data-toc-modified-id="WilsonのP値函数とClopper-PeasonのP値函数とベイズ版P値函数の比較-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>WilsonのP値函数とClopper-PeasonのP値函数とベイズ版P値函数の比較</a></span></li><li><span><a href="#highest-density-interval-版のP値函数" data-toc-modified-id="highest-density-interval-版のP値函数-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>highest density interval 版のP値函数</a></span></li><li><span><a href="#信頼区間にベイズ信用区間と同様の意味で「真の値」が含まれる確率" data-toc-modified-id="信頼区間にベイズ信用区間と同様の意味で「真の値」が含まれる確率-4"><span class="toc-item-num">4&nbsp;&nbsp;</span>信頼区間にベイズ信用区間と同様の意味で「真の値」が含まれる確率</a></span></li><li><span><a href="#ベイズ信用区間の信頼区間と同様の意味での被覆確率" data-toc-modified-id="ベイズ信用区間の信頼区間と同様の意味での被覆確率-5"><span class="toc-item-num">5&nbsp;&nbsp;</span>ベイズ信用区間の信頼区間と同様の意味での被覆確率</a></span></li><li><span><a href="#P値とBayes因子の比較" data-toc-modified-id="P値とBayes因子の比較-6"><span class="toc-item-num">6&nbsp;&nbsp;</span>P値とBayes因子の比較</a></span><ul class="toc-item"><li><span><a href="#P値とBayes因子の関係の導出" data-toc-modified-id="P値とBayes因子の関係の導出-6.1"><span class="toc-item-num">6.1&nbsp;&nbsp;</span>P値とBayes因子の関係の導出</a></span></li><li><span><a href="#Bayes-factor経由で計算したP値と通常のP値の比較" data-toc-modified-id="Bayes-factor経由で計算したP値と通常のP値の比較-6.2"><span class="toc-item-num">6.2&nbsp;&nbsp;</span>Bayes factor経由で計算したP値と通常のP値の比較</a></span></li><li><span><a href="#一定のBayes因子に対応するP値の値の漸近挙動" data-toc-modified-id="一定のBayes因子に対応するP値の値の漸近挙動-6.3"><span class="toc-item-num">6.3&nbsp;&nbsp;</span>一定のBayes因子に対応するP値の値の漸近挙動</a></span></li><li><span><a href="#一般の事前分布の場合に関する補足" data-toc-modified-id="一般の事前分布の場合に関する補足-6.4"><span class="toc-item-num">6.4&nbsp;&nbsp;</span>一般の事前分布の場合に関する補足</a></span></li></ul></li></ul></div>
 
 # %%
 using Distributions
@@ -493,7 +493,7 @@ end
 # とおく. このとき,
 #
 # $$
-# z^2 = \frac{(k - np)}{np(1-p)}.
+# z^2 = \frac{(k - np)^2}{np(1-p)}.
 # $$
 #
 # WilsonのP値は次のように定義される:
@@ -520,7 +520,7 @@ end
 # $k$ が $np$ に近ければ中心極限定理によってこれは次のように近似される:
 #
 # $$
-# Z_0 \approx \frac{1}{\sqrt{np(1-p)}}\exp(-z^2/2).
+# Z_0 \approx \frac{1}{\sqrt{2\pi np(1-p)}}\exp(-z^2/2).
 # $$
 #
 # 一様事前分布の周辺尤度 $Z_1$ は次のように定義され, 計算される:
@@ -539,12 +539,12 @@ end
 # これは次のように近似される:
 #
 # $$
-# \op{BF} \approx \frac{n+1}{\sqrt{np(1-p)}}\exp(-z^2/2).
+# \op{BF} \approx \frac{n+1}{\sqrt{2\pi np(1-p)}}\exp(-z^2/2).
 # $$
 #
 # これに $z^2 = \quantile(\op{Normal}(0,1), 1-\op{pval}/2)^2$ を適用すればP値 $\op{pval}$ に近似的に対応するBayes因子の値が得られる.
 #
-# さらに上の近似は次と同値である:
+# さらに上の近似は次の近似的等式と同値である:
 #
 # $$
 # z^2 \approx -2\log\op{BF} + \log\frac{(n+1)^2}{n} - \log(2\pi p(1-p)).
@@ -653,5 +653,59 @@ plot(P1, P2; size=(1000, 300))
 P1 = plot_bf2pval(1//30, 0.3; ytick=0:0.0002:1, nmin=10, nstep=1, nmax=100, xtick=10:10:100)
 P2 = plot_bf2pval(1//30, 0.3; ytick=0:0.0002:1)
 plot(P1, P2; size=(1000, 300))
+
+# %% [markdown]
+# ### 一般の事前分布の場合に関する補足
+#
+# $$
+# \hat{p} = k/n
+# $$
+#
+# とおく. $n\to\infty$ で $\hat{p}$ の値はほぼ一定であると仮定する(そういう設定で考える).
+#
+# Wald法では二項分布の確率について次の近似を使う:
+#
+# $$
+# \binom{n}{k} t^k(1-t)^{n-k}
+# \approx
+# \frac{1}{\sqrt{2\pi n\hat{p}(1-\hat{p})}} \exp\left(\frac{(t-\hat{p})^2}{2\hat{p}(1-\hat{p})/n}\right).
+# $$
+#
+# 事前分布 $\varphi(t)$ の周辺尤度は
+#
+# $$
+# Z = \int_0^1 \binom{n}{k} t^k (1 - t)^{n-k} \varphi(t)\,dt
+# $$
+#
+# である.  これに上の近似を適用すると,
+#
+# $$
+# \begin{aligned}
+# Z
+# &\approx
+# \frac{1}{\sqrt{2\pi n\hat{p}(1-\hat{p})}}
+# \int_{-\infty}^\infty \exp\left(\frac{(t-\hat{p})^2}{2\hat{p}(1-\hat{p})/n}\right) \varphi(t)\,dt
+# \\
+# &\approx
+# \frac{\varphi(\hat{p})}{\sqrt{2\pi n\hat{p}(1-\hat{p})}}
+# \int_{-\infty}^\infty \exp\left(\frac{(t-\hat{p})^2}{2\hat{p}(1-\hat{p})/n}\right) \,dt
+# \\
+# &=
+# \frac{\varphi(\hat{p})}{\sqrt{2\pi n\hat{p}(1-\hat{p})}} \sqrt{\frac{2\pi\hat{p}(1-\hat{p})}{n}}
+# \\
+# &=
+# \frac{\varphi(\hat{p})}{n}.
+# \end{aligned}
+# $$
+#
+# 例えば, 一様事前分布 $\varphi(t)=1$ ($0\le t\le 1$) の場合には,
+#
+# $$
+# Z_1 = \frac{1}{n+1} = \frac{\varphi(\hat{p})}{n+1} \approx \frac{\varphi(\hat{p})}{n}
+# $$
+#
+# なので, 確かに上の近似は成立している(分母の $n+1$ と $n$ の違いしかない).
+#
+# 事前分布 $\varphi(t)$ が $t=\hat{p}$ で $0$ になる場合には, $n\to\infty$ のとき, 周辺尤度は $O(1/n)$ のオーダーよりも速く $0$ に収束することに注意せよ. 
 
 # %%
