@@ -104,6 +104,10 @@ end
 # ## EigenDecomposedMatrices.EigenDecomposed
 
 # %%
+using LinearAlgebra
+using BenchmarkTools
+
+# %%
 module EigenDecomposedMatrices
 
 export EigenDecomposed
@@ -127,16 +131,28 @@ function EigenDecomposed(A::AbstractMatrix, E::AbstractVector, P::AbstractMatrix
     EigenDecomposed{eltype(A), typeof(A), typeof(E), typeof(P), typeof(invP)}(A, E, P, invP)
 end
 
-function EigenDecomposed(M::AbstractMatrix)
-    E, P = eigen(M)
-    A = oftype(P, M)
-    invP = ishermitian(M) ? P' : inv(P)
+function EigenDecomposed(A::AbstractMatrix)
+    E, P = eigen(A)
+    invP = ishermitian(A) ? P' : inv(P)
     EigenDecomposed(A, E, P, invP)
 end
 
-Base.size(ed::EigenDecomposed) = size(ed.A)
-Base.getindex(ed::EigenDecomposed, I...) = getindex(ed.A, I...)
-Base.convert(::Type{Array}, ed::EigenDecomposed) = ed.A
+Base.parent(ed::EigenDecomposed) = ed.A
+LinearAlgebra.eigvals(ed::EigenDecomposed) = ed.E
+LinearAlgebra.eigvecs(ed::EigenDecomposed) = ed.P
+Base.convert(::Type{Array}, ed::EigenDecomposed) = convert(Array, parent(ed))
+for op in (:eltype, :size)
+    @eval Base.$op(ed::EigenDecomposed) = $op(parent(ed))
+end
+Base.getindex(ed::EigenDecomposed, I...) = getindex(parent(ed), I...)
+
+Base.:*(c::Number, ed::EigenDecomposed) = EigenDecomposed(c*ed.A, c*ed.E, ed.P, ed.invP)
+Base.:*(ed::EigenDecomposed, c::Number) = EigenDecomposed(ed.A*c, ed.E*c, ed.P, ed.invP)
+Base.:\(c::Number, ed::EigenDecomposed) = EigenDecomposed(c\ed.A, c\ed.E, ed.P, ed.invP)
+Base.:/(ed::EigenDecomposed, c::Number) = EigenDecomposed(ed.A/c, ed.E/c, ed.P, ed.invP)
+for T in (AbstractVector, AbstractMatrix)
+    @eval Base.:*(ed::EigenDecomposed, v::$T) = ed.A * v
+end
 
 function exp_old(ed::EigenDecomposed)
     (; A, E, P, invP) = ed
@@ -144,41 +160,51 @@ function exp_old(ed::EigenDecomposed)
     expA = P * Diagonal(expE) * invP
     EigenDecomposed(expA, expE, P, invP)
 end
-Base.exp(ed::EigenDecomposed) = exp_eigendecomposed(ed)
-Base.:*(c::Number, ed::EigenDecomposed) = EigenDecomposed(c*ed.A, c*ed.E, ed.P, ed.invP)
-Base.:*(ed::EigenDecomposed, c::Number) = EigenDecomposed(ed.A*c, ed.E*c, ed.P, ed.invP)
-Base.:\(c::Number, ed::EigenDecomposed) = EigenDecomposed(c\ed.A, c\ed.E, ed.P, ed.invP)
-Base.:/(ed::EigenDecomposed, c::Number) = EigenDecomposed(ed.A/c, ed.E/c, ed.P, ed.invP)
-Base.:*(ed::EigenDecomposed, v::AbstractVector) = ed.A * v
 
-"""
-    exp_eigendecomposed!(Y, ed::EigenDecomposed, expE=similar(ed.E), tmpY=similar(Y))
-
-returns the exponential of `ed` and stores the result in `Y`, overwriting the existing value of `Y`. 
-It does not overwrite `ed` and uses `expE` and `tmpY` as workspaces.
-"""
-function exp_eigendecomposed!(Y, ed::EigenDecomposed, expE=similar(ed.E), tmpY=similar(Y))
-    (; A, E, P, invP) = ed
-    @. expE = exp.(E)
-    mul!(tmpY, P, Diagonal(expE))
-    mul!(Y, tmpY, invP)
-end
-exp_eigendecomposed(ed::EigenDecomposed) = exp_eigendecomposed!(similar(ed.P), ed)
-LinearAlgebra.lmul!(c::Number, ed::EigenDecomposed) = (lmul!(c, ed.A); lmul!(c, ed.E))
-LinearAlgebra.rmul!(ed::EigenDecomposed, c::Number) = (rmul!(ed.A, c); rmul!(ed.E, c))
-LinearAlgebra.ldiv!(c::Number, ed::EigenDecomposed) = (ldiv!(c, ed.A); ldiv!(c, ed.E))
-LinearAlgebra.rdiv!(ed::EigenDecomposed, c::Number) = (rdiv!(ed.A, c); rdiv!(ed.E, c))
-
+LinearAlgebra.lmul!(c::Number, ed::EigenDecomposed) = (lmul!(c, parent(ed)); lmul!(c, eigvals(ed)))
+LinearAlgebra.rmul!(ed::EigenDecomposed, c::Number) = (rmul!(parent(ed), c); rmul!(eigvals(ed), c))
+LinearAlgebra.ldiv!(c::Number, ed::EigenDecomposed) = (ldiv!(c, parent(ed)); ldiv!(c, eigvals(ed)))
+LinearAlgebra.rdiv!(ed::EigenDecomposed, c::Number) = (rdiv!(parent(ed), c); rdiv!(eigvals(ed), c))
 for T in (AbstractVector, AbstractMatrix)
     @eval function LinearAlgebra.mul!(y::$T, ed::EigenDecomposed, x::$T, alpha::Number, beta::Number)
-        mul!(y, ed.A, x, alpha, beta)
+        mul!(y, parent(ed), x, alpha, beta)
+    end
+end
+
+for op in (:exp, :log, :sin, :cos)
+    opE = Symbol(op, "E")
+    op_eigendecomposed = Symbol(op, "_eigendecomposed")
+    op_eigendecomposed! = Symbol(op_eigendecomposed, "!")
+    op_eigendecomposed!_doc =
+        """
+        $op_eigendecomposed!(Y, ed::EigenDecomposed, $opE=similar(ed.E), tmpY=similar(Y))
+
+        returns the `$op` of `ed` and stores the result in `Y`, overwriting the existing value of `Y`. 
+        It does not overwrite `ed` and uses `$opE` and `tmpY` as workspaces.
+        """
+    @eval begin
+        @doc $op_eigendecomposed!_doc
+        function $op_eigendecomposed!(Y, ed::EigenDecomposed, $opE=similar(ed.E), tmpY=similar(Y))
+            (; A, E, P, invP) = ed
+            @. $opE = $op.(E)
+            mul!(tmpY, P, Diagonal($opE))
+            mul!(Y, tmpY, invP)
+        end
+        $op_eigendecomposed(ed::EigenDecomposed) = $op_eigendecomposed!(similar(ed.P), ed)
+        Base.$op(ed::EigenDecomposed) = $op_eigendecomposed(ed)
     end
 end
 
 end
 
 # %%
+?rmul!
+
+# %%
 ?EigenDecomposedMatrices.exp_eigendecomposed!
+
+# %%
+?EigenDecomposedMatrices.log_eigendecomposed!
 
 # %%
 methods(EigenDecomposedMatrices.EigenDecomposed)
@@ -190,6 +216,27 @@ methodswith(EigenDecomposedMatrices.EigenDecomposed)
 methods(EigenDecomposedMatrices.exp_eigendecomposed!)
 
 # %%
+methods(EigenDecomposedMatrices.log_eigendecomposed!)
+
+# %%
+A = [
+    2 -1 0
+    -1 2 -1
+    0 -1 2
+]
+
+edA = EigenDecomposedMatrices.EigenDecomposed(A)
+
+# %%
+log(edA)
+
+# %%
+log(A)
+
+# %%
+log(edA) ≈ log(A)
+
+# %%
 n = 2^8
 M = 5I + randn(n, n)
 v = randn(n)
@@ -197,7 +244,7 @@ c = randn()
 
 edM = EigenDecomposedMatrices.EigenDecomposed(M)
 
-Y = similar(edM.A)
+Y = similar(edM.P)
 expE = similar(edM.E)
 tmpY = similar(Y)
 
@@ -213,7 +260,7 @@ edM
 dump(edM)
 
 # %%
-M ≈ Matrix(edM)
+M == parent(edM) == Matrix(edM)
 
 # %%
 M ≈ edM
@@ -265,7 +312,7 @@ c2 = randn()
 
 edM2 = EigenDecomposedMatrices.EigenDecomposed(M2)
 
-Y2 = similar(edM2.A)
+Y2 = similar(edM2.P)
 expE2 = similar(edM2.E)
 tmpY2 = similar(Y2)
 
@@ -281,7 +328,7 @@ edM2
 dump(edM2)
 
 # %%
-M2 ≈ Matrix(edM2)
+M2 == parent(edM2) == Matrix(edM2)
 
 # %%
 M2 ≈ edM2
