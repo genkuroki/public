@@ -117,17 +117,13 @@ using Memoization
 
 struct EigenDecomposed{
         T,
-        TE<:AbstractVector,
-        TP<:AbstractMatrix,
-        TinvP<:AbstractMatrix
+        TE<:AbstractVector{T},
+        TP<:AbstractMatrix{T},
+        TinvP<:AbstractMatrix{T}
     } <: AbstractMatrix{T}
     E::TE
     P::TP
     invP::TinvP
-end
-
-function EigenDecomposed(E::AbstractVector, P::AbstractMatrix, invP::AbstractMatrix)
-    EigenDecomposed{eltype(P), typeof(E), typeof(P), typeof(invP)}(E, P, invP)
 end
 
 function EigenDecomposed(A::AbstractMatrix)
@@ -203,6 +199,9 @@ end
 
 # %%
 methods(EigenDecomposedMatrices.EigenDecomposed)
+
+# %%
+methods(EigenDecomposedMatrices.EigenDecomposed{Float64, Vector{Float64}, Matrix{Float64}, Matrix{Float64}})
 
 # %%
 methodswith(EigenDecomposedMatrices.EigenDecomposed)
@@ -317,7 +316,7 @@ edM2
 dump(edM2)
 
 # %%
-M2 == parent(edM2) == Matrix(edM2)
+M2 ≈ parent(edM2) == Matrix(edM2)
 
 # %%
 M2 ≈ edM2
