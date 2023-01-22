@@ -120,7 +120,7 @@
 # \begin{array}{ccc}
 #   & & X & & \\
 #   & \nearrow & & \searrow & \\ 
-# W & & \to & & Y \\
+# W & \to & \to & \to & Y \\
 # \end{array}
 # &
 # \qquad
@@ -130,7 +130,7 @@
 # \begin{array}{ccc}
 #   & & X & & \\
 #   & \swarrow & & \searrow & \\ 
-# W & & \to & & Y \\
+# W & \to & \to & \to & Y \\
 # \end{array}
 # \\
 # 𝑝(𝑦|𝑥,𝑤)𝑝(𝑥|𝑤)𝑝(𝑤)
@@ -155,7 +155,7 @@ using Distributions
 using LinearAlgebra
 dot2(x) = LinearAlgebra.dot(x, x)
 using StatsPlots
-default(fmt=:png)
+default(fmt=:png, guidefontsize=8, titlefontsize=10, tickfontsize=6)
 
 # %%
 μ₁x::Float64 = 55
@@ -203,15 +203,19 @@ function plot_data(XYW; ms=1, alpha=0.3, xlim=(10, 110), ylim=(10, 110), kwargs.
     Y1 = [y for (x,y,w) in XYW if w==1]
     X0 = [x for (x,y,w) in XYW if w==0]
     Y0 = [y for (x,y,w) in XYW if w==0]
-    @show mean(X1), mean(Y1), mean(X0), mean(Y0), length(X1)/length(XYW)
+    @show mean(X1), mean(Y1)
+    @show mean(X0), mean(Y0)
+    @show length(X1)/length(XYW)
     
-    P1 = scatter(X1, Y1; label="", c=1, msc=:auto, ms, alpha, xlim, ylim)
+    P1 = scatter(X1, Y1; label="w=1", c=1, msc=:auto, ms, alpha, xlim, ylim)
     plot!(collect(xlim), collect(xlim); label="", c=:black, ls=:dot, alpha=0.5)
     plot!(collect(xlim), x->β₁₀+β₁₁*x; label="", c=:blue)
+    plot!(xguide="x", yguide="y")
     
-    P0 = scatter(X0, Y0; label="", c=2, msc=:auto, ms, alpha, xlim, ylim)
+    P0 = scatter(X0, Y0; label="w=0", c=2, msc=:auto, ms, alpha, xlim, ylim)
     plot!(collect(xlim), collect(xlim); label="", c=:black, ls=:dot, alpha=0.5)
     plot!(collect(xlim), x->β₀₀+β₀₁*x; label="", c=:red)
+    plot!(xguide="x", yguide="y")
     
     plot(P1, P0; size=(600, 300), layout=(1, 2))
     plot!(; kwargs...)
@@ -237,15 +241,19 @@ function plot_data2(XYW; ms=1, alpha=0.3, xlim=(10, 110), ylim=(10, 110), kwargs
     Y1 = [y for (x,y,w) in XYW if w==1]
     X0 = [x for (x,y,w) in XYW if w==0]
     Y0 = [y for (x,y,w) in XYW if w==0]
-    @show mean(X1), mean(Y1), mean(X0), mean(Y0), length(X1)/length(XYW)
+    @show mean(X1), mean(Y1)
+    @show mean(X0), mean(Y0)
+    @show length(X1)/length(XYW)
     
     plot()
-    scatter!(X1, Y1; label="", c=1, msc=:auto, ms, alpha, xlim, ylim)
+    scatter!(X1, Y1; label="w=1", c=1, msc=:auto, ms, alpha, xlim, ylim)
     plot!(collect(xlim), collect(xlim); label="", c=:black, ls=:dot, alpha=0.5)
     plot!(collect(xlim), x->β₁₀+β₁₁*x; label="", c=:blue)
-    scatter!(X0, Y0; label="", c=2, msc=:auto, ms, alpha, xlim, ylim)
+    plot!(xguide="x", yguide="y")
+    scatter!(X0, Y0; label="w=0", c=2, msc=:auto, ms, alpha, xlim, ylim)
     plot!(collect(xlim), collect(xlim); label="", c=:black, ls=:dot, alpha=0.5)
     plot!(collect(xlim), x->β₀₀+β₀₁*x; label="", c=:red)
+    plot!(xguide="x", yguide="y")
 end
 
 # %%
@@ -261,5 +269,6 @@ XYW3 = [(x = rand(distx()); w = rand(distw(x)); (x, rand(disty(x, w)), w)) for _
 P3 = plot_data2(XYW3)
 
 plot(P1, P2, P3; size=(900, 300), layout=(1, 3))
+plot!(leftmargin=4Plots.mm, bottommargin=4Plots.mm)
 
 # %%
