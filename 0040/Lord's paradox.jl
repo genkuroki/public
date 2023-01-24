@@ -28,8 +28,7 @@
 # %% [markdown]
 # ## 準備
 #
-# <!-- ![IMG_8086.jpg](attachment:baeb4c6d-6ae5-4268-9d70-e69138504ec9.jpg) -->
-# <img src="attachment:baeb4c6d-6ae5-4268-9d70-e69138504ec9.jpg" width=80%>
+# <img src="linreg.jpg" width=80%>
 
 # %% [markdown]
 # ## 2種類の因果モデルに対応する確率分布の表示
