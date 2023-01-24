@@ -14,7 +14,8 @@
 # ---
 
 # %% [markdown]
-# https://gist.github.com/tagdtm/3d923b706430e80973463d76a0b3605e
+# * https://twitter.com/YutaTasaki/status/1617668862165778432
+# * https://gist.github.com/tagdtm/3d923b706430e80973463d76a0b3605e
 
 # %%
 nx = 2
