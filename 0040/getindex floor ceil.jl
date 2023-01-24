@@ -57,7 +57,7 @@ B = round.(1 .+ 3rand(m, n); digits=1)
 C = similar(A)
 
 for k in keys(A)
-    C[k] = A[k] * A[floor.(Int, B[k]), ceil.(Int, B[k])]
+    C[k] = A[k] * A[floor(Int, B[k]), ceil(Int, B[k])]
 end
 C
 
