@@ -65,12 +65,13 @@ scatter(data[6,:], data[5,:]; ms=1, msc=:auto, ma=0.5, label="(z3, z2)")
 scatter(data[1,:], data[5,:]; ms=1, msc=:auto, ma=0.5, label="(w, z2)")
 
 # %%
-@gif for z3 in -4:0.2:4
+anim = @animate for z3 in -4:0.2:4
     ks = @.(abs(data[6,:] - z3) < 0.1)
     scatter(data[1,ks], data[5,ks]; ms=3, msc=:auto, ma=0.5, label="")
     plot!(xlim=extrema(data[1,:]), ylim=extrema(data[5,:]))
     title!("(w, z2) given z3=$(@sprintf("%5.2f", z3))")
 end
+gif(anim, "w_and_z2_give_z3.gif")
 
 # %%
 n = N
