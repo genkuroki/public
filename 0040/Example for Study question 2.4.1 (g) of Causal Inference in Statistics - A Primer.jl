@@ -17,6 +17,7 @@
 # %%
 using Distributions
 using StatsPlots
+default(fmt=:png)
 using Printf
 
 # %% [markdown]
