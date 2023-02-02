@@ -22,6 +22,8 @@ default(fmt=:png, size=(400, 250),
 r(x) = round(x; digits=3)
 
 # %% [markdown]
+# https://arxiv.org/abs/1203.3503 Section 4
+#
 # $$
 # \begin{matrix}
 # Z          & & \\
