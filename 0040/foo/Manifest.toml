@@ -2,9 +2,9 @@
 
 julia_version = "1.9.0-beta3"
 manifest_format = "2.0"
-project_hash = "a91c28a15dbcd28414367b3b44524a2d39c4521d"
+project_hash = "66d08595bfd35c3ebdddcd00f0b392efc0bcc680"
 
 [[deps.Foo]]
 path = "Foo"
-uuid = "3fd9b0fe-f817-4e6b-be18-d9e347fda0f6"
+uuid = "45a4483b-101e-48f7-ac5b-b0339c1234a9"
 version = "0.1.0"
