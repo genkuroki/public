@@ -57,7 +57,7 @@ plot(ecdf_pval, 0, 0.1; label="")
 plot!([0, 0.1], [0, 0.1]; label="", c=:black, ls=:dot, lw=0.5)
 plot!(xguide="nominal significance level α", yguide="probability of pvalue ≤ α")
 plot!(xtick=0:0.01:1, ytick=0:0.01:1, xrotation=30)
-title!("MannWhitneyUTest for disX m=$m vs. distY n=$n")
+title!("MannWhitneyUTest for distX m=$m vs. distY n=$n")
 plot!(size=(450, 450))
 
 # %%
@@ -318,7 +318,7 @@ plot(ecdf_pval, 0, 0.1; label="")
 plot!([0, 0.1], [0, 0.1]; label="", c=:black, ls=:dot, lw=0.5)
 plot!(xguide="nominal significance level α", yguide="probability of pvalue ≤ α")
 plot!(xtick=0:0.01:1, ytick=0:0.01:1, xrotation=30)
-title!("Brunner-Munzel test for disX m=$m vs. distY n=$n")
+title!("Brunner-Munzel test for distX m=$m vs. distY n=$n")
 plot!(size=(450, 450))
 
 # %%
@@ -346,7 +346,7 @@ plot(ecdf_pval, 0, 0.1; label="")
 plot!([0, 0.1], [0, 0.1]; label="", c=:black, ls=:dot, lw=0.5)
 plot!(xguide="nominal significance level α", yguide="probability of pvalue ≤ α")
 plot!(xtick=0:0.01:1, ytick=0:0.01:1, xrotation=30)
-title!("Welch t-test for disX m=$m vs. distY n=$n")
+title!("Welch t-test for distX m=$m vs. distY n=$n")
 plot!(size=(450, 450))
 
 # %%
