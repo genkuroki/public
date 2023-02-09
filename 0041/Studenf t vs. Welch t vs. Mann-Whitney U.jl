@@ -175,3 +175,23 @@ m, n = 100, 400
 plot_ttests(distX, distY, m, n; L=10^5)
 
 # %%
+distX, distY = Normal(0, 1), Normal(0, 2)
+m, n = 100, 100
+plot_ttests(distX, distY, m, n; L=10^5)
+
+# %%
+distX, distY = Normal(0, 1), Normal(0, 4)
+m, n = 100, 100
+plot_ttests(distX, distY, m, n; L=10^5)
+
+# %%
+distX, distY = TDist(4), 2TDist(4)
+m, n = 100, 100
+plot_ttests(distX, distY, m, n; L=10^5)
+
+# %%
+distX, distY = TDist(4), 4TDist(4)
+m, n = 100, 100
+plot_ttests(distX, distY, m, n; L=10^5)
+
+# %%
