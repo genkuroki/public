@@ -20,19 +20,8 @@ using HypothesisTests
 using Random
 using StatsBase
 using StatsPlots
-default(fmt=:png, titlefontsize=10)
+default(fmt=:png, titlefontsize=10, tickfontsize=6, guidefontsize=8)
 
-# %%
-distX = DiscreteUniform(1, 5)
-distY = Categorical(0.05, 0.2, 0.5, 0.2, 0.05)
-
-P1 = bar(1:5, x -> pdf(distX, round(Int, x)); label="", title="distX")
-plot!(ylim=(-0.02, 0.52))
-P2 = bar(1:5, x -> pdf(distY, round(Int, x)); label="", title="distY", c=2)
-plot!(ylim=(-0.02, 0.52))
-plot(P1, P2; size=(800, 250))
-
-# %%
 function simMWU(distX, distY, m, n; L = 10^6)
     tmpX = [Vector{Int}(undef, m) for _ in 1:Threads.nthreads()]
     tmpY = [Vector{Int}(undef, n) for _ in 1:Threads.nthreads()]
@@ -49,16 +38,27 @@ function simMWU(distX, distY, m, n; L = 10^6)
 end
 
 # %%
+distX = DiscreteUniform(1, 5)
+distY = Categorical(0.05, 0.2, 0.5, 0.2, 0.05)
 m, n = 100, 200
+
+P1 = bar(1:5, x -> pdf(distX, round(Int, x)); label="", title="distX, m=$m")
+plot!(ylim=(-0.02, 0.52))
+P2 = bar(1:5, x -> pdf(distY, round(Int, x)); label="", title="distY, n=$n", c=2)
+plot!(ylim=(-0.02, 0.52))
+plot(P1, P2; size=(800, 250))
+
 ecdf_pval = simMWU(distX, distY, m, n)
 @show ecdf_pval(0.05)
 @show ecdf_pval(0.01)
-plot(ecdf_pval, 0, 0.1; label="")
+P3 = plot(ecdf_pval, 0, 0.1; label="")
 plot!([0, 0.1], [0, 0.1]; label="", c=:black, ls=:dot, lw=0.5)
 plot!(xguide="nominal significance level α", yguide="probability of pvalue ≤ α")
 plot!(xtick=0:0.01:1, ytick=0:0.01:1, xrotation=30)
-title!("MannWhitneyUTest for distX m=$m vs. distY n=$n")
+title!("MannWhitneyUTest")
 plot!(size=(450, 450))
+
+plot(P1, P2, P3; size=(600, 400), layout=@layout[ [a; b] c{0.7w}])
 
 # %%
 safediv(x, y) = x == 0 ? x : isinf(y) ? zero(y) : x/y
@@ -309,17 +309,19 @@ function simBM(distX, distY, m, n; L = 10^6)
     ecdf_pval
 end
 
-# %%
+# %% tags=[]
 m, n = 100, 200
 ecdf_pval = simBM(distX, distY, m, n)
 @show ecdf_pval(0.05)
 @show ecdf_pval(0.01)
-plot(ecdf_pval, 0, 0.1; label="")
+P4 = plot(ecdf_pval, 0, 0.1; label="")
 plot!([0, 0.1], [0, 0.1]; label="", c=:black, ls=:dot, lw=0.5)
 plot!(xguide="nominal significance level α", yguide="probability of pvalue ≤ α")
 plot!(xtick=0:0.01:1, ytick=0:0.01:1, xrotation=30)
-title!("Brunner-Munzel test for distX m=$m vs. distY n=$n")
+title!("Brunner-Munzel test")# for distX m=$m vs. distY n=$n")
 plot!(size=(450, 450))
+
+plot(P1, P2, P3, P4; size=(640, 512), layout=@layout[[a b]; [c{0.65h} d{0.65h}]])
 
 # %%
 function simT(distX, distY, m, n; L = 10^6)
@@ -342,11 +344,14 @@ m, n = 100, 200
 ecdf_pval = simT(distX, distY, m, n)
 @show ecdf_pval(0.05)
 @show ecdf_pval(0.01)
-plot(ecdf_pval, 0, 0.1; label="")
+
+P5 = plot(ecdf_pval, 0, 0.1; label="")
 plot!([0, 0.1], [0, 0.1]; label="", c=:black, ls=:dot, lw=0.5)
 plot!(xguide="nominal significance level α", yguide="probability of pvalue ≤ α")
 plot!(xtick=0:0.01:1, ytick=0:0.01:1, xrotation=30)
-title!("Welch t-test for distX m=$m vs. distY n=$n")
+title!("Welch t-test")# for distX m=$m vs. distY n=$n")
 plot!(size=(450, 450))
+
+plot(P1, P2, P3, P5; size=(640, 512), layout=@layout[[a b]; [c{0.65h} d{0.65h}]])
 
 # %%
