@@ -22,6 +22,8 @@ using StatsBase
 using StatsPlots
 default(fmt=:png, titlefontsize=10, tickfontsize=6, guidefontsize=8)
 
+rd(x; d=3) = round(x; digits=d)
+
 function simMWU(distX, distY, m, n; L = 10^6)
     tmpX = [Vector{Int}(undef, m) for _ in 1:Threads.nthreads()]
     tmpY = [Vector{Int}(undef, n) for _ in 1:Threads.nthreads()]
@@ -41,12 +43,18 @@ end
 distX = DiscreteUniform(1, 5)
 distY = Categorical(0.05, 0.2, 0.5, 0.2, 0.05)
 m, n = 100, 200
+@show m, n
+@show rd.((mean(distX), mean(distY)))
+@show rd.((var(distX), var(distY)))
+@show rd.((skewness(distX), skewness(distY)))
+@show rd.((kurtosis(distX), kurtosis(distY)))
+println()
 
+ymax = maximum([probs(distX); probs(distY)]) + 0.02
 P1 = bar(1:5, x -> pdf(distX, round(Int, x)); label="", title="distX, m=$m")
-plot!(ylim=(-0.02, 0.52))
+plot!(ylim=(-0.02, ymax))
 P2 = bar(1:5, x -> pdf(distY, round(Int, x)); label="", title="distY, n=$n", c=2)
-plot!(ylim=(-0.02, 0.52))
-plot(P1, P2; size=(800, 250))
+plot!(ylim=(-0.02, ymax))
 
 ecdf_pval = simMWU(distX, distY, m, n)
 @show ecdf_pval(0.05)
@@ -58,7 +66,7 @@ plot!(xtick=0:0.01:1, ytick=0:0.01:1, xrotation=30)
 title!("MannWhitneyUTest")
 plot!(size=(450, 450))
 
-plot(P1, P2, P3; size=(600, 400), layout=@layout[ [a; b] c{0.7w}])
+plot(P1, P2, P3; size=(600, 400), layout=@layout[[a; b] c{0.7w}])
 
 # %%
 safediv(x, y) = x == 0 ? x : isinf(y) ? zero(y) : x/y
@@ -353,5 +361,187 @@ title!("Welch t-test")# for distX m=$m vs. distY n=$n")
 plot!(size=(450, 450))
 
 plot(P1, P2, P3, P5; size=(640, 512), layout=@layout[[a b]; [c{0.65h} d{0.65h}]])
+
+# %%
+p = 1/12
+distX = Categorical(p, 2p, 1-6p, 2p, p)
+q = 3p/2
+distY = Categorical(q, 0, 1-2q, 0, q)
+m, n = 50, 200
+@show m, n
+@show rd.((mean(distX), mean(distY)))
+@show rd.((var(distX), var(distY)))
+@show rd.((skewness(distX), skewness(distY)))
+@show rd.((kurtosis(distX), kurtosis(distY)))
+println()
+
+ymax = maximum([probs(distX); probs(distY)]) + 0.02
+P1 = bar(1:5, x -> pdf(distX, round(Int, x)); label="", title="distX, m=$m")
+plot!(ylim=(-0.02, ymax))
+P2 = bar(1:5, x -> pdf(distY, round(Int, x)); label="", title="distY, n=$n", c=2)
+plot!(ylim=(-0.02, ymax))
+
+ecdf_pval = simMWU(distX, distY, m, n)
+@show ecdf_pval(0.05)
+@show ecdf_pval(0.01)
+P3 = plot(ecdf_pval, 0, 0.1; label="")
+plot!([0, 0.1], [0, 0.1]; label="", c=:black, ls=:dot, lw=0.5)
+plot!(xguide="nominal significance level α", yguide="probability of pvalue ≤ α")
+plot!(xtick=0:0.01:1, ytick=0:0.01:1, xrotation=30)
+title!("MannWhitneyUTest")
+plot!(size=(450, 450))
+
+plot(P1, P2, P3; size=(600, 400), layout=@layout[[a; b] c{0.7w}])
+
+# %%
+ecdf_pval = simBM(distX, distY, m, n)
+@show ecdf_pval(0.05)
+@show ecdf_pval(0.01)
+P4 = plot(ecdf_pval, 0, 0.1; label="")
+plot!([0, 0.1], [0, 0.1]; label="", c=:black, ls=:dot, lw=0.5)
+plot!(xguide="nominal significance level α", yguide="probability of pvalue ≤ α")
+plot!(xtick=0:0.01:1, ytick=0:0.01:1, xrotation=30)
+title!("Brunner-Munzel test")# for distX m=$m vs. distY n=$n")
+plot!(size=(450, 450))
+
+plot(P1, P2, P3, P4; size=(640, 512), layout=@layout[[a b]; [c{0.65h} d{0.65h}]])
+
+# %%
+ecdf_pval = simT(distX, distY, m, n)
+@show ecdf_pval(0.05)
+@show ecdf_pval(0.01)
+
+P5 = plot(ecdf_pval, 0, 0.1; label="")
+plot!([0, 0.1], [0, 0.1]; label="", c=:black, ls=:dot, lw=0.5)
+plot!(xguide="nominal significance level α", yguide="probability of pvalue ≤ α")
+plot!(xtick=0:0.01:1, ytick=0:0.01:1, xrotation=30)
+title!("Welch t-test")# for distX m=$m vs. distY n=$n")
+plot!(size=(450, 450))
+
+plot(P1, P2, P3, P5; size=(640, 512), layout=@layout[[a b]; [c{0.65h} d{0.65h}]])
+
+# %%
+p = 1/12
+distX = Categorical(p, 2p, 1-6p, 2p, p)
+q = 3p/2
+distY = Categorical(q, 0, 1-2q, 0, q)
+m, n = 200, 50
+@show m, n
+@show rd.((mean(distX), mean(distY)))
+@show rd.((var(distX), var(distY)))
+@show rd.((skewness(distX), skewness(distY)))
+@show rd.((kurtosis(distX), kurtosis(distY)))
+println()
+
+ymax = maximum([probs(distX); probs(distY)]) + 0.02
+P1 = bar(1:5, x -> pdf(distX, round(Int, x)); label="", title="distX, m=$m")
+plot!(ylim=(-0.02, ymax))
+P2 = bar(1:5, x -> pdf(distY, round(Int, x)); label="", title="distY, n=$n", c=2)
+plot!(ylim=(-0.02, ymax))
+
+ecdf_pval = simMWU(distX, distY, m, n)
+@show ecdf_pval(0.05)
+@show ecdf_pval(0.01)
+P3 = plot(ecdf_pval, 0, 0.1; label="")
+plot!([0, 0.1], [0, 0.1]; label="", c=:black, ls=:dot, lw=0.5)
+plot!(xguide="nominal significance level α", yguide="probability of pvalue ≤ α")
+plot!(xtick=0:0.01:1, ytick=0:0.01:1, xrotation=30)
+title!("MannWhitneyUTest")
+plot!(size=(450, 450))
+
+plot(P1, P2, P3; size=(600, 400), layout=@layout[[a; b] c{0.7w}])
+
+# %%
+p = 1/12
+distX = Categorical(p, 2p, 1-6p, 2p, p)
+q = 3p/2
+distY = Categorical(q, 0, 1-2q, 0, q)
+m, n = 200, 100
+@show m, n
+@show rd.((mean(distX), mean(distY)))
+@show rd.((var(distX), var(distY)))
+@show rd.((skewness(distX), skewness(distY)))
+@show rd.((kurtosis(distX), kurtosis(distY)))
+println()
+
+ymax = maximum([probs(distX); probs(distY)]) + 0.02
+P1 = bar(1:5, x -> pdf(distX, round(Int, x)); label="", title="distX, m=$m")
+plot!(ylim=(-0.02, ymax))
+P2 = bar(1:5, x -> pdf(distY, round(Int, x)); label="", title="distY, n=$n", c=2)
+plot!(ylim=(-0.02, ymax))
+
+ecdf_pval = simMWU(distX, distY, m, n)
+@show ecdf_pval(0.05)
+@show ecdf_pval(0.01)
+P3 = plot(ecdf_pval, 0, 0.1; label="")
+plot!([0, 0.1], [0, 0.1]; label="", c=:black, ls=:dot, lw=0.5)
+plot!(xguide="nominal significance level α", yguide="probability of pvalue ≤ α")
+plot!(xtick=0:0.01:1, ytick=0:0.01:1, xrotation=30)
+title!("MannWhitneyUTest")
+plot!(size=(450, 450))
+
+plot(P1, P2, P3; size=(600, 400), layout=@layout[[a; b] c{0.7w}])
+
+# %%
+p = 1/12
+distX = Categorical(p, 2p, 1-6p, 2p, p)
+q = 3p/2
+distY = Categorical(q, 0, 1-2q, 0, q)
+m, n = 100, 100
+@show m, n
+@show rd.((mean(distX), mean(distY)))
+@show rd.((var(distX), var(distY)))
+@show rd.((skewness(distX), skewness(distY)))
+@show rd.((kurtosis(distX), kurtosis(distY)))
+println()
+
+ymax = maximum([probs(distX); probs(distY)]) + 0.02
+P1 = bar(1:5, x -> pdf(distX, round(Int, x)); label="", title="distX, m=$m")
+plot!(ylim=(-0.02, ymax))
+P2 = bar(1:5, x -> pdf(distY, round(Int, x)); label="", title="distY, n=$n", c=2)
+plot!(ylim=(-0.02, ymax))
+
+ecdf_pval = simMWU(distX, distY, m, n)
+@show ecdf_pval(0.05)
+@show ecdf_pval(0.01)
+P3 = plot(ecdf_pval, 0, 0.1; label="")
+plot!([0, 0.1], [0, 0.1]; label="", c=:black, ls=:dot, lw=0.5)
+plot!(xguide="nominal significance level α", yguide="probability of pvalue ≤ α")
+plot!(xtick=0:0.01:1, ytick=0:0.01:1, xrotation=30)
+title!("MannWhitneyUTest")
+plot!(size=(450, 450))
+
+plot(P1, P2, P3; size=(600, 400), layout=@layout[[a; b] c{0.7w}])
+
+# %%
+p = 1/12
+distX = Categorical(p, 2p, 1-6p, 2p, p)
+q = 3p/2
+distY = Categorical(q, 0, 1-2q, 0, q)
+m, n = 100, 200
+@show m, n
+@show rd.((mean(distX), mean(distY)))
+@show rd.((var(distX), var(distY)))
+@show rd.((skewness(distX), skewness(distY)))
+@show rd.((kurtosis(distX), kurtosis(distY)))
+println()
+
+ymax = maximum([probs(distX); probs(distY)]) + 0.02
+P1 = bar(1:5, x -> pdf(distX, round(Int, x)); label="", title="distX, m=$m")
+plot!(ylim=(-0.02, ymax))
+P2 = bar(1:5, x -> pdf(distY, round(Int, x)); label="", title="distY, n=$n", c=2)
+plot!(ylim=(-0.02, ymax))
+
+ecdf_pval = simMWU(distX, distY, m, n)
+@show ecdf_pval(0.05)
+@show ecdf_pval(0.01)
+P3 = plot(ecdf_pval, 0, 0.1; label="")
+plot!([0, 0.1], [0, 0.1]; label="", c=:black, ls=:dot, lw=0.5)
+plot!(xguide="nominal significance level α", yguide="probability of pvalue ≤ α")
+plot!(xtick=0:0.01:1, ytick=0:0.01:1, xrotation=30)
+title!("MannWhitneyUTest")
+plot!(size=(450, 450))
+
+plot(P1, P2, P3; size=(600, 400), layout=@layout[[a; b] c{0.7w}])
 
 # %%
