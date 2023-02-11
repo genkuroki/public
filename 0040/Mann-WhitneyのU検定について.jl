@@ -545,3 +545,128 @@ plot!(size=(450, 450))
 plot(P1, P2, P3; size=(600, 400), layout=@layout[[a; b] c{0.7w}])
 
 # %%
+p = 1/12
+distX = Categorical(p/2, p/2, 2p, 1-6p, 3p)
+q = 3p/2
+a = 0.43
+distY = Categorical((1-a)*q, a*q, 0, 1-2q, q)
+m, n = 100, 200
+@show m, n
+@show rd.((cdf(distX, 2), cdf(distY, 2)))
+@show rd.((ccdf(distX, 2), ccdf(distY, 2)))
+@show rd.((ccdf(distX, 3), ccdf(distY, 3)))
+@show rd.((ccdf(distX, 4), ccdf(distY, 4)))
+@show rd.((median(distX), median(distY)))
+@show rd.((mean(distX), mean(distY)))
+@show rd.((var(distX), var(distY)))
+@show rd.((skewness(distX), skewness(distY)))
+@show rd.((kurtosis(distX), kurtosis(distY)))
+println()
+
+ymax = maximum([probs(distX); probs(distY)]) + 0.02
+P1 = bar(1:5, x -> pdf(distX, round(Int, x)); label="", title="distX, m=$m")
+plot!(ylim=(-0.02, ymax))
+P2 = bar(1:5, x -> pdf(distY, round(Int, x)); label="", title="distY, n=$n", c=2)
+plot!(ylim=(-0.02, ymax))
+
+ecdf_pval = simMWU(distX, distY, m, n)
+@show ecdf_pval(0.05)
+@show ecdf_pval(0.01)
+P3 = plot(ecdf_pval, 0, 0.1; label="")
+plot!([0, 0.1], [0, 0.1]; label="", c=:black, ls=:dot, lw=0.5)
+plot!(xguide="nominal significance level α", yguide="probability of pvalue ≤ α")
+plot!(xtick=0:0.01:1, ytick=0:0.01:1, xrotation=30)
+title!("MannWhitneyUTest")
+plot!(size=(450, 450))
+
+plot(P1, P2, P3; size=(600, 400), layout=@layout[[a; b] c{0.7w}])
+
+# %%
+H(x, y) = (x < y) + (x == y)/2
+function bmparam(distX, distY)
+    sum(H(x, y)*pdf(distX, x)*pdf(distY, y)
+        for x in support(distX), y in support(distY))
+end
+
+bmparam(distX, distY)
+
+# %%
+ecdf_pval = simBM(distX, distY, m, n)
+@show ecdf_pval(0.05)
+@show ecdf_pval(0.01)
+P4 = plot(ecdf_pval, 0, 0.1; label="")
+plot!([0, 0.1], [0, 0.1]; label="", c=:black, ls=:dot, lw=0.5)
+plot!(xguide="nominal significance level α", yguide="probability of pvalue ≤ α")
+plot!(xtick=0:0.01:1, ytick=0:0.01:1, xrotation=30)
+title!("Brunner-Munzel test")# for distX m=$m vs. distY n=$n")
+plot!(size=(450, 450))
+
+plot(P1, P2, P3, P4; size=(640, 512), layout=@layout[[a b]; [c{0.65h} d{0.65h}]])
+
+# %%
+p = 1/12
+distX = Categorical(p/2, p/2, 2p, 1-6p, 3p)
+q = 3p/2
+a = 0.5
+b = 0.17460318
+distY = Categorical((1-a)*q, a*q, 0, (1-b)*(1-q), b*(1-q))
+
+@show bmparam(distX, distY)
+
+m, n = 50, 200
+@show m, n
+@show rd.((cdf(distX, 2), cdf(distY, 2)))
+@show rd.((ccdf(distX, 2), ccdf(distY, 2)))
+@show rd.((ccdf(distX, 3), ccdf(distY, 3)))
+@show rd.((ccdf(distX, 4), ccdf(distY, 4)))
+@show rd.((median(distX), median(distY)))
+@show rd.((mean(distX), mean(distY)))
+@show rd.((var(distX), var(distY)))
+@show rd.((skewness(distX), skewness(distY)))
+@show rd.((kurtosis(distX), kurtosis(distY)))
+println()
+
+ymax = maximum([probs(distX); probs(distY)]) + 0.02
+P1 = bar(1:5, x -> pdf(distX, round(Int, x)); label="", title="distX, m=$m")
+plot!(ylim=(-0.02, ymax))
+P2 = bar(1:5, x -> pdf(distY, round(Int, x)); label="", title="distY, n=$n", c=2)
+plot!(ylim=(-0.02, ymax))
+
+ecdf_pval = simMWU(distX, distY, m, n)
+@show ecdf_pval(0.05)
+@show ecdf_pval(0.01)
+P3 = plot(ecdf_pval, 0, 0.1; label="")
+plot!([0, 0.1], [0, 0.1]; label="", c=:black, ls=:dot, lw=0.5)
+plot!(xguide="nominal significance level α", yguide="probability of pvalue ≤ α")
+plot!(xtick=0:0.01:1, ytick=0:0.01:1, xrotation=30)
+title!("MannWhitneyUTest")
+plot!(size=(450, 450))
+
+plot(P1, P2, P3; size=(600, 400), layout=@layout[[a; b] c{0.7w}])
+
+# %%
+@show m, n
+@show rd.((cdf(distX, 2), cdf(distY, 2)))
+@show rd.((ccdf(distX, 2), ccdf(distY, 2)))
+@show rd.((ccdf(distX, 3), ccdf(distY, 3)))
+@show rd.((ccdf(distX, 4), ccdf(distY, 4)))
+@show rd.((median(distX), median(distY)))
+@show rd.((mean(distX), mean(distY)))
+@show rd.((var(distX), var(distY)))
+@show rd.((skewness(distX), skewness(distY)))
+@show rd.((kurtosis(distX), kurtosis(distY)))
+println()
+
+ecdf_pval = simBM(distX, distY, m, n)
+@show ecdf_pval(0.05)
+@show ecdf_pval(0.01)
+P4 = plot(ecdf_pval, 0, 0.1; label="")
+plot!([0, 0.1], [0, 0.1]; label="", c=:black, ls=:dot, lw=0.5)
+plot!(xguide="nominal significance level α", yguide="probability of pvalue ≤ α")
+plot!(xtick=0:0.01:1, ytick=0:0.01:1, xrotation=30)
+title!("Brunner-Munzel test")# for distX m=$m vs. distY n=$n")
+plot!(size=(450, 450))
+
+plot(P1, P2, P3, P4; size=(640, 512), layout=@layout[[a b]; [c{0.65h} d{0.65h}]])
+
+# %%
