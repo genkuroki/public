@@ -277,15 +277,18 @@ function sim_MWU_BM_Welch(distX, distY, m, n; L = 10^6)
     pval_Welch = similar(pval_MWU)
     MWsigma = similar(pval_MWU)
     BMphat = similar(pval_MWU)
+    BMsehat = similar(pval_MWU)
     Threads.@threads for i in 1:L
         X = rand!(distX, tmpX[Threads.threadid()])
         Y = rand!(distY, tmpY[Threads.threadid()])
         mw = MannWhitneyUTest(X, Y)
         pval_MWU[i] = pvalue(mw)
-        pval_BM[i] = pvalue_brunner_munzel(X, Y)
+        bm = statistics_brunner_munzel(X, Y)
+        pval_BM[i] = bm.pvalue
         pval_Welch[i] = pvalue(UnequalVarianceTTest(X, Y))
         MWsigma[i] = mw.sigma
-        BMphat[i] = bm_phat(X, Y)
+        BMphat[i] = bm.phat
+        BMsehat[i] = bm.sehat
     end
     _ecdf_pval_MWU = ecdf(pval_MWU)
     _ecdf_pval_BM = ecdf(pval_BM)
@@ -293,7 +296,7 @@ function sim_MWU_BM_Welch(distX, distY, m, n; L = 10^6)
     ecdf_pval_MWU(x) = _ecdf_pval_MWU(x)
     ecdf_pval_BM(x) = _ecdf_pval_BM(x)
     ecdf_pval_Welch(x) = _ecdf_pval_Welch(x)
-    (; ecdf_pval_MWU, ecdf_pval_BM, ecdf_pval_Welch, MWsigma, BMphat)
+    (; ecdf_pval_MWU, ecdf_pval_BM, ecdf_pval_Welch, MWsigma, BMphat, BMsehat)
 end
 
 function plot_MWU_BM_Welch(distX, distY, m, n; L = 10^6, plot_Welch=false)
@@ -308,7 +311,8 @@ function plot_MWU_BM_Welch(distX, distY, m, n; L = 10^6, plot_Welch=false)
     @show rd.((skewness(distX), skewness(distY)))
     @show rd.((kurtosis(distX), kurtosis(distY)))
     println()
-    @show rd.(bm_p_param(distX, distY))
+    bm_p = bm_p_param(distX, distY)
+    @show rd.(bm_p)
     println()
     
     ymax = maximum([probs(distX); probs(distY)]) + 0.02
@@ -317,7 +321,7 @@ function plot_MWU_BM_Welch(distX, distY, m, n; L = 10^6, plot_Welch=false)
     P2 = bar(1:5, x -> pdf(distY, round(Int, x)); label="", title="distY, n=$n", c=2)
     plot!(ylim=(-0.02, ymax))
 
-    (; ecdf_pval_MWU, ecdf_pval_BM, ecdf_pval_Welch, MWsigma, BMphat) =
+    (; ecdf_pval_MWU, ecdf_pval_BM, ecdf_pval_Welch, MWsigma, BMphat, BMsehat) =
         sim_MWU_BM_Welch(distX, distY, m, n; L)
     @show ecdf_pval_MWU(0.05), ecdf_pval_MWU(0.01)
     @show ecdf_pval_BM(0.05), ecdf_pval_BM(0.01)
@@ -331,10 +335,10 @@ function plot_MWU_BM_Welch(distX, distY, m, n; L = 10^6, plot_Welch=false)
     plot!(xguide="nominal significance level α", yguide="probability of pvalue ≤ α")
     plot!(xtick=0:0.01:1, ytick=0:0.01:1, xrotation=30)
 
-    μ = 1/2
-    σ = √mean(MWsigma .^2) / (m*n)
-    P4 = stephist(BMphat; norm=true, label="", title="distribution of BM p̂ statistics")
-    plot!(Normal(μ, σ); label="MW approx.", ls=:dash)
+    P4 = plot()
+    plot!(Normal(1/2, √mean(MWsigma .^ 2) / (m*n)); label="MW approx.")
+    plot!(Normal(bm_p, √mean(BMsehat .^ 2)); label="BM approx.", ls=:dash)
+    stephist!(BMphat; norm=true, label="dist. of p̂", c=:red, ls=:dot, lw=1.3)
     plot!(xguide="Brunner-Munzel p̂ = U/(mn)")
 
     plot(P1, P2, P3, P4; size=(640, 512), layout=@layout[[a b]; [c{0.67h} d{0.67h}]])
