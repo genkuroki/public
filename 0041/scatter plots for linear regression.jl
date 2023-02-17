@@ -19,8 +19,9 @@ using LinearAlgebra
 dot2(x) = dot(x, x)
 using Distributions
 using StatsPlots
-#pythonplot()
 default(fmt=:png, titlefontsize=10, tickfontsize=6, guidefontsize=7)
+using DataFrames
+using RCall
 
 # %% [markdown]
 # データを生成するモデル:
@@ -125,5 +126,34 @@ hline!([0]; label="", ls=:dot, c=:gray)
 
 plot(P1, P2, Q1, Q2, R1, R2; size=(600, 800), layout=(3, 2))
 plot!(legend=:outertop)
+
+# %%
+R"""
+library(car)
+"""
+
+# %%
+df = DataFrame(y=y, x1=x1, x12=@.(x1^2), x2=x2)
+@rput df
+
+# %%
+R"""
+model1 = lm(y ~ x1 + x2, data = df)
+"""
+
+# %%
+R"""
+car::crPlots(model1)
+""";
+
+# %%
+R"""
+model2 = lm(y ~ x1 + x12 + x2, data = df)
+"""
+
+# %%
+R"""
+car::crPlots(model2)
+""";
 
 # %%
