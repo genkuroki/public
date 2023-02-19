@@ -242,6 +242,31 @@ model = lm(y ~ x1 + x22, data = d)
 car::crPlots(model)
 """
 
+# %% [markdown]
+# データを生成するモデル:
+#
+# $$
+# y = 10 + 4x_1 + x_2^2 + 0.3u, \quad u \sim \operatorname{Norma}(0, 1). 
+# $$
+#
+# モデル1:
+#
+# $$
+# y = b_0 + b_1 x_1 + b_2 x_2 + \sigma u.
+# $$
+#
+# モデル2:
+#
+# $$
+# y = b_0 + b_1 x_1 + b_2 x_2^2 + \sigma u.
+# $$
+#
+# モデル2:
+#
+# $$
+# y = b_0 + b_1 x_1 + b_2 x_2 + b_3 x_2^2 + \sigma u.
+# $$
+
 # %%
 R"""
 set.seed(2349)
