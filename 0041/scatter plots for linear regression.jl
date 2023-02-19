@@ -527,3 +527,12 @@ hline!([0]; label="", ls=:dot, c=:gray)
 plot!(legend=:outertop)
 
 # %%
+L = 10^6
+U = σ_true * randn(L)
+X₂ = rand(Uniform(1, 5), L)
+X₂² = @. X₂^2
+V = X₂² .- mean(X₂²) + U
+@show mean(V) std(V)
+stephist(V; norm=true, label="", bin=200)
+
+# %%
