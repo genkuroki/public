@@ -205,7 +205,7 @@ ggplot(d) + geom_point(aes(x = x2, y = y)) +
 geom_smooth(aes(x=x2, y=y), se=FALSE)
 """
 
-# %%
+# %% tags=[]
 R"""
 ggplot(d) + geom_point(aes(x = x22, y = y)) +
 geom_smooth(aes(x=x22, y=y), se=FALSE)
@@ -241,5 +241,104 @@ R"""
 model = lm(y ~ x1 + x22, data = d)
 car::crPlots(model)
 """
+
+# %%
+R"""
+set.seed(2349)
+n <- 40
+d <- tibble(x1 = runif(n, 3, 8), x2 = runif(n, 1, 5),
+    epsilon = rnorm(n, 0, 0.3)) |>
+    mutate(y = 10 + (4*x1) + (1 * x2^2) + epsilon)
+"""
+
+n = size(d, 1)
+(; x1, x2, y) = d
+
+anim = @animate for t in 0:3:359
+    scatter(x1, x2, y; label="", title="data d", msc=:auto, alpha=0.5, ms=4, camera=(t+30, 45))
+    plot!(xguide="x1", yguide="x2", zguide="y")
+    plot!(size=(500, 500))
+end
+gif(anim, "d_x1x2y.gif")
+
+# %%
+n = size(d, 1)
+(; x1, x2, y) = d
+
+P1 = scatter(x1, y; label="(x1, y)", msc=:auto, alpha=0.8, ms=3)
+P2 = scatter(x2, y; label="(x2, y)", msc=:auto, alpha=0.8, ms=3)
+
+plot(P1, P2; size=(640, 320), legend=:outertop)
+
+# %%
+# y ~ b0 + b1*x1 + b2*x2 + u で推定
+
+n = size(d, 1)
+(; x1, x2, y) = d
+X1 = [ones(n) x1 x2]
+
+@show b1 = X1 \ y
+
+ŷ = @. b1[1] + b1[2]*x1 + b1[3]*x2
+
+s1 = √(dot2(y - ŷ)/(n-3))
+@show s1
+
+R1 = scatter(x1, y - ŷ; label="(x1, y - ŷ)", msc=:auto, alpha=0.8, ms=3)
+hline!([0]; label="", ls=:dot, c=:gray)
+R2 = scatter(x2, y - ŷ; label="(x2, y - ŷ)", msc=:auto, alpha=0.8, ms=3)
+hline!([0]; label="", ls=:dot, c=:gray)
+
+plot(R1, R2; size=(640, 320), legend=:outertop)
+
+# %%
+# y ~ b0 + b1*x1 + b2*x2^2 + u で推定
+
+n = size(d, 1)
+(; x1, x2, y) = d
+X2 = [ones(n) x1 @.(x2^2)]
+
+b_true = Float64[10, 4, 1]
+@show b_true
+@show b2 = X2 \ y
+
+ŷ = @. b2[1] + b2[2]*x1 + b2[3]*x2^2
+
+σ_true = 0.3
+s2 = √(dot2(y - ŷ)/(n-3))
+@show σ_true
+@show s2
+
+R1 = scatter(x1, y - ŷ; label="(x1, y - ŷ)", msc=:auto, alpha=0.8, ms=3)
+hline!([0]; label="", ls=:dot, c=:gray)
+R2 = scatter(x2, y - ŷ; label="(x2, y - ŷ)", msc=:auto, alpha=0.8, ms=3)
+hline!([0]; label="", ls=:dot, c=:gray)
+
+plot(R1, R2; size=(640, 320), legend=:outertop)
+
+# %%
+# y ~ b0 + b1*x1 + b2*x2 + b3*x2^2 + u で推定
+
+n = size(d, 1)
+(; x1, x2, y) = d
+X3 = [ones(n) x1 x2 @.(x2^2)]
+
+b_true = Float64[10, 4, 0, 1]
+@show b_true
+@show b3 = X3 \ y
+
+ŷ = @. b3[1] + b3[2]*x1 + b3[3]*x2 + b3[4]*x2^2
+
+σ_true = 0.3
+s3 = √(dot2(y - ŷ)/(n-4))
+@show σ_true
+@show s3
+
+R1 = scatter(x1, y - ŷ; label="(x1, y - ŷ)", msc=:auto, alpha=0.8, ms=3)
+hline!([0]; label="", ls=:dot, c=:gray)
+R2 = scatter(x2, y - ŷ; label="(x2, y - ŷ)", msc=:auto, alpha=0.8, ms=3)
+hline!([0]; label="", ls=:dot, c=:gray)
+
+plot(R1, R2; size=(640, 320), legend=:outertop)
 
 # %%
