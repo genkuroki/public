@@ -367,3 +367,12 @@ hline!([0]; label="", ls=:dot, c=:gray)
 plot(R1, R2; size=(640, 320), legend=:outertop)
 
 # %%
+anim = @animate for t in 0:3:359
+    scatter(x1, x2, y - ŷ; label="", msc=:auto, alpha=0.5, ms=4, camera=(t+30, 20))
+    plot!(xguide="x1", yguide="x2", zguide="y - ŷ")
+    title!("residual error of model3")
+    plot!(size=(500, 500))
+end
+gif(anim, "d_reserr3.gif")
+
+# %%
