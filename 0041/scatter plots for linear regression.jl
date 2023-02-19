@@ -275,6 +275,7 @@ d <- tibble(x1 = runif(n, 3, 8), x2 = runif(n, 1, 5),
     epsilon = rnorm(n, 0, 0.3)) |>
     mutate(y = 10 + (4*x1) + (1 * x2^2) + epsilon)
 """
+@rget d
 
 n = size(d, 1)
 (; x1, x2, y) = d
@@ -374,5 +375,155 @@ anim = @animate for t in 0:3:359
     plot!(size=(500, 500))
 end
 gif(anim, "d_reserr3.gif")
+
+# %%
+# y ~ b0 + b1*x1 + b2*x2 + b3*x2^2 + u で推定
+
+R"""
+set.seed(2349)
+n <- 1000
+d2 <- tibble(x1 = runif(n, 3, 8), x2 = runif(n, 1, 5),
+    epsilon = rnorm(n, 0, 0.3)) |>
+    mutate(y = 10 + (4*x1) + (1 * x2^2) + epsilon)
+"""
+@rget d2
+
+n = size(d2, 1)
+(; x1, x2, y) = d2
+X3 = [ones(n) x1 x2 @.(x2^2)]
+
+b_true = Float64[10, 4, 0, 1]
+@show b_true
+@show b3 = X3 \ y
+
+ŷ = @. b3[1] + b3[2]*x1 + b3[3]*x2 + b3[4]*x2^2
+
+σ_true = 0.3
+s3 = √(dot2(y - ŷ)/(n-4))
+@show σ_true
+@show s3
+
+R1 = scatter(x1, y - ŷ; label="(x1, y - ŷ)", msc=:auto, alpha=0.5, ms=3)
+hline!([0]; label="", ls=:dot, c=:gray)
+R2 = scatter(x2, y - ŷ; label="(x2, y - ŷ)", msc=:auto, alpha=0.5, ms=3)
+hline!([0]; label="", ls=:dot, c=:gray)
+
+plot(R1, R2; size=(640, 320), legend=:outertop)
+
+# %%
+anim = @animate for t in 0:3:359
+    scatter(x1, x2, y - ŷ; label="", msc=:auto, alpha=0.5, ms=4, camera=(t+30, 20))
+    plot!(xguide="x1", yguide="x2", zguide="y - ŷ")
+    title!("residual error of model3")
+    plot!(size=(500, 500))
+end
+gif(anim, "d2_reserr3.gif")
+
+# %% [markdown]
+# モデル2:
+#
+# $$
+# \begin{aligned}
+# &
+# y = b_0 + b_1 x_1 + b_2 x_2^2 + \sigma u,
+# \\ &
+# u \sim \operatorname{Normal}(0, 1), 
+# \\ &
+# x_2 \sim \operatorname{Uniform}(p, q),
+# \\ &
+# \text{$u, x_2$ are independent}
+# \end{aligned}
+# $$
+#
+# の下で, $x_2^2$ の平均と分散は
+#
+# $$
+# \begin{aligned}
+# &
+# E[x_2^2] = \frac{q^3 - p^3}{3(q - p)},
+# \\ &
+# E[x_2^4] = \frac{q^5 - c^5}{5(q - p)},
+# \\ &
+# \operatorname{var}(x_2^2) = E[x_2^4] - E[x_2^2]^2.
+# \end{aligned}
+# $$
+#
+# そして,
+#
+# $$
+# \tau^2 := E[b_2 x_2^2 + \sigma u] = b_2 E[x_2^2], \quad
+# \operatorname{var}(b_2 x_2^2 + \sigma u) = b_2^2 \operatorname{var}(x_2^2) + \sigma^2.
+# $$
+
+# %%
+b_true = [10, 4, 1]
+σ_true = 0.3
+p, q = 1, 5
+
+@show Ex₂² = (q^3 - p^3)/(3(q - p))
+@show Ex₂⁴ = (q^5 - p^5)/(5(q - p))
+@show var_x₂² = Ex₂⁴ - (Ex₂²)^2
+@show a_true = [b_true[1]+b_true[3]*Ex₂², b_true[2]]
+@show τ_true = √(b_true[3]^2 * var_x₂² + σ_true^2);
+
+# %%
+# y ~ a0 + a1*x1 + u で推定
+
+R"""
+set.seed(2349)
+n <- 40
+d2 <- tibble(x1 = runif(n, 3, 8), x2 = runif(n, 1, 5),
+    epsilon = rnorm(n, 0, 0.3)) |>
+    mutate(y = 10 + (4*x1) + (1 * x2^2) + epsilon)
+"""
+@rget d
+
+n = size(d, 1)
+(; x1, x2, y) = d
+X4 = [ones(n) x1]
+
+@show a_true
+@show a = X4 \ y
+
+ŷ = @. a[1] + a[2]*x1
+
+s4 = √(dot2(y - ŷ)/(n-2))
+
+@show τ_true
+@show s4
+
+R1 = scatter(x1, y - ŷ; label="(x1, y - ŷ)", msc=:auto, alpha=0.8, ms=3)
+hline!([0]; label="", ls=:dot, c=:gray)
+plot!(legend=:outertop)
+
+# %%
+# y ~ a0 + a1*x1 + u で推定
+
+R"""
+set.seed(2349)
+n <- 1000
+d2 <- tibble(x1 = runif(n, 3, 8), x2 = runif(n, 1, 5),
+    epsilon = rnorm(n, 0, 0.3)) |>
+    mutate(y = 10 + (4*x1) + (1 * x2^2) + epsilon)
+"""
+@rget d2
+
+n = size(d2, 1)
+(; x1, x2, y) = d2
+X4 = [ones(n) x1]
+
+@show a_true
+@show a = X4 \ y
+
+ŷ = @. a[1] + a[2]*x1
+
+s4 = √(dot2(y - ŷ)/(n-2))
+
+@show τ_true
+@show s4
+
+R1 = scatter(x1, y - ŷ; label="(x1, y - ŷ)", msc=:auto, alpha=0.8, ms=3)
+hline!([0]; label="", ls=:dot, c=:gray)
+plot!(legend=:outertop)
 
 # %%
