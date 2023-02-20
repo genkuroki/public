@@ -167,63 +167,57 @@ title!("distribution of second coefficients")
 plot(Q1, Q3, Q2; size=(800, 600))
 
 # %% [markdown]
-# 以上は標本サイズが $n=1000$ の場合である. 標本サイズが $n=20$ 程度だと正規分布近似の誤差が見える程度になる.
+# 以上は標本サイズが $n=1000$ の場合である. 標本サイズが $n=10, 20$ 程度だと正規分布近似の誤差が見える程度になる.
 
 # %%
-n = 20
-β̂ = sim(distx, a, b, distu, n)
-@show mvnormalapprox_true(distx, a, b, distu, n)
-@show fit(MvNormal, stack(β̂))
+function plot_betahat(; distx, a, b, distu, n, L=10^5)
+    @show distx
+    @show distu
+    @show n
+    println()
+    
+    β̂ = sim(distx, a, b, distu, n; L)
+    @show mvnormalapprox_true(distx, a, b, distu, n)
+    @show fit(MvNormal, stack(β̂))
 
-β̂₀, β̂₁ = getindex.(β̂, 1)[1:10000], getindex.(β̂, 2)[1:10000]
-Q1 = scatter(β̂₀, β̂₁; label="", msc=:auto, alpha=0.5, ms=1)
-title!("distribution of regression coefficients")
-Q2 = stephist(β̂₀; norm=true, label="")
-plot!(fit(Normal, β̂₀); label="normal approx.")
-title!("distribution of first coefficients")
-Q3 = stephist(β̂₁; norm=true, label="")
-plot!(fit(Normal, β̂₁); label="normal approx.")
-title!("distribution of second coefficients")
+    β̂₀, β̂₁ = getindex.(β̂, 1)[begin:min(end,10000)], getindex.(β̂, 2)[begin:min(end,10000)]
+    Q1 = scatter(β̂₀, β̂₁; label="", msc=:auto, alpha=0.5, ms=1)
+    title!("distribution of regression coefficients")
+    Q2 = stephist(β̂₀; norm=true, label="")
+    plot!(fit(Normal, β̂₀); label="normal approx.")
+    title!("distribution of first coefficients")
+    Q3 = stephist(β̂₁; norm=true, label="")
+    plot!(fit(Normal, β̂₁); label="normal approx.")
+    title!("distribution of second coefficients")
 
-plot(Q1, Q3, Q2; size=(800, 600))
-
-# %%
-n = 40
-β̂ = sim(distx, a, b, distu, n)
-@show mvnormalapprox_true(distx, a, b, distu, n)
-@show fit(MvNormal, stack(β̂))
-
-β̂₀, β̂₁ = getindex.(β̂, 1)[1:10000], getindex.(β̂, 2)[1:10000]
-Q1 = scatter(β̂₀, β̂₁; label="", msc=:auto, alpha=0.5, ms=1)
-title!("distribution of regression coefficients")
-Q2 = stephist(β̂₀; norm=true, label="")
-plot!(fit(Normal, β̂₀); label="normal approx.")
-title!("distribution of first coefficients")
-Q3 = stephist(β̂₁; norm=true, label="")
-plot!(fit(Normal, β̂₁); label="normal approx.")
-title!("distribution of second coefficients")
-
-plot(Q1, Q3, Q2; size=(800, 600))
+    plot(Q1, Q3, Q2; size=(800, 600))
+end
 
 # %%
-n = 100
-β̂ = sim(distx, a, b, distu, n)
-@show mvnormalapprox_true(distx, a, b, distu, n)
-@show fit(MvNormal, stack(β̂))
+plot_betahat(; distx, a, b, distu, n=10)
 
-β̂₀, β̂₁ = getindex.(β̂, 1)[1:10000], getindex.(β̂, 2)[1:10000]
-Q1 = scatter(β̂₀, β̂₁; label="", msc=:auto, alpha=0.5, ms=1)
-title!("distribution of regression coefficients")
-Q2 = stephist(β̂₀; norm=true, label="")
-plot!(fit(Normal, β̂₀); label="normal approx.")
-title!("distribution of first coefficients")
-Q3 = stephist(β̂₁; norm=true, label="")
-plot!(fit(Normal, β̂₁); label="normal approx.")
-title!("distribution of second coefficients")
+# %%
+plot_betahat(; distx, a, b, distu, n=20)
 
-plot(Q1, Q3, Q2; size=(800, 600))
+# %%
+plot_betahat(; distx, a, b, distu, n=40)
+
+# %%
+plot_betahat(; distx, a, b, distu, n=100)
 
 # %% [markdown]
 # このようにi.i.d.の残差の分布が正規分布でなくても, 標本サイズが十分に大きければ, 回帰係数の分布は多変量正規分布で近似される.
+
+# %%
+plot_betahat(; distx=Normal(2, 2), a, b, distu, n=10)
+
+# %%
+plot_betahat(; distx=Normal(2, 2), a, b, distu, n=20)
+
+# %%
+plot_betahat(; distx=Normal(2, 2), a, b, distu, n=40)
+
+# %%
+plot_betahat(; distx=Normal(2, 2), a, b, distu, n=100)
 
 # %%
