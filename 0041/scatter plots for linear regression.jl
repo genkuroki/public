@@ -335,6 +335,9 @@ s2 = √(dot2(y - ŷ)/(n-3))
 @show σ_true
 @show s2
 
+ŷ1 = @.(b2[1] + b2[2]*x1) .+ mean(@.(b2[3]*x2^2))
+@show √(dot2(y - ŷ1)/(n-2))
+
 R1 = scatter(x1, y - ŷ; label="(x1, y - ŷ)", msc=:auto, alpha=0.8, ms=3)
 hline!([0]; label="", ls=:dot, c=:gray)
 R2 = scatter(x2, y - ŷ; label="(x2, y - ŷ)", msc=:auto, alpha=0.8, ms=3)
@@ -359,6 +362,9 @@ ŷ = @. b3[1] + b3[2]*x1 + b3[3]*x2 + b3[4]*x2^2
 s3 = √(dot2(y - ŷ)/(n-4))
 @show σ_true
 @show s3
+
+ŷ1 = @.(b2[1] + b2[2]*x1) .+ mean(@.(b2[3]*x2^2))
+@show √(dot2(y - ŷ1)/(n-2))
 
 R1 = scatter(x1, y - ŷ; label="(x1, y - ŷ)", msc=:auto, alpha=0.8, ms=3)
 hline!([0]; label="", ls=:dot, c=:gray)
