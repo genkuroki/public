@@ -117,14 +117,13 @@ plot(P1, P2, P3; size=(800, 600), legend=:outertop, layout=(2, 2))
 # このような場合であっても, $\hat\beta$ の分布は2変量正規分布で近似される.  以下でそのことを確認しよう.
 
 # %%
-function sim(distx, a, b, distu, n; L=10^4)
+function sim(distx, a, b, distu, n; L=10^5)
     tmpx = [Vector{Float64}(undef, n) for _ in 1:Threads.nthreads()]
     tmpu = [Vector{Float64}(undef, n) for _ in 1:Threads.nthreads()]
     tmpy = [Vector{Float64}(undef, n) for _ in 1:Threads.nthreads()]
     tmpX = [Matrix{Float64}(undef, n, 2) for _ in 1:Threads.nthreads()]
     β̂ = [Vector{Float64}(undef, 2) for _ in 1:L]
-    #Threads.@threads 
-    for i in 1:L
+    Threads.@threads for i in 1:L
         tid = Threads.threadid()
         x = rand!(distx, tmpx[tid])
         u = rand!(distu, tmpu[tid])
@@ -153,7 +152,7 @@ n = 1000
 @show mvnormalapprox_true(distx, a, b, distu, n)
 @show fit(MvNormal, stack(β̂))
 
-β̂₀, β̂₁ = getindex.(β̂, 1), getindex.(β̂, 2)
+β̂₀, β̂₁ = getindex.(β̂, 1)[1:10000], getindex.(β̂, 2)[1:10000]
 Q1 = scatter(β̂₀, β̂₁; label="", msc=:auto, alpha=0.5, ms=1)
 title!("distribution of regression coefficients")
 Q2 = stephist(β̂₀; norm=true, label="")
@@ -174,7 +173,7 @@ n = 20
 @show mvnormalapprox_true(distx, a, b, distu, n)
 @show fit(MvNormal, stack(β̂))
 
-β̂₀, β̂₁ = getindex.(β̂, 1), getindex.(β̂, 2)
+β̂₀, β̂₁ = getindex.(β̂, 1)[1:10000], getindex.(β̂, 2)[1:10000]
 Q1 = scatter(β̂₀, β̂₁; label="", msc=:auto, alpha=0.5, ms=1)
 title!("distribution of regression coefficients")
 Q2 = stephist(β̂₀; norm=true, label="")
@@ -192,7 +191,7 @@ n = 40
 @show mvnormalapprox_true(distx, a, b, distu, n)
 @show fit(MvNormal, stack(β̂))
 
-β̂₀, β̂₁ = getindex.(β̂, 1), getindex.(β̂, 2)
+β̂₀, β̂₁ = getindex.(β̂, 1)[1:10000], getindex.(β̂, 2)[1:10000]
 Q1 = scatter(β̂₀, β̂₁; label="", msc=:auto, alpha=0.5, ms=1)
 title!("distribution of regression coefficients")
 Q2 = stephist(β̂₀; norm=true, label="")
@@ -210,7 +209,7 @@ n = 100
 @show mvnormalapprox_true(distx, a, b, distu, n)
 @show fit(MvNormal, stack(β̂))
 
-β̂₀, β̂₁ = getindex.(β̂, 1), getindex.(β̂, 2)
+β̂₀, β̂₁ = getindex.(β̂, 1)[1:10000], getindex.(β̂, 2)[1:10000]
 Q1 = scatter(β̂₀, β̂₁; label="", msc=:auto, alpha=0.5, ms=1)
 title!("distribution of regression coefficients")
 Q2 = stephist(β̂₀; norm=true, label="")
