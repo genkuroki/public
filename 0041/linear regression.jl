@@ -32,6 +32,8 @@
 # %%
 using Distributions
 using KernelDensity
+using LinearAlgebra
+dot2(x) = dot(x, x)
 using Optim
 using Random
 using StatsFuns
@@ -82,73 +84,61 @@ plot_mixedcase()
 # 以下は残差が非正規分布になっている場合.
 
 # %%
-distx = Normal(0, 2)
 _distu = Gamma(2, 1)
 distu = _distu - mean(_distu)
 
 plot(distu; label="true distribution of residual error", legend=:outertop)
 
 # %%
-n = 1000
-distx = Normal(0, 2)
-x = rand(distx, n)
-a, b = 1.0, 1.0
-y = @. a + b*x + rand(distu)
+function plot_ols(; n = 1000,
+        distx = Normal(0, 2), a=1.0, b=1.0,
+        _distu = Gamma(2, 1), distu = _distu - mean(_distu),
+        qthreshold = 0.01,
+        xlim=quantile.(distx, (qthreshold, 1-qthreshold)),
+        ylim=quantile.(distu, (qthreshold, 1-qthreshold)))
+    x = rand(distx, n)
+    y = @. a + b*x + rand(distu)
 
-X = x .^ (0:1)'
-@show β̂ = X \ y
-ŷ = X * β̂
+    @show distx
+    @show distu
+    @show n
+    println()
+    
+    X = x .^ (0:1)'
+    @show β̂_true = [a, b]
+    @show β̂ = X \ y
+    println()
+    
+    ŷ = X * β̂
+    @show σ_true = √var(distu)
+    @show √(dot2(y - ŷ)/(n - size(X, 2)))
+    
+    P1 = scatter(x, y; label="data: (x, y)", msc=:auto, alpha=0.5, ms=2)
+    plot!(x -> [1,x]'*β̂; label="simple regression line: (x, ŷ)", lw=1.5)
 
-P1 = scatter(x, y; label="data: (x, y)", msc=:auto, alpha=0.5, ms=2)
-plot!(x -> [1,x]'*β̂; label="simple regression line: (x, ŷ)", lw=1.5)
+    P2 = scatter(x, y - ŷ; label="residual error: (x, y - ŷ)", msc=:auto, alpha=0.5, ms=2)
+    hline!([0]; label="", lw=1.5)
 
-P2 = scatter(x, y - ŷ; label="residual error: (x, y - ŷ)", msc=:auto, alpha=0.5, ms=2)
-hline!([0]; label="", lw=1.5)
+    P3 = stephist(y - ŷ; norm=true, label="histogram of residual error y - ŷ")
+    plot!(fit(Normal, y - ŷ); label="normal approximation")
+    plot!(distu; label="true distribution of residual error")
 
-P3 = stephist(y - ŷ; norm=true, label="histogram of residual error y - ŷ")
-plot!(fit(Normal, y - ŷ); label="normal approximation")
-plot!(distu; label="true distribution of residual error")
+    ikx = InterpKDE(kde(x))
+    ikxy = InterpKDE(kde((x, y-ŷ)))
+    f(x, y) = pdf(ikxy, x, y) / pdf(ikx, x)
+    xs = range(xlim..., 20)
+    ys = range(ylim..., 20)
 
-ikx = InterpKDE(kde(x))
-ikxy = InterpKDE(kde((x, y-ŷ)))
-f(x, y) = pdf(ikxy, x, y) / pdf(ikx, x)
-xs = range(-4, 4, 20)
-ys = range(-2, 4, 20)
+    P4 = heatmap(xs, ys, f; colorbar=false, title="conditional distribution of residual error")
 
-P4 = heatmap(xs, ys, f; colorbar=false, title="conditional distribution of residual error")
-
-plot(P1, P2, P3, P4; size=(800, 600), legend=:outertop, layout=(2, 2))
+    plot(P1, P2, P3, P4; size=(800, 600), legend=:outertop, layout=(2, 2))
+end
 
 # %%
-n = 10^4
-distx = Normal(0, 2)
-x = rand(distx, n)
-a, b = 1.0, 1.0
-y = @. a + b*x + rand(distu)
+plot_ols()
 
-X = x .^ (0:1)'
-@show β̂ = X \ y
-ŷ = X * β̂
-
-P1 = scatter(x, y; label="data: (x, y)", msc=:auto, alpha=0.5, ms=1)
-plot!(x -> [1,x]'*β̂; label="simple regression line: (x, ŷ)", lw=1.5)
-
-P2 = scatter(x, y - ŷ; label="residual error: (x, y - ŷ)", msc=:auto, alpha=0.5, ms=1)
-hline!([0]; label="", lw=1.5)
-
-P3 = stephist(y - ŷ; norm=true, label="histogram of residual error y - ŷ")
-plot!(fit(Normal, y - ŷ); label="normal approximation")
-plot!(distu; label="true distribution of residual error")
-
-ikx = InterpKDE(kde(x))
-ikxy = InterpKDE(kde((x, y-ŷ)))
-f(x, y) = pdf(ikxy, x, y) / pdf(ikx, x)
-xs = range(-5, 5, 20)
-ys = range(-2, 4, 20)
-
-P4 = heatmap(xs, ys, f; colorbar=false, title="conditional distribution of residual error")
-
-plot(P1, P2, P3, P4; size=(800, 600), legend=:outertop, layout=(2, 2))
+# %%
+plot_ols(; n=100)
 
 # %% [markdown]
 # このような場合であっても, $\hat\beta$ の分布は2変量正規分布で近似される.  以下でそのことを確認しよう.
@@ -174,7 +164,10 @@ function sim(distx, a, b, distu, n; L=10^5)
 end
 
 # 回帰係数の分布は以下の分布に漸近する.
-function mvnormalapprox_true(distx, a, b, distu, n)
+function mvnormalapprox_true(; n = 1000,
+        distx = Normal(0, 2),
+        a = 1.0, b = 1.0,
+        _distu = Gamma(2, 1), distu = _distu - mean(_distu))
     μx = mean(distx)
     σx² = var(distx)
     σ² = var(distu)
@@ -184,14 +177,18 @@ function mvnormalapprox_true(distx, a, b, distu, n)
 end
 
 # %%
-function plot_betahat(; distx, a, b, distu, n, L=10^5)
+function plot_betahat(; n = 1000,
+        distx = Normal(0, 2),
+        a = 1.0, b = 1.0,
+        _distu = Gamma(2, 1), distu = _distu - mean(_distu),
+        L=10^5)
     @show distx
     @show distu
     @show n
     println()
     
     β̂ = sim(distx, a, b, distu, n; L)
-    @show mvnormalapprox_true(distx, a, b, distu, n)
+    @show mvnormalapprox_true(; n, distx, a, b, _distu, distu)
     @show fit(MvNormal, stack(β̂))
 
     β̂₀, β̂₁ = getindex.(β̂, 1)[begin:min(end,10000)], getindex.(β̂, 2)[begin:min(end,10000)]
@@ -208,36 +205,36 @@ function plot_betahat(; distx, a, b, distu, n, L=10^5)
 end
 
 # %%
-plot_betahat(; distx, a, b, distu, n=1000)
+plot_betahat(; n=1000)
 
 # %% [markdown]
 # 以上は標本サイズが $n=1000$ の場合である. 標本サイズが $n=10, 20$ 程度だと正規分布近似の誤差が見える程度になる.
 
 # %%
-plot_betahat(; distx, a, b, distu, n=10)
+plot_betahat(; n=10)
 
 # %%
-plot_betahat(; distx, a, b, distu, n=20)
+plot_betahat(; n=20)
 
 # %%
-plot_betahat(; distx, a, b, distu, n=40)
+plot_betahat(; n=40)
 
 # %%
-plot_betahat(; distx, a, b, distu, n=100)
+plot_betahat(; n=100)
 
 # %% [markdown]
 # このようにi.i.d.の残差の分布が正規分布でなくても, 標本サイズが十分に大きければ, 回帰係数の分布は多変量正規分布で近似される.
 
 # %%
-plot_betahat(; distx=Normal(2, 2), a, b, distu, n=10)
+plot_betahat(; distx=Normal(2, 2), n=10)
 
 # %%
-plot_betahat(; distx=Normal(2, 2), a, b, distu, n=20)
+plot_betahat(; distx=Normal(2, 2), n=20)
 
 # %%
-plot_betahat(; distx=Normal(2, 2), a, b, distu, n=40)
+plot_betahat(; distx=Normal(2, 2), n=40)
 
 # %%
-plot_betahat(; distx=Normal(2, 2), a, b, distu, n=100)
+plot_betahat(; distx=Normal(2, 2), n=100)
 
 # %%
