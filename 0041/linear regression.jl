@@ -9,7 +9,7 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.10.3
 #   kernelspec:
-#     display_name: Julia 1.9.0-beta3
+#     display_name: Julia 1.9.0-beta4
 #     language: julia
 #     name: julia-1.9
 # ---
@@ -31,6 +31,7 @@
 
 # %%
 using Distributions
+using KernelDensity
 using Optim
 using Random
 using StatsFuns
@@ -40,49 +41,42 @@ default(fmt=:png, titlefontsize=10, tickfontsize=6, guidefontsize=8, legendfonts
 # %%
 Random.seed!(4649373)
 
-n = 10^3
-
-distx = Normal(0, 2)
-
 disty(x,a,b,c,d,s,t) = MixtureModel(
     [Normal(a + b*x, exp(s)), Normal(c + d*x , exp(t))],
     fill(1/2, 2))
 
-w_true = Float64[2, 1, 2, 3, 0, 0]
-x = rand(distx, n)
-y = @. rand(disty(x, w_true...))
-X = x .^ (0:1)'
-@show β̂ = X \ y
-ŷ = X * β̂
+function plot_mixedcase(; n=10^3, distx=Normal(0,2), disty=disty,
+        w_true=Float64[2, 1, 2, 3, log(1), log(1)])
+    x = rand(distx, n)
+    y = @. rand(disty(x, w_true...))
+    X = x .^ (0:1)'
+    @show β̂ = X \ y
+    ŷ = X * β̂
 
-P1 = scatter(x, y; label="data: (x, y)", msc=:auto, alpha=0.5, ms=2)
-plot!(x -> [1,x]'*β̂; label="simple regression line: (x, ŷ)", lw=1.5)
+    P1 = scatter(x, y; label="data: (x, y)", msc=:auto, alpha=0.5, ms=2)
+    plot!(x -> [1,x]'*β̂; label="simple regression line: (x, ŷ)", lw=1.5)
 
-P2 = scatter(x, y - ŷ; label="residual error: (x, y - ŷ)", msc=:auto, alpha=0.5, ms=2)
-hline!([0]; label="", lw=1.5)
+    P2 = scatter(x, y - ŷ; label="residual error: (x, y - ŷ)", msc=:auto, alpha=0.5, ms=2)
+    hline!([0]; label="", lw=1.5)
 
-P3 = stephist(y - ŷ; norm=true, label="histogram of residual error y - ŷ")
-plot!(fit(Normal, y - ŷ); label="normal approximation")
+    P3 = stephist(y - ŷ; norm=true, label="histogram of residual error y - ŷ")
+    plot!(fit(Normal, y - ŷ); label="normal approximation")
+    
+    negloglik(a, b, c, d, s, t) = -logsumexp(logpdf(disty(x,a,b,c,d,s,t), y) for (x, y) in zip(x, y))
+    o = optimize(w -> negloglik(w..., 0, 0), w_true[1:4], LBFGS())
+    @show o
+    @show w_true[1:4]
+    @show â, b̂, ĉ, d̂ = o.minimizer
 
-plot(P1, P2, P3; size=(800, 600), legend=:outertop, layout=(2, 2))
+    Q1 = scatter(x, y; label="", msc=:auto, alpha=0.5, ms=2)
+    plot!(x -> â + b̂*x; label="regression line 1", ls=:dash, lw=1.5, c=2)
+    plot!(x -> ĉ + d̂*x; label="regression line 2", ls=:dashdot, lw=1.5, c=2)
 
-# %% [markdown]
-# 上のデータに単純に線形回帰を適用することは散布図より明らかだが, 残差の全体は正規分布に従っている.
+    plot(P1, P2, P3, Q1; size=(800, 600), legend=:outertop, layout=(2, 2))
+end
 
 # %%
-disty(x,a,b,c,d,s,t) = MixtureModel(
-    [Normal(a + b*x, exp(s)), Normal(c + d*x , exp(t))],
-    fill(1/2, 2))
-
-negloglik(a, b, c, d, s, t) = -logsumexp(logpdf(disty(x,a,b,c,d,s,t), y) for (x, y) in zip(x, y))
-@time o = optimize(w -> negloglik(w..., 0, 0), w_true[1:4], LBFGS())
-@show o
-@show â, b̂, ĉ, d̂ = o.minimizer
-
-Q1 = scatter(x, y; label="data: (x, y)", msc=:auto, alpha=0.5, ms=2)
-plot!(x -> â + b̂*x; label="regression line 1", ls=:dash, lw=1.5, c=2)
-plot!(x -> ĉ + d̂*x; label="regression line 2", ls=:dashdot, lw=1.5, c=2)
-plot!(size=(400, 300))
+plot_mixedcase()
 
 # %% [markdown]
 # 以下は残差が非正規分布になっている場合.
@@ -96,6 +90,8 @@ plot(distu; label="true distribution of residual error", legend=:outertop)
 
 # %%
 n = 1000
+distx = Normal(0, 2)
+x = rand(distx, n)
 a, b = 1.0, 1.0
 y = @. a + b*x + rand(distu)
 
@@ -113,7 +109,46 @@ P3 = stephist(y - ŷ; norm=true, label="histogram of residual error y - ŷ")
 plot!(fit(Normal, y - ŷ); label="normal approximation")
 plot!(distu; label="true distribution of residual error")
 
-plot(P1, P2, P3; size=(800, 600), legend=:outertop, layout=(2, 2))
+ikx = InterpKDE(kde(x))
+ikxy = InterpKDE(kde((x, y-ŷ)))
+f(x, y) = pdf(ikxy, x, y) / pdf(ikx, x)
+xs = range(-4, 4, 20)
+ys = range(-2, 4, 20)
+
+P4 = heatmap(xs, ys, f; colorbar=false, title="conditional distribution of residual error")
+
+plot(P1, P2, P3, P4; size=(800, 600), legend=:outertop, layout=(2, 2))
+
+# %%
+n = 10^4
+distx = Normal(0, 2)
+x = rand(distx, n)
+a, b = 1.0, 1.0
+y = @. a + b*x + rand(distu)
+
+X = x .^ (0:1)'
+@show β̂ = X \ y
+ŷ = X * β̂
+
+P1 = scatter(x, y; label="data: (x, y)", msc=:auto, alpha=0.5, ms=1)
+plot!(x -> [1,x]'*β̂; label="simple regression line: (x, ŷ)", lw=1.5)
+
+P2 = scatter(x, y - ŷ; label="residual error: (x, y - ŷ)", msc=:auto, alpha=0.5, ms=1)
+hline!([0]; label="", lw=1.5)
+
+P3 = stephist(y - ŷ; norm=true, label="histogram of residual error y - ŷ")
+plot!(fit(Normal, y - ŷ); label="normal approximation")
+plot!(distu; label="true distribution of residual error")
+
+ikx = InterpKDE(kde(x))
+ikxy = InterpKDE(kde((x, y-ŷ)))
+f(x, y) = pdf(ikxy, x, y) / pdf(ikx, x)
+xs = range(-5, 5, 20)
+ys = range(-2, 4, 20)
+
+P4 = heatmap(xs, ys, f; colorbar=false, title="conditional distribution of residual error")
+
+plot(P1, P2, P3, P4; size=(800, 600), legend=:outertop, layout=(2, 2))
 
 # %% [markdown]
 # このような場合であっても, $\hat\beta$ の分布は2変量正規分布で近似される.  以下でそのことを確認しよう.
@@ -149,27 +184,6 @@ function mvnormalapprox_true(distx, a, b, distu, n)
 end
 
 # %%
-n = 1000
-β̂ = sim(distx, a, b, distu, n)
-@show mvnormalapprox_true(distx, a, b, distu, n)
-@show fit(MvNormal, stack(β̂))
-
-β̂₀, β̂₁ = getindex.(β̂, 1)[1:10000], getindex.(β̂, 2)[1:10000]
-Q1 = scatter(β̂₀, β̂₁; label="", msc=:auto, alpha=0.5, ms=1)
-title!("distribution of regression coefficients")
-Q2 = stephist(β̂₀; norm=true, label="")
-plot!(fit(Normal, β̂₀); label="normal approx.")
-title!("distribution of first coefficients")
-Q3 = stephist(β̂₁; norm=true, label="")
-plot!(fit(Normal, β̂₁); label="normal approx.")
-title!("distribution of second coefficients")
-
-plot(Q1, Q3, Q2; size=(800, 600))
-
-# %% [markdown]
-# 以上は標本サイズが $n=1000$ の場合である. 標本サイズが $n=10, 20$ 程度だと正規分布近似の誤差が見える程度になる.
-
-# %%
 function plot_betahat(; distx, a, b, distu, n, L=10^5)
     @show distx
     @show distu
@@ -192,6 +206,12 @@ function plot_betahat(; distx, a, b, distu, n, L=10^5)
 
     plot(Q1, Q3, Q2; size=(800, 600))
 end
+
+# %%
+plot_betahat(; distx, a, b, distu, n=1000)
+
+# %% [markdown]
+# 以上は標本サイズが $n=1000$ の場合である. 標本サイズが $n=10, 20$ 程度だと正規分布近似の誤差が見える程度になる.
 
 # %%
 plot_betahat(; distx, a, b, distu, n=10)
