@@ -9,7 +9,7 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.10.3
 #   kernelspec:
-#     display_name: Julia 1.9.0-beta3
+#     display_name: Julia 1.9.0-beta4
 #     language: julia
 #     name: julia-1.9
 # ---
@@ -137,10 +137,12 @@ function statistics_brunner_munzel(X, Y,
     phat = (mean(Hy) - mean(Hx) + n)/(m + n)
     sx2, sy2 = var(Hx)/n^2, var(Hy)/m^2
     sehat = √(sx2/m + sy2/n)
+    s2 = ((m-1)*sx2 + (n-1)*sy2)/(m + n - 2)
+    sehat_student = √(s2 * (1/m + 1/n))
     tvalue = (phat - p)/sehat
     df = safediv((sx2/m + sy2/n)^2, (sx2/m)^2/(m-1) + (sy2/n)^2/(n-1))
     pvalue = (df != 0 && isfinite(df)) ? 2ccdf(TDist(df), abs(tvalue)) : zero(df)
-    (; phat, sx2, sy2, sehat, tvalue, df, pvalue)
+    (; phat, sx2, sy2, sehat, sehat_student, tvalue, df, pvalue)
 end
 
 @doc raw"""
@@ -278,6 +280,7 @@ function sim_MWU_BM_Welch(distX, distY, m, n; L = 10^6)
     MWsigma = similar(pval_MWU)
     BMphat = similar(pval_MWU)
     BMsehat = similar(pval_MWU)
+    BMsehat_student = similar(pval_MWU)
     Threads.@threads for i in 1:L
         X = rand!(distX, tmpX[Threads.threadid()])
         Y = rand!(distY, tmpY[Threads.threadid()])
@@ -289,6 +292,7 @@ function sim_MWU_BM_Welch(distX, distY, m, n; L = 10^6)
         MWsigma[i] = mw.sigma
         BMphat[i] = bm.phat
         BMsehat[i] = bm.sehat
+        BMsehat_student[i] = bm.sehat_student
     end
     _ecdf_pval_MWU = ecdf(pval_MWU)
     _ecdf_pval_BM = ecdf(pval_BM)
@@ -296,7 +300,7 @@ function sim_MWU_BM_Welch(distX, distY, m, n; L = 10^6)
     ecdf_pval_MWU(x) = _ecdf_pval_MWU(x)
     ecdf_pval_BM(x) = _ecdf_pval_BM(x)
     ecdf_pval_Welch(x) = _ecdf_pval_Welch(x)
-    (; ecdf_pval_MWU, ecdf_pval_BM, ecdf_pval_Welch, MWsigma, BMphat, BMsehat)
+    (; ecdf_pval_MWU, ecdf_pval_BM, ecdf_pval_Welch, MWsigma, BMphat, BMsehat, BMsehat_student)
 end
 
 function plot_MWU_BM_Welch(distX, distY, m, n; L = 10^6, plot_Welch=false)
@@ -321,7 +325,7 @@ function plot_MWU_BM_Welch(distX, distY, m, n; L = 10^6, plot_Welch=false)
     P2 = bar(1:5, x -> pdf(distY, round(Int, x)); label="", title="distY, n=$n", c=2)
     plot!(ylim=(-0.02, ymax))
 
-    (; ecdf_pval_MWU, ecdf_pval_BM, ecdf_pval_Welch, MWsigma, BMphat, BMsehat) =
+    (; ecdf_pval_MWU, ecdf_pval_BM, ecdf_pval_Welch, MWsigma, BMphat, BMsehat, BMsehat_student) =
         sim_MWU_BM_Welch(distX, distY, m, n; L)
     @show ecdf_pval_MWU(0.05), ecdf_pval_MWU(0.01)
     @show ecdf_pval_BM(0.05), ecdf_pval_BM(0.01)
@@ -341,7 +345,22 @@ function plot_MWU_BM_Welch(distX, distY, m, n; L = 10^6, plot_Welch=false)
     stephist!(BMphat; norm=true, label="dist. of p̂", c=:red, ls=:dot, lw=1.3)
     plot!(xguide="Brunner-Munzel p̂ = U/(mn)")
 
-    plot(P1, P2, P3, P4; size=(640, 512), layout=@layout[[a b]; [c{0.67h} d{0.67h}]])
+    P5 = plot()
+    stephist!(BMsehat ./ (MWsigma/(m*n)); norm=true,
+        label="BMsehat ./ (MWsigma/(m*n))")
+    stephist!(BMsehat_student ./ (MWsigma/(m*n)); norm=true,
+        label="BMsehat_student ./ (MWsigma/(m*n))", ls=:dash)
+    plot!(legend=:outertop)
+    
+    P6 = plot()
+    stephist!(BMsehat ./ (MWsigma/(m*n)); norm=true,
+        label="BMsehat ./ (MWsigma/(m*n))")
+    m !== n && stephist!(BMsehat ./ BMsehat_student; norm=true,
+        label="BMsehat ./ BMsehat_student", ls=:dashdot, c=3)
+    plot!(legend=:outertop)
+
+    plot(P1, P2, P3, P4, P5, P6; layout=@layout[[a b]; [c{0.5h} d{0.5h}]; [e{0.3h} f{0.3h}]])
+    plot!(; size=(640, 680))
 end
 
 # %%
