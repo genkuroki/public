@@ -19,7 +19,7 @@
 #
 # * 残差が独立同分布になっている
 #
-# である.  よく言われている条件
+# である(より正しくは回帰係数の推定量の分布が多変量正規分布で近似されること).  よく言われている条件
 #
 # * 残差が正規分布に従うこと
 #
@@ -53,26 +53,26 @@ function plot_mixedcase(; n=10^3, distx=Normal(0,2), disty=disty,
     y = @. rand(disty(x, w_true...))
     X = x .^ (0:1)'
     @show β̂ = X \ y
-    ŷ = X * β̂
+    ŷ = X * β̂
 
     P1 = scatter(x, y; label="data: (x, y)", msc=:auto, alpha=0.5, ms=2)
-    plot!(x -> [1,x]'*β̂; label="simple regression line: (x, ŷ)", lw=1.5)
+    plot!(x -> [1,x]'*β̂; label="simple regression line: (x, ŷ)", lw=1.5)
 
-    P2 = scatter(x, y - ŷ; label="residual error: (x, y - ŷ)", msc=:auto, alpha=0.5, ms=2)
+    P2 = scatter(x, y - ŷ; label="residual error: (x, y - ŷ)", msc=:auto, alpha=0.5, ms=2)
     hline!([0]; label="", lw=1.5)
 
-    P3 = stephist(y - ŷ; norm=true, label="histogram of residual error y - ŷ")
-    plot!(fit(Normal, y - ŷ); label="normal approximation")
+    P3 = stephist(y - ŷ; norm=true, label="histogram of residual error y - ŷ")
+    plot!(fit(Normal, y - ŷ); label="normal approximation")
     
     negloglik(a, b, c, d, s, t) = -logsumexp(logpdf(disty(x,a,b,c,d,s,t), y) for (x, y) in zip(x, y))
     o = optimize(w -> negloglik(w..., 0, 0), w_true[1:4], LBFGS())
     @show o
     @show w_true[1:4]
-    @show â, b̂, ĉ, d̂ = o.minimizer
+    @show â, b̂, ĉ, d̂ = o.minimizer
 
     Q1 = scatter(x, y; label="", msc=:auto, alpha=0.5, ms=2)
-    plot!(x -> â + b̂*x; label="regression line 1", ls=:dash, lw=1.5, c=2)
-    plot!(x -> ĉ + d̂*x; label="regression line 2", ls=:dashdot, lw=1.5, c=2)
+    plot!(x -> â + b̂*x; label="regression line 1", ls=:dash, lw=1.5, c=2)
+    plot!(x -> ĉ + d̂*x; label="regression line 2", ls=:dashdot, lw=1.5, c=2)
 
     plot(P1, P2, P3, Q1; size=(800, 600), legend=:outertop, layout=(2, 2))
 end
@@ -91,13 +91,13 @@ plot(distu; label="true distribution of residual error", legend=:outertop)
 
 # %%
 function plot_ols(; n = 1000,
-        distx = Normal(0, 2), a=1.0, b=1.0,
+        distx = Normal(0, 2),
+        a = 1.0, b = 1.0, F = x -> a+b*x,
         _distu = Gamma(2, 1), distu = _distu - mean(_distu),
         qthreshold = 0.01,
-        xlim=quantile.(distx, (qthreshold, 1-qthreshold)),
-        ylim=quantile.(distu, (qthreshold, 1-qthreshold)))
+        xlim=quantile.(distx, (qthreshold, 1-qthreshold)))
     x = rand(distx, n)
-    y = @. a + b*x + rand(distu)
+    y = @. F(x) + rand(distu)
 
     @show distx
     @show distu
@@ -109,29 +109,43 @@ function plot_ols(; n = 1000,
     @show β̂ = X \ y
     println()
     
-    ŷ = X * β̂
+    ŷ = X * β̂
     @show σ_true = √var(distu)
-    @show √(dot2(y - ŷ)/(n - size(X, 2)))
+    @show √(dot2(y - ŷ)/(n - size(X, 2)))
+    
+    P0 = plot(distu; label="", c=3, ls=:dashdot)
+    title!("true distribution of residuals")
     
     P1 = scatter(x, y; label="data: (x, y)", msc=:auto, alpha=0.5, ms=2)
-    plot!(x -> [1,x]'*β̂; label="simple regression line: (x, ŷ)", lw=1.5)
+    plot!(x -> [1,x]'*β̂; label="simple regression line: (x, ŷ)", lw=1.5)
 
-    P2 = scatter(x, y - ŷ; label="residual error: (x, y - ŷ)", msc=:auto, alpha=0.5, ms=2)
+    P2 = scatter(x, y - ŷ; label="", msc=:auto, alpha=0.5, ms=2)
     hline!([0]; label="", lw=1.5)
+    plot!(xguide="x")
+    title!("residuals: (x, y - ŷ)")
 
-    P3 = stephist(y - ŷ; norm=true, label="histogram of residual error y - ŷ")
-    plot!(fit(Normal, y - ŷ); label="normal approximation")
-    plot!(distu; label="true distribution of residual error")
+    P3 = stephist(y - ŷ; norm=true, label="histogram of residuals y - ŷ")
+    plot!(fit(Normal, y - ŷ); label="normal approximation", ls=:dash)
+    plot!(distu; label="true distribution of residuals", ls=:dashdot)
 
+    ylim = quantile.((y - ŷ,), (qthreshold, 1-qthreshold))
     ikx = InterpKDE(kde(x))
-    ikxy = InterpKDE(kde((x, y-ŷ)))
+    ikxy = InterpKDE(kde((x, y-ŷ)))
     f(x, y) = pdf(ikxy, x, y) / pdf(ikx, x)
     xs = range(xlim..., 20)
     ys = range(ylim..., 20)
 
-    P4 = heatmap(xs, ys, f; colorbar=false, title="conditional distribution of residual error")
+    P4 = heatmap(xs, ys, f; colorbar=false)
+    hline!([0]; label="", c=:cyan)
+    title!("KDE of conditional distribution of residuals")
+    
+    perm = sortperm(x)
+    P5 = scatter(1:n, (y - ŷ)[perm]; label="", msc=:auto, alpha=0.5, ms=2)
+    hline!([0]; label="", lw=1.5)
+    plot!(xguide="rank of x")
+    title!("residuals: (rank of x, y - ŷ)")
 
-    plot(P1, P2, P3, P4; size=(800, 600), legend=:outertop, layout=(2, 2))
+    plot(P0, P1, P2, P3, P5, P4; size=(800, 900), legend=:outertop, layout=(3, 2))
 end
 
 # %%
@@ -140,8 +154,14 @@ plot_ols()
 # %%
 plot_ols(; n=100)
 
+# %%
+plot_ols(; F = x -> 1 + x + 0.3x^2, n=1000)
+
+# %%
+plot_ols(; F = x -> 1 + x + 0.3x^2, n=100)
+
 # %% [markdown]
-# このような場合であっても, $\hat\beta$ の分布は2変量正規分布で近似される.  以下でそのことを確認しよう.
+# 残差の分布がi.i.d.になっていれば、残差が正規分布にしたがっていない場合であっても, 回帰係数の推定量 $\hat\beta$ の分布は2変量正規分布で近似される.  以下でそのことを確認しよう.
 
 # %%
 function sim(distx, a, b, distu, n; L=10^5)
@@ -195,10 +215,10 @@ function plot_betahat(; n = 1000,
     Q1 = scatter(β̂₀, β̂₁; label="", msc=:auto, alpha=0.5, ms=1)
     title!("distribution of regression coefficients")
     Q2 = stephist(β̂₀; norm=true, label="")
-    plot!(fit(Normal, β̂₀); label="normal approx.")
+    plot!(fit(Normal, β̂₀); label="normal approx.", ls=:dash)
     title!("distribution of first coefficients")
     Q3 = stephist(β̂₁; norm=true, label="")
-    plot!(fit(Normal, β̂₁); label="normal approx.")
+    plot!(fit(Normal, β̂₁); label="normal approx.", ls=:dash)
     title!("distribution of second coefficients")
 
     plot(Q1, Q3, Q2; size=(800, 600))
