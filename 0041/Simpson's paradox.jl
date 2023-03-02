@@ -18,7 +18,7 @@
 using Distributions
 using Random
 using StatsPlots
-default(fmt=:png, titlefontsize=10, tickfontsize=6, guidefontsize=10, legendfontsize=10)
+default(fmt=:png, titlefontsize=12, tickfontsize=6, guidefontsize=12, legendfontsize=12)
 
 # %%
 function randxyz(; distz, distx, disty)
@@ -63,14 +63,14 @@ A = [ones(n) x]
 @show a = A \ y
 
 scatter(x, y; label="(xᵢ, yᵢ)", msw=0, alpha=0.5, ms=3, marker_z=round.(z), color)
-plot!(xguide="xᵢ", yguide="yᵢ", colorbar_title="zᵢ")
+plot!(xguide="xᵢ", yguide="yᵢ", colorbar_title="round(zᵢ)")
 plot!(x -> a[1] + a[2]*x; label="", c=:red)
 
 # %%
 ŷ = @. a[1] + a[2]*x
 
 scatter(x, y - ŷ; label="(xᵢ, yᵢ - ŷᵢ)", msw=0, alpha=0.5, ms=3, marker_z=round.(z), color)
-plot!(xguide="xᵢ", yguide="yᵢ - ŷᵢ", colorbar_title="zᵢ")
+plot!(xguide="xᵢ", yguide="yᵢ - ŷᵢ", colorbar_title="round(zᵢ)")
 hline!([0]; label="", c=:red)
 
 # %%
@@ -78,7 +78,7 @@ hline!([0]; label="", c=:red)
 
 perm = sortperm(x)
 scatter(1:n, (y - ŷ)[perm]; label="", msw=0, alpha=0.5, ms=3, marker_z=round.(z[perm]), color)
-plot!(xguide="rank of xᵢ", yguide="yᵢ - ŷᵢ", colorbar_title="zᵢ")
+plot!(xguide="rank of xᵢ", yguide="yᵢ - ŷᵢ", colorbar_title="round(zᵢ)")
 hline!([0]; label="", c=:red)
 
 # %%
@@ -89,14 +89,14 @@ scatter(x, y; label="(xᵢ, yᵢ)", msw=0, alpha=0.5, ms=3, marker_z=round.(z), 
 for z in range(round.(extrema(z))...)
     plot!(x -> b[1] + b[2]*x + b[3]*z, z-2, z+2; label="", c=:blue)
 end
-plot!()
+plot!(xguide="xᵢ", yguide="yᵢ", colorbar_title="round(zᵢ)")
 
 # %%
 scatter(x, y - b[2]*x; label="(xᵢ, yᵢ - b₂xᵢ)", msw=0, alpha=0.5, ms=3, marker_z=round.(z), color)
 for z in range(round.(extrema(z))...)
     plot!(x -> b[1] + b[3]*z, z-2, z+2; label="", c=:blue)
 end
-plot!()
+plot!(xguide="xᵢ", yguide="yᵢ - b₂xᵢ", colorbar_title="round(zᵢ)")
 
 # %%
 function randxyz2(; distx, distz, disty)
@@ -138,14 +138,14 @@ A = [ones(n) x]
 @show a = A \ y
 
 scatter(x, y; label="(xᵢ, yᵢ)", msw=0, alpha=0.5, ms=3, marker_z=round.(z), color)
-plot!(xguide="xᵢ", yguide="yᵢ", colorbar_title="zᵢ")
+plot!(xguide="xᵢ", yguide="yᵢ", colorbar_title="round(zᵢ)")
 plot!(x -> a[1] + a[2]*x; label="", c=:red)
 
 # %%
 ŷ = @. a[1] + a[2]*x
 
 scatter(x, y - ŷ; label="(xᵢ, yᵢ - ŷᵢ)", msw=0, alpha=0.5, ms=3, marker_z=round.(z), color)
-plot!(xguide="xᵢ", yguide="yᵢ - ŷᵢ", colorbar_title="zᵢ")
+plot!(xguide="xᵢ", yguide="yᵢ - ŷᵢ", colorbar_title="round(zᵢ)")
 hline!([0]; label="", c=:red)
 
 # %%
@@ -153,7 +153,7 @@ hline!([0]; label="", c=:red)
 
 perm = sortperm(x)
 scatter(1:n, (y - ŷ)[perm]; label="", msw=0, alpha=0.5, ms=3, marker_z=round.(z[perm]), color)
-plot!(xguide="rank of xᵢ", yguide="yᵢ - ŷᵢ", colorbar_title="zᵢ")
+plot!(xguide="rank of xᵢ", yguide="yᵢ - ŷᵢ", colorbar_title="round(zᵢ)")
 hline!([0]; label="", c=:red)
 
 # %%
@@ -164,13 +164,13 @@ scatter(x, y; label="(xᵢ, yᵢ)", msw=0, alpha=0.5, ms=3, marker_z=round.(z), 
 for z in range(round.(extrema(z))...)
     plot!(x -> b[1] + b[2]*x + b[3]*z, z-2, z+2; label="", c=:blue)
 end
-plot!()
+plot!(xguide="xᵢ", yguide="yᵢ", colorbar_title="round(zᵢ)")
 
 # %%
 scatter(x, y - b[2]*x; label="(xᵢ, yᵢ - b₂xᵢ)", msw=0, alpha=0.5, ms=3, marker_z=round.(z), color)
 for z in range(round.(extrema(z))...)
     plot!(x -> b[1] + b[3]*z, z-2, z+2; label="", c=:blue)
 end
-plot!()
+plot!(xguide="xᵢ", yguide="yᵢ - b₂xᵢ", colorbar_title="round(zᵢ)")
 
 # %%
