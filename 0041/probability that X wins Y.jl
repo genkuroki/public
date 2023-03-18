@@ -1,0 +1,66 @@
+# ---
+# jupyter:
+#   jupytext:
+#     formats: ipynb,jl:hydrogen
+#     text_representation:
+#       extension: .jl
+#       format_name: hydrogen
+#       format_version: '1.3'
+#       jupytext_version: 1.10.3
+#   kernelspec:
+#     display_name: Julia 1.9.0-beta4
+#     language: julia
+#     name: julia-1.9
+# ---
+
+# %%
+using Distributions
+using StatsPlots
+default(fmt=:png, titlefontsize=10)
+
+# %%
+X_wins_Y(x, y) = (x > y) + (x == y)/2
+
+function probability_that_X_wins_Y(
+        distX::DiscreteUnivariateDistribution,
+        distY::DiscreteUnivariateDistribution)
+    p = 0.0
+    for x in support(distX)
+        for y in support(distY)
+            p += X_wins_Y(x, y) * pdf(distX, x) * pdf(distY, y)
+        end
+    end
+    p
+end
+
+# %%
+distA = Categorical(0, 1/3, 0, 1/3, 0, 0, 0, 0, 1/3)
+distB = Categorical(1/3, 0, 0, 0, 0, 1/3, 0, 1/3, 0)
+distC = Categorical(0, 0, 1/3, 0, 1/3, 0, 1/3, 0, 0)
+
+@show probability_that_X_wins_Y(distA, distB)
+@show probability_that_X_wins_Y(distB, distC)
+@show probability_that_X_wins_Y(distC, distA)
+println()
+
+PA = bar(distA; label="", title="distribution of A", c=1)
+PB = bar(distB; label="", title="distribution of B", c=2)
+PC = bar(distC; label="", title="distribution of C", c=3)
+plot(PA, PB, PC; layout=(3, 1))
+
+# %%
+distX = Categorical(0, 1/2, 1/6, 0, 1/3)
+distY = Categorical(1/3, 0, 1/6, 1/2, 0)
+distZ = Categorical(0, 1/6, 2/3, 1/6, 0)
+
+@show probability_that_X_wins_Y(distX, distY)
+@show probability_that_X_wins_Y(distY, distZ)
+@show probability_that_X_wins_Y(distZ, distX)
+println()
+
+PX = bar(distX; label="", title="distribution of X", c=1)
+PY = bar(distY; label="", title="distribution of Y", c=2)
+PZ = bar(distZ; label="", title="distribution of Z", c=3)
+plot(PX, PY, PZ; layout=(3, 1))
+
+# %%
