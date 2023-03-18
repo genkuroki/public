@@ -19,15 +19,15 @@ using StatsPlots
 default(fmt=:png, titlefontsize=10)
 
 # %%
-X_wins_Y(x, y) = (x > y) + (x == y)/2
+probability_that_x_wins_y(x, y) = (x > y) + (x == y)/2
 
-function probability_that_X_wins_Y(
+function probability_that_distX_wins_distY(
         distX::DiscreteUnivariateDistribution,
         distY::DiscreteUnivariateDistribution)
     p = 0.0
     for x in support(distX)
         for y in support(distY)
-            p += X_wins_Y(x, y) * pdf(distX, x) * pdf(distY, y)
+            p += probability_that_x_wins_y(x, y) * pdf(distX, x) * pdf(distY, y)
         end
     end
     p
@@ -38,9 +38,9 @@ distA = Categorical(0, 1/3, 0, 1/3, 0, 0, 0, 0, 1/3)
 distB = Categorical(1/3, 0, 0, 0, 0, 1/3, 0, 1/3, 0)
 distC = Categorical(0, 0, 1/3, 0, 1/3, 0, 1/3, 0, 0)
 
-@show probability_that_X_wins_Y(distA, distB)
-@show probability_that_X_wins_Y(distB, distC)
-@show probability_that_X_wins_Y(distC, distA)
+@show probability_that_distX_wins_distY(distA, distB)
+@show probability_that_distX_wins_distY(distB, distC)
+@show probability_that_distX_wins_distY(distC, distA)
 println()
 
 PA = bar(distA; label="", title="distribution of A", c=1)
@@ -53,9 +53,9 @@ distX = Categorical(0, 1/2, 1/6, 0, 1/3)
 distY = Categorical(1/3, 0, 1/6, 1/2, 0)
 distZ = Categorical(0, 1/6, 2/3, 1/6, 0)
 
-@show probability_that_X_wins_Y(distX, distY)
-@show probability_that_X_wins_Y(distY, distZ)
-@show probability_that_X_wins_Y(distZ, distX)
+@show probability_that_distX_wins_distY(distX, distY)
+@show probability_that_distX_wins_distY(distY, distZ)
+@show probability_that_distX_wins_distY(distZ, distX)
 println()
 
 PX = bar(distX; label="", title="distribution of X", c=1)
