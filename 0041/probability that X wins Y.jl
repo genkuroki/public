@@ -15,6 +15,8 @@
 
 # %%
 using Distributions
+using RCall
+@rlibrary lawstat
 using StatsPlots
 default(fmt=:png, titlefontsize=10)
 
@@ -57,6 +59,22 @@ PX = bar(distX; label="", title="distribution of X", c=1)
 PY = bar(distY; label="", title="distribution of Y", c=2)
 PZ = bar(distZ; label="", title="distribution of Z", c=3)
 plot(PX, PY, PZ; layout=(3, 1), ylim=(-0.01, 0.7))
+
+# %%
+n = 10^4
+X = rand(distX, n)
+Y = rand(distY, n)
+Z = rand(distZ, n)
+@rput X Y Z;
+
+# %%
+brunner_munzel_test(Y, X) |> rcopy
+
+# %%
+brunner_munzel_test(Z, Y) |> rcopy
+
+# %%
+brunner_munzel_test(X, Z) |> rcopy
 
 # %%
 distX = Categorical(0, 1/2, 1/6, 0, 1/3)
