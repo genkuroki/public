@@ -63,7 +63,7 @@ Q = bar(distY; label="", ylim=(0, 0.62), c=2)
 title!("distribution of Y")
 
 # %%
-function show_sim(distX, distY, m, n; L=10^5, P=P, Q=Q)
+function show_sim(distX, distY, m, n; L=10^6, P=P, Q=Q)
     ecdf_pval = sim(distX, distY, m, n; L)
 
     R = plot(ecdf_pval, 0, 0.1; label="")
