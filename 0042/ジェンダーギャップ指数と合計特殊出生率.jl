@@ -64,7 +64,7 @@ df = DataFrame(X = X, Y = Y);
 function plot_ols(X, Y;
         xlim=(0.6, 1.0), ylim=(0.6, 2.0),
         xtick=0.6:0.1:1.0, ytick=0.6:0.2:2.0,
-        size=(500, 450),
+        size=(1000, 450),
         α = 0.05,
         xguide = "gender gap index",
         yguide = "total fertility rate"
@@ -84,9 +84,9 @@ function plot_ols(X, Y;
     g(x) = c * g(1, x)
 
     P = scatter(X, Y; label="", xlim, ylim, xtick, ytick)
-    plot!(f; label="", ls=:dash, c=2)
-    plot!(x -> f(x) + g(x); label="", ls=:dot, c=2)
-    plot!(x -> f(x) - g(x); label="", ls=:dot, c=2)
+    plot!(f; label="regression line", ls=:dash, c=2)
+    plot!(x -> f(x) + g(x); label="$(100(1-α))% CI", ls=:dot, c=3)
+    plot!(x -> f(x) - g(x); label="", ls=:dot, c=3)
     plot!(; xguide, yguide)
     
     ci_β₁() = [β̂[2] - c * g(0, 1), β̂[2] + c * g(0, 1)]
@@ -96,12 +96,12 @@ function plot_ols(X, Y;
     @show pval = pval_β₁(0)
     
     Q = plot(pval_β₁, β̂[2] - 4g(0, 1), β̂[2] + 4g(0, 1); label="")
-    vline!([β̂[2]]; label="estimate of β₁", ls=:dash, c=2)
+    vline!([β̂[2]]; label="point estimate of β₁", ls=:dash, c=2)
     vline!([0.0]; label="", c=:black, lw=0.5)
-    plot!(ci, fill(α, 2); label="$(100(1-α))% CI", lw=2, c=2)
+    plot!(ci, fill(α, 2); label="$(100(1-α))% CI", lw=2, c=3)
     plot!(ytick=0:0.05:1, xguide="β₁", yguide="P-value")
     
-    plot(P, Q; size=(1000, 450))
+    plot(P, Q; size)
     plot!(leftmargin=4Plots.mm, bottommargin=4Plots.mm)
 end
 
@@ -123,7 +123,16 @@ R"""
 library(ggplot2)
 ggplot(df, aes(x = X, y = Y)) + 
   geom_point() +
-  stat_smooth(method = "lm", col = "red")
+  geom_smooth(method = lm)
+"""
+
+# %%
+@rput df
+R"""
+library(ggplot2)
+ggplot(df, aes(x = X, y = Y)) + 
+  geom_point() +
+  geom_smooth(method = lm, level=0.98)
 """
 
 # %%
