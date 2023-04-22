@@ -68,7 +68,8 @@ function plot_ols(X, Y;
         α = 0.05,
         xguide = "gender gap index",
         yguide = "total fertility rate",
-        plotci = true
+        plotci = true,
+        legend = :bottomright
     )
     n = length(X)
     A = [ones(n) X]
@@ -95,10 +96,12 @@ function plot_ols(X, Y;
     println("$(100(1-α))% CI of β₁ = $(round.(ci; digits=4))")
     
     P = scatter(X, Y; label="", xlim, ylim, xtick, ytick)
-    plot!(f; label="regression line", ls=:dash, c=2)
+    plot!(f; label="regression line", c=2)
     plotci && plot!(x -> f(x) + c*s*g(1, x); label="$(100(1-α))% CI", ls=:dot, c=3)
-    plotci && plot!(x -> f(x) - c*s*g(1, x); label="", ls=:dot, c=3)
-    plot!(; xguide, yguide)
+    plotci && plot!(x -> f(x) - c*s*g(1, x); label="", c=3)
+    plotci && plot!(x -> ci[begin]*(x - mean(X)) + mean(Y); label="max β₁", ls=:dash, c=4)
+    plotci && plot!(x -> ci[end]*(x - mean(X)) + mean(Y); label="min β₁", ls=:dashdot, c=5)
+    plot!(; xguide, yguide, legend)
     
     Q = plot(pval_β₁, β̂[2] - 4s*g(0, 1), β̂[2] + 4s*g(0, 1); label="")
     vline!([β̂[2]]; label="point estimate of β₁", ls=:dash, c=2)
