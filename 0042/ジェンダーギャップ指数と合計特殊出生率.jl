@@ -70,12 +70,13 @@ function plot_ols(X, Y;
         yguide = "total fertility rate"
     )
 
-    @show R = cor(X, Y)
-    @show R^2
+    R = cor(X, Y)
+    println("R² = ", round(R^2; digits=2))
     
     n = length(X)
     A = [ones(n) X]
-    @show β̂ = A \ Y
+    β̂ = A \ Y
+    println("y = $(round(β̂[2], digits=2)) x + $(round(β̂[1], digits=2))")
     Ŷ = A * β̂
     s = √(dot2(Y - Ŷ)/(n - 2))
     c = quantile(TDist(n - 2), 1 - α/2)
@@ -88,13 +89,14 @@ function plot_ols(X, Y;
     plot!(x -> f(x) + g(x); label="$(100(1-α))% CI", ls=:dot, c=3)
     plot!(x -> f(x) - g(x); label="", ls=:dot, c=3)
     plot!(; xguide, yguide)
-    
+
     ci_β₁() = [β̂[2] - c * g(0, 1), β̂[2] + c * g(0, 1)]
     pval_β₁(β₁) = 2ccdf(TDist(n - 2), abs((β̂[2] - β₁)/g(0, 1)))
-    @show α
-    @show ci = ci_β₁()
-    @show pval = pval_β₁(0)
-    
+    ci = ci_β₁()
+    pval = pval_β₁(0)
+    println("P-value = ", round(pval; digits=4))
+    println("$(100(1-α))% CI of β₁ = $(round.(ci; digits=4))")
+
     Q = plot(pval_β₁, β̂[2] - 4g(0, 1), β̂[2] + 4g(0, 1); label="")
     vline!([β̂[2]]; label="point estimate of β₁", ls=:dash, c=2)
     vline!([0.0]; label="", c=:black, lw=0.5)
@@ -110,6 +112,12 @@ end
 # * https://www3.nhk.or.jp/news/special/news_seminar/jiji/jiji133/
 #
 # <img src="IMG_9568.jpg" width="640">
+#
+# * https://www.kantei.go.jp/jp/content/000116413.pdf
+#
+# <img src="IMG_9579.jpg" width="640">
+#
+# <img src="IMG_9579-1.jpg" width="640">
 
 # %%
 plot_ols(X, Y)
@@ -123,7 +131,7 @@ R"""
 library(ggplot2)
 ggplot(df, aes(x = X, y = Y)) + 
   geom_point() +
-  geom_smooth(method = lm)
+  stat_smooth(method = lm)
 """
 
 # %%
@@ -145,7 +153,7 @@ R"""
 library(ggplot2)
 ggplot(df1, aes(x = X, y = Y)) + 
   geom_point() +
-  stat_smooth(method = "lm", col = "red")
+  geom_smooth(method = "lm", col = "red")
 """
 
 # %%
