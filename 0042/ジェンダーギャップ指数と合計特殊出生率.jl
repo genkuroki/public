@@ -67,40 +67,43 @@ function plot_ols(X, Y;
         size=(1000, 450),
         α = 0.05,
         xguide = "gender gap index",
-        yguide = "total fertility rate"
+        yguide = "total fertility rate",
+        plotci = true
     )
-
-    R = cor(X, Y)
-    println("R² = ", round(R^2; digits=2))
-    
     n = length(X)
     A = [ones(n) X]
     β̂ = A \ Y
-    println("y = $(round(β̂[2], digits=2)) x + $(round(β̂[1], digits=2))")
     Ŷ = A * β̂
     s = √(dot2(Y - Ŷ)/(n - 2))
     c = quantile(TDist(n - 2), 1 - α/2)
     f(x) = evalpoly(x, β̂)
-    g(a, b) = s * √([a, b]' * (A'A \ [a, b]))
-    g(x) = c * g(1, x)
-
+    g(a, b) = √([a, b]' * (A'A \ [a, b]))
+    R = cor(X, Y)
+    
+    pval_β₁(β₁) = 2ccdf(TDist(n - 2), abs(β̂[2] - β₁)/(s*g(0, 1)))
+    pval = pval_β₁(0)
+    ci = [β̂[2] - c*s*g(0, 1), β̂[2] + c*s*g(0, 1)]
+    ci′ = [β̂[2] - c*abs(β̂[2])/√(n-2)*√((1 - R^2)/R^2), β̂[2] + c*abs(β̂[2])/√(n-2)*√((1 - R^2)/R^2)]
+    @show pval
+    @show ci
+    @show ci′
+    println()
+    
+    println("y = $(round(β̂[2], digits=2)) x + $(round(β̂[1], digits=2))")
+    println("R² = ", round(R^2; digits=2))
+    println("P-value of \"β₁ = 0\" = ", round(pval; digits=4))
+    println("$(100(1-α))% CI of β₁ = $(round.(ci; digits=4))")
+    
     P = scatter(X, Y; label="", xlim, ylim, xtick, ytick)
     plot!(f; label="regression line", ls=:dash, c=2)
-    plot!(x -> f(x) + g(x); label="$(100(1-α))% CI", ls=:dot, c=3)
-    plot!(x -> f(x) - g(x); label="", ls=:dot, c=3)
+    plotci && plot!(x -> f(x) + c*s*g(1, x); label="$(100(1-α))% CI", ls=:dot, c=3)
+    plotci && plot!(x -> f(x) - c*s*g(1, x); label="", ls=:dot, c=3)
     plot!(; xguide, yguide)
-
-    ci_β₁() = [β̂[2] - c * g(0, 1), β̂[2] + c * g(0, 1)]
-    pval_β₁(β₁) = 2ccdf(TDist(n - 2), abs((β̂[2] - β₁)/g(0, 1)))
-    ci = ci_β₁()
-    pval = pval_β₁(0)
-    println("P-value = ", round(pval; digits=4))
-    println("$(100(1-α))% CI of β₁ = $(round.(ci; digits=4))")
-
-    Q = plot(pval_β₁, β̂[2] - 4g(0, 1), β̂[2] + 4g(0, 1); label="")
+    
+    Q = plot(pval_β₁, β̂[2] - 4s*g(0, 1), β̂[2] + 4s*g(0, 1); label="")
     vline!([β̂[2]]; label="point estimate of β₁", ls=:dash, c=2)
     vline!([0.0]; label="", c=:black, lw=0.5)
-    plot!(ci, fill(α, 2); label="$(100(1-α))% CI", lw=2, c=3)
+    plotci && plot!(ci, fill(α, 2); label="$(100(1-α))% CI", lw=2, c=3)
     plot!(ytick=0:0.05:1, xguide="β₁", yguide="P-value")
     
     plot(P, Q; size)
@@ -168,5 +171,11 @@ ggplot(df2, aes(x = X, y = Y)) +
   geom_point() +
   geom_smooth(method = lm)
 """
+
+# %%
+plot_ols(X, Y; plotci=false)
+
+# %%
+plot_ols(X[begin+1:end], Y[begin+1:end]; plotci=false)
 
 # %%
