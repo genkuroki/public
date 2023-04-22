@@ -153,7 +153,7 @@ R"""
 library(ggplot2)
 ggplot(df1, aes(x = X, y = Y)) + 
   geom_point() +
-  geom_smooth(method = "lm", col = "red")
+  geom_smooth(method = lm)
 """
 
 # %%
@@ -166,7 +166,7 @@ R"""
 library(ggplot2)
 ggplot(df2, aes(x = X, y = Y)) + 
   geom_point() +
-  stat_smooth(method = "lm", col = "red")
+  geom_smooth(method = lm)
 """
 
 # %%
