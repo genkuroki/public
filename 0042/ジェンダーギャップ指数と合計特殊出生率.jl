@@ -22,6 +22,7 @@ dot2(x) = dot(x, x)
 using Plots
 default(fmt=:png)
 using RCall
+using RDatasets
 
 # %%
 data = [
@@ -180,5 +181,34 @@ plot_ols(X, Y; plotci=false)
 
 # %%
 plot_ols(X[begin+1:end], Y[begin+1:end]; plotci=false)
+
+# %%
+anscombe = dataset("datasets", "anscombe")
+
+# %%
+xlim = (2, 20)
+ylim = (2, 14)
+xtick = 2:2:20
+ytick = 2:14;
+
+# %%
+@show fit_mle(MvNormal, [anscombe.X1 anscombe.Y1]')
+plot_ols(anscombe.X1, anscombe.Y1; xlim, ylim, xtick, ytick)
+plot!(plot_title="Anscombe 1")
+
+# %%
+@show fit_mle(MvNormal, [anscombe.X2 anscombe.Y2]')
+plot_ols(anscombe.X2, anscombe.Y2; xlim, ylim, xtick, ytick)
+plot!(plot_title="Anscombe 2")
+
+# %%
+@show fit_mle(MvNormal, [anscombe.X3 anscombe.Y3]')
+plot_ols(anscombe.X3, anscombe.Y3; xlim, ylim, xtick, ytick)
+plot!(plot_title="Anscombe 3")
+
+# %%
+@show fit_mle(MvNormal, [anscombe.X4 anscombe.Y4]')
+plot_ols(anscombe.X4, anscombe.Y4; xlim, ylim, xtick, ytick)
+plot!(plot_title="Anscombe 4")
 
 # %%
