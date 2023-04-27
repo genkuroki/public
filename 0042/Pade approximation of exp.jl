@@ -47,3 +47,34 @@ end
 gif(anim, "pade_exp.gif", fps=2)
 
 # %%
+using SymPy
+@vars z
+
+f(z, 3)
+
+# %%
+pade_exp(z, 1).series(n = 8)
+
+# %%
+sympy.init_printing(order="rev-lex")
+taylor_exp(z, 2)
+
+# %%
+pade_exp(z, 2).series(n = 8)
+
+# %%
+sympy.init_printing(order="rev-lex")
+taylor_exp(z, 3)
+
+# %%
+pade_exp(z, 3).series(n = 8)
+
+# %%
+sympy.init_printing(order="rev-lex")
+taylor_exp(z, 6)
+
+# %%
+sympy.init_printing(order="lex")
+taylor_exp(z, 6)
+
+# %%
