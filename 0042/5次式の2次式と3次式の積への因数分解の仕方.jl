@@ -45,7 +45,7 @@ end
 # ## 一般論
 
 # %%
-@vars a b c d e p q r s t x
+@vars a b c d e p q r s t u v x
 
 # %% [markdown]
 # $t\ne 0$ と仮定する.
@@ -85,6 +85,33 @@ eqrem1 = remainder.coeff(x, 1)
 
 # %% [markdown]
 # 与えられた5次でモニックな整数係数多項式 $f$ の整数係数の2次式 $g$ と3次式 $h$ の積への分解を求めるためには, まず $be=t$ を満たす整数の組 $(b, e)$ の各々について, `eqrem0` を0にする整数 $a$ が存在するかどうかを確認し, 存在する場合に `eqrem1` が0になるかどうかも確認し, `eqrem0` と `eqrem1` の両方を $0$ にするような整数の組 $(a,b)$ を見付ければよい.  (見付からない場合には整数係数の2次式と整数係数の3次式の積に分解不可能なことが証明されたことになる.)
+
+# %% [markdown]
+# ## 雑多な計算メモ
+
+# %%
+sympy.div(f, x^3 + a*x^2 + b*x + c, x) |> collect
+
+# %%
+sympy.div(x^6 + p*x^5 + q*x^4 + r*x^3 + s*x^2 + t*x + u, g, x) |> collect
+
+# %%
+Q63, R63 = sympy.div(x^6 + p*x^5 + q*x^4 + r*x^3 + s*x^2 + t*x + u, x^3 + a*x^2 + b*x + c, x) |> collect
+
+# %%
+C63 = [R63.coeff(x, k) for k in 2:-1:0]
+
+# %%
+B63 = sympy.solve(C63[end], b)[end]
+
+# %%
+@show eqrem63_1 = -(C63[1](b=>B63)(u=>c*v) * (-2*a + p)^2).expand().factor();
+
+# %%
+[eqrem63_1.coeff(a, k) for k in 6:-1:0]
+
+# %%
+sympy.poly(eqrem63_1, a).coeffs()
 
 # %% [markdown]
 # ## 例1
