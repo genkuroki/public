@@ -47,6 +47,9 @@ end
 # %%
 @vars a b c d e p q r s t x
 
+# %% [markdown]
+# $t\ne 0$ と仮定する.
+
 # %%
 f = x^5 + p*x^4 + q*x^3 + r*x^2 + s*x + t
 
