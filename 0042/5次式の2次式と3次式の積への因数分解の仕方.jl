@@ -60,6 +60,11 @@ g = x^2 + a*x + b
 h = x^3 + c*x^2 + d*x + e
 
 # %%
+R1, R0 = sympy.div(f, g, x)
+
+# %%
+
+# %%
 ghmf = sympy.poly(g*h - f, x)
 
 # %% [markdown]
@@ -91,6 +96,9 @@ eq1 = eq .|> (F -> -F(c=>C, d=>D, e=>E).expand())
 
 # %%
 eqlast = eq1[end](t=>b*e) / b |> expand
+
+# %%
+eqsecondlast = eq1[end-1]
 
 # %% [markdown]
 # ## 例1
@@ -128,6 +136,12 @@ _, P, Q, R, S, T = [FF.coeff(x, k) for k in 5:-1:0]
 Eqlast = eqlast(p=>P, q=>Q, r=>R, s=>S, t=>T)
 
 # %% [markdown]
+# 下から2段目の方程式の形の確認.
+
+# %%
+Eqsecondlast = eqsecondlast(p=>P, q=>Q, r=>R, s=>S, t=>T)
+
+# %% [markdown]
 # $be = 2$ となる整数の組 $(b, e)$ 全体について, 最下段の方程式が整数解を持つ場合を探す.
 
 # %%
@@ -149,10 +163,7 @@ C, D, E
 CC, DD, EE = C(a=>AA, b=>BB, p=>P), D(a=>AA, b=>BB, p=>P, q=>Q), E(a=>AA, b=>BB, p=>P, q=>Q, r=>R, t=>T)
 
 # %%
-eq[end-1]
-
-# %%
-eq[end-1](a=>AA, b=>BB, d=>DD, e=>EE, s=>S)
+Eqsecondlast(a=>AA, b=>BB)
 
 # %%
 sol = (x^2 + AA*x + BB)*(x^3 + CC*x^2 + DD*x + EE)
@@ -206,6 +217,12 @@ _, P, Q, R, S, T = [FF.coeff(x, k) for k in 5:-1:0]
 Eqlast = eqlast(p=>P, q=>Q, r=>R, s=>S, t=>T)
 
 # %% [markdown]
+# 下から2段目の方程式の形の確認.
+
+# %%
+Eqsecondlast = eqsecondlast(p=>P, q=>Q, r=>R, s=>S, t=>T)
+
+# %% [markdown]
 # $be=-1$ となる整数の組 $(b,d)$ の各々について, 最下段の方程式が整数解を持つかどうかを確認する.
 
 # %%
@@ -218,11 +235,11 @@ Eqlast = eqlast(p=>P, q=>Q, r=>R, s=>S, t=>T)
 
 # %%
 BB, AA = 1, -1
-eq[end-1](a=>AA, b=>BB, d=>D(a=>AA, b=>BB, p=>P, q=>Q), e=>E(a=>AA, b=>BB, p=>P, q=>Q, r=>R, t=>T), s=>S)
+Eqsecondlast(a=>AA, b=>BB)
 
 # %%
 BB, AA = -1, -1
-eq[end-1](a=>AA, b=>BB, d=>D(a=>2, b=>4, p=>P, q=>Q), e=>E(a=>AA, b=>BB, p=>P, q=>Q, r=>R, t=>T), s=>S)
+Eqsecondlast(a=>AA, b=>BB)
 
 # %% [markdown]
 # $(a, b) = -1, 1$ の場合のみが解になっていることがわかった.
@@ -261,27 +278,91 @@ factor(FF)
 _, P, Q, R, S, T = [FF.coeff(x, k) for k in 5:-1:0]
 
 # %% [markdown]
-# 最下段の方程式.
+# 最下段の方程式の形の確認.
 
 # %%
 Eqlast = eqlast(p=>P, q=>Q, r=>R, s=>S, t=>T)
+
+# %% [markdown]
+# 下から2段目の方程式の形の確認.
+
+# %%
+Eqsecondlast = eqsecondlast(p=>P, q=>Q, r=>R, s=>S, t=>T)
 
 # %%
 [(B = k; E = T/k; (b=B, e=E, eqlast = Eqlast(b=>B, e=>E) |> factor)) for k in ((2 .^ (0:5))..., (-2 .^ (0:5))...)]
 
 # %%
 BB, AA = 4, 2
-eq[end-1](a=>AA, b=>BB, d=>D(a=>AA, b=>BB, p=>P, q=>Q), e=>E(a=>AA, b=>BB, p=>P, q=>Q, r=>R, t=>T), s=>S)
+Eqsecondlast(a=>AA, b=>BB)
 
 # %%
 BB, AA = -2, -16
-eq[end-1](a=>AA, b=>BB, d=>D(a=>AA, b=>BB, p=>P, q=>Q), e=>E(a=>AA, b=>BB, p=>P, q=>Q, r=>R, t=>T), s=>S)
+Eqsecondlast(a=>AA, b=>BB)
 
 # %% [markdown]
 # 解 $a = 2$, $b=4$ が見付かった.
 
 # %%
 AA, BB = 2, 4
+CC, DD, EE = C(a=>AA, b=>BB, p=>P), D(a=>AA, b=>BB, p=>P, q=>Q), E(a=>AA, b=>BB, p=>P, q=>Q, r=>R, t=>T)
+
+# %%
+sol = (x^2 + AA*x + BB)*(x^3 + CC*x^2 + DD*x + EE)
+
+# %%
+sol - FF |> simplify
+
+# %% [markdown]
+# ## 例4
+#
+# $f = x^5 + 3x^4 - 2x^3 - 2x^2 - 6x + 4$ の因数分解
+
+# %%
+FF = x^5 + 3x^4 - 2x^3 - 2x^2 - 6x + 4
+
+# %%
+factor(FF)
+
+# %% [markdown]
+# $f$ が $x^k + a$ 型の因子を持つと決め打ちできるなら, そのように $f$ を整理すれば容易に因数分解できる.
+#
+# $$
+# \begin{aligned}
+# x^5 + 3x^4 - 2x^3 - 2x^2 - 6x + 4
+# &=
+# (x^5 + 3x^4 - 2x^3) - (2x^2 + 6x - 4)
+# \\ &=
+# x^3(x^2 + 3x - 2) - 2(x^2 + 3x - 2)
+# \\ &=
+# (x^3-2)(x^2 + 3x - 2).
+# \end{aligned}
+# $$
+
+# %%
+factor(FF)
+
+# %%
+_, P, Q, R, S, T = [FF.coeff(x, k) for k in 5:-1:0]
+
+# %%
+eqlast
+
+# %%
+Eqlast = eqlast(p=>P, q=>Q, r=>R, s=>S, t=>T)
+
+# %%
+Eqsecondlast = eqsecondlast(p=>P, q=>Q, r=>R, s=>S, t=>T)
+
+# %%
+[Eqlast(b=>k, e=>T/k) |> factor for k in (1, 2, 4, -1, -2, -4)]
+
+# %%
+BB, AA = -2, 3
+Eqsecondlast(a=>AA, b=>BB)
+
+# %%
+AA, BB = 3, -2
 CC, DD, EE = C(a=>AA, b=>BB, p=>P), D(a=>AA, b=>BB, p=>P, q=>Q), E(a=>AA, b=>BB, p=>P, q=>Q, r=>R, t=>T)
 
 # %%
