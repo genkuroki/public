@@ -59,46 +59,32 @@ g = x^2 + a*x + b
 # %%
 h = x^3 + c*x^2 + d*x + e
 
-# %%
-R1, R0 = sympy.div(f, g, x)
+# %% [markdown]
+# $f$ を $g$ で割ったときの商と余りを求める.
 
 # %%
-
-# %%
-ghmf = sympy.poly(g*h - f, x)
+quotient, remainder = sympy.div(f, g, x)
+sympy.poly.([quotient, remainder], x)
 
 # %% [markdown]
-# $gh=f$ となることと次のセルの内容がすべて $0$ になることは同値.
+# $h$ が商に一致することと $c,d,e$ が次のようになることは同値.
 
 # %%
-eq = ghmf.coeffs()
+C, D, E = [quotient.coeff(x, k) for k in 2:-1:0]
 
 # %% [markdown]
-# この方程式を使って $c,d,e$ を $a,b,p,q,r$ で表そう.
+# $be = t\ne 0$ ならば $b\ne 0$ でなければいけない.
+#
+# そのとき, 余りが0になることと以下の2つが0になることは同値である.
 
 # %%
-C = p - a
+eqrem0 = remainder.coeff(x, 0)/b |> expand
 
 # %%
-D = q - a*C - b |> expand
-
-# %%
-E = r - a*D - b*C |> expand
+eqrem1 = remainder.coeff(x, 1)
 
 # %% [markdown]
-# 元の方程式にこれらを代入して $c,d,e$ を削除すると以下のようになる.
-
-# %%
-eq1 = eq .|> (F -> -F(c=>C, d=>D, e=>E).expand())
-
-# %% [markdown]
-# $b\ne 0$ の場合に($t\ne 0$ ならば $b\ne 0$ となる), 最下段の方程式は次のセルのように書き直される($t$ に $be$ を代入しておく).
-
-# %%
-eqlast = eq1[end](t=>b*e) / b |> expand
-
-# %%
-eqsecondlast = eq1[end-1]
+# 与えられた5次でモニックな整数係数多項式 $f$ の整数係数の2次式 $g$ と3次式 $h$ の積への分解を求めるためには, まず $be=t$ を満たす整数の組 $(b, e)$ の各々について, `eqrem0` を0にする整数 $a$ が存在するかどうかを確認し, 存在する場合に `eqrem1` が0になるかどうかも確認し, `eqrem0` と `eqrem1` の両方を $0$ にするような整数の組 $(a,b)$ を見付ければよい.  (見付からない場合には整数係数の2次式と整数係数の3次式の積に分解不可能なことが証明されたことになる.)
 
 # %% [markdown]
 # ## 例1
@@ -130,25 +116,25 @@ factor(FF)
 _, P, Q, R, S, T = [FF.coeff(x, k) for k in 5:-1:0]
 
 # %% [markdown]
-# 最下段の方程式の形の確認.
+# 余りの定数項が0になるという条件.
 
 # %%
-Eqlast = eqlast(p=>P, q=>Q, r=>R, s=>S, t=>T)
+Eqrem0 = eqrem0(p=>P, q=>Q, r=>R, s=>S, t=>T)
 
 # %% [markdown]
-# 下から2段目の方程式の形の確認.
+# 余りの1次の項が0になるという条件.
 
 # %%
-Eqsecondlast = eqsecondlast(p=>P, q=>Q, r=>R, s=>S, t=>T)
+Eqrem1 = eqrem1(p=>P, q=>Q, r=>R, s=>S, t=>T)
 
 # %% [markdown]
 # $be = 2$ となる整数の組 $(b, e)$ 全体について, 最下段の方程式が整数解を持つ場合を探す.
 
 # %%
-[Eqlast(b=>k, e=>T/k) |> factor for k in (1, 2, -1, -2)]
+[Eqrem0(b=>k) |> factor for k in (1, 2, -1, -2)]
 
 # %% [markdown]
-# 最後の $b=-2$, $e=-1$ の場合にのみ整数解 $a=3$ が存在する.
+# 最後の $b=-2$ の場合にのみ整数解 $a=3$ が存在することがわかった.
 
 # %%
 BB, AA = -2, 3
@@ -163,7 +149,7 @@ C, D, E
 CC, DD, EE = C(a=>AA, b=>BB, p=>P), D(a=>AA, b=>BB, p=>P, q=>Q), E(a=>AA, b=>BB, p=>P, q=>Q, r=>R, t=>T)
 
 # %%
-Eqsecondlast(a=>AA, b=>BB)
+Eqrem1(a=>AA, b=>BB)
 
 # %%
 sol = (x^2 + AA*x + BB)*(x^3 + CC*x^2 + DD*x + EE)
@@ -211,35 +197,35 @@ factor(FF)
 _, P, Q, R, S, T = [FF.coeff(x, k) for k in 5:-1:0]
 
 # %% [markdown]
-# 最下段の方程式の形の確認.
+# 余りの定数項が0になるという条件.
 
 # %%
-Eqlast = eqlast(p=>P, q=>Q, r=>R, s=>S, t=>T)
+Eqrem0 = eqrem0(p=>P, q=>Q, r=>R, s=>S, t=>T)
 
 # %% [markdown]
-# 下から2段目の方程式の形の確認.
+# 余りの1次の項が0になるという条件.
 
 # %%
-Eqsecondlast = eqsecondlast(p=>P, q=>Q, r=>R, s=>S, t=>T)
+Eqrem1 = eqrem1(p=>P, q=>Q, r=>R, s=>S, t=>T)
 
 # %% [markdown]
 # $be=-1$ となる整数の組 $(b,d)$ の各々について, 最下段の方程式が整数解を持つかどうかを確認する.
 
 # %%
-[(B = k; E = T/k; Eqlast(b=>B, e=>E) |> factor) for k in (1, -1)]
+[(B = k; E = T/k; Eqrem0(b=>B, e=>E) |> factor) for k in (1, -1)]
 
 # %% [markdown]
-# $(b,d)=(1,-1), (-1,1)$ の両方の場合に整数解 $a=-1$ を持つことがわかった.
+# $b=\pm 1$ の両方の場合に整数解 $a=-1$ を持つことがわかった.
 #
 # これらが下から2段目の方程式も満たしているかを確認する.
 
 # %%
 BB, AA = 1, -1
-Eqsecondlast(a=>AA, b=>BB)
+Eqrem1(a=>AA, b=>BB)
 
 # %%
 BB, AA = -1, -1
-Eqsecondlast(a=>AA, b=>BB)
+Eqrem1(a=>AA, b=>BB)
 
 # %% [markdown]
 # $(a, b) = -1, 1$ の場合のみが解になっていることがわかった.
@@ -278,30 +264,36 @@ factor(FF)
 _, P, Q, R, S, T = [FF.coeff(x, k) for k in 5:-1:0]
 
 # %% [markdown]
-# 最下段の方程式の形の確認.
+# 余りの定数項が0になるという条件.
 
 # %%
-Eqlast = eqlast(p=>P, q=>Q, r=>R, s=>S, t=>T)
+Eqrem0 = eqrem0(p=>P, q=>Q, r=>R, s=>S, t=>T)
 
 # %% [markdown]
-# 下から2段目の方程式の形の確認.
+# 余りの1次の項が0になるという条件.
 
 # %%
-Eqsecondlast = eqsecondlast(p=>P, q=>Q, r=>R, s=>S, t=>T)
+Eqrem1 = eqrem1(p=>P, q=>Q, r=>R, s=>S, t=>T)
+
+# %% [markdown]
+# $b$ として $32$ の約数全体を動かして, `eqrem0` を0にする整数 $a$ が存在する場合を探す.
 
 # %%
-[(B = k; E = T/k; (b=B, e=E, eqlast = Eqlast(b=>B, e=>E) |> factor)) for k in ((2 .^ (0:5))..., (-2 .^ (0:5))...)]
+[[k, Eqrem0(b=>k) |> factor] for k in ((2 .^ (0:5))..., (-2 .^ (0:5))...)] |> (x -> stack(x; dims=1))
+
+# %% [markdown]
+# 方程式 `eqrem0 = 0` は $b=4,-2$ のときにのみ整数解 $a=2$ を持つことがわかった.
 
 # %%
 BB, AA = 4, 2
-Eqsecondlast(a=>AA, b=>BB)
+Eqrem1(a=>AA, b=>BB)
 
 # %%
-BB, AA = -2, -16
-Eqsecondlast(a=>AA, b=>BB)
+BB, AA = -2, 2
+Eqrem1(a=>AA, b=>BB)
 
 # %% [markdown]
-# 解 $a = 2$, $b=4$ が見付かった.
+# 方程式 `eqrem0 = eqrem1 = 0` の整数解 $a = 2$, $b=4$ が見付かった.
 
 # %%
 AA, BB = 2, 4
@@ -346,20 +338,23 @@ factor(FF)
 _, P, Q, R, S, T = [FF.coeff(x, k) for k in 5:-1:0]
 
 # %%
-eqlast
+eqrem0
 
 # %%
-Eqlast = eqlast(p=>P, q=>Q, r=>R, s=>S, t=>T)
+Eqrem0 = eqrem0(p=>P, q=>Q, r=>R, s=>S, t=>T)
 
 # %%
-Eqsecondlast = eqsecondlast(p=>P, q=>Q, r=>R, s=>S, t=>T)
+eqrem1
 
 # %%
-[Eqlast(b=>k, e=>T/k) |> factor for k in (1, 2, 4, -1, -2, -4)]
+Eqrem1 = eqrem1(p=>P, q=>Q, r=>R, s=>S, t=>T)
+
+# %%
+[Eqrem0(b=>k, e=>T/k) |> factor for k in (1, 2, 4, -1, -2, -4)]
 
 # %%
 BB, AA = -2, 3
-Eqsecondlast(a=>AA, b=>BB)
+Eqrem1(a=>AA, b=>BB)
 
 # %%
 AA, BB = 3, -2
