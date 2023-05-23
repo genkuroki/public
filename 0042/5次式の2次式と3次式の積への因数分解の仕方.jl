@@ -41,6 +41,25 @@ end
     print(io, as_markdown(toeqnarray(x)))
 end
 
+# %%
+all_coeffs(f, x) = sympy.poly(f, x).all_coeffs()
+
+function all_divisors(x)
+    @assert x != 0
+    A = typeof(x)[]
+    for i in 1:abs(x)
+        if mod(x, i) == 0
+            push!(A, i, -i)
+        end
+    end
+    A
+end
+
+function factor_for_all_divisors(f, var, constant_term)
+    A = all_divisors(constant_term)
+    stack([k, f(var=>k).factor()] for k in A; dims=1)
+end
+
 # %% [markdown]
 # ## 一般論
 
@@ -70,7 +89,7 @@ sympy.poly.([quotient, remainder], x)
 # $h$ が商に一致することと $c,d,e$ が次のようになることは同値.
 
 # %%
-C, D, E = [quotient.coeff(x, k) for k in 2:-1:0]
+_, C, D, E = all_coeffs(quotient, x)
 
 # %% [markdown]
 # $be = t\ne 0$ ならば $b\ne 0$ でなければいけない.
@@ -99,7 +118,7 @@ sympy.div(x^6 + p*x^5 + q*x^4 + r*x^3 + s*x^2 + t*x + u, g, x) |> collect
 Q63, R63 = sympy.div(x^6 + p*x^5 + q*x^4 + r*x^3 + s*x^2 + t*x + u, x^3 + a*x^2 + b*x + c, x) |> collect
 
 # %%
-C63 = [R63.coeff(x, k) for k in 2:-1:0]
+C63 = all_coeffs(R63, x)
 
 # %%
 B63 = sympy.solve(C63[end], b)[end]
@@ -108,10 +127,7 @@ B63 = sympy.solve(C63[end], b)[end]
 @show eqrem63_1 = -(C63[1](b=>B63)(u=>c*v) * (-2*a + p)^2).expand().factor();
 
 # %%
-[eqrem63_1.coeff(a, k) for k in 6:-1:0]
-
-# %%
-sympy.poly(eqrem63_1, a).coeffs()
+all_coeffs(eqrem63_1, a)
 
 # %% [markdown]
 # ## 例1
@@ -140,7 +156,7 @@ factor(FF)
 # 係数を $P,Q,R,S,T$ に代入する.
 
 # %%
-_, P, Q, R, S, T = [FF.coeff(x, k) for k in 5:-1:0]
+_, P, Q, R, S, T = all_coeffs(FF, x)
 
 # %% [markdown]
 # 余りの定数項が0になるという条件.
@@ -158,7 +174,7 @@ Eqrem1 = eqrem1(p=>P, q=>Q, r=>R, s=>S, t=>T)
 # $be = 2$ となる整数の組 $(b, e)$ 全体について, 最下段の方程式が整数解を持つ場合を探す.
 
 # %%
-[Eqrem0(b=>k) |> factor for k in (1, 2, -1, -2)]
+factor_for_all_divisors(Eqrem0, b, N(T))
 
 # %% [markdown]
 # 最後の $b=-2$ の場合にのみ整数解 $a=3$ が存在することがわかった.
@@ -221,7 +237,7 @@ factor(FF)
 # 係数を $P,Q,R,S,T$ に代入する.
 
 # %%
-_, P, Q, R, S, T = [FF.coeff(x, k) for k in 5:-1:0]
+_, P, Q, R, S, T = all_coeffs(FF, x)
 
 # %% [markdown]
 # 余りの定数項が0になるという条件.
@@ -239,7 +255,7 @@ Eqrem1 = eqrem1(p=>P, q=>Q, r=>R, s=>S, t=>T)
 # $be=-1$ となる整数の組 $(b,d)$ の各々について, 最下段の方程式が整数解を持つかどうかを確認する.
 
 # %%
-[(B = k; E = T/k; Eqrem0(b=>B, e=>E) |> factor) for k in (1, -1)]
+factor_for_all_divisors(Eqrem0, b, N(T))
 
 # %% [markdown]
 # $b=\pm 1$ の両方の場合に整数解 $a=-1$ を持つことがわかった.
@@ -288,7 +304,7 @@ factor(FF)
 # 係数を $P,Q,R,S,T$ に代入する.
 
 # %%
-_, P, Q, R, S, T = [FF.coeff(x, k) for k in 5:-1:0]
+_, P, Q, R, S, T = all_coeffs(FF, x)
 
 # %% [markdown]
 # 余りの定数項が0になるという条件.
@@ -306,7 +322,7 @@ Eqrem1 = eqrem1(p=>P, q=>Q, r=>R, s=>S, t=>T)
 # $b$ として $32$ の約数全体を動かして, `eqrem0` を0にする整数 $a$ が存在する場合を探す.
 
 # %%
-[[k, Eqrem0(b=>k) |> factor] for k in ((2 .^ (0:5))..., (-2 .^ (0:5))...)] |> (x -> stack(x; dims=1))
+factor_for_all_divisors(Eqrem0, b, N(T))
 
 # %% [markdown]
 # 方程式 `eqrem0 = 0` は $b=4,-2$ のときにのみ整数解 $a=2$ を持つことがわかった.
@@ -362,7 +378,7 @@ factor(FF)
 factor(FF)
 
 # %%
-_, P, Q, R, S, T = [FF.coeff(x, k) for k in 5:-1:0]
+_, P, Q, R, S, T = all_coeffs(FF, x)
 
 # %%
 eqrem0
@@ -377,7 +393,7 @@ eqrem1
 Eqrem1 = eqrem1(p=>P, q=>Q, r=>R, s=>S, t=>T)
 
 # %%
-[Eqrem0(b=>k, e=>T/k) |> factor for k in (1, 2, 4, -1, -2, -4)]
+factor_for_all_divisors(Eqrem0, b, N(T))
 
 # %%
 BB, AA = -2, 3
