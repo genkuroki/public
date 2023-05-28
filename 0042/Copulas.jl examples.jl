@@ -20,12 +20,11 @@ using Random
 using StatsPlots
 default(fmt=:png)
 
-function plot_XY(copula; n=10^6)
-    mvdist = SklarDist(copula, (Normal(), Normal()))
-    X, Y = eachrow(rand(mvdist, n))
+function plot_XY(X, Y; alpha=0.3, kwargs...)
     @show cor(X, Y)
+    n = length(X)
     t = 1:min(n, 10^4)
-    P1 = scatter(X[t], Y[t]; label="", ms=1.5, msc=:auto, alpha=0.3)
+    P1 = scatter(X[t], Y[t]; label="", ms=1.5, msc=:auto, alpha)
     plot!(xguide="X", yguide="Y")
     P2 = stephist(X; label="X", norm=true)
     plot!(Normal(); label="standard normal", ls=:dash)
@@ -33,7 +32,14 @@ function plot_XY(copula; n=10^6)
     plot!(Normal(); label="standard normal", ls=:dash)
     P4 = stephist(X+Y; label="X+Y", norm=true)
     plot!(fit(Normal, X+Y); label="normal", ls=:dash)
+    plot!(; kwargs...)
     plot(P1, P3, P2, P4; layout=(2, 2), size=(800, 800))
+end
+
+function plot_XY(copula; n=10^6)
+    mvdist = SklarDist(copula, (Normal(), Normal()))
+    X, Y = eachrow(rand(mvdist, n))
+    plot_XY(X, Y)
 end
 
 # %%
@@ -44,5 +50,14 @@ plot_XY(TCopula(2, [1 0; 0 1]))
 
 # %%
 plot_XY(ClaytonCopula(2, 3.0))
+
+# %%
+RademacherDist = 2Bernoulli(1/2) - 1
+
+n = 10^6
+X = rand(Normal(), n)
+Z = rand(RademacherDist, n)
+Y = @. Z*X
+plot_XY(X, Y; alpha=0.15, ylim = (-0.03, 1))
 
 # %%
