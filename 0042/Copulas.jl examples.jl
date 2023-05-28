@@ -46,7 +46,7 @@ end
 plot_XY(JoeCopula(2, 2.2))
 
 # %%
-plot_XY(TCopula(2, [1 0; 0 1]))
+plot_XY(TCopula(1, [1 0; 0 1]))
 
 # %%
 plot_XY(ClaytonCopula(2, 3.0))
