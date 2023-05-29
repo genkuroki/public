@@ -58,6 +58,7 @@ anim = @animate for t in times
     title!("t² = x + 1   (t = y/x)")
     plot(P1, P2; size=(800, 300))
     plot!(titlefontsize=10)
+    plot!(bottommargin=3Plots.mm)
 end
 
 gif(anim, "degellres.gif")
