@@ -9,9 +9,9 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.10.3
 #   kernelspec:
-#     display_name: Julia 1.7.3
+#     display_name: Julia 1.9.0
 #     language: julia
-#     name: julia-1.7
+#     name: julia-1.9
 # ---
 
 # %%
@@ -22,6 +22,7 @@ using HypothesisTests
 using Memoization
 using StatsBase
 using StatsPlots
+default(fmt=:png)
 
 # %% [markdown]
 # $\{1,2,\ldots,N\}$ から重複無しに $m$ 個の組み合わせ $1\le i_1<\cdots<i_m\le N$ を取るとき, その和が $r$ になる場合の数を $f(N, m, r)$ と書くと, 以下が成立することがわかる:
