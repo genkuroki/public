@@ -81,3 +81,13 @@ for t in (:clopper_pearson, :sterne, :wilson, :wald)
 end
 
 # %%
+for (k, t) in enumerate((:clopper_pearson, :sterne, :wilson, :wald))
+    P = Symbol(:P, k)
+    g = Symbol(:pvalue_, t)
+    @eval $P = plot(p -> $g(6, 10, p), 0, 1; label="")
+    plot!(xtick=0:0.1:1, ytick=0:0.1:1)
+    title!("$t")
+end
+plot(P1, P2, P3, P4; size=(800, 500))
+
+# %%
