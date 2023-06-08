@@ -33,13 +33,19 @@
 VERSION ≥ v"1.7.0-beta" #> true
 
 # %% [markdown]
+# `@kwdef` macro is exported as of Julia v1.9.
+
+# %%
+VERSION ≥ v"1.9.0" #> true
+
+# %% [markdown]
 # ## A minimal working example of the problem-algorithm-solver pattern
 
 # %%
 module FreeFall
 
 """Problem type"""
-Base.@kwdef struct Problem{G, Y0, V0, TS}
+@kwdef struct Problem{G, Y0, V0, TS}
     g::G = 9.80665
     y0::Y0 = 0.0
     v0::V0 = 30.0
@@ -47,12 +53,22 @@ Base.@kwdef struct Problem{G, Y0, V0, TS}
 end
 
 """Algorithm types"""
-Base.@kwdef struct EulerMethod{T}  dt::T = 0.1 end
-Base.@kwdef struct ExactFormula{T} dt::T = 0.1 end
+@kwdef struct EulerMethod{T}
+    dt::T = 0.1
+end
+@kwdef struct ExactFormula{T}
+    dt::T = 0.1
+end
 default_algorithm(::Problem) = EulerMethod()
 
 """Solution type"""
-struct Solution{Y, V, T, P<:Problem, A} y::Y; v::V; t::T; prob::P; alg::A end
+struct Solution{Y, V, T, P<:Problem, A}
+    y::Y
+    v::V
+    t::T
+    prob::P
+    alg::A
+end
 
 """Solver function"""
 solve(prob::Problem) = solve(prob, default_algorithm(prob))
@@ -150,7 +166,9 @@ module SomeExtension
 using ..FreeFall
 using ..FreeFall: Problem, Solution
 
-Base.@kwdef struct Symplectic2ndOrder{T}  dt::T = 0.1 end
+@kwdef struct Symplectic2ndOrder{T}
+    dt::T = 0.1
+end
 
 function FreeFall.solve(prob::Problem, alg::Symplectic2ndOrder)
     (; g, y0, v0, tspan) = prob
