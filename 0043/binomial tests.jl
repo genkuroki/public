@@ -62,3 +62,22 @@ end
 pvalue_wald(6, 10, 1/4)
 
 # %%
+using Roots
+
+# 手抜き
+function confint(pvaluefunc, k, n; α=0.05)
+    find_zeros(p -> pvaluefunc(k, n, p) - α, 0, 1)
+end
+
+for t in (:clopper_pearson, :sterne, :wilson, :wald)
+    f = Symbol(:confint_, t)
+    g = Symbol(:pvalue_, t)
+    @eval $f(k, n; α=0.05) = confint($g, k, n; α)
+end
+
+for t in (:clopper_pearson, :sterne, :wilson, :wald)
+    f = Symbol(:confint_, t)
+    @eval @show $f(6, 10; α=0.05)
+end
+
+# %%
