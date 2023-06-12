@@ -66,13 +66,26 @@ plot!(xguide="x", yguide="y")
 A = X .^ (0:1)'
 @show β̂ = A \ Y
 
-scatter(X, Y; label="sample", msc=:auto, alpha=0.2, ms=2)
+scatter(X, Y; label="sample", msc=:auto, alpha=0.3, ms=2)
 plot!(x -> evalpoly(x, β̂); label="regression line", lw=3)
 plot!(xguide="x", yguide="y")
 
 # %%
+# メッシュで区切る
+
 xbin = -2:0.5:10
 ybin = -4:0.5:10
+
+scatter(X, Y; label="sample", msc=:auto, alpha=0.3, ms=2)
+plot!(x -> evalpoly(x, β̂); label="regression line", lw=3)
+plot!(xguide="x", yguide="y")
+vline!(xbin; label="")
+hline!(ybin; label="")
+plot!(xlim=extrema(xbin), ylim=extrema(ybin))
+
+# %%
+# P[i,j] = (格子長方形の内側の点の個数) / (その講師超法権を含む縦の帯の中の点の個数)
+
 P = condprob(X, Y, xbin, ybin)
 heatmap(xbin[1:end-1] .+ 0.25, ybin[1:end-1] .+ 0.25, P'; colorbar=false)
 plot!(xlim=extrema(xbin), ylim=extrema(ybin))
