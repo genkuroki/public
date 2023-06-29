@@ -114,6 +114,24 @@ using LinearAlgebra
 using Random
 using StaticArrays
 
+function f4(n = 10^8)
+    a, b, c = (MVector{2, Float64}(undef) for _ in 1:3)
+    k = 0
+    for i in 1:n
+        randn!(a); randn!(b); randn!(c)
+        k += (dot(b - a, c - a) > 0 && dot(c - b, a - b) > 0 && dot(a - c, b - c) > 0)
+    end
+    100k/n
+end
+@time f4()
+@time f4()
+@time f4()
+
+# %%
+using LinearAlgebra
+using Random
+using StaticArrays
+
 @show ENV["JULIA_NUM_THREADS"]
 @show Threads.nthreads();
 
@@ -157,5 +175,28 @@ end
 @time f3threads()
 @time f3threads()
 @time f3threads()
+
+# %%
+using LinearAlgebra
+using Random
+using StaticArrays
+
+@show ENV["JULIA_NUM_THREADS"]
+@show Threads.nthreads();
+
+function f4threads(n = 10^8)
+    A, B, C = ([MVector{2, Float64}(undef) for _ in 1:Threads.nthreads()] for _ in 1:3)
+    K = zeros(Int, Threads.nthreads())
+    Threads.@threads for i in 1:n
+        tid = Threads.threadid()
+        a, b, c = A[tid], B[tid], C[tid]
+        randn!(a); randn!(b); randn!(c)
+        K[tid] += (dot(b - a, c - a) > 0 && dot(c - b, a - b) > 0 && dot(a - c, b - c) > 0)
+    end
+    100sum(K)/n
+end
+@time f4threads()
+@time f4threads()
+@time f4threads()
 
 # %%
