@@ -106,5 +106,3 @@ plot_sims(LogNormal(); ns=(100, 300, 1000, 3000), correction=false)
 plot_sims(LogNormal(); ns=(100, 300, 1000, 3000))
 
 # %%
-
-# %%
