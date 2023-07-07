@@ -27,24 +27,29 @@ function plot_sim(dist, n; μ=mean(dist), L=10^6, D=TDist(n-1))
     Xtmp = [Vector{Float64}(undef, n) for _ in 1:Threads.nthreads()]
     Threads.@threads for i in 1:L
         tid = Threads.threadid()
-        X = rand!(dist, Xtmp[tid])
+        X = Xtmp[tid]
+        rand!(dist, X)
         X̄ = mean(X)
         S = std(X)
         T = √n * (X̄ - μ) / S
         pval[i] = 2ccdf(D, abs(T))
     end
-    _ecdf = ecdf(pval)
-    f(x) = _ecdf(x)
-    println("n = $n => coverage probability (α=5%) = ", 1 - f(0.05))
-    plot(f, 0, 0.1; label="")
+    _ecdf_pval = ecdf(pval)
+    ecdf_pval(x) = _ecdf_pval(x)
+    println("n = $n => coverage probability (α=5%) = ", 1 - ecdf_pval(0.05))
+    plot(ecdf_pval, 0, 0.1; label="")
     plot!(identity; label="", c=:grey, ls=:dash)
     plot!(xtick=0:0.01:1, ytick=0:0.01:1, xrotation=30)
-    plot!(xguide="α", yguide="probability of P-value ≤ α")
-    title!("$testname$distname, n=$n", titlefontsize=10)
-    plot!(size=(400, 420))
+    plot!(xguide="nominl significance level α", yguide="probability of P-value ≤ α")
+    title!("$testname$distname, n=$n", titlefontsize=9)
+    plot!(size=(400, 420), tickfontsize=6, guidefontsize=8)
 end
 
 function plot_sims(dist; ns=(5, 10, 20, 100), correction=true)
+    distname = replace(string(dist), r"{[^}]*}"=>"")
+    println("skewness of $distname = ", skewness(dist))
+    println("kurtosis of $distname = ", kurtosis(dist))
+    println()
     PP = []
     for n in ns
         D = correction ? TDist(n-1) : Normal()
@@ -75,5 +80,31 @@ plot_sims(Exponential(); ns=(5, 10, 20, 100))
 
 # %%
 plot_sims(Exponential(); ns=(100, 200, 500, 1000))
+
+# %%
+plot_sims(Beta(0.1, 0.1); ns=(5, 10, 20, 100), correction=false)
+
+# %%
+plot_sims(Beta(0.1, 0.1); ns=(5, 10, 20, 100))
+
+# %%
+plot_sims(TDist(4); ns=(5, 10, 20, 100), correction=false)
+
+# %%
+plot_sims(TDist(4); ns=(5, 10, 20, 100))
+
+# %%
+plot_sims(LogNormal(); ns=(5, 10, 20, 100), correction=false)
+
+# %%
+plot_sims(LogNormal(); ns=(5, 10, 20, 100))
+
+# %%
+plot_sims(LogNormal(); ns=(100, 300, 1000, 3000), correction=false)
+
+# %%
+plot_sims(LogNormal(); ns=(100, 300, 1000, 3000))
+
+# %%
 
 # %%
