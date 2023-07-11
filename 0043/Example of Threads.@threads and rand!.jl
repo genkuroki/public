@@ -65,3 +65,54 @@ scatter(X̄, S²)
 scatter(X̄, S²)
 
 # %%
+plot(x -> pdf(dist, x), -4, 24; xguide="x", yguide="probability density")
+
+# %%
+scatter(sim_threads(dist, 10))
+
+# %%
+scatter(sim_threads(dist, 40))
+
+# %%
+scatter(sim_threads(dist, 160))
+
+# %%
+scatter(sim_threads(dist, 640))
+
+# %%
+scatter(sim_threads(Normal(), 10))
+
+# %%
+scatter(sim_threads(Uniform(), 10))
+
+# %%
+scatter(sim_threads(Laplace(), 10))
+
+# %%
+scatter(sim_threads(Laplace(), 100))
+
+# %%
+scatter(sim_threads(Gamma(2), 10))
+
+# %%
+scatter(sim_threads(Gamma(2), 40))
+
+# %%
+scatter(sim_threads(Gamma(2), 160))
+
+# %%
+scatter(sim_threads(Gamma(2), 640))
+
+# %%
+scatter(sim_threads(Poisson(1), 10); ma=1)
+
+# %%
+scatter(sim_threads(Poisson(1), 40); ma=1)
+
+# %%
+scatter(sim_threads(Poisson(1), 160); ma=1)
+
+# %%
+scatter(sim_threads(Poisson(1), 640); ma=1)
+
+# %%
