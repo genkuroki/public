@@ -118,7 +118,7 @@ function plot_sims2(dist; ns=[10; 20:20:200; 300:100:500], L=10^6, α=0.05, kwar
         prob2[i] = ecdf_pval2(α)
     end
     Q = plot(xs, prob1; label="t-test", marker=:o)
-    plot!(xs, prob2; label="no corection", ls=:dash, marker=:diamond)
+    plot!(xs, prob2; label="no correction", ls=:dash, marker=:diamond)
     hline!([α]; label="", ls=:dot, c=:red)
     plot!(xguide="sample size n", yguide="probability of P-values ≤ $α")
     plot!(ytick=0:0.01:1)
