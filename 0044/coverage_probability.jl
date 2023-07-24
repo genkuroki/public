@@ -22,7 +22,6 @@ default(fmt=:png)
 
 coverage_probability(A, α) = count(≥(α), A)/length(A)
 
-# %%
 function sim(dist, n; L=10^6)
     μ, σ² = mean(dist), var(dist)
     nths = Threads.nthreads()
@@ -119,6 +118,72 @@ dist = Gamma(2, 3)
 n = 100
 
 plot(dist; label="Gamma(2, 3)", legendfontsize=10)
+title!("sample size: $n", titlefontsize=10)
+plot!(size=(400, 250)) |> display
+
+X̄, S², T, Chi², pvalT, pvalChi² = @time sim(dist, n)
+@show coverage_probability(pvalT, 0.05) coverage_probability(pvalChi², 0.05)
+
+P = histogram(T; normed=true, alpha=0.2, label="sample t-values")
+plot!(TDist(n-1); label="TDist(n-1)")
+plot!(xlim=(-6, 6))
+
+Q = histogram(Chi²; normed=true, alpha=0.2, label="sample (n-1)s²/σ²")
+plot!(Chisq(n-1), label="Chisq(n-1)")
+plot!(xlim=(max(0, n-8√n), n+8√n))
+
+R = plot(α -> coverage_probability(pvalT, α), 0, 1;
+    label="population mean")
+plot!(α -> 1 - α; label="", ls=:dot)
+plot!(xtick=0:0.1:1, ytick=0:0.1:1)
+plot!(xguide="α", yguide="coverage probability")
+
+S = plot(α -> coverage_probability(pvalChi², α), 0, 1;
+    label="population variance")
+plot!(α -> 1 - α; label="", ls=:dot)
+plot!(xtick=0:0.1:1, ytick=0:0.1:1)
+plot!(xguide="α", yguide="coverage probability")
+
+plot(P, Q, R, S; size=(800, 500))
+
+# %%
+dist = LogNormal(0, 2)
+n = 100
+
+plot(x -> pdf(dist, x), -0.3, 8.3; label="LogNormal(0, 2)", legendfontsize=10)
+title!("sample size: $n", titlefontsize=10)
+plot!(size=(400, 250)) |> display
+
+X̄, S², T, Chi², pvalT, pvalChi² = @time sim(dist, n)
+@show coverage_probability(pvalT, 0.05) coverage_probability(pvalChi², 0.05)
+
+P = histogram(T; normed=true, alpha=0.2, label="sample t-values")
+plot!(TDist(n-1); label="TDist(n-1)")
+plot!(xlim=(-6, 6))
+
+Q = histogram(Chi²; normed=true, alpha=0.2, label="sample (n-1)s²/σ²")
+plot!(Chisq(n-1), label="Chisq(n-1)")
+plot!(xlim=(max(0, n-8√n), n+8√n))
+
+R = plot(α -> coverage_probability(pvalT, α), 0, 1;
+    label="population mean")
+plot!(α -> 1 - α; label="", ls=:dot)
+plot!(xtick=0:0.1:1, ytick=0:0.1:1)
+plot!(xguide="α", yguide="coverage probability")
+
+S = plot(α -> coverage_probability(pvalChi², α), 0, 1;
+    label="population variance")
+plot!(α -> 1 - α; label="", ls=:dot)
+plot!(xtick=0:0.1:1, ytick=0:0.1:1)
+plot!(xguide="α", yguide="coverage probability")
+
+plot(P, Q, R, S; size=(800, 500))
+
+# %%
+dist = MixtureModel([Normal(), Normal(20)], [0.95, 0.05])
+n = 30
+
+plot(x -> pdf(dist, x), -4, 24; label="", legendfontsize=10)
 title!("sample size: $n", titlefontsize=10)
 plot!(size=(400, 250)) |> display
 
