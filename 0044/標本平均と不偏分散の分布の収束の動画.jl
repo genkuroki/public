@@ -16,12 +16,40 @@
 
 # %%
 using Distributions
+using QuadGK
 using Random
 using StatsPlots
 default(fmt=:png)
 
 # %%
 distname(dist) = replace(string(dist), r"{[^\}]*}"=>"")
+
+function distname(dist::MixtureModel)
+    d = distname.(dist.components)
+    d = replace.(d, r", σ=1.0"=>"")
+    p = string.(dist.prior.p)
+    name = "$(p[1]) $(d[1])"
+    name *= prod(" + $(p[i]) $(d[i])" for i in 2:length(d))
+    name
+end
+
+Skewness(dist) = skewness(dist)
+
+function Skewness(dist::MixtureModel)
+    μ = mean(dist)
+    σ = std(dist)
+    f(x) = ((x - μ)/σ)^3 * pdf(dist, x)
+    quadgk(f, extrema(dist)...)[1]
+end
+
+Kurtosis(dist) = kurtosis(dist)
+
+function Kurtosis(dist::MixtureModel)
+    μ = mean(dist)
+    σ = std(dist)
+    f(x) = ((x - μ)/σ)^4 * pdf(dist, x)
+    quadgk(f, extrema(dist)...)[1] - 3
+end
 
 function samplemeanvar(dist, n; L=10^4)
     X̄ = Vector{Float64}(undef, L)
@@ -57,8 +85,8 @@ title!("$(distname(dist)), n = $n", titlefontsize=12)
 function gif_samplemeanvar(dist; xlim=:auto, ylim=:auto, kwargs...)
     @show μ = mean(dist)
     @show σ² = var(dist)
-    @show skewness(dist)
-    @show kurtosis(dist)
+    @show Skewness(dist)
+    @show Kurtosis(dist)
     @gif for n in [10:50; 60:10:1000; fill(1000, 40)]
         plot_samplemeanvar(dist, n; label="", ms=2, msc=:auto, ma=0.2)
         scatter!([μ], [σ²]; label="", m=:star)
@@ -89,5 +117,10 @@ gif_samplemeanvar(Gamma(2, 3); xlim=(3, 9), ylim=(0, 50))
 
 # %%
 gif_samplemeanvar(Poisson(); xlim=(0.3, 1.7), ylim=(0, 3))
+
+# %%
+dist = MixtureModel([Normal(), Normal(20)], [0.95, 0.05])
+@show distname(dist)
+gif_samplemeanvar(dist; xlim=(-1, 6), ylim=(0, 100))
 
 # %%
