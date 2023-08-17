@@ -22,6 +22,29 @@
 #       * light.csv
 
 # %%
+ENV["LINES"], ENV["COLUMNS"] = 100, 100
+using Base.Threads
+using BenchmarkTools
+using DataFrames
+using Distributions
+using LinearAlgebra
+using Memoization
+using Printf
+using QuadGK
+using RCall
+using Random
+Random.seed!(4649373)
+using Roots
+using SpecialFunctions
+using StaticArrays
+using StatsBase
+using StatsFuns
+using StatsPlots
+default(fmt = :png, size = (400, 250),
+    titlefontsize = 10, plot_titlefontsize = 12)
+using SymPy
+
+# %%
 using DataFrames
 
 # t.test.data.csv
@@ -44,29 +67,6 @@ df = DataFrame(; gardenA, gardenB)
 # %%
 @show mean(gardenA) mean(gardenB)
 @show var(gardenA) var(gardenB);
-
-# %%
-ENV["LINES"], ENV["COLUMNS"] = 100, 100
-using Base.Threads
-using BenchmarkTools
-using DataFrames
-using Distributions
-using LinearAlgebra
-using Memoization
-using Printf
-using QuadGK
-using RCall
-using Random
-Random.seed!(4649373)
-using Roots
-using SpecialFunctions
-using StaticArrays
-using StatsBase
-using StatsFuns
-using StatsPlots
-default(fmt = :png, size = (400, 250),
-    titlefontsize = 10, plot_titlefontsize = 12)
-using SymPy
 
 # %%
 # Override the Base.show definition of SymPy.jl:
@@ -257,15 +257,204 @@ end
 speed = [850, 740, 900, 1070, 930, 850, 950, 980, 980, 880, 1000, 980, 930, 650, 760, 810, 1000, 1000, 960, 960]
 
 @show speed
+@show median(speed) mean(speed) var(speed) skewness(speed) kurtosis(speed)
 @show pvalue_tdist(speed, 990)
 @show pvalue(SignedRankTest(speed .- 990))
 
-pval_t, pval_w = let L = 10^5, c = 0, μ = mean(speed), n = length(speed)
-    speed0 = speed .- μ
+pval_t, pval_w = let L = 10^5, c = 0, n = length(speed)
     pval_t = Vector{Float64}(undef, L)
     pval_w = Vector{Float64}(undef, L)
     for i in 1:L
-        X = sample(speed0, n)
+        X = sample(speed, n)
+        pval_t[i] = pvalue_tdist(X, mean(speed))
+        pval_w[i] = pvalue(SignedRankTest(X .- mean(speed)))
+    end
+    pval_t, pval_w
+end
+_ecdf_pval_t = ecdf(pval_t)
+_ecdf_pval_w = ecdf(pval_w)
+ecdf_pval_t(x) = _ecdf_pval_t(x)
+ecdf_pval_w(x) = _ecdf_pval_w(x)
+
+P1 = plot(ecdf_pval_t, 0, 1; label="t-test")
+plot!(ecdf_pval_w; label="signed rank test", ls=:dash)
+plot!(identity; label="", ls=:dot, c=:grey)
+plot!(xtick=0:0.1:1, ytick=0:0.1:1)
+plot!(xguide="α", yguide="probability of pvalue ≤ α")
+
+P2 = plot(ecdf_pval_t, 0, 0.1; label="t-test")
+plot!(ecdf_pval_w; label="signed rank test", ls=:dash)
+plot!(identity; label="", ls=:dot, c=:grey)
+plot!(xtick=0:0.01:1, ytick=0:0.01:1)
+plot!(xguide="α", yguide="probability of pvalue ≤ α")
+
+plot(P1, P2; size=(800, 400))
+
+# %%
+using HypothesisTests
+using Distributions
+using StatsBase: ecdf
+using StatsPlots
+
+function pvalue_tdist(x̄, s², n, μ)
+    t = (x̄ - μ)/√(s²/n)
+    2ccdf(TDist(n-1), abs(t))
+end
+
+function pvalue_tdist(x, μ)
+    x̄, s², n = mean(x), var(x), length(x)
+    pvalue_tdist(x̄, s², n, μ)
+end
+
+function confint_tdist(x̄, s², n; α = 0.05)
+    c = quantile(TDist(n-1), 1-α/2)
+    [x̄ - c*√(s²/n), x̄ + c*√(s²/n)]
+end
+
+function confint_tdist(x; α = 0.05)
+    x̄, s², n = mean(x), var(x), length(x)
+    confint_tdist(x̄, s², n; α)
+end
+
+# light.csv
+speed = [850, 740, 900, 1070, 930, 850, 950, 980, 980, 880, 1000, 980, 930, 650, 760, 810, 1000, 1000, 960, 960]
+
+@show speed
+@show median(speed) mean(speed) var(speed) skewness(speed) kurtosis(speed)
+@show pvalue_tdist(speed, 990)
+@show pvalue(SignedRankTest(speed .- 990))
+
+pval_t, pval_w = let L = 10^5, c = 0, n = length(speed)
+    pval_t = Vector{Float64}(undef, L)
+    pval_w = Vector{Float64}(undef, L)
+    for i in 1:L
+        X = sample(speed, n)
+        pval_t[i] = pvalue_tdist(X, mean(speed))
+        pval_w[i] = pvalue(SignedRankTest(X .- 920))
+    end
+    pval_t, pval_w
+end
+_ecdf_pval_t = ecdf(pval_t)
+_ecdf_pval_w = ecdf(pval_w)
+ecdf_pval_t(x) = _ecdf_pval_t(x)
+ecdf_pval_w(x) = _ecdf_pval_w(x)
+
+P1 = plot(ecdf_pval_t, 0, 1; label="t-test")
+plot!(ecdf_pval_w; label="signed rank test", ls=:dash)
+plot!(identity; label="", ls=:dot, c=:grey)
+plot!(xtick=0:0.1:1, ytick=0:0.1:1)
+plot!(xguide="α", yguide="probability of pvalue ≤ α")
+
+P2 = plot(ecdf_pval_t, 0, 0.1; label="t-test")
+plot!(ecdf_pval_w; label="signed rank test", ls=:dash)
+plot!(identity; label="", ls=:dot, c=:grey)
+plot!(xtick=0:0.01:1, ytick=0:0.01:1)
+plot!(xguide="α", yguide="probability of pvalue ≤ α")
+
+plot(P1, P2; size=(800, 400))
+
+# %%
+using HypothesisTests
+using Distributions
+using StatsBase: ecdf
+using StatsPlots
+
+function pvalue_tdist(x̄, s², n, μ)
+    t = (x̄ - μ)/√(s²/n)
+    2ccdf(TDist(n-1), abs(t))
+end
+
+function pvalue_tdist(x, μ)
+    x̄, s², n = mean(x), var(x), length(x)
+    pvalue_tdist(x̄, s², n, μ)
+end
+
+function confint_tdist(x̄, s², n; α = 0.05)
+    c = quantile(TDist(n-1), 1-α/2)
+    [x̄ - c*√(s²/n), x̄ + c*√(s²/n)]
+end
+
+function confint_tdist(x; α = 0.05)
+    x̄, s², n = mean(x), var(x), length(x)
+    confint_tdist(x̄, s², n; α)
+end
+
+# light.csv
+speed = [850, 740, 900, 1070, 930, 850, 950, 980, 980, 880, 1000, 980, 930, 650, 760, 810, 1000, 1000, 960, 960]
+
+@show speed
+@show median(speed) mean(speed) var(speed) skewness(speed) kurtosis(speed)
+@show pvalue_tdist(speed, 990)
+@show pvalue(SignedRankTest(speed .- 990))
+
+pval_t, pval_w = let L = 10^5, c = 0, n = length(speed)
+    pval_t = Vector{Float64}(undef, L)
+    pval_w = Vector{Float64}(undef, L)
+    for i in 1:L
+        X = sample(speed, n)
+        pval_t[i] = pvalue_tdist(X, mean(speed))
+        pval_w[i] = pvalue(SignedRankTest(X .- median(speed)))
+    end
+    pval_t, pval_w
+end
+_ecdf_pval_t = ecdf(pval_t)
+_ecdf_pval_w = ecdf(pval_w)
+ecdf_pval_t(x) = _ecdf_pval_t(x)
+ecdf_pval_w(x) = _ecdf_pval_w(x)
+
+P1 = plot(ecdf_pval_t, 0, 1; label="t-test")
+plot!(ecdf_pval_w; label="signed rank test", ls=:dash)
+plot!(identity; label="", ls=:dot, c=:grey)
+plot!(xtick=0:0.1:1, ytick=0:0.1:1)
+plot!(xguide="α", yguide="probability of pvalue ≤ α")
+
+P2 = plot(ecdf_pval_t, 0, 0.1; label="t-test")
+plot!(ecdf_pval_w; label="signed rank test", ls=:dash)
+plot!(identity; label="", ls=:dot, c=:grey)
+plot!(xtick=0:0.01:1, ytick=0:0.01:1)
+plot!(xguide="α", yguide="probability of pvalue ≤ α")
+
+plot(P1, P2; size=(800, 400))
+
+# %%
+using HypothesisTests
+using Distributions
+using StatsBase: ecdf
+using StatsPlots
+
+function pvalue_tdist(x̄, s², n, μ)
+    t = (x̄ - μ)/√(s²/n)
+    2ccdf(TDist(n-1), abs(t))
+end
+
+function pvalue_tdist(x, μ)
+    x̄, s², n = mean(x), var(x), length(x)
+    pvalue_tdist(x̄, s², n, μ)
+end
+
+function confint_tdist(x̄, s², n; α = 0.05)
+    c = quantile(TDist(n-1), 1-α/2)
+    [x̄ - c*√(s²/n), x̄ + c*√(s²/n)]
+end
+
+function confint_tdist(x; α = 0.05)
+    x̄, s², n = mean(x), var(x), length(x)
+    confint_tdist(x̄, s², n; α)
+end
+
+# light.csv
+speed = [850, 740, 900, 1070, 930, 850, 950, 980, 980, 880, 1000, 980, 930, 650, 760, 810, 1000, 1000, 960, 960]
+
+@show speed
+@show median(speed) mean(speed) var(speed) skewness(speed) kurtosis(speed)
+@show pvalue_tdist(speed, 990)
+@show pvalue(SignedRankTest(speed .- 990))
+
+pval_t, pval_w = let L = 10^5, c = 0, n = length(speed)
+    pval_t = Vector{Float64}(undef, L)
+    pval_w = Vector{Float64}(undef, L)
+    for i in 1:L
+        X = rand(TDist(2), n)
         pval_t[i] = pvalue_tdist(X, 0)
         pval_w[i] = pvalue(SignedRankTest(X))
     end
