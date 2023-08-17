@@ -74,12 +74,22 @@ function plot_samplemeanvar!(dist, n; L=10^4, kwargs...)
 end
 
 # %%
-dist = Normal()
+dist1 = Gamma(2, 3)
+dist2 = MixtureModel([dist1], [1.0])
+@show skewness(dist1) Skewness(dist2)
+@show kurtosis(dist1) Kurtosis(dist2);
+
+# %%
+dist = Gamma(2, 3)
 n = 100
-plot_samplemeanvar(dist, n; label="", ms=1, msc=:auto, ma=0.2)
-plot!(xlim=(-1, 1), ylim=(0, 3))
+@show μ = mean(dist)
+@show σ² = var(dist)
+@show Skewness(dist)
+@show Kurtosis(dist)
+plot_samplemeanvar(dist, n; label="", ms=2, msc=:auto, ma=0.2)
+scatter!([μ], [σ²]; label="", m=:star)
 plot!(xguide="sample mean", yguide="unbiased sample variance")
-title!("$(distname(dist)), n = $n", titlefontsize=12)
+title!("$(distname(dist)), n = $n", titlefontsize=11)
 
 # %%
 function gif_samplemeanvar(dist; xlim=:auto, ylim=:auto, kwargs...)
@@ -122,5 +132,10 @@ gif_samplemeanvar(Poisson(); xlim=(0.3, 1.7), ylim=(0, 3))
 dist = MixtureModel([Normal(), Normal(20)], [0.95, 0.05])
 @show distname(dist)
 gif_samplemeanvar(dist; xlim=(-1, 6), ylim=(0, 100))
+
+# %%
+plot(x -> pdf(dist, x), -4, 24; label="")
+plot!(xguide="x", yguide="probability density")
+title!("$(distname(dist))")
 
 # %%
