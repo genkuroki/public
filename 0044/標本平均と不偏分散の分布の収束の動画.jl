@@ -97,7 +97,7 @@ function gif_samplemeanvar(dist; xlim=:auto, ylim=:auto, kwargs...)
     @show σ² = var(dist)
     @show Skewness(dist)
     @show Kurtosis(dist)
-    @gif for n in [10:50; 60:10:1000; fill(1000, 40)]
+    @gif for n in [10:100; 110:10:1000; fill(1000, 60)]
         plot_samplemeanvar(dist, n; label="", ms=2, msc=:auto, ma=0.2)
         scatter!([μ], [σ²]; label="", m=:star)
         plot!(; xlim, ylim)
