@@ -78,6 +78,11 @@ dist2 = MixtureModel([dist1], [1.0])
 @show kurtosis(dist1) Kurtosis(dist2);
 
 # %%
+dist3 = MixtureModel([Normal(), Normal(50)], [0.98, 0.02])
+@show Skewness(dist3)
+@show Kurtosis(dist3);
+
+# %%
 dist = Gamma(2, 3)
 n = 100
 @show μ = mean(dist)
