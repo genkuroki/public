@@ -9,7 +9,7 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.10.3
 #   kernelspec:
-#     display_name: Julia 1.9.2
+#     display_name: Julia 1.9.3
 #     language: julia
 #     name: julia-1.9
 # ---
@@ -33,23 +33,21 @@ function distname(dist::MixtureModel)
     name
 end
 
-Skewness(dist) = skewness(dist)
-
-function Skewness(dist::MixtureModel)
-    μ = mean(dist)
-    σ = std(dist)
-    f(x) = ((x - μ)/σ)^3 * pdf(dist, x)
-    quadgk(f, extrema(dist)...)[1]
+function stdmoment(dist::ContinuousUnivariateDistribution, k;
+        μ = mean(dist),
+        σ = std(dist),
+        a = max(minimum(dist), μ - 20σ),
+        b = min(maximum(dist), μ + 20σ)
+    )
+    f(x) = ((x - μ)/σ)^k * pdf(dist, x)
+    quadgk(f, a, b)[1]
 end
+
+Skewness(dist) = skewness(dist)
+Skewness(dist::MixtureModel; kwargs...) = stdmoment(dist, 3; kwargs... )
 
 Kurtosis(dist) = kurtosis(dist)
-
-function Kurtosis(dist::MixtureModel)
-    μ = mean(dist)
-    σ = std(dist)
-    f(x) = ((x - μ)/σ)^4 * pdf(dist, x)
-    quadgk(f, extrema(dist)...)[1] - 3
-end
+Kurtosis(dist::MixtureModel; kwargs...) = stdmoment(dist, 4; kwargs... ) - 3
 
 function samplemeanvar(dist, n; L=10^4)
     X̄ = Vector{Float64}(undef, L)
@@ -97,7 +95,8 @@ function gif_samplemeanvar(dist; xlim=:auto, ylim=:auto, kwargs...)
     @show σ² = var(dist)
     @show Skewness(dist)
     @show Kurtosis(dist)
-    @gif for n in [10:100; 110:10:1000; fill(1000, 60)]
+    t = [round(Int, 100^s) for s in range(1, log(100, 2000), 100)]
+    @gif for n in [10:99; t; fill(t[end], 60)]
         plot_samplemeanvar(dist, n; label="", ms=2, msc=:auto, ma=0.2)
         scatter!([μ], [σ²]; label="", m=:star)
         plot!(; xlim, ylim)
@@ -117,7 +116,7 @@ gif_samplemeanvar(Uniform(-1.7320508, 1.7320508); xlim=(-0.7, 0.7), ylim=(0, 2))
 gif_samplemeanvar(Laplace(0, 0.70710678); xlim=(-0.7, 0.7), ylim=(0, 2))
 
 # %%
-gif_samplemeanvar(TDist(4); xlim=(-1, 1), ylim=(0, 4))
+gif_samplemeanvar(TDist(4); xlim=(-1, 1), ylim=(0, 6))
 
 # %%
 gif_samplemeanvar(Exponential(); xlim=(0.3, 1.7), ylim=(0, 3))
@@ -135,6 +134,16 @@ gif_samplemeanvar(dist; xlim=(-1, 6), ylim=(0, 100))
 
 # %%
 plot(x -> pdf(dist, x), -4, 24; label="")
+plot!(xguide="x", yguide="probability density")
+title!("$(distname(dist))")
+
+# %%
+dist = MixtureModel([Normal(), Normal(50)], [0.98, 0.02])
+@show distname(dist)
+gif_samplemeanvar(dist; xlim=(-1, 6), ylim=(0, 250))
+
+# %%
+plot(x -> pdf(dist, x), -4, 54; label="")
 plot!(xguide="x", yguide="probability density")
 title!("$(distname(dist))")
 
