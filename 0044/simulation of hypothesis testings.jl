@@ -343,7 +343,7 @@ function show_plot_brunner_munzel(X, Y,
 end
 
 # %%
-@doc statistics_brunner_munzel
+?statistics_brunner_munzel
 
 # %%
 function make_brunner_munzel_pvaluefunc(m, n; p=1/2)
