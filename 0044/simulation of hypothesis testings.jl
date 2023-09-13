@@ -343,6 +343,9 @@ function show_plot_brunner_munzel(X, Y,
 end
 
 # %%
+@doc statistics_brunner_munzel
+
+# %%
 function make_brunner_munzel_pvaluefunc(m, n; p=1/2)
     nth = Threads.nthreads()
     Hx = [Vector{Float64}(undef, m) for _ in 1:nth]
@@ -412,9 +415,21 @@ plot_simulation(
 )
 
 # %%
+distx = Normal(0, 1)
+disty = Normal(0, 2)
+
+@show mean(distx)
+@show mean(disty)
+@show std(distx)
+@show std(disty)
+
+plot(distx, -6, 6; label="distx")
+plot!(disty, -6, 6; label="disty", ls=:dash)
+
+# %%
 plot_simulation(;
-    distx = Normal(0, 1),
-    disty = Normal(0, 2),
+    distx,
+    disty,
     m = 20,
     n = 20,
     testname="Student t-test",
@@ -424,8 +439,8 @@ end
 
 # %%
 plot_simulation(;
-    distx = Normal(0, 1),
-    disty = Normal(0, 2),
+    distx,
+    disty,
     m = 20,
     n = 20,
     testname="Mann-Whitney U-test",
@@ -435,8 +450,8 @@ end
 
 # %%
 plot_simulation(;
-    distx = Normal(0, 1),
-    disty = Normal(0, 2),
+    distx,
+    disty,
     m = 20,
     n = 20,
     testname="Welch t-test",
@@ -448,8 +463,8 @@ end
 m, n = 20, 20
 plot_simulation(
     make_brunner_munzel_pvaluefunc(m, n);
-    distx = Normal(0, 1),
-    disty = Normal(0, 2),
+    distx,
+    disty,
     m,
     n,
     testname="Brunner-Munzel test"
@@ -457,8 +472,8 @@ plot_simulation(
 
 # %%
 plot_simulation(;
-    distx = Normal(0, 1),
-    disty = Normal(0, 2),
+    distx,
+    disty,
     m = 40,
     n = 20,
     testname="Student t-test",
@@ -468,8 +483,8 @@ end
 
 # %%
 plot_simulation(;
-    distx = Normal(0, 1),
-    disty = Normal(0, 2),
+    distx,
+    disty,
     m = 40,
     n = 20,
     testname="Mann-Whitney U-test",
@@ -479,8 +494,8 @@ end
 
 # %%
 plot_simulation(;
-    distx = Normal(0, 1),
-    disty = Normal(0, 2),
+    distx,
+    disty,
     m = 40,
     n = 20,
     testname="Welch t-test",
@@ -492,8 +507,8 @@ end
 m, n = 40, 20
 plot_simulation(
     make_brunner_munzel_pvaluefunc(m, n);
-    distx = Normal(0, 1),
-    disty = Normal(0, 2),
+    distx,
+    disty,
     m,
     n,
     testname="Brunner-Munzel test"
@@ -501,8 +516,8 @@ plot_simulation(
 
 # %%
 plot_simulation(;
-    distx = Normal(0, 1),
-    disty = Normal(0, 2),
+    distx,
+    disty,
     m = 400,
     n = 200,
     testname="Student t-test",
@@ -512,8 +527,8 @@ end
 
 # %%
 plot_simulation(;
-    distx = Normal(0, 1),
-    disty = Normal(0, 2),
+    distx,
+    disty,
     m = 400,
     n = 200,
     testname="Mann-Whitney U-test",
@@ -523,8 +538,8 @@ end
 
 # %%
 plot_simulation(;
-    distx = Normal(0, 1),
-    disty = Normal(0, 2),
+    distx,
+    disty,
     m = 400,
     n = 200,
     testname="Welch t-test",
@@ -536,8 +551,108 @@ end
 m, n = 400, 200
 plot_simulation(
     make_brunner_munzel_pvaluefunc(m, n);
-    distx = Normal(0, 1),
-    disty = Normal(0, 2),
+    distx,
+    disty,
+    m,
+    n,
+    testname="Brunner-Munzel test"
+)
+
+# %%
+distx = Normal()
+disty = TDist(2.5)
+
+@show mean(distx)
+@show mean(disty)
+@show std(distx)
+@show std(disty)
+
+plot(distx, -6, 6; label="distx")
+plot!(disty, -6, 6; label="disty", ls=:dash)
+
+# %%
+plot_simulation(;
+    distx,
+    disty,
+    m = 40,
+    n = 20,
+    testname="Student t-test",
+    ) do X, Y
+    pvalue(EqualVarianceTTest(X, Y))
+end
+
+# %%
+plot_simulation(;
+    distx,
+    disty,
+    m = 40,
+    n = 20,
+    testname="Mann-Whitney U-test",
+    ) do X, Y
+    pvalue(MannWhitneyUTest(X, Y))
+end
+
+# %%
+plot_simulation(;
+    distx,
+    disty,
+    m = 40,
+    n = 20,
+    testname="Welch-test",
+    ) do X, Y
+    pvalue(UnequalVarianceTTest(X, Y))
+end
+
+# %%
+m, n = 40, 20
+plot_simulation(
+    make_brunner_munzel_pvaluefunc(m, n);
+    distx,
+    disty,
+    m,
+    n,
+    testname="Brunner-Munzel test"
+)
+
+# %%
+plot_simulation(;
+    distx,
+    disty,
+    m = 400,
+    n = 200,
+    testname="Student t-test",
+    ) do X, Y
+    pvalue(EqualVarianceTTest(X, Y))
+end
+
+# %%
+plot_simulation(;
+    distx,
+    disty,
+    m = 400,
+    n = 200,
+    testname="Mann-Whitney U-test",
+    ) do X, Y
+    pvalue(MannWhitneyUTest(X, Y))
+end
+
+# %%
+plot_simulation(;
+    distx,
+    disty,
+    m = 400,
+    n = 200,
+    testname="Welch-test",
+    ) do X, Y
+    pvalue(UnequalVarianceTTest(X, Y))
+end
+
+# %%
+m, n = 400, 200
+plot_simulation(
+    make_brunner_munzel_pvaluefunc(m, n);
+    distx,
+    disty,
     m,
     n,
     testname="Brunner-Munzel test"
@@ -653,9 +768,16 @@ s = evenly_matching_shift(distx, disty)
 @show std(distx)
 @show std(disty)
 @show s
+@show median(distx)
+@show median(disty)
 
-plot(distx, 0, 30; label="distx")
-plot!(disty, 0, 30; label="disty", ls=:dash)
+P = plot(distx, -1, 30; label="distx")
+plot!(disty, -1, 30; label="disty", ls=:dash)
+
+Q = plot(distx + s, -1, 30; label="distx + s")
+plot!(disty, -1, 30; label="disty", ls=:dash)
+
+plot(P, Q; size=(800, 250))
 
 # %%
 plot_simulation(;
@@ -755,9 +877,16 @@ s = evenly_matching_shift(distx, disty)
 @show std(distx)
 @show std(disty)
 @show s
+@show median(distx)
+@show median(disty)
 
-plot(distx, 0, 30; label="distx")
-plot!(disty, 0, 30; label="disty", ls=:dash)
+P = plot(distx, -1, 30; label="distx")
+plot!(disty, -1, 30; label="disty", ls=:dash)
+
+Q = plot(distx + s, -1, 30; label="distx + s")
+plot!(disty, -1, 30; label="disty", ls=:dash)
+
+plot(P, Q; size=(800, 250))
 
 # %%
 plot_simulation(;
@@ -902,9 +1031,16 @@ s = evenly_matching_shift(distx, disty)
 @show std(distx)
 @show std(disty)
 @show s
+@show median(distx)
+@show median(disty)
 
-plot(distx, -5, 15; label="distx")
+P = plot(distx, -5, 15; label="distx")
 plot!(disty, -5, 15; label="disty", ls=:dash)
+
+Q = plot(distx + s, -5, 15; label="distx + s")
+plot!(disty, -5, 15; label="disty", ls=:dash)
+
+plot(P, Q; size=(800, 250))
 
 # %%
 plot_simulation(;
@@ -949,6 +1085,94 @@ plot_simulation(
     n,
     testname="Brunner-Munzel test"
 )
+
+# %%
+m, n = 40, 20
+plot_simulation(
+    make_brunner_munzel_pvaluefunc(m, n);
+    distx = distx + s,
+    disty,
+    m,
+    n,
+    testname="Brunner-Munzel test"
+)
+
+# %%
+distx = Normal()
+disty = MixtureModel([Normal(), Normal(20)], [0.95, 0.05])
+disty = disty - mean(disty)
+s = evenly_matching_shift(distx, disty)
+
+@show mean(distx)
+@show mean(disty)
+@show std(distx)
+@show std(disty)
+@show s
+@show median(distx)
+@show median(disty)
+
+P = plot(distx, -5, 25; label="distx")
+plot!(disty, -5, 25; label="disty", ls=:dash)
+
+Q = plot(distx + s, -5, 25; label="distx + s")
+plot!(disty, -5, 25; label="disty", ls=:dash)
+
+plot(P, Q; size=(800, 250))
+
+# %%
+plot_simulation(;
+    distx,
+    disty,
+    m = 40,
+    n = 20,
+    testname="Student t-test",
+    ) do X, Y
+    pvalue(EqualVarianceTTest(X, Y))
+end
+
+# %%
+plot_simulation(;
+    distx = distx + s,
+    disty,
+    m = 40,
+    n = 20,
+    testname="Student t-test",
+    ) do X, Y
+    pvalue(EqualVarianceTTest(X, Y))
+end
+
+# %%
+plot_simulation(;
+    distx = distx + s,
+    disty,
+    m = 40,
+    n = 20,
+    testname="Mann-Whitney U-test",
+    ) do X, Y
+    pvalue(MannWhitneyUTest(X, Y))
+end
+
+# %%
+plot_simulation(;
+    distx,
+    disty,
+    m = 40,
+    n = 20,
+    testname="Welch t-test",
+    ) do X, Y
+    pvalue(UnequalVarianceTTest(X, Y))
+end
+
+# %%
+plot_simulation(;
+    distx = distx + s,
+    disty,
+    m = 40,
+    n = 20,
+    testname="Welch t-test",
+    ) do X, Y
+    pvalue(UnequalVarianceTTest(X, Y))
+end
 
 # %%
 m, n = 40, 20
