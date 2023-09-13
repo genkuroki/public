@@ -9,7 +9,7 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.10.3
 #   kernelspec:
-#     display_name: Julia 1.9.0-beta4
+#     display_name: Julia 1.9.3
 #     language: julia
 #     name: julia-1.9
 # ---
@@ -28,7 +28,7 @@ safediv(x, y) = x == 0 ? x : isinf(y) ? zero(y) : x/y
 """
     h_brunner_munzel(x, y)
 
-この函数は, x < y のとき 1.0 を, x = y のとき 0.5 を返す.
+この函数は, x < y のとき 1.0 を, x = y のとき 0.5 を, それら以外のとき 0.0 返す.
 """
 h_brunner_munzel(x, y) = (x < y) + (x == y)/2
 
@@ -40,7 +40,7 @@ h_brunner_munzel(x, y) = (x < y) + (x == y)/2
 ```math
 \begin{aligned}
 &
-H(x, y) = \begin{cases} 1 & (x < y) \\ 1/2 & (x = y), \end{cases}
+H(x, y) = \begin{cases} 1 & (x < y) \\ 1/2 & (x = y) \\ 0 & (x > y), \end{cases}
 \\ &
 m = \mathrm{length}(X), \quad
 n = \mathrm{length}(Y), \quad
@@ -78,7 +78,7 @@ y_j = Y[j],
 \\ &
 \hat{p} = \frac{1}{mn}\sum_{i=1}^m \sum_{j=1}^n H(x_i, y_j),
 \\ &
-H(x, y) = \begin{cases} 1 & (x < y) \\ 1/2 & (x = y), \end{cases}
+H(x, y) = \begin{cases} 1 & (x < y) \\ 1/2 & (x = y) \\ 0 & (x > y), \end{cases}
 \\ &
 H^x_i = \sum_{j=1}^n H(y_j, x_i), \quad
 H^y_j = \sum_{i=1}^m H(x_i, y_j),
