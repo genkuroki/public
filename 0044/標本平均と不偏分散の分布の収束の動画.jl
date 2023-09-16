@@ -150,15 +150,6 @@ plot!(xguide="x", yguide="probability density")
 title!("$(distname(dist))")
 
 # %%
-dist = MixtureModel([Normal(), Normal(50)], [0.98, 0.02])
-gif_samplemeanvar(dist; xlim=(-1, 6), ylim=(0, 250))
-
-# %%
-plot(x -> pdf(dist, x), -4, 54; label="")
-plot!(xguide="x", yguide="probability density")
-title!("$(distname(dist))")
-
-# %%
 dist = MixtureModel([Normal(), Normal(4)], [0.9, 0.1])
 gif_samplemeanvar(dist; xlim=(-1, 2), ylim=(0, 7))
 
