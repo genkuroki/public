@@ -19,7 +19,7 @@ using Distributions
 using QuadGK
 using Random
 using StatsPlots
-default(fmt=:png)
+default(fmt=:png, size=(600, 400))
 
 # %%
 distname(dist) = replace(string(dist), r"{[^\}]*}"=>"")
