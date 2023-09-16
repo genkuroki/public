@@ -79,21 +79,22 @@ function plot_samplemeanvar!(dist, n; L=10^4, kwargs...)
 end
 
 function gif_samplemeanvar(dist; xlim=:auto, ylim=:auto,
-        ns = [round(Int, 10^s) for s in range(log(10, 10), log(10, 2000), 200)],
+        ns = [round(Int, 10^s) for s in range(log(10, 10), log(10, 2000), 150)],
         kwargs...)
-    @show distname(dist)
+    @show dname = distname(dist)
     @show μ = mean(dist)
     @show σ² = var(dist)
     @show Skewness(dist)
     @show Kurtosis(dist)
-    @gif for n in [fill(ns[begin], 40); ns; fill(ns[end], 60)]
+    anim = @animate for n in [fill(ns[begin], 30); ns; fill(ns[end], 45)]
         plot_samplemeanvar(dist, n; label="", ms=2, msc=:auto, ma=0.2)
         scatter!([μ], [σ²]; label="", m=:star)
         plot!(; xlim, ylim)
         plot!(xguide="sample mean", yguide="unbiased sample variance")
-        title!("$(distname(dist)), n = $n", titlefontsize=11)
+        title!("$(dname), n = $n", titlefontsize=11)
         plot!(; kwargs...)
     end
+    gif(anim, "gif/$(dname).gif", fps=15)
 end
 
 # %%
