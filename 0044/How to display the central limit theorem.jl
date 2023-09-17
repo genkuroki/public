@@ -219,4 +219,123 @@ plot!(xguide="cdf of standard normal", yguide="ecdf of standardized sample mean"
 title!("$(distname(dist)), n=$n", titlefontsize=8)
 plot!(size=(400, 400))
 
+# %% [markdown]
+# __二項検定の様々なP値__
+
+# %%
+x ⪅ y = x < y || x ≈ y
+
+function pvalue_clopper_pearson(dist::DiscreteUnivariateDistribution, x)
+    min(1, 2cdf(dist, x), 2ccdf(dist, x-1))
+end
+
+function pvalue_sterne(dist::DiscreteUnivariateDistribution, x)
+    μ, σ = mean(dist), std(dist)
+    kmin = max(minimum(dist), round(Int, μ - 6σ))
+    kmax = min(maximum(dist), round(Int, μ + 6σ))
+    sum(pdf(dist, k) for k in kmin:kmax if pdf(dist, k) ⪅ pdf(dist, x))
+end
+
+function pvalue_normal_approx(dist, x)
+    μ, σ = mean(dist), std(dist)
+    z = (x - μ) / σ
+    2ccdf(Normal(), abs(z))
+end
+
+# %%
+n, p = 20, 1/3
+x = 11
+@show pvalue_clopper_pearson(Binomial(n, p), x)
+@show pvalue_sterne(Binomial(n, p), x)
+@show pvalue_normal_approx(Binomial(n, p), x)
+;
+
+# %%
+function sim(null, alt = null; L=10^6)
+    pval_cp = Vector{Float64}(undef, L)
+    pval_st = similar(pval_cp)
+    pval_na = similar(pval_cp)
+    Threads.@threads for i in 1:L
+        x = rand(alt)
+        pval_cp[i] = pvalue_clopper_pearson(null, x)
+        pval_st[i] = pvalue_sterne(null, x)
+        pval_na[i] = pvalue_normal_approx(null, x)
+    end
+    f_cp = make_ecdf(pval_cp)
+    f_st = make_ecdf(pval_st)
+    f_na = make_ecdf(pval_na)
+    f_cp, f_st, f_na
+end
+
+# %%
+n, p = 100, 0.3
+null = Binomial(n, p)
+f_cp, f_st, f_na = sim(null)
+pval_cp, pval_st, pval_na = (f._ecdf.sorted_values for f in (f_cp, f_st, f_na))
+
+a, b, s = 0, 1, 0.1
+bin = range(0, 1, 21)
+P1 = stephist(pval_cp; norm=true, bin, label="Clopper-Pearson", c=1)
+P2 = stephist(pval_st; norm=true, bin, label="Sterne", c=2)
+P3 = stephist(pval_na; norm=true, bin, label="normal approx", c=3)
+plot(P1, P2, P3; size=(600, 600), layout=(3, 1))
+plot!(legend=:topleft)
+
+# %%
+#n, p = 100, 0.3
+#null = Binomial(n, p)
+#f_cp, f_st, f_na = sim(null)
+#pval_cp, pval_st, pval_na = (f._ecdf.sorted_values for f in (f_cp, f_st, f_na))
+
+a, b, s = 0, 1, 0.1
+bin = range(0, 1, 101)
+P1 = stephist(pval_cp; norm=true, bin, label="Clopper-Pearson", c=1)
+P2 = stephist(pval_st; norm=true, bin, label="Sterne", c=2)
+P3 = stephist(pval_na; norm=true, bin, label="normal approx", c=3)
+plot(P1, P2, P3; size=(600, 600), layout=(3, 1))
+plot!(legend=:topleft)
+
+# %%
+#n, p = 100, 0.3
+#null = Binomial(n, p)
+#f_cp, f_st, f_na = sim(null)
+
+a, b, s = 0, 1, 0.1
+
+P1 = plot(f_cp, a, b; label="Clopper-Pearson", c=1)
+plot!(identity, a, b; label="", ls=:dot, c=:black)
+plot!(xtick=a:s:b, ytick=a:s:b)
+plot!(xguide="α", yguide="probability of p-value ≤ α")
+
+P2 = plot(f_st, a, b; label="Sterne", c=2)
+plot!(identity, a, b; label="", ls=:dot, c=:black)
+plot!(xtick=a:s:b, ytick=a:s:b)
+plot!(xguide="α", yguide="probability of p-value ≤ α")
+
+P3 = plot(f_na, a, b; label="normal approx", c=3)
+plot!(identity, a, b; label="", ls=:dot, c=:black)
+plot!(xtick=a:s:b, ytick=a:s:b)
+plot!(xguide="α", yguide="probability of p-value ≤ α")
+plot!(size=(400, 400))
+
+a, b, s = 0, 0.1, 0.01
+
+Q1 = plot(f_cp, a, b; label="Clopper-Pearson", c=1)
+plot!(identity, a, b; label="", ls=:dot, c=:black)
+plot!(xtick=a:s:b, ytick=a:s:b)
+plot!(xguide="α", yguide="probability of p-value ≤ α")
+
+Q2 = plot(f_st, a, b; label="Sterne", c=2)
+plot!(identity, a, b; label="", ls=:dot, c=:black)
+plot!(xtick=a:s:b, ytick=a:s:b)
+plot!(xguide="α", yguide="probability of p-value ≤ α")
+
+Q3 = plot(f_na, a, b; label="normal approx", c=3)
+plot!(identity, a, b; label="", ls=:dot, c=:black)
+plot!(xtick=a:s:b, ytick=a:s:b)
+plot!(xguide="α", yguide="probability of p-value ≤ α")
+
+plot(P1, Q1, P2, Q2, P3, Q3; size=(800, 1200), layout=(3, 2))
+plot!(leftmargin=4Plots.mm)
+
 # %%
