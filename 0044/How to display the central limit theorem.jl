@@ -269,36 +269,36 @@ end
 
 # %%
 n, p = 100, 0.3
-null = Binomial(n, p)
+@show null = Binomial(n, p)
 f_cp, f_st, f_na = sim(null)
 pval_cp, pval_st, pval_na = (f._ecdf.sorted_values for f in (f_cp, f_st, f_na))
 
 a, b, s = 0, 1, 0.1
 bin = range(0, 1, 21)
-P1 = stephist(pval_cp; norm=true, bin, label="Clopper-Pearson", c=1)
-P2 = stephist(pval_st; norm=true, bin, label="Sterne", c=2)
-P3 = stephist(pval_na; norm=true, bin, label="normal approx", c=3)
+P1 = histogram(pval_cp; norm=true, alpha=0.3, bin, label="Clopper-Pearson", c=1)
+P2 = histogram(pval_st; norm=true, alpha=0.3, bin, label="Sterne", c=2)
+P3 = histogram(pval_na; norm=true, alpha=0.3, bin, label="normal approx", c=3)
 plot(P1, P2, P3; size=(600, 600), layout=(3, 1))
 plot!(legend=:topleft)
 
 # %%
-#n, p = 100, 0.3
-#null = Binomial(n, p)
-#f_cp, f_st, f_na = sim(null)
-#pval_cp, pval_st, pval_na = (f._ecdf.sorted_values for f in (f_cp, f_st, f_na))
+n, p = 100, 0.3
+@show null = Binomial(n, p)
+f_cp, f_st, f_na = sim(null)
+pval_cp, pval_st, pval_na = (f._ecdf.sorted_values for f in (f_cp, f_st, f_na))
 
 a, b, s = 0, 1, 0.1
 bin = range(0, 1, 101)
-P1 = stephist(pval_cp; norm=true, bin, label="Clopper-Pearson", c=1)
-P2 = stephist(pval_st; norm=true, bin, label="Sterne", c=2)
-P3 = stephist(pval_na; norm=true, bin, label="normal approx", c=3)
+P1 = histogram(pval_cp; norm=true, alpha=0.3, bin, label="Clopper-Pearson", c=1)
+P2 = histogram(pval_st; norm=true, alpha=0.3, bin, label="Sterne", c=2)
+P3 = histogram(pval_na; norm=true, alpha=0.3, bin, label="normal approx", c=3)
 plot(P1, P2, P3; size=(600, 600), layout=(3, 1))
 plot!(legend=:topleft)
 
 # %%
-#n, p = 100, 0.3
-#null = Binomial(n, p)
-#f_cp, f_st, f_na = sim(null)
+n, p = 100, 0.3
+@show null = Binomial(n, p)
+f_cp, f_st, f_na = sim(null)
 
 a, b, s = 0, 1, 0.1
 
