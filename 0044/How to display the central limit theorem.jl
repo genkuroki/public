@@ -233,7 +233,7 @@ function pvalue_sterne(dist::DiscreteUnivariateDistribution, x)
     μ, σ = mean(dist), std(dist)
     kmin = max(minimum(dist), round(Int, μ - 6σ))
     kmax = min(maximum(dist), round(Int, μ + 6σ))
-    sum(pdf(dist, k) for k in kmin:kmax if pdf(dist, k) ⪅ pdf(dist, x))
+    sum(pdf(dist, k) for k in kmin:kmax if pdf(dist, k) ⪅ pdf(dist, x); init=0.0)
 end
 
 function pvalue_normal_approx(dist, x)
@@ -336,6 +336,64 @@ plot!(xtick=a:s:b, ytick=a:s:b)
 plot!(xguide="α", yguide="probability of p-value ≤ α")
 
 plot(P1, Q1, P2, Q2, P3, Q3; size=(800, 1200), layout=(3, 2))
+plot!(leftmargin=4Plots.mm)
+
+# %%
+n, p = 100, 0.25
+@show null = Binomial(n, p)
+q = p
+@show alt = Binomial(n, q)
+f_cp, f_st, f_na = sim(null, alt)
+
+a, b, s = 0, 0.1, 0.01
+A, B, S = 0, 1, 0.1
+
+P1 = plot(f_cp, a, b; label="Clopper-Pearson", c=1)
+plot!(identity, a, b; label="", ls=:dot, c=:black)
+plot!(xtick=a:s:b, ytick=A:S:B)
+plot!(xguide="α", yguide="probability of p-value ≤ α")
+
+P2 = plot(f_st, a, b; label="Sterne", c=2)
+plot!(identity, a, b; label="", ls=:dot, c=:black)
+plot!(xtick=a:s:b, ytick=A:S:B)
+plot!(xguide="α", yguide="probability of p-value ≤ α")
+
+P3 = plot(f_na, a, b; label="normal approx", c=3)
+plot!(identity, a, b; label="", ls=:dot, c=:black)
+plot!(xtick=a:s:b, ytick=A:S:B)
+plot!(xguide="α", yguide="probability of p-value ≤ α")
+plot!(size=(400, 400))
+
+plot(P1, P2, P3; size=(800, 800), layout=(2, 2))
+plot!(leftmargin=4Plots.mm)
+
+# %%
+n, p = 100, 0.25
+@show null = Binomial(n, p)
+q = 0.37
+@show alt = Binomial(n, q)
+f_cp, f_st, f_na = sim(null, alt)
+
+a, b, s = 0, 0.1, 0.01
+A, B, S = 0, 1, 0.1
+
+P1 = plot(f_cp, a, b; label="Clopper-Pearson", c=1)
+plot!(identity, a, b; label="", ls=:dot, c=:black)
+plot!(xtick=a:s:b, ytick=A:S:B)
+plot!(xguide="α", yguide="probability of p-value ≤ α")
+
+P2 = plot(f_st, a, b; label="Sterne", c=2)
+plot!(identity, a, b; label="", ls=:dot, c=:black)
+plot!(xtick=a:s:b, ytick=A:S:B)
+plot!(xguide="α", yguide="probability of p-value ≤ α")
+
+P3 = plot(f_na, a, b; label="normal approx", c=3)
+plot!(identity, a, b; label="", ls=:dot, c=:black)
+plot!(xtick=a:s:b, ytick=A:S:B)
+plot!(xguide="α", yguide="probability of p-value ≤ α")
+plot!(size=(400, 400))
+
+plot(P1, P2, P3; size=(800, 800), layout=(2, 2))
 plot!(leftmargin=4Plots.mm)
 
 # %%
