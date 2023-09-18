@@ -67,15 +67,24 @@ plot!(xtick=0:0.1:1, ytick=0:0.1:1)
 plot!(xguide="parameter p", yguide="P-value")
 
 # %%
-ci95 = find_zeros(p -> pvalue_normal_approx(Binomial(100, p), 30) - 0.05, 0, 1)
-@show ci95
+n, p₀ = 100, 0.4
+@show nulldist = Binomial(n, p₀)
+
+p_value_of_null = pvalue_normal_approx(nulldist, 30)
+
+confint95 = find_zeros(p -> pvalue_normal_approx(Binomial(n, p), 30) - 0.05, 0, 1)
+
+o = optimize(p -> -pvalue_normal_approx(Binomial(n, p), 30), 0, 1)
+point_estimate = o.minimizer
+
+@show p_value_of_null confint95 point_estimate
 
 plot(p -> pvalue_normal_approx(Binomial(100, p), 30), 0, 1;
     label="P-value function for data: n=100, x=30")
 plot!(xtick=0:0.1:1, ytick=0:0.1:1)
 plot!(xguide="parameter p", yguide="P-value")
-plot!(ci95, fill(0.05, 2); label="95% confidence interval")
-scatter!([30/100], [1]; label="point estimate")
+plot!(confint95, fill(0.05, 2); label="95% confidence interval")
+scatter!([point_estimate], [1]; label="point estimate")
 
 # %%
 @show nulldist = Poisson(30)
@@ -86,6 +95,40 @@ F_pval = make_ecdf(pval)
 println("probability of P-value ≤ 5% = ", F_pval(0.05))
 
 plot_ecdf_pval(F_pval)
+
+# %%
+@show nulldist = Poisson(30)
+@show altdist = Poisson(45)
+X = rand(altdist, 10^6)
+pval = pvalue_normal_approx.(nulldist, X)
+F_pval = make_ecdf(pval)
+
+println("probability of P-value ≤ 5% = ", F_pval(0.05))
+
+plot_ecdf_pval(F_pval)
+
+# %%
+@show nulldist = Poisson(30)
+
+p_value_of_null = pvalue_normal_approx(nulldist, 40)
+
+confint95 = find_zeros(0.01, 100) do λ
+    pvalue_normal_approx(Poisson(λ), 40) - 0.05
+end
+
+o = optimize(0.01, 100) do λ
+    -pvalue_normal_approx(Poisson(λ), 40)
+end
+point_estimate = o.minimizer
+
+@show p_value_of_null confint95 point_estimate
+
+plot(λ -> pvalue_normal_approx(Poisson(λ), 40), 0.01, 100;
+    label="P-value function for data x=40")
+plot!(xtick=0:10:100, ytick=0:0.1:1)
+plot!(xguide="parameter λ", yguide="P-value")
+plot!(confint95, fill(0.05, 2); label="95% confidence interval")
+scatter!([point_estimate], [1]; label="point estimate")
 
 # %%
 @show nulldist = NegativeBinomial(30, 0.7)
@@ -107,6 +150,33 @@ F_pval = make_ecdf(pval)
 println("probability of P-value ≤ 5% = ", F_pval(0.05))
 
 plot_ecdf_pval(F_pval)
+
+# %%
+r, p₀ = 30, 0.7
+@show nulldist = NegativeBinomial(r, p₀)
+
+x = 20
+
+p_value_of_null = pvalue_normal_approx(nulldist, x)
+
+confint95 = find_zeros(0.01, 1) do p
+    pvalue_normal_approx(NegativeBinomial(r, p), x) - 0.05
+end
+
+o = optimize(0.01, 1) do p
+    -pvalue_normal_approx(NegativeBinomial(r, p), x)
+end
+point_estimate = o.minimizer
+
+@show p_value_of_null confint95 point_estimate
+
+plot(p -> pvalue_normal_approx(NegativeBinomial(r, p), x), 0.01, 1;
+    label="P-value function for data: r=$r, x=$x")
+plot!(xtick=0:0.1:1, ytick=0:0.1:1)
+plot!(xguide="parameter p", yguide="P-value")
+plot!(confint95, fill(0.05, 2); label="95% confidence interval")
+scatter!([point_estimate], [1]; label="point estimate")
+plot!(legend=:topleft)
 
 # %%
 A = [
@@ -163,7 +233,8 @@ a, b, c, d = A'
 @show (a/b)/(c/d)
 println()
 
-p_value_of_OR_equals_1 = pvalue_normal_approx(Hypergeometric(a+b, c+d, a+c), a)
+@show nulldist = Hypergeometric(a+b, c+d, a+c)
+p_value_of_null = pvalue_normal_approx(Hypergeometric(a+b, c+d, a+c), a)
 
 confint95 = find_zeros(0.1, 10) do OR
     pvalue_normal_approx(FisherNoncentralHypergeometric(a+b, c+d, a+c, OR), a) - 0.05
@@ -174,7 +245,7 @@ o = optimize(0.1, 10) do OR
 end
 point_estimate = o.minimizer
 
-@show p_value_of_OR_equals_1 confint95 point_estimate
+@show p_value_of_null confint95 point_estimate
 
 plot(OR -> pvalue_normal_approx(FisherNoncentralHypergeometric(a+b, c+d, a+c, OR), 115), 0.8, 4;
     label="P-value function for data $A")
