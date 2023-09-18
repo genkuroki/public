@@ -16,6 +16,7 @@
 
 # %%
 using Distributions
+using Optim
 using Roots
 using StatsBase: ecdf
 using StatsPlots
@@ -97,6 +98,17 @@ println("probability of P-value ≤ 5% = ", F_pval(0.05))
 plot_ecdf_pval(F_pval)
 
 # %%
+@show nulldist = NegativeBinomial(30, 0.7)
+@show altdist = NegativeBinomial(30, 0.5)
+X = rand(altdist, 10^6)
+pval = pvalue_normal_approx.(nulldist, X)
+F_pval = make_ecdf(pval)
+
+println("probability of P-value ≤ 5% = ", F_pval(0.05))
+
+plot_ecdf_pval(F_pval)
+
+# %%
 @show nulldist = Hypergeometric(200, 200, 200)
 X = rand(nulldist, 10^6)
 pval = pvalue_normal_approx.(nulldist, X)
@@ -105,5 +117,41 @@ F_pval = make_ecdf(pval)
 println("probability of P-value ≤ 5% = ", F_pval(0.05))
 
 plot_ecdf_pval(F_pval)
+
+# %%
+@show nulldist = Hypergeometric(200, 200, 200)
+@show altdist = FisherNoncentralHypergeometric(200, 200, 200, 1.8)
+X = rand(altdist, 10^5)
+@time pval = pvalue_normal_approx.(nulldist, X)
+F_pval = make_ecdf(pval)
+
+println("probability of P-value ≤ 5% = ", F_pval(0.05))
+
+plot_ecdf_pval(F_pval)
+
+# %%
+A = [
+    115 85
+    90 110
+]
+a, b, c, d = A'
+
+p_value_of_OR_equals_1 = pvalue_normal_approx(Hypergeometric(a+b, c+d, a+c), a)
+
+o = optimize(OR -> -pvalue_normal_approx(FisherNoncentralHypergeometric(a+b, c+d, a+c, OR), a), 0.1, 10)
+point_estimate = o.minimizer
+
+confint95 = find_zeros(0.1, 10) do OR
+    pvalue_normal_approx(FisherNoncentralHypergeometric(a+b, c+d, a+c, OR), a) - 0.05
+end
+
+@show p_value_of_OR_equals_1 point_estimate confint95
+
+plot(OR -> pvalue_normal_approx(FisherNoncentralHypergeometric(a+b, c+d, a+c, OR), 115), 0.8, 4;
+    label="P-value function for data $(A')")
+plot!(xtick=0:0.2:5, ytick=0:0.1:1)
+plot!(xguide="parameter OR = odds ratio", yguide="P-value")
+plot!(confint95, fill(0.05, 2); label="95% confidence interval")
+scatter!([point_estimate], [1]; label="point estimate")
 
 # %%
