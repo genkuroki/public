@@ -109,7 +109,18 @@ println("probability of P-value ≤ 5% = ", F_pval(0.05))
 plot_ecdf_pval(F_pval)
 
 # %%
-@show nulldist = Hypergeometric(200, 200, 200)
+A = [
+    115 90
+    80 110
+]
+a, b, c, d = A'
+
+@show A
+@show a, b, c, d
+@show (a/b)/(c/d)
+println()
+
+@show nulldist = Hypergeometric(a+b, c+d, a+c)
 X = rand(nulldist, 10^6)
 pval = pvalue_normal_approx.(nulldist, X)
 F_pval = make_ecdf(pval)
@@ -119,10 +130,21 @@ println("probability of P-value ≤ 5% = ", F_pval(0.05))
 plot_ecdf_pval(F_pval)
 
 # %%
-@show nulldist = Hypergeometric(200, 200, 200)
-@show altdist = FisherNoncentralHypergeometric(200, 200, 200, 1.8)
+A = [
+    115 90
+    80 110
+]
+a, b, c, d = A'
+
+@show A
+@show a, b, c, d
+@show (a/b)/(c/d)
+println()
+
+@show nulldist = Hypergeometric(a+b, c+d, a+c)
+@show altdist = FisherNoncentralHypergeometric(a+b, c+d, a+c, 1.8)
 X = rand(altdist, 10^5)
-@time pval = pvalue_normal_approx.(nulldist, X)
+pval = pvalue_normal_approx.(nulldist, X)
 F_pval = make_ecdf(pval)
 
 println("probability of P-value ≤ 5% = ", F_pval(0.05))
@@ -131,24 +153,31 @@ plot_ecdf_pval(F_pval)
 
 # %%
 A = [
-    115 85
-    90 110
+    115 90
+    80 110
 ]
 a, b, c, d = A'
 
-p_value_of_OR_equals_1 = pvalue_normal_approx(Hypergeometric(a+b, c+d, a+c), a)
+@show A
+@show a, b, c, d
+@show (a/b)/(c/d)
+println()
 
-o = optimize(OR -> -pvalue_normal_approx(FisherNoncentralHypergeometric(a+b, c+d, a+c, OR), a), 0.1, 10)
-point_estimate = o.minimizer
+p_value_of_OR_equals_1 = pvalue_normal_approx(Hypergeometric(a+b, c+d, a+c), a)
 
 confint95 = find_zeros(0.1, 10) do OR
     pvalue_normal_approx(FisherNoncentralHypergeometric(a+b, c+d, a+c, OR), a) - 0.05
 end
 
-@show p_value_of_OR_equals_1 point_estimate confint95
+o = optimize(0.1, 10) do OR
+    -pvalue_normal_approx(FisherNoncentralHypergeometric(a+b, c+d, a+c, OR), a)
+end
+point_estimate = o.minimizer
+
+@show p_value_of_OR_equals_1 confint95 point_estimate
 
 plot(OR -> pvalue_normal_approx(FisherNoncentralHypergeometric(a+b, c+d, a+c, OR), 115), 0.8, 4;
-    label="P-value function for data $(A')")
+    label="P-value function for data $A")
 plot!(xtick=0:0.2:5, ytick=0:0.1:1)
 plot!(xguide="parameter OR = odds ratio", yguide="P-value")
 plot!(confint95, fill(0.05, 2); label="95% confidence interval")
