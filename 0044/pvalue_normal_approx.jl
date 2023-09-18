@@ -53,9 +53,9 @@ plot_ecdf_pval(F_pval)
 @show altdist = Binomial(100, 1/2)
 X = rand(altdist, 10^6)
 pval = pvalue_normal_approx.(nulldist, X)
-F = make_ecdf(pval)
+F_pval = make_ecdf(pval)
 
-println("probability of P-value ≤ 5% = ", F(0.05))
+println("probability of P-value ≤ 5% = ", F_pval(0.05))
 
 plot_ecdf_pval(F_pval)
 
@@ -63,9 +63,9 @@ plot_ecdf_pval(F_pval)
 @show nulldist = Poisson(30)
 X = rand(nulldist, 10^6)
 pval = pvalue_normal_approx.(nulldist, X)
-F = make_ecdf(pval)
+F_pval = make_ecdf(pval)
 
-println("probability of P-value ≤ 5% = ", F(0.05))
+println("probability of P-value ≤ 5% = ", F_pval(0.05))
 
 plot_ecdf_pval(F_pval)
 
@@ -73,9 +73,9 @@ plot_ecdf_pval(F_pval)
 @show nulldist = NegativeBinomial(30, 0.7)
 X = rand(nulldist, 10^6)
 pval = pvalue_normal_approx.(nulldist, X)
-F = make_ecdf(pval)
+F_pval = make_ecdf(pval)
 
-println("probability of P-value ≤ 5% = ", F(0.05))
+println("probability of P-value ≤ 5% = ", F_pval(0.05))
 
 plot_ecdf_pval(F_pval)
 
@@ -83,9 +83,9 @@ plot_ecdf_pval(F_pval)
 @show nulldist = Hypergeometric(200, 200, 200)
 X = rand(nulldist, 10^6)
 pval = pvalue_normal_approx.(nulldist, X)
-F = make_ecdf(pval)
+F_pval = make_ecdf(pval)
 
-println("probability of P-value ≤ 5% = ", F(0.05))
+println("probability of P-value ≤ 5% = ", F_pval(0.05))
 
 plot_ecdf_pval(F_pval)
 
