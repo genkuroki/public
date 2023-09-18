@@ -17,7 +17,6 @@
 # %%
 using Distributions
 using StatsBase: ecdf
-make_ecdf(Y) = (_ecdf = ecdf(Y); f(x) = _ecdf(x))
 using StatsPlots
 default(fmt=:png)
 
@@ -27,16 +26,27 @@ function pvalue_normal_approx(nulldist, x)
     2ccdf(Normal(), abs(z))
 end
 
+make_ecdf(Y) = (_ecdf = ecdf(Y); f(x) = _ecdf(x))
+
+function plot_ecdf_pval(F_pval)
+    plot(F_pval, 0, 1; label="")
+    plot!(identity, 0, 1; label="", ls=:dot, c=:black, alpha=0.5)
+    plot!(xtick=0:0.1:1, ytick=0:0.1:1)
+    plot!(xguide="nominal significance level α",
+        yguide="probability of P-value ≤ α")
+    plot!(size=(400, 400))
+end
+
 @show pvalue_normal_approx(Binomial(100, 0.5), 60);
 
 @show nulldist = Binomial(100, 1/3)
 X = rand(nulldist, 10^6)
 pval = pvalue_normal_approx.(nulldist, X)
-F = make_ecdf(pval)
+F_pval = make_ecdf(pval)
 
-println("probability of P-value ≤ 5% = ", F(0.05))
+println("probability of P-value ≤ 5% = ", F_pval(0.05))
 
-plot([F identity], 0, 1; label="", ls=[:solid :dash], size=(400, 400))
+plot_ecdf_pval(F_pval)
 
 # %%
 @show nulldist = Binomial(100, 1/3)
@@ -47,7 +57,7 @@ F = make_ecdf(pval)
 
 println("probability of P-value ≤ 5% = ", F(0.05))
 
-plot([F identity], 0, 1; label="", ls=[:solid :dash], size=(400, 400))
+plot_ecdf_pval(F_pval)
 
 # %%
 @show nulldist = Poisson(30)
@@ -57,7 +67,7 @@ F = make_ecdf(pval)
 
 println("probability of P-value ≤ 5% = ", F(0.05))
 
-plot([F identity], 0, 1; label="", ls=[:solid :dash], size=(400, 400))
+plot_ecdf_pval(F_pval)
 
 # %%
 @show nulldist = NegativeBinomial(30, 0.7)
@@ -67,7 +77,7 @@ F = make_ecdf(pval)
 
 println("probability of P-value ≤ 5% = ", F(0.05))
 
-plot([F identity], 0, 1; label="", ls=[:solid :dash], size=(400, 400))
+plot_ecdf_pval(F_pval)
 
 # %%
 @show nulldist = Hypergeometric(200, 200, 200)
@@ -77,6 +87,6 @@ F = make_ecdf(pval)
 
 println("probability of P-value ≤ 5% = ", F(0.05))
 
-plot([F identity], 0, 1; label="", ls=[:solid :dash], size=(400, 400))
+plot_ecdf_pval(F_pval)
 
 # %%
