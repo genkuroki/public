@@ -60,6 +60,11 @@ println("probability of P-value ≤ 5% = ", F_pval(0.05))
 plot_ecdf_pval(F_pval)
 
 # %%
+plot(p -> pvalue_normal_approx(Binomial(100, p), 30), 0, 1; label="data: n=100, x=30")
+plot!(xtick=0:0.1:1, ytick=0:0.1:1)
+plot!(xguide="parameter p", yguide="P-value")
+
+# %%
 @show nulldist = Poisson(30)
 X = rand(nulldist, 10^6)
 pval = pvalue_normal_approx.(nulldist, X)
