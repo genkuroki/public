@@ -16,6 +16,7 @@
 
 # %%
 using Distributions
+using QuadGK
 using StatsPlots
 default(fmt=:png)
 
@@ -64,5 +65,53 @@ plot(1mixnormal)
 
 # %%
 1mixnormal
+
+# %%
+L = 10^6
+X = rand(Gamma(7, 2), L)
+Y = rand(Gamma(3, 2), L)
+Z = @. X / (X + Y)
+
+stephist(Z; norm=true, label="X/(X+Y) where X~Gamma(7,2), Y~Gamma(3,2)")
+plot!(Beta(7, 3); label="Beta(7, 3)", ls=:dash)
+plot!(legend=:outertop)
+
+# %%
+L = 10^6
+X = rand(Gamma(7, 2), L)
+Y = rand(Gamma(3, 2), L)
+Z = @. X / Y
+
+stephist(Z; norm=true, label="X/Y where X~Gamma(7,2), Y~Gamma(3,2)")
+plot!(BetaPrime(7, 3); label="BetaPrime(7, 3)", ls=:dash)
+plot!(legend=:outertop, xlim=(-0.1, 20))
+
+# %%
+L = 10^6
+X = rand(Binomial(10, 0.5), L)
+Y = rand(Binomial(10, 0.5), L)
+Z = X + Y
+
+@show var(Z)
+@show var(Binomial(20, 0.5))
+
+stephist(Z; norm=true, bin=-0.5:20.5, label="Binomial(10, 0.5) + Binomial(10, 0.5)")
+bar!(Binomial(20, 0.5); alpha=0.3, label="Binomial(20, 0.5)")
+plot!(legend=:outertop)
+
+# %%
+L = 10^6
+X = rand(Binomial(10, 0.2), L)
+Y = rand(Binomial(10, 0.8), L)
+Z = X + Y
+
+@show var(Z)
+@show var(Binomial(20, 0.5))
+@show var(Binomial(10, 0.2)) + var(Binomial(10, 0.8))
+
+stephist(Z; norm=true, bin=-0.5:20.5, label="Binomial(10, 0.2) + Binomial(10, 0.8)")
+bar!(Binomial(20, 0.5); alpha=0.3, label="Binomial(20, 0.5)")
+plot!(Normal(10, √3.2); label="Normal(10, √3.2)", ls=:dash)
+plot!(legend=:outertop, ylim=(-0.005, 0.25))
 
 # %%
