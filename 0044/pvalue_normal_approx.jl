@@ -16,6 +16,7 @@
 
 # %%
 using Distributions
+using Roots
 using StatsBase: ecdf
 using StatsPlots
 default(fmt=:png)
@@ -63,6 +64,17 @@ plot_ecdf_pval(F_pval)
 plot(p -> pvalue_normal_approx(Binomial(100, p), 30), 0, 1; label="data: n=100, x=30")
 plot!(xtick=0:0.1:1, ytick=0:0.1:1)
 plot!(xguide="parameter p", yguide="P-value")
+
+# %%
+ci95 = find_zeros(p -> pvalue_normal_approx(Binomial(100, p), 30) - 0.05, 0, 1)
+@show ci95
+
+plot(p -> pvalue_normal_approx(Binomial(100, p), 30), 0, 1;
+    label="P-value function for data: n=100, x=30")
+plot!(xtick=0:0.1:1, ytick=0:0.1:1)
+plot!(xguide="parameter p", yguide="P-value")
+plot!(ci95, fill(0.05, 2); label="95% confidence interval")
+scatter!([30/100], [1]; label="point estimate")
 
 # %%
 @show nulldist = Poisson(30)
