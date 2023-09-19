@@ -17,6 +17,7 @@
 # %%
 using Distributions
 using QuadGK
+using Random
 using StatsPlots
 default(fmt=:png)
 
@@ -113,5 +114,77 @@ stephist(Z; norm=true, bin=-0.5:20.5, label="Binomial(10, 0.2) + Binomial(10, 0.
 bar!(Binomial(20, 0.5); alpha=0.3, label="Binomial(20, 0.5)")
 plot!(Normal(10, √3.2); label="Normal(10, √3.2)", ls=:dash)
 plot!(legend=:outertop, ylim=(-0.005, 0.25))
+
+# %%
+Random.seed!(4649373)
+
+p₀ = 0.3
+dist_true = Bernoulli(p₀)
+N = 4000
+X = rand(dist_true, N)
+K = cumsum(X)
+
+safediv(x, y) = x == 0 ? zero(x/y) : x/y
+
+function pvalue_wilson(k, n, p)
+    z = safediv(k - n*p, √(n*p*(1-p)))
+    2ccdf(Normal(), abs(z))
+end
+
+ns = round.(Int, exp.(range(log(10), log(N), 500)))
+
+@gif for n in [fill(ns[1], 20); ns; fill(ns[end], 40)]
+    k = K[n]
+    posterior = Beta(k+1, n-k+1)
+    m = mode(posterior)
+    a = pdf(posterior, m)
+
+    plot()
+    plot!(p -> pvalue_wilson(k, n, p), 0, 1; label="P-value function")
+    plot!(p -> pdf(posterior, p)/a, 0, 1; label="Bayesian posterior", ls=:dash)
+    vline!([p₀]; label="true value", ls=:dot, c=:black, alpha=0.5)
+    plot!(xtick=0:0.1:1, ytick=0:0.1:1, ylim=(-0.02, 1.02))
+    title!("n = $n,  k = $k")
+    plot!(legendfontsize=12)
+end
+
+# %%
+Random.seed!(4649373)
+
+p₀ = 0.3
+dist_true = Bernoulli(p₀)
+N = 4000
+X = rand(dist_true, N)
+K = cumsum(X)
+
+safediv(x, y) = x == 0 ? zero(x/y) : x/y
+
+function pvalue_wilson(k, n, p)
+    z = safediv(k - n*p, √(n*p*(1-p)))
+    2ccdf(Normal(), abs(z))
+end
+
+ns = round.(Int, exp.(range(log(10), log(N), 500)))
+
+@gif for n in [fill(ns[1], 20); ns; fill(ns[end], 40)]
+    k = K[n]
+    posterior = Beta(k+1, n-k+1)
+    m = mode(posterior)
+    a = pdf(posterior, m)
+
+    P = plot()
+    plot!(p -> pvalue_wilson(k, n, p), 0, 1; label="P-value function")
+    vline!([p₀]; label="true value", ls=:dot, c=:black, alpha=0.5)
+    plot!(xtick=0:0.1:1, ytick=0:0.1:1, ylim=(-0.02, 1.02))
+
+    Q = plot()
+    plot!(p -> pdf(posterior, p)/a, 0, 1; label="Bayesian posterior", c=2)
+    vline!([p₀]; label="true value", ls=:dot, c=:black, alpha=0.5)
+    plot!(xtick=0:0.1:1, ytick=0:0.1:1, ylim=(-0.02, 1.02))
+    
+    plot(P, Q; layout=(2, 1))
+    plot!(plot_title="n = $n,  k = $k")
+    plot!(legendfontsize=12)
+end
 
 # %%
