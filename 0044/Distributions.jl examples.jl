@@ -16,7 +16,6 @@
 
 # %%
 using Distributions
-using QuadGK
 using Random
 using StatsPlots
 default(fmt=:png)
