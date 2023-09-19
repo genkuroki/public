@@ -9,87 +9,10 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.10.3
 #   kernelspec:
-#     display_name: Julia 1.9.0
+#     display_name: Julia 1.9.3
 #     language: julia
 #     name: julia-1.9
 # ---
 
-# %%
-using Distributions
-E(f, dist) = sum(x -> f(x)*pdf(dist, x), support(dist))
-mu(k, dist; m=mean(dist)) = E(x ->(x-m)^k, dist)
-using HypothesisTests
-using Random
-using StatsBase
-using StatsPlots
-default(fmt=:png, titlefontsize=10, tickfontsize=6,
-    size=(400, 250))
-
-# %%
-function sim(distX, distY, m, n; L=10^5)
-    pval = Vector{Float64}(undef, L)
-    tmpX = [Vector{Float64}(undef, m) for _ in 1:Threads.nthreads()]
-    tmpY = [Vector{Float64}(undef, n) for _ in 1:Threads.nthreads()]
-    Threads.@threads for i in 1:L
-        tid = Threads.threadid()
-        X = rand!(distX, tmpX[tid])
-        Y = rand!(distY, tmpY[tid])
-        pval[i] = pvalue(MannWhitneyUTest(X, Y))
-    end
-    _ecdf_pval = ecdf(pval)
-    ecdf_pval(x) = _ecdf_pval(x)
-    ecdf_pval
-end
-
-# %%
-dist7(a, b, c) = Categorical(a, b, c, 1-2(a+b+c), c, b ,a)
-@show distX = dist7(1/16, 0, 7/16)
-s2, m4, m6 = @show var(distX), mu(4, distX), mu(6, distX)
-println()
-
-P = bar(distX; label="", ylim=(0, 0.62), c=1)
-title!("distribution of X")
-
-# %%
-t = 1/30
-a = t
-b = (m4 - s2 - 2(3^4-3^2)*a)/(2(2^4 - 2^2))
-c = s2/2 - (3^2*a + 2^2*b)
-@show distY = dist7(a, b, c)
-@show var(distY), mu(4, distY), mu(6, distY)
-println()
-
-Q = bar(distY; label="", ylim=(0, 0.62), c=2)
-title!("distribution of Y")
-
-# %%
-function show_sim(distX, distY, m, n; L=10^6, P=P, Q=Q)
-    ecdf_pval = sim(distX, distY, m, n; L)
-
-    R = plot(ecdf_pval, 0, 0.1; label="")
-    plot!(identity; label="", ls=:dot, c=:gray)
-    plot!(xguide="α", yguide="probability of p-value ≤ α")
-    plot!(xtick=0:0.01:1, ytick=0:0.01:1)
-    title!("Mann-Whitney U-test (sizes of X, Y = $m, $n)")
-    plot!(size=(400, 400))
-
-    @show distX distY
-    @show mean(distX), var(distX), kurtosis(distX), mu(6, distX)
-    @show mean(distY), var(distY), kurtosis(distY), mu(6, distY)
-    println()
-    @show ecdf_pval(0.05)
-    println()
-
-    plot(P, Q, R; layout=@layout[[a; b] c], size=(800, 400))
-end
-
-# %%
-show_sim(distX, distY, 50, 50)
-
-# %%
-show_sim(distX, distY, 50, 100)
-
-# %%
-show_sim(distX, distY, 50, 200)
-
-# %%
+# %% [markdown]
+# [左右対称で平均と分散と尖度が一致するがMann-WhitneyのU検定を使ってはいけないシンプルな具体例.ipynb](https://github.com/genkuroki/public/blob/main/0041/%E5%B7%A6%E5%8F%B3%E5%AF%BE%E7%A7%B0%E3%81%A7%E5%B9%B3%E5%9D%87%E3%81%A8%E5%88%86%E6%95%A3%E3%81%A8%E5%B0%96%E5%BA%A6%E3%81%8C%E4%B8%80%E8%87%B4%E3%81%99%E3%82%8B%E3%81%8CMann-Whitney%E3%81%AEU%E6%A4%9C%E5%AE%9A%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%A6%E3%81%AF%E3%81%84%E3%81%91%E3%81%AA%E3%81%84%E3%82%B7%E3%83%B3%E3%83%97%E3%83%AB%E3%81%AA%E5%85%B7%E4%BD%93%E4%BE%8B.ipynb) に名前を変えた→[nbviewer](https://nbviewer.org/github/genkuroki/public/blob/main/0041/%E5%B7%A6%E5%8F%B3%E5%AF%BE%E7%A7%B0%E3%81%A7%E5%B9%B3%E5%9D%87%E3%81%A8%E5%88%86%E6%95%A3%E3%81%A8%E5%B0%96%E5%BA%A6%E3%81%8C%E4%B8%80%E8%87%B4%E3%81%99%E3%82%8B%E3%81%8CMann-Whitney%E3%81%AEU%E6%A4%9C%E5%AE%9A%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%A6%E3%81%AF%E3%81%84%E3%81%91%E3%81%AA%E3%81%84%E3%82%B7%E3%83%B3%E3%83%97%E3%83%AB%E3%81%AA%E5%85%B7%E4%BD%93%E4%BE%8B.ipynb).
