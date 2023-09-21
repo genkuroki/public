@@ -171,6 +171,13 @@ plot_t_tests(; distx = Normal(0, 3), disty = Normal(0, 1), m = 9, n = 11)
 plot_t_tests(; distx = Normal(0, 3), disty = Normal(0, 1), m = 90, n = 110)
 
 # %%
+plot_t_tests(; distx = Normal(0, 3), disty = Normal(0, 1), m = 12, n = 8)
+
+# %%
+plot_t_tests(; distx = Normal(2.83, 3), disty = Normal(0, 1), m = 12, n = 8,
+    ytick=0:0.1:1, ylim=(-0.06, 3))
+
+# %%
 plot_t_tests(; distx = Normal(0, 1.1), disty = Normal(0, 1), m = 10, n = 50)
 
 # %%
