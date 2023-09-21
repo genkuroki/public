@@ -171,6 +171,13 @@ plot_t_tests(; distx = Normal(0, 3), disty = Normal(0, 1), m = 9, n = 11)
 plot_t_tests(; distx = Normal(0, 3), disty = Normal(0, 1), m = 90, n = 110)
 
 # %%
+plot_t_tests(; distx = Normal(0, 3), disty = Normal(0, 1), m = 11, n = 9)
+
+# %%
+plot_t_tests(; distx = Normal(2.94, 3), disty = Normal(0, 1), m = 11, n = 9,
+    ytick=0:0.1:1, ylim=(-0.06, 3))
+
+# %%
 plot_t_tests(; distx = Normal(0, 3), disty = Normal(0, 1), m = 12, n = 8)
 
 # %%
@@ -202,7 +209,7 @@ plot_t_tests(; distx = Normal(0, 1.2), disty = Normal(0, 1), m = 20, n = 60)
 
 # %%
 plot_df_and_tstatratio(; m = 20, n = 60,
-    tick = Any[0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 10000])
+    tick = Any[0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500])
 
 # %%
 plot_t_tests(; distx = Normal(0, 1.2), disty = Normal(0, 1), m = 20, n = 60)
