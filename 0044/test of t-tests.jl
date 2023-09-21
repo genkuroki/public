@@ -178,6 +178,10 @@ plot_t_tests(; distx = Normal(2.94, 3), disty = Normal(0, 1), m = 11, n = 9,
     ytick=0:0.1:1, ylim=(-0.06, 3))
 
 # %%
+plot(Normal(2.83, 3), -6, 12; label="Normal(0, 3)")
+plot!(Normal(0, 1), -6, 12; label="Normal(0, 1)", ls=:dash)
+
+# %%
 plot_t_tests(; distx = Normal(0, 3), disty = Normal(0, 1), m = 12, n = 8)
 
 # %%
@@ -187,6 +191,26 @@ plot_t_tests(; distx = Normal(2.83, 3), disty = Normal(0, 1), m = 12, n = 8,
 # %%
 plot_t_tests(; distx = Normal(2.83, 3), disty = Normal(0, 1), m = 15, n = 10,
     ytick=0:0.1:1, ylim=(-0.06, 3))
+
+# %%
+distx = Gamma(8, 4)
+disty = Gamma(32, 1)
+
+plot(distx; label="distx")
+plot!(disty; label="disty", ls=:dash)
+plot!(legendfontsize=12, size=(400, 250)) |> display
+
+plot_t_tests(; distx, disty, m = 20, n = 12)
+
+# %%
+distx = Gamma(8, 4) + 8.6
+disty = Gamma(32, 1)
+
+plot(distx; label="distx")
+plot!(disty; label="disty", ls=:dash)
+plot!(legendfontsize=12, size=(400, 250)) |> display
+
+plot_t_tests(; distx, disty, m = 20, n = 12, ytick=0:0.1:1, ylim=(-0.06, 3))
 
 # %%
 plot_t_tests(; distx = Normal(0, 1.1), disty = Normal(0, 1), m = 10, n = 50)
