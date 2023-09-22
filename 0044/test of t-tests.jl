@@ -16,6 +16,7 @@
 
 # %%
 using Distributions
+using Random
 using StatsPlots
 default(fmt=:png, tickfontsize=6, titlefontsize=12)
 
@@ -50,27 +51,38 @@ function plot_t_tests(;
     if s == 1 @show(std(disty)) else @show(abs(s)*std(disty)) end
     println()
     
-    X = rand(distx, m, L)
-    Y = rand(disty, n, L)
+    T_Student = Vector{Float64}(undef, L)
+    T_Welch = Vector{Float64}(undef, L)
     
-    X̄ = mean(X; dims=1) |> vec
-    Ȳ = s*mean(Y; dims=1) |> vec
-    SX = std.(eachcol(X))
-    SY = std.(eachcol(Y));
-    S = @. √(((m-1)*SX^2 + (n-1)*SY^2)/(m+n-2))
+    df_Student = m + n - 2
+    DF_Welch = Vector{Float64}(undef, L)
+    
+    Xtmp = [Vector{eltype(distx)}(undef, m) for _ in 1:Threads.nthreads()]
+    Ytmp = [Vector{eltype(disty)}(undef, n) for _ in 1:Threads.nthreads()]
+    Threads.@threads for i in 1:L
+        tid = Threads.threadid()
+        X = rand!(distx, Xtmp[tid])
+        Y = rand!(disty, Ytmp[tid])
+    
+        X̄ = mean(X)
+        Ȳ = s*mean(Y)
+        SX = std(X)
+        SY = std(Y)
+        S = √(((m-1)*SX^2 + (n-1)*SY^2)/(m+n-2))
 
-    T_Student = @. (X̄ - Ȳ)/(S*√(1/m + 1/n))
-    T_Welch = @. (X̄ - Ȳ)/√(SX^2/m + SY^2/n)
+        T_Student[i] = (X̄ - Ȳ)/(S*√(1/m + 1/n))
+        T_Welch[i] = (X̄ - Ȳ)/√(SX^2/m + SY^2/n)
+        
+        DF_Welch[i] = degree_of_freedom_Welchelch(m, SX^2, n, SY^2)
+    end
     @show T_Student ≈ T_Welch
     println()
     
-    df_Student = m + n - 2
-    DF_Welch = @. degree_of_freedom_Welchelch(m, SX^2, n, SY^2)
     @show df_Student
     @show mean(DF_Welch) std(DF_Welch)
     println()
 
-    pval_Student = @. 2ccdf(TDist(m+n-2), abs(T_Student))
+    pval_Student = @. 2ccdf(TDist(df_Student), abs(T_Student))
     pval_Welch = @. 2ccdf(TDist(DF_Welch), abs(T_Welch))
 
     @show ECDF(pval_Student, 0.05) ECDF(pval_Welch, 0.05)
@@ -162,7 +174,7 @@ plot_df_and_tstatratio(; m = 8, n = 12)
 plot_t_tests(; distx = Normal(0, 2), disty = Normal(0, 1), m = 80, n = 120)
 
 # %%
-plot_t_tests(; distx = Normal(0, 2), disty = Normal(0, 1), m = 800, n = 1200, L = 10^5, bin=0:0.01:1)
+plot_t_tests(; distx = Normal(0, 2), disty = Normal(0, 1), m = 800, n = 1200)
 
 # %%
 plot_t_tests(; distx = Normal(0, 3), disty = Normal(0, 1), m = 9, n = 11)
@@ -254,7 +266,7 @@ plot_t_tests(; distx = Gamma(1, 4), disty = Gamma(4, 1), m = 80, n = 120)
 # %%
 distx = LogNormal(0.1, 0.7)
 disty = LogNormal(0.2, 0.7)
-plot_t_tests(; distx, disty, m = 10^3, n = 10^3, L = 10^5, ytick=0:0.1:1, ylim=(-0.06, 3))
+plot_t_tests(; distx, disty, m = 10^3, n = 10^3, ytick=0:0.1:1, ylim=(-0.06, 3))
 
 # %%
 plot_df_and_tstatratio(; m=10, n=10)
@@ -300,7 +312,7 @@ hline!([2ccdf(Normal(), z)]; label="2ccdf(Normal(), $z)", ls=:dash)
 plot!(xguide="n")
 plot!(xtick=0:5:100, ytick=0:0.01:1)
 
-# %% tags=[] jupyter={"source_hidden": true}
+# %% tags=[]
 @show dist = Normal()
 @show c = cquantile(dist, 0.05/2)
 for p in 0.07:-0.01:0.03
@@ -313,7 +325,7 @@ hline!(0.04:0.01:0.06; label="", ls=:dot)
 plot!(xguide="test statistic", yguide="P-value")
 title!("$dist")
 
-# %% tags=[] jupyter={"source_hidden": true}
+# %% tags=[]
 @show dist = TDist(10)
 @show c = cquantile(dist, 0.05/2)
 for p in 0.07:-0.01:0.03
