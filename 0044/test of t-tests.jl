@@ -300,19 +300,76 @@ hline!([2ccdf(Normal(), z)]; label="2ccdf(Normal(), $z)", ls=:dash)
 plot!(xguide="n")
 plot!(xtick=0:5:100, ytick=0:0.01:1)
 
-# %%
-z = 1.96
-plot(x -> 2ccdf(Normal(0,1), x), 0.8z, 1.2z; label="Normal(0,1) P-value")
+# %% tags=[] jupyter={"source_hidden": true}
+@show dist = Normal()
+@show c = cquantile(dist, 0.05/2)
+for p in 0.07:-0.01:0.03
+    @eval @show cquantile(dist, $p/2) / c
+end
+plot(x -> 2ccdf(dist, x), c/1.1, 1.1c; label="P-value")
 plot!(xtick=0:0.1:4, ytick=0:0.01:1)
-vline!([z]; label="", ls=:dot)
-hline!([2ccdf(Normal(), z)]; label="", ls=:dot)
+vline!([cquantile(dist, p/2) for p in 0.04:0.01:0.06]; label="", ls=:dot)
+hline!(0.04:0.01:0.06; label="", ls=:dot)
+plot!(xguide="test statistic", yguide="P-value")
+title!("$dist")
+
+# %% tags=[] jupyter={"source_hidden": true}
+@show dist = TDist(10)
+@show c = cquantile(dist, 0.05/2)
+for p in 0.07:-0.01:0.03
+    @eval @show cquantile(dist, $p/2) / c
+end
+plot(x -> 2ccdf(dist, x), c/1.1, 1.1c; label="P-value")
+plot!(xtick=0:0.1:4, ytick=0:0.01:1)
+vline!([cquantile(dist, p/2) for p in 0.04:0.01:0.06]; label="", ls=:dot)
+hline!(0.04:0.01:0.06; label="", ls=:dot)
+plot!(xguide="test statistic", yguide="P-value")
+title!("$dist")
 
 # %%
-dist = TDist(10)
-z = cquantile(dist, 0.05/2)
-plot(x -> 2ccdf(dist, x), 0.8z, 1.2z; label="TDist(10) P-value")
+@show dist = TDist(4)
+@show c = cquantile(dist, 0.05/2)
+for p in 0.07:-0.01:0.03
+    @eval @show cquantile(dist, $p/2) / c
+end
+plot(x -> 2ccdf(dist, x), c/1.1, 1.1c; label="P-value")
 plot!(xtick=0:0.1:4, ytick=0:0.01:1)
-vline!([z]; label="", ls=:dot)
-hline!([2ccdf(dist, z)]; label="", ls=:dot)
+vline!([cquantile(dist, p/2) for p in 0.04:0.01:0.06]; label="", ls=:dot)
+hline!(0.04:0.01:0.06; label="", ls=:dot)
+plot!(xguide="test statistic", yguide="P-value")
+title!("$dist")
+
+# %%
+plot_df_and_tstatratio(; m=9, n=10)
+
+# %%
+plot_t_tests(; distx=Normal(0, 3), disty=Normal(0, 1), m = 9, n = 10)
+
+# %%
+plot_t_tests(; distx=Normal(0, 3), disty=Normal(0, 1), m = 27, n = 30)
+
+# %%
+plot_t_tests(; distx=Normal(0, 3), disty=Normal(0, 1), m = 90, n = 100)
+
+# %%
+plot_t_tests(; distx=Normal(0, 3), disty=Normal(0, 1), m = 10, n = 9)
+
+# %%
+plot_t_tests(; distx=Normal(0, 3), disty=Normal(0, 1), m = 30, n = 27)
+
+# %%
+plot_t_tests(; distx=Normal(0, 3), disty=Normal(0, 1), m = 90, n = 100)
+
+# %%
+plot_df_and_tstatratio(; m=8, n=10)
+
+# %%
+plot_t_tests(; distx = Normal(0, 3), disty = Normal(0, 1), m = 8, n = 10)
+
+# %%
+plot_t_tests(; distx = Normal(0, 3), disty = Normal(0, 1), m = 24, n = 30)
+
+# %%
+plot_t_tests(; distx = Normal(0, 3), disty = Normal(0, 1), m = 80, n = 100)
 
 # %%
