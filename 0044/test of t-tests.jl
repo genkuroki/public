@@ -22,7 +22,7 @@ default(fmt=:png, tickfontsize=6, titlefontsize=12)
 
 ECDF(A, x) = count(≤(x), A)/length(A)
 
-function degree_of_freedom_Welchelch(m, sx², n, sy²)
+function degree_of_freedom_Welch(m, sx², n, sy²)
     (sx²/m + sy²/n)^2 / ((sx²/m)^2/(m-1) + (sy²/n)^2/(n-1))
 end
 
@@ -73,7 +73,7 @@ function plot_t_tests(;
         T_Student[i] = (X̄ - Ȳ)/(S*√(1/m + 1/n))
         T_Welch[i] = (X̄ - Ȳ)/√(SX^2/m + SY^2/n)
         
-        DF_Welch[i] = degree_of_freedom_Welchelch(m, SX^2, n, SY^2)
+        DF_Welch[i] = degree_of_freedom_Welch(m, SX^2, n, SY^2)
     end
     @show T_Student ≈ T_Welch
     println()
@@ -116,7 +116,7 @@ function plot_df_and_tstatratio(;
     log10tick = (tick, string.(tick))
     as = 10.0 .^ range(log10(minimum(tick)), log10(maximum(tick)), 1000)
 
-    P = plot(as, a -> degree_of_freedom_Welchelch(m, 1, n, a^2); label="Welch t-test")
+    P = plot(as, a -> degree_of_freedom_Welch(m, 1, n, a^2); label="Welch t-test")
     hline!([(m-1)+(n-1)]; label="Student t-test", ls=:dash)
     hline!([min(m-1, n-1)]; label="min(m-1, n-1)", ls=:dashdot)
     hline!([max(m-1, n-1)]; label="max(m-1, n-1)", ls=:dashdotdot)
@@ -383,5 +383,42 @@ plot_t_tests(; distx = Normal(0, 3), disty = Normal(0, 1), m = 24, n = 30)
 
 # %%
 plot_t_tests(; distx = Normal(0, 3), disty = Normal(0, 1), m = 80, n = 100)
+
+# %% [markdown]
+# https://tanigaku.jp/wp/?p=2556
+
+# %%
+X = [153, 153, 152, 156, 158, 160, 162, 151, 151, 150]
+Y = [153, 146, 138, 152, 140, 128, 116, 146, 156, 142]
+
+@show X
+@show Y
+@show m = length(X)
+@show n = length(Y)
+@show X̄ = mean(X)
+@show Ȳ = mean(Y)
+@show SX = std(X)
+@show SY = std(Y)
+@show SY^2/SX^2
+@show S = √(((m-1)*SX^2 + (n-1)*SY^2)/(m+n-2))
+@show SE_Student = S * √(1/m + 1/n)
+@show SE_Welch = √(SX^2/m + SY^2/n)
+@show T_Student = (X̄ - Ȳ)/SE_Student
+@show T_Welch = (X̄ - Ȳ)/SE_Welch
+@show df_Student = m + n - 2
+@show DF_Welch = degree_of_freedom_Welch(m, SX^2, n, SY^2)
+@show pvalue_Student = 2ccdf(TDist(df_Student), abs(T_Student))
+@show pvalue_Welch = 2ccdf(TDist(DF_Welch), abs(T_Welch))
+;
+
+# %% tags=[]
+@show SY^2/SX^2
+@show ccdf(FDist(9, 9), SY^2/SX^2)
+
+SY2overSX2 = [var(randn(10))/var(randn(10)) for _ in 1:10^6]
+stephist(SY2overSX2; norm=true, label="var(size-10 normal sample) / var(size-10 normal sample)")
+plot!(x -> pdf(FDist(9, 9), x), ls=:dash, label="FDist(9, 9)")
+plot!(xlim=(-0.2, 9), legend=:outertop)
+vline!([SY^2/SX^2]; ls=:dash, label="SY²/SX²", c=:red)
 
 # %%
