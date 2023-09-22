@@ -16,6 +16,7 @@
 
 # %%
 using Distributions
+using HypothesisTests
 using Random
 using StatsPlots
 default(fmt=:png, tickfontsize=6, titlefontsize=12)
@@ -413,12 +414,16 @@ Y = [153, 146, 138, 152, 140, 128, 116, 146, 156, 142]
 
 # %% tags=[]
 @show SY^2/SX^2
-@show ccdf(FDist(9, 9), SY^2/SX^2)
+@show 2ccdf(FDist(9, 9), SY^2/SX^2)
+@show VarianceFTest(Y, X)
 
 SY2overSX2 = [var(randn(10))/var(randn(10)) for _ in 1:10^6]
 stephist(SY2overSX2; norm=true, label="var(size-10 normal sample) / var(size-10 normal sample)")
 plot!(x -> pdf(FDist(9, 9), x), ls=:dash, label="FDist(9, 9)")
 plot!(xlim=(-0.2, 9), legend=:outertop)
 vline!([SY^2/SX^2]; ls=:dash, label="SY²/SX²", c=:red)
+
+# %%
+plot_t_tests(; distx=Normal(X̄, SX), disty=Normal(X̄, SY), m = 10, n = 10)
 
 # %%
