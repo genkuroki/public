@@ -29,7 +29,6 @@ function pvalue_1_sample_t_test(X, μ)
     2ccdf(TDist(n-1), abs(t))
 end
 
-# %%
 dist = Normal(2, 3)
 μ₀ = mean(dist)
 
