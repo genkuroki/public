@@ -100,6 +100,60 @@ plot_1_sample_t_test(; dist = Normal(0.2, 1), μ₀ = 0, n = 100)
 plot_1_sample_t_test(; dist = Normal(0.2, 1), μ₀ = 0, n = 200)
 
 # %%
+@show dist = Gamma(20, 3)
+@show μ = mean(dist)
+@show σ = std(dist)
+plot_1_sample_t_test(; dist, μ₀ = μ, n = 20)
+
+# %%
+@show dist = Gamma(20, 3)
+@show μ = mean(dist)
+@show σ = std(dist)
+plot_1_sample_t_test(; dist, μ₀ = μ + 0.2σ, n = 20)
+
+# %%
+@show dist = Gamma(20, 3)
+@show μ = mean(dist)
+@show σ = std(dist)
+plot_1_sample_t_test(; dist, μ₀ = μ + 0.2σ, n = 50)
+
+# %%
+@show dist = Gamma(20, 3)
+@show μ = mean(dist)
+@show σ = std(dist)
+plot_1_sample_t_test(; dist, μ₀ = μ + 0.2σ, n = 100)
+
+# %%
+@show dist = Gamma(20, 3)
+@show μ = mean(dist)
+@show σ = std(dist)
+plot_1_sample_t_test(; dist, μ₀ = μ + 0.2σ, n = 200)
+
+# %%
+@show dist = Gamma(2, 3)
+@show μ = mean(dist)
+@show σ = std(dist)
+plot_1_sample_t_test(; dist, μ₀ = μ, n = 20)
+
+# %%
+@show dist = Gamma(2, 3)
+@show μ = mean(dist)
+@show σ = std(dist)
+plot_1_sample_t_test(; dist, μ₀ = μ, n = 100)
+
+# %%
+@show dist = Gamma(2, 3)
+@show μ = mean(dist)
+@show σ = std(dist)
+plot_1_sample_t_test(; dist, μ₀ = μ + 0.2σ, n = 100)
+
+# %%
+@show dist = Gamma(2, 3)
+@show μ = mean(dist)
+@show σ = std(dist)
+plot_1_sample_t_test(; dist, μ₀ = μ + 0.2σ, n = 200)
+
+# %%
 using Random
 using StatsBase: ecdf
 
