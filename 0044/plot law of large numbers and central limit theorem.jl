@@ -202,6 +202,27 @@ Distributions.skewness(dist::MixtureModel) = meanvarstdskku(dist)[4]
 Distributions.kurtosis(dist::MixtureModel) = meanvarstdskku(dist)[5]
 
 # %%
+dist = Gamma(2, 3)
+μ, σ = mean(dist), std(dist)
+sk, ku = skewness(dist), kurtosis(dist)
+n = 1
+
+L = 10^6
+S² = [(X = rand(dist, n); n == 1 ? (X[1] - μ)^2 : var(X)) for i in 1:L]
+
+std_S² = σ^2 * √(ku/n + 2/max(1, n-1))
+#alpha = σ^4/std_S²^2
+#theta = std_S²^2/σ^2
+stephist(S²; norm=true, label="")
+plot!(xlim=(σ^2-m*std_S², σ^2+m*std_S²))
+plot!(Normal(σ^2, std_S²), σ^2-m*std_S², σ^2+m*std_S²; label="normal approx.", ls=:dash)
+vline!([σ^2]; label="σ²", ls=:dot)
+#plot!(Gamma(alpha, theta), σ^2-m*std_S², σ^2+m*std_S²; label="gamma aprrox.", ls=:dashdot)
+title!("central limit theorem for unbiased variance (n = $n)"; titlefontsize=10)
+if n == 1 ymax = 4/std_S²; plot!(ylim=(-0.03ymax, ymax)) end
+#plot!(ytick=[0])
+
+# %%
 using Distributions
 using Random
 using StatsPlots
@@ -226,7 +247,7 @@ function plot_lln_clt_meanvar2x2(; dist=Gamma(2, 3), m=5, nbin=200, nns=200, L=1
     end
 
     js = collect(eachindex(ns))
-    js_gif = [fill(js[1], 60); js; fill(js[end], 60)]
+    js_gif = [fill(js[1], 40); js; fill(js[end], 40)]
     ns_gif = ns[js_gif]
     
     @time @gif for (j, n) in zip(js_gif, ns_gif)
@@ -254,7 +275,8 @@ function plot_lln_clt_meanvar2x2(; dist=Gamma(2, 3), m=5, nbin=200, nns=200, L=1
         P2 = stephist(@view(S²[:, j]); norm=true, label="")
         plot!(xlim=(σ^2-m*σ^2*√(ku+2), σ^2+m*σ^2*√(ku+2)))
         vline!([σ^2]; label="σ²", ls=:dot, c=3)
-        title!("law of large numbers for unbiased variance (n = $n)"; titlefontsize=10)
+        title!("law of large numbers for unbiased variance (n = $n)"; titlefontsize=9)
+        if n == 1 ymax = 4/(σ^2*√(ku+2)); plot!(ylim=(-0.03ymax, ymax)) end
         plot!(ytick=[0])
 
         std_S² = σ^2 * √(ku/n + 2/max(1, n-1))
@@ -265,10 +287,11 @@ function plot_lln_clt_meanvar2x2(; dist=Gamma(2, 3), m=5, nbin=200, nns=200, L=1
         plot!(Normal(σ^2, std_S²), σ^2-m*std_S², σ^2+m*std_S²; label="normal approx.", ls=:dash)
         vline!([σ^2]; label="σ²", ls=:dot)
         #plot!(Gamma(alpha, theta), σ^2-m*std_S², σ^2+m*std_S²; label="gamma aprrox.", ls=:dashdot)
-        title!("central limit theorem for unbiased variance (n = $n)"; titlefontsize=10)
+        title!("central limit theorem for unbiased variance (n = $n)"; titlefontsize=9)
+        if n == 1 ymax = 4/std_S²; plot!(ylim=(-0.03ymax, ymax)) end
         plot!(ytick=[0])
         
-        plot(P1, P2, Q1, Q2; size=(1000, 500), layout=(2, 2))
+        plot(P1, P2, Q1, Q2; size=(800, 500), layout=(2, 2))
     end
 end
 
