@@ -199,6 +199,21 @@ P = bar(distx; alpha=0.3, label="distx", ylim=(-0.05, 0.5))
 Q = bar(disty; alpha=0.3, label="disty", ylim=(-0.05, 0.5))
 plot(P, Q; size=(600, 200)) |> display
 
+plot_t_tests(; distx, disty, m=20, n=14, ytick=0:0.01:1, ylim=(-0.05, 2), bin=0:0.01:1.01)
+
+# %% tags=[]
+fx = [5, 10, 40, 70, 75, 0, 0]
+px = fx / sum(fx)
+distx = Categorical(px)
+
+fy = reverse([10, 15, 30, 45, 90, 0, 0])
+py = fy / sum(fy)
+disty = Categorical(py)
+
+P = bar(distx; alpha=0.3, label="distx", ylim=(-0.05, 0.5))
+Q = bar(disty; alpha=0.3, label="disty", ylim=(-0.05, 0.5))
+plot(P, Q; size=(600, 200)) |> display
+
 plot_t_tests(; distx, disty, m=50, n=35, ytick=0:0.01:1, ylim=(-0.05, 2), bin=0:0.01:1.01)
 
 # %% tags=[]
