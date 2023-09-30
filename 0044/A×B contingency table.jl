@@ -64,10 +64,9 @@ end
 @show pearson_chisq(A)
 @show degree_of_freedom(A)
 @show pvalue_pearson_chisq(A)
-ASR = pearson_adjusted_standardized_residual(A)
-
-# %%
-@. 2ccdf(Normal(), abs(ASR))
+asr = pearson_adjusted_standardized_residual(A)
+display(asr)
+pval_asr = @. 2ccdf(Normal(), abs(asr))
 
 # %%
 c = sum(A; dims=1)
@@ -76,7 +75,8 @@ n = sum(A)
 E = r * c / n
 prodpoi = product_distribution((Poisson(λ) for λ in vec(E))...)
 L = 10^6
-Chi2 = [pearson_chisq(reshape(rand(prodpoi), 3, 3)) for _ in 1:L]
+X = [reshape(rand(prodpoi), 3, 3) for _ in 1:L]
+Chi2 = pearson_chisq.(X)
 df = (length(c) - 1)*(length(r) - 1)
 
 P = stephist(Chi2; norm=true, label="Pearson's χ²-statistic")
@@ -84,13 +84,23 @@ plot!(Chisq(df); label="Chisq($df)")
 plot!(xlim=(-1, 24))
 plot!(xguide="chi-squared value", yguide="probability density")
 
-Pval = [ccdf(Chisq(df), chi2) for chi2 in Chi2]
+Pval = ccdf.(Chisq(df), Chi2)
 Q = plot(α -> count(<(α), Pval)/length(Pval), 0, 0.1; label="")
 plot!(identity, 0, 0.1; ls=:dot, label="")
 plot!(xguide="α", yguide="probability of P-value < α")
 
 plot(P, Q; size=(1000, 400), layout=@layout [a b{0.4w}])
 plot!(bottommargin=4Plots.mm, leftmargin=4Plots.mm)
+
+# %%
+ASR = pearson_adjusted_standardized_residual.(X)
+PP = []
+for i in 1:3, j in 1:3
+    P = stephist(getindex.(ASR, i, j); norm=true, bin=50, label="")
+    plot!(Normal(); label="")
+    push!(PP, P)
+end
+plot(PP...; size=(1000, 600), layout=(3, 3))
 
 # %%
 c = sum(A; dims=1)
@@ -101,7 +111,8 @@ q = r / n
 P = q * p
 mult = Multinomial(n, vec(P))
 L = 10^6
-Chi2 = [pearson_chisq(reshape(rand(mult), 3, 3)) for _ in 1:L]
+X = [reshape(rand(mult), 3, 3) for _ in 1:L]
+Chi2 = pearson_chisq.(X)
 df = (length(c) - 1)*(length(r) - 1)
 
 P = stephist(Chi2; norm=true, label="Pearson's χ²-statistic")
@@ -109,13 +120,23 @@ plot!(Chisq(df); label="Chisq($df)")
 plot!(xlim=(-1, 24))
 plot!(xguide="chi-squared value", yguide="probability density")
 
-Pval = [ccdf(Chisq(df), chi2) for chi2 in Chi2]
+Pval = ccdf.(Chisq(df), Chi2)
 Q = plot(α -> count(<(α), Pval)/length(Pval), 0, 0.1; label="")
 plot!(identity, 0, 0.1; ls=:dot, label="")
 plot!(xguide="α", yguide="probability of P-value < α")
 
 plot(P, Q; size=(1000, 400), layout=@layout [a b{0.4w}])
 plot!(bottommargin=4Plots.mm, leftmargin=4Plots.mm)
+
+# %%
+ASR = pearson_adjusted_standardized_residual.(X)
+PP = []
+for i in 1:3, j in 1:3
+    P = stephist(getindex.(ASR, i, j); norm=true, bin=50, label="")
+    plot!(Normal(); label="")
+    push!(PP, P)
+end
+plot(PP...; size=(1000, 600), layout=(3, 3))
 
 # %%
 c = sum(A; dims=1)
@@ -126,7 +147,8 @@ q = r / n
 P = q * p
 mult = [Multinomial(m, vec(p)) for m in vec(r)]
 L = 10^6
-Chi2 = [pearson_chisq([rand(mult[1])'; rand(mult[2])'; rand(mult[3])']) for _ in 1:L]
+X = [[rand(mult[1])'; rand(mult[2])'; rand(mult[3])'] for _ in 1:L]
+Chi2 = pearson_chisq.(X)
 df = (length(c) - 1)*(length(r) - 1)
 
 P = stephist(Chi2; norm=true, bin=200, label="Pearson's χ²-statistic")
@@ -134,13 +156,23 @@ plot!(Chisq(df); label="Chisq($df)")
 plot!(xlim=(-1, 24))
 plot!(xguide="chi-squared value", yguide="probability density")
 
-Pval = [ccdf(Chisq(df), chi2) for chi2 in Chi2]
+Pval = ccdf.(Chisq(df), Chi2)
 Q = plot(α -> count(<(α), Pval)/length(Pval), 0, 0.1; label="")
 plot!(identity, 0, 0.1; ls=:dot, label="")
 plot!(xguide="α", yguide="probability of P-value < α")
 
 plot(P, Q; size=(1000, 400), layout=@layout [a b{0.4w}])
 plot!(bottommargin=4Plots.mm, leftmargin=4Plots.mm)
+
+# %%
+ASR = pearson_adjusted_standardized_residual.(X)
+PP = []
+for i in 1:3, j in 1:3
+    P = stephist(getindex.(ASR, i, j); norm=true, bin=50, label="")
+    plot!(Normal(); label="")
+    push!(PP, P)
+end
+plot(PP...; size=(1000, 600), layout=(3, 3))
 
 # %%
 c = sum(A; dims=1)
@@ -151,7 +183,8 @@ q = r / n
 P = q * p
 mult = [Multinomial(m, vec(q)) for m in vec(c)]
 L = 10^6
-Chi2 = [pearson_chisq([rand(mult[1])'; rand(mult[2])'; rand(mult[3])']) for _ in 1:L]
+X = [[rand(mult[1]) rand(mult[2]) rand(mult[3])] for _ in 1:L]
+Chi2 = pearson_chisq.(X)
 df = (length(c) - 1)*(length(r) - 1)
 
 P = stephist(Chi2; norm=true, bin=200, label="Pearson's χ²-statistic")
@@ -159,12 +192,22 @@ plot!(Chisq(df); label="Chisq($df)")
 plot!(xlim=(-1, 24))
 plot!(xguide="chi-squared value", yguide="probability density")
 
-Pval = [ccdf(Chisq(df), chi2) for chi2 in Chi2]
+Pval = ccdf.(Chisq(df), Chi2)
 Q = plot(α -> count(<(α), Pval)/length(Pval), 0, 0.1; label="")
 plot!(identity, 0, 0.1; ls=:dot, label="")
 plot!(xguide="α", yguide="probability of P-value < α")
 
 plot(P, Q; size=(1000, 400), layout=@layout [a b{0.4w}])
 plot!(bottommargin=4Plots.mm, leftmargin=4Plots.mm)
+
+# %%
+ASR = pearson_adjusted_standardized_residual.(X)
+PP = []
+for i in 1:3, j in 1:3
+    P = stephist(getindex.(ASR, i, j); norm=true, bin=50, label="")
+    plot!(Normal(); label="")
+    push!(PP, P)
+end
+plot(PP...; size=(1000, 600), layout=(3, 3))
 
 # %%
