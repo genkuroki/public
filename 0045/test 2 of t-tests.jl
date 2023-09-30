@@ -169,7 +169,7 @@ P = bar(distx; alpha=0.3, label="distx", ylim=(-0.05, 0.5))
 Q = bar(disty; alpha=0.3, label="disty", ylim=(-0.05, 0.5))
 plot(P, Q; size=(600, 200)) |> display
 
-plot_t_tests(; distx, disty, m=50, n=35, ytick=0:0.01:1, ylim=(-0.05, 2), bin=0:0.01:1.01)
+plot_t_tests(; distx, disty, m=20, n=14, ytick=0:0.01:1, ylim=(-0.05, 2), bin=0:0.01:1.01)
 
 # %%
 fx = [5, 10, 40, 70, 75, 0, 0]
@@ -184,7 +184,7 @@ P = bar(distx; alpha=0.3, label="distx", ylim=(-0.05, 0.5))
 Q = bar(disty; alpha=0.3, label="disty", ylim=(-0.05, 0.5))
 plot(P, Q; size=(600, 200)) |> display
 
-plot_t_tests(; distx, disty, m=20, n=14, ytick=0:0.01:1, ylim=(-0.05, 2), bin=0:0.01:1.01)
+plot_t_tests(; distx, disty, m=20, n=20, ytick=0:0.01:1, ylim=(-0.05, 2), bin=0:0.01:1.01)
 
 # %% tags=[]
 fx = [5, 10, 40, 70, 75, 0, 0]
@@ -199,7 +199,7 @@ P = bar(distx; alpha=0.3, label="distx", ylim=(-0.05, 0.5))
 Q = bar(disty; alpha=0.3, label="disty", ylim=(-0.05, 0.5))
 plot(P, Q; size=(600, 200)) |> display
 
-plot_t_tests(; distx, disty, m=20, n=14, ytick=0:0.01:1, ylim=(-0.05, 2), bin=0:0.01:1.01)
+plot_t_tests(; distx, disty, m=20, n=20, ytick=0:0.01:1, ylim=(-0.05, 2), bin=0:0.01:1.01)
 
 # %% tags=[]
 fx = [5, 10, 40, 70, 75, 0, 0]
@@ -214,22 +214,7 @@ P = bar(distx; alpha=0.3, label="distx", ylim=(-0.05, 0.5))
 Q = bar(disty; alpha=0.3, label="disty", ylim=(-0.05, 0.5))
 plot(P, Q; size=(600, 200)) |> display
 
-plot_t_tests(; distx, disty, m=50, n=35, ytick=0:0.01:1, ylim=(-0.05, 2), bin=0:0.01:1.01)
-
-# %% tags=[]
-fx = [5, 10, 40, 70, 75, 0, 0]
-px = fx / sum(fx)
-distx = Categorical(px)
-
-fy = reverse([10, 15, 30, 45, 90, 0, 0])
-py = fy / sum(fy)
-disty = Categorical(py)
-
-P = bar(distx; alpha=0.3, label="distx", ylim=(-0.05, 0.5))
-Q = bar(disty; alpha=0.3, label="disty", ylim=(-0.05, 0.5))
-plot(P, Q; size=(600, 200)) |> display
-
-plot_t_tests(; distx, disty, m=100, n=70, ytick=0:0.01:1, ylim=(-0.05, 2), bin=0:0.01:1.01)
+plot_t_tests(; distx, disty, m=40, n=40, ytick=0:0.01:1, ylim=(-0.05, 2), bin=0:0.01:1.01)
 
 # %%
 distx = Gamma(2, 1/2)
@@ -239,17 +224,27 @@ P = plot(distx; label="distx", xlim=(-0.2, 6), ylim=(-0.05, 1.1))
 Q = plot(disty; label="disty", xlim=(-0.2, 6), ylim=(-0.05, 1.1))
 plot(P, Q; size=(600, 200)) |> display
 
-plot_t_tests(; distx, disty, m=50, n=35, ytick=0:0.01:1, ylim=(-0.05, 2), bin=0:0.01:1.01)
+plot_t_tests(; distx, disty, m=20, n=20, ytick=0:0.01:1, ylim=(-0.05, 2), bin=0:0.01:1.01)
 
 # %%
-distx = Gamma(2, 1/2) + 0.585
+distx = Gamma(2, 1/2) + 0.82
 disty = Exponential()
 
 P = plot(distx, -0.2, 6; label="distx", xlim=(-0.2, 6), ylim=(-0.05, 1.1))
 Q = plot(disty, -0.2, 6; label="disty", xlim=(-0.2, 6), ylim=(-0.05, 1.1))
 plot(P, Q; size=(600, 200)) |> display
 
-plot_t_tests(; distx, disty, m=50, n=35, ytick=0:0.1:1, ylim=(-0.05, 2), bin=0:0.01:1.01)
+plot_t_tests(; distx, disty, m=20, n=20, ytick=0:0.1:1, ylim=(-0.05, 2), bin=0:0.01:1.01)
+
+# %%
+distx = Gamma(2, 1/2) + 0.57
+disty = Exponential()
+
+P = plot(distx, -0.2, 6; label="distx", xlim=(-0.2, 6), ylim=(-0.05, 1.1))
+Q = plot(disty, -0.2, 6; label="disty", xlim=(-0.2, 6), ylim=(-0.05, 1.1))
+plot(P, Q; size=(600, 200)) |> display
+
+plot_t_tests(; distx, disty, m=40, n=40, ytick=0:0.1:1, ylim=(-0.05, 2), bin=0:0.01:1.01)
 
 # %%
 distx = Gamma(2, 1/2)
@@ -261,7 +256,7 @@ P = plot(distx, -5, 5; label="distx", xlim=(-5, 5), ylim=(-0.05, 1.1))
 Q = plot(x -> pdf(disty, -x), -5, 5; label="disty", xlim=(-5, 5), ylim=(-0.05, 1.1))
 plot(P, Q; size=(600, 200)) |> display
 
-plot_t_tests(; distx, disty, m=50, n=35, ytick=0:0.01:1, ylim=(-0.05, 2), bin=0:0.01:1.01, s=-1)
+plot_t_tests(; distx, disty, m=20, n=20, ytick=0:0.01:1, ylim=(-0.05, 2), bin=0:0.01:1.01, s=-1)
 
 # %%
 distx = Gamma(2, 1/2)
@@ -273,7 +268,7 @@ P = plot(distx, -5, 5; label="distx", xlim=(-5, 5), ylim=(-0.05, 1.1))
 Q = plot(x -> pdf(disty, -x), -5, 5; label="disty", xlim=(-5, 5), ylim=(-0.05, 1.1))
 plot(P, Q; size=(600, 200)) |> display
 
-plot_t_tests(; distx, disty, m=100, n=70, ytick=0:0.01:1, ylim=(-0.05, 2), bin=0:0.01:1.01, s=-1)
+plot_t_tests(; distx, disty, m=40, n=40, ytick=0:0.01:1, ylim=(-0.05, 2), bin=0:0.01:1.01, s=-1)
 
 # %%
 distx = Gamma(2, 1/2)
@@ -285,11 +280,23 @@ P = plot(distx, -5, 5; label="distx", xlim=(-5, 5), ylim=(-0.05, 1.1))
 Q = plot(x -> pdf(disty, -x), -5, 5; label="disty", xlim=(-5, 5), ylim=(-0.05, 1.1))
 plot(P, Q; size=(600, 200)) |> display
 
-plot_t_tests(; distx, disty, m=200, n=140, ytick=0:0.01:1, ylim=(-0.05, 2), bin=0:0.01:1.01, s=-1)
+plot_t_tests(; distx, disty, m=80, n=80, ytick=0:0.01:1, ylim=(-0.05, 2), bin=0:0.01:1.01, s=-1)
+
+# %%
+distx = Gamma(2, 1/2)
+distx = distx - 1
+disty = Exponential()
+disty = disty - 1
+
+P = plot(distx, -5, 5; label="distx", xlim=(-5, 5), ylim=(-0.05, 1.1))
+Q = plot(x -> pdf(disty, -x), -5, 5; label="disty", xlim=(-5, 5), ylim=(-0.05, 1.1))
+plot(P, Q; size=(600, 200)) |> display
+
+plot_t_tests(; distx, disty, m=160, n=160, ytick=0:0.01:1, ylim=(-0.05, 2), bin=0:0.01:1.01, s=-1)
 
 # %% tags=[]
 distx = Gamma(2, 1/2)
-distx = distx - 1 + 0.5218
+distx = distx - 1 + 0.52
 disty = Exponential()
 disty = disty - 1
 
@@ -297,6 +304,6 @@ P = plot(distx, -5, 5; label="distx", xlim=(-5, 5), ylim=(-0.05, 1.1))
 Q = plot(x -> pdf(disty, -x), -5, 5; label="disty", xlim=(-5, 5), ylim=(-0.05, 1.1))
 plot(P, Q; size=(600, 200)) |> display
 
-plot_t_tests(; distx, disty, m=50, n=35, ytick=0:0.1:1, ylim=(-0.05, 2), bin=0:0.01:1.01, s=-1)
+plot_t_tests(; distx, disty, m=40, n=40, ytick=0:0.1:1, ylim=(-0.05, 2), bin=0:0.01:1.01, s=-1)
 
 # %%
