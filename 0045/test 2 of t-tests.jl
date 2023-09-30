@@ -169,7 +169,7 @@ P = bar(distx; alpha=0.3, label="distx", ylim=(-0.05, 0.5))
 Q = bar(disty; alpha=0.3, label="disty", ylim=(-0.05, 0.5))
 plot(P, Q; size=(600, 200)) |> display
 
-plot_t_tests(; distx, disty, m=50, n=35, ytick=0:0.01:1, ylim=(-0.05, 2), bin=50)
+plot_t_tests(; distx, disty, m=50, n=35, ytick=0:0.01:1, ylim=(-0.05, 2), bin=0:0.01:1.01)
 
 # %%
 fx = [5, 10, 40, 70, 75, 0, 0]
@@ -184,7 +184,7 @@ P = bar(distx; alpha=0.3, label="distx", ylim=(-0.05, 0.5))
 Q = bar(disty; alpha=0.3, label="disty", ylim=(-0.05, 0.5))
 plot(P, Q; size=(600, 200)) |> display
 
-plot_t_tests(; distx, disty, m=20, n=14, ytick=0:0.01:1, ylim=(-0.05, 2), bin=50)
+plot_t_tests(; distx, disty, m=20, n=14, ytick=0:0.01:1, ylim=(-0.05, 2), bin=0:0.01:1.01)
 
 # %% tags=[]
 fx = [5, 10, 40, 70, 75, 0, 0]
@@ -287,7 +287,7 @@ plot(P, Q; size=(600, 200)) |> display
 
 plot_t_tests(; distx, disty, m=200, n=140, ytick=0:0.01:1, ylim=(-0.05, 2), bin=0:0.01:1.01, s=-1)
 
-# %%
+# %% tags=[]
 distx = Gamma(2, 1/2)
 distx = distx - 1 + 0.5218
 disty = Exponential()
