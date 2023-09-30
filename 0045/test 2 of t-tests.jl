@@ -76,8 +76,8 @@ function plot_t_tests(;
         
         DF_Welch[i] = degree_of_freedom_Welch(m, SX^2, n, SY^2)
     end
-    @show T_Student ≈ T_Welch
-    println()
+    #@show T_Student ≈ T_Welch
+    #println()
     
     @show df_Student
     @show mean(DF_Welch) std(DF_Welch)
@@ -86,21 +86,25 @@ function plot_t_tests(;
     pval_Student = @. 2ccdf(TDist(df_Student), abs(T_Student))
     pval_Welch = @. 2ccdf(TDist(DF_Welch), abs(T_Welch))
 
-    @show ECDF(pval_Student, 0.05) ECDF(pval_Welch, 0.05)
+    @show ECDF(pval_Welch, 0.05)
+    #@show ECDF(pval_Student, 0.05)
     println()
-    @show ECDF(pval_Student, 0.01) ECDF(pval_Welch, 0.01)
-    println()
+    #@show ECDF(pval_Welch, 0.01)
+    #@show ECDF(pval_Student, 0.01)
+    #println()
     
-    P = plot(α -> ECDF(pval_Student, α), 0, 0.1; label="Student t-test")
-    plot!(α -> ECDF(pval_Welch, α), 0, 0.1; label="Welch t-test", ls=:dash)
+    P = plot()
+    plot!(α -> ECDF(pval_Welch, α), 0, 0.1; label="Welch t-test")
+    #plot!(α -> ECDF(pval_Student, α), 0, 0.1; label="Student t-test", ls=:dot)
     plot!(identity, 0, 0.1; label="", ls=:dot, c=:black)
     plot!(; xtick=0:0.01:1, ytick, xrotation=90)
     plot!(; xguide="nominal significance level α",
         yguide="probability of p-value ≤ α")
     plot!(; legend=:outertop, legendfontsize=10)
 
-    Q = stephist(pval_Student; norm=true, bin, label="Student t-test")
-    stephist!(pval_Welch; norm=true, bin, ls=:dash, label="Welch t-test")
+    Q = plot()
+    stephist!(pval_Welch; norm=true, bin, label="Welch t-test")
+    #stephist!(pval_Student; norm=true, bin, label="Student t-test", ls=:dot)
     plot!(; xguide="P-value", yguide="probability density")
     plot!(; xtick=0:0.05:1, ytick=0:0.1:5, xrotation=90)
     plot!(; legend=:outertop, legendfontsize=10, ylim)
@@ -141,93 +145,143 @@ function plot_df_and_tstatratio(;
 end
 
 # %%
-fx = [2, 3, 4, 8, 13]
+ff = [0, 0, 100, 0, 100, 0, 0]
+ff = [50, 0, 0, 0, 150, 0, 0]
+ff = [5, 5, 30, 105, 55, 0, 0]
+ff = [5, 10, 40, 70, 75, 0, 0]
+ff = [10, 15, 30, 45, 90, 0, 0]
+#ff = reverse(ff)
+pp = ff / sum(ff)
+dist = Categorical(pp)
+@show mean(dist) std(dist)
+bar(dist; alpha=0.3, label="", size=(300, 200))
+
+# %%
+fx = [5, 10, 40, 70, 75, 0, 0]
 px = fx / sum(fx)
 distx = Categorical(px)
 
-fy = [5, 1, 2, 6, 16]
+fy = [10, 15, 30, 45, 90, 0, 0]
 py = fy / sum(fy)
 disty = Categorical(py)
 
-P = bar(distx; alpha=0.3, label="distx", ylim=(-0.05, 0.7))
-Q = bar(disty; alpha=0.3, label="disty", ylim=(-0.05, 0.7))
+P = bar(distx; alpha=0.3, label="distx", ylim=(-0.05, 0.5))
+Q = bar(disty; alpha=0.3, label="disty", ylim=(-0.05, 0.5))
 plot(P, Q; size=(600, 200)) |> display
 
-plot_t_tests(; distx, disty, m=100, n=70, bin=50)
+plot_t_tests(; distx, disty, m=50, n=35, ytick=0:0.01:1, ylim=(-0.05, 2), bin=50)
 
 # %%
-fx = [2, 3, 4, 8, 13]
+fx = [5, 10, 40, 70, 75, 0, 0]
 px = fx / sum(fx)
 distx = Categorical(px)
 
-fy = [5, 1, 2, 6, 16]
+fy = [10, 15, 30, 45, 90, 0, 0]
 py = fy / sum(fy)
 disty = Categorical(py)
 
-P = bar(distx; alpha=0.3, label="distx", ylim=(-0.05, 0.7))
-Q = bar(disty; alpha=0.3, label="disty", ylim=(-0.05, 0.7))
+P = bar(distx; alpha=0.3, label="distx", ylim=(-0.05, 0.5))
+Q = bar(disty; alpha=0.3, label="disty", ylim=(-0.05, 0.5))
 plot(P, Q; size=(600, 200)) |> display
 
-plot_t_tests(; distx, disty, m=50, n=35, bin=50)
+plot_t_tests(; distx, disty, m=20, n=14, ytick=0:0.01:1, ylim=(-0.05, 2), bin=50)
 
-# %%
-fx = [2, 3, 4, 8, 13]
+# %% tags=[]
+fx = [5, 10, 40, 70, 75, 0, 0]
 px = fx / sum(fx)
 distx = Categorical(px)
 
-fy = [1, 1, 2, 8, 19]
+fy = reverse([10, 15, 30, 45, 90, 0, 0])
 py = fy / sum(fy)
 disty = Categorical(py)
 
-P = bar(distx; alpha=0.3, label="distx", ylim=(-0.05, 0.7))
-Q = bar(disty; alpha=0.3, label="disty", ylim=(-0.05, 0.7))
+P = bar(distx; alpha=0.3, label="distx", ylim=(-0.05, 0.5))
+Q = bar(disty; alpha=0.3, label="disty", ylim=(-0.05, 0.5))
 plot(P, Q; size=(600, 200)) |> display
 
-plot_t_tests(; distx, disty, m=100, n=70, ytick=0:0.1:1, ylim=(-0.05, 2), bin=50)
+plot_t_tests(; distx, disty, m=50, n=35, ytick=0:0.01:1, ylim=(-0.05, 2), bin=0:0.01:1.01)
 
-# %%
-fx = [2, 3, 4, 8, 13]
+# %% tags=[]
+fx = [5, 10, 40, 70, 75, 0, 0]
 px = fx / sum(fx)
 distx = Categorical(px)
 
-fy = [1, 1, 2, 8, 19]
+fy = reverse([10, 15, 30, 45, 90, 0, 0])
 py = fy / sum(fy)
 disty = Categorical(py)
 
-P = bar(distx; alpha=0.3, label="distx", ylim=(-0.05, 0.7))
-Q = bar(disty; alpha=0.3, label="disty", ylim=(-0.05, 0.7))
+P = bar(distx; alpha=0.3, label="distx", ylim=(-0.05, 0.5))
+Q = bar(disty; alpha=0.3, label="disty", ylim=(-0.05, 0.5))
 plot(P, Q; size=(600, 200)) |> display
 
-plot_t_tests(; distx, disty, m=50, n=35, ytick=0:0.1:1, ylim=(-0.05, 2), bin=50)
+plot_t_tests(; distx, disty, m=100, n=70, ytick=0:0.01:1, ylim=(-0.05, 2), bin=0:0.01:1.01)
 
 # %%
-distx = Gamma(1.5, 1/1.5)
+distx = Gamma(2, 1/2)
 disty = Exponential()
 
 P = plot(distx; label="distx", xlim=(-0.2, 6), ylim=(-0.05, 1.1))
 Q = plot(disty; label="disty", xlim=(-0.2, 6), ylim=(-0.05, 1.1))
 plot(P, Q; size=(600, 200)) |> display
 
-plot_t_tests(; distx, disty, m=50, n=35, ytick=0:0.1:1, ylim=(-0.05, 2), bin=50)
+plot_t_tests(; distx, disty, m=50, n=35, ytick=0:0.01:1, ylim=(-0.05, 2), bin=0:0.01:1.01)
 
 # %%
-distx = Exponential(1.55)
+distx = Gamma(2, 1/2) + 0.585
 disty = Exponential()
 
-P = plot(distx; label="distx", xlim=(-0.2, 6), ylim=(-0.05, 1.1))
-Q = plot(disty; label="disty", xlim=(-0.2, 6), ylim=(-0.05, 1.1))
+P = plot(distx, -0.2, 6; label="distx", xlim=(-0.2, 6), ylim=(-0.05, 1.1))
+Q = plot(disty, -0.2, 6; label="disty", xlim=(-0.2, 6), ylim=(-0.05, 1.1))
 plot(P, Q; size=(600, 200)) |> display
 
-plot_t_tests(; distx, disty, m=50, n=35, ytick=0:0.1:1, ylim=(-0.05, 2), bin=50)
+plot_t_tests(; distx, disty, m=50, n=35, ytick=0:0.1:1, ylim=(-0.05, 2), bin=0:0.01:1.01)
 
 # %%
-distx = Exponential(1.55)
+distx = Gamma(2, 1/2)
+distx = distx - 1
 disty = Exponential()
+disty = disty - 1
 
-P = plot(distx; label="distx", xlim=(-0.2, 6), ylim=(-0.05, 1.1))
-Q = plot(disty; label="disty", xlim=(-0.2, 6), ylim=(-0.05, 1.1))
+P = plot(distx, -5, 5; label="distx", xlim=(-5, 5), ylim=(-0.05, 1.1))
+Q = plot(x -> pdf(disty, -x), -5, 5; label="disty", xlim=(-5, 5), ylim=(-0.05, 1.1))
 plot(P, Q; size=(600, 200)) |> display
 
-plot_t_tests(; distx, disty, m=100, n=70, ytick=0:0.1:1, ylim=(-0.05, 2), bin=50)
+plot_t_tests(; distx, disty, m=50, n=35, ytick=0:0.01:1, ylim=(-0.05, 2), bin=0:0.01:1.01, s=-1)
+
+# %%
+distx = Gamma(2, 1/2)
+distx = distx - 1
+disty = Exponential()
+disty = disty - 1
+
+P = plot(distx, -5, 5; label="distx", xlim=(-5, 5), ylim=(-0.05, 1.1))
+Q = plot(x -> pdf(disty, -x), -5, 5; label="disty", xlim=(-5, 5), ylim=(-0.05, 1.1))
+plot(P, Q; size=(600, 200)) |> display
+
+plot_t_tests(; distx, disty, m=100, n=70, ytick=0:0.01:1, ylim=(-0.05, 2), bin=0:0.01:1.01, s=-1)
+
+# %%
+distx = Gamma(2, 1/2)
+distx = distx - 1
+disty = Exponential()
+disty = disty - 1
+
+P = plot(distx, -5, 5; label="distx", xlim=(-5, 5), ylim=(-0.05, 1.1))
+Q = plot(x -> pdf(disty, -x), -5, 5; label="disty", xlim=(-5, 5), ylim=(-0.05, 1.1))
+plot(P, Q; size=(600, 200)) |> display
+
+plot_t_tests(; distx, disty, m=200, n=140, ytick=0:0.01:1, ylim=(-0.05, 2), bin=0:0.01:1.01, s=-1)
+
+# %%
+distx = Gamma(2, 1/2)
+distx = distx - 1 + 0.5218
+disty = Exponential()
+disty = disty - 1
+
+P = plot(distx, -5, 5; label="distx", xlim=(-5, 5), ylim=(-0.05, 1.1))
+Q = plot(x -> pdf(disty, -x), -5, 5; label="disty", xlim=(-5, 5), ylim=(-0.05, 1.1))
+plot(P, Q; size=(600, 200)) |> display
+
+plot_t_tests(; distx, disty, m=50, n=35, ytick=0:0.1:1, ylim=(-0.05, 2), bin=0:0.01:1.01, s=-1)
 
 # %%
