@@ -96,7 +96,7 @@ function plot_t_tests(;
     P = plot()
     plot!(α -> ECDF(pval_Welch, α), 0, 0.1; label="Welch t-test")
     plot!(α -> ECDF(pval_Student, α), 0, 0.1; label="Student t-test", ls=:dot)
-    plot!(identity, 0, 0.1; label="", ls=:dot, c=:black)
+    plot!(identity, 0, 0.1; label="", ls=:dot, c=:black, alpha=3)
     plot!(; xtick=0:0.01:1, ytick, xrotation=90)
     plot!(; xguide="nominal significance level α",
         yguide="probability of p-value ≤ α")
@@ -105,7 +105,7 @@ function plot_t_tests(;
     Q = plot()
     plot!(α -> ECDF(pval_Welch, α), 0, 1; label="Welch t-test")
     plot!(α -> ECDF(pval_Student, α), 0, 1; label="Student t-test", ls=:dot)
-    plot!(identity, 0, 1; label="", ls=:dot, c=:black)
+    plot!(identity, 0, 1; label="", ls=:dot, c=:black, alpha=0.3)
     plot!(; xtick=0:0.05:1, ytick=0:0.05:1, xrotation=90)
     plot!(; xguide="nominal significance level α",
         yguide="probability of p-value ≤ α")
