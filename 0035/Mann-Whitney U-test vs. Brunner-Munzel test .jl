@@ -97,7 +97,7 @@ H^y_j = \sum_{i=1}^m H(x_i, y_j),
 \begin{aligned}
 &
 \mathrm{phat} = 
-\hat{p} = \frac{\bar{H}^x - \bar{H}^y + n}{m + n},
+\hat{p} = \frac{\bar{H}^y - \bar{H}^x + n}{m + n},
 \\ &
 \mathrm{sx2} =
 \hat{\sigma}_x^2 = \frac{1}{n^2}\frac{1}{m-1}\sum_{i=1}^m (H^x_i - \bar{H}^x)^2,
