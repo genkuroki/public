@@ -255,6 +255,15 @@ end
 # %%
 using Distributions
 
+safediv(x, y) = x == 0 ? x : isinf(y) ? zero(y) : x/y
+
+"""
+    h_brunner_munzel(x, y)
+
+この函数は, x < y のとき 1.0 を, x = y のとき 0.5 を, それら以外のとき 0.0 返す.
+"""
+h_brunner_munzel(x, y) = (x < y) + (x == y)/2
+
 @doc raw"""
     brunner_munzel_test(X, Y; p = 1/2)
 
@@ -352,6 +361,9 @@ B = [phat, sehat, tvalue, df, pvalue, p]
 [A B]
 
 # %%
+@doc h_brunner_munzel
+
+# %%
 @doc brunner_munzel_test
 
 # %%
@@ -359,6 +371,10 @@ B = [phat, sehat, tvalue, df, pvalue, p]
 
 # %%
 using Distributions
+
+safediv(x, y) = x == 0 ? x : isinf(y) ? zero(y) : x/y
+
+h_brunner_munzel(x, y) = (x < y) + (x == y)/2
 
 function brunner_munzel_test(X, Y; p=1/2)
     m, n = length(X), length(Y)
@@ -368,9 +384,9 @@ function brunner_munzel_test(X, Y; p=1/2)
     sx2 = 1/n^2 * 1/(m-1) * sum((sum(h_brunner_munzel(y, x) for y in Y) - Hbarx)^2 for x in X)
     sy2 = 1/m^2 * 1/(n-1) * sum((sum(h_brunner_munzel(x, y) for x in X) - Hbary)^2 for y in Y)
     sehat = √(sx2/m + sy2/n)
-    tvalue = (phat - p)/sehat
-    df = (sx2/m + sy2/n)^2 / ((sx2/m)^2/(m-1) + (sy2/n)^2/(n-1))
-    pvalue = 2ccdf(TDist(df), abs(tvalue))
+    tvalue = safediv(phat - p, sehat)
+    df = safediv((sx2/m + sy2/n)^2, (sx2/m)^2/(m-1) + (sy2/n)^2/(n-1))
+    pvalue = df == 0 ? 1.0 : 2ccdf(TDist(df), abs(tvalue))
     (; phat, sehat, tvalue, df, pvalue, p)
 end
 
@@ -382,5 +398,22 @@ Y = rand(Normal(0, 1), 20)
 brunner_munzel_test(X, Y)
 
 # %%
+using StatsPlots
+default(fmt=:png)
+
+f(X, Y, a, p) = 1 - pvalue_brunner_munzel_test(X .+ a, Y; p)
+
+X = rand(Normal(0, 1), 30)
+Y = rand(Normal(0, 1), 20)
+
+ps = range(0, 1, 401)
+as = range(minimum(Y) - maximum(X) + 0.1, maximum(Y) - minimum(X) - 0.1, 401)
+levels = [0, 0.25, 0.5, 0.75, 0.95, 0.99, 1]
+contour(as, ps, (a, p) -> f(X, Y, a, p); levels, color=:darkrainbow)
+vline!([0.0]; label="", ls=:dot, c=:black, alpha=0.5)
+hline!([0.5]; label="", ls=:dot, c=:black, alpha=0.5)
+plot!(xtick=-5:0.5:5, ytick=0:0.1:1, xrotation=90)
+plot!(xguide="a", yguide="p")
+title!("1 - (P-value function)")
 
 # %%
