@@ -22,110 +22,84 @@ default(fmt=:png, titlefontsize=12)
 
 ECDF(A, x) = count(≤(x), A)/length(A)
 
-# %%
-@show distx = Normal(0, 1)
-@show disty = Normal(0, 1.5)
-@show m = 25
-@show n = 15
-@show threshold = 0.05
+function plot_mixedtest(; distx=Normal(0, 1), disty=Normal(0, 1.5), m=25, n=15, threshold=0.05, α=0.05, L=10^6)
+    @show distx
+    @show disty
+    @show m
+    @show n
+    @show threshold
+    @show α
+    println()
 
-L = 10^6
-pval_Ftest = zeros(L)
-pval_Student = zeros(L)
-pval_Welch = zeros(L)
-pval_multiple = zeros(L)
+    pval_Ftest = zeros(L)
+    pval_Student = zeros(L)
+    pval_Welch = zeros(L)
+    pval_mixedtest = zeros(L)
 
-Threads.@threads for i in 1:L
-    X = rand(distx, m)
-    Y = rand(disty, n)
-    pval_Ftest[i] = pvalue(VarianceFTest(X, Y))
-    pval_Student[i] = pvalue(EqualVarianceTTest(X, Y))
-    pval_Welch[i] = pvalue(UnequalVarianceTTest(X, Y))
-    pval_multiple[i] = pval_Ftest[i] < threshold ? pval_Welch[i] : pval_Student[i]
+    Threads.@threads for i in 1:L
+        X = rand(distx, m)
+        Y = rand(disty, n)
+        pval_Ftest[i] = pvalue(VarianceFTest(X, Y))
+        pval_Student[i] = pvalue(EqualVarianceTTest(X, Y))
+        pval_Welch[i] = pvalue(UnequalVarianceTTest(X, Y))
+        pval_mixedtest[i] = pval_Ftest[i] ≤ threshold ? pval_Welch[i] : pval_Student[i]
+    end
+
+    @show ECDF(pval_Ftest, threshold)
+    @show ECDF(pval_mixedtest, α)
+    @show ECDF(pval_Student, α)
+    @show ECDF(pval_Welch, α)
+
+    _tick = [0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1.0]
+    tick = (_tick, string.(_tick))
+
+    P = plot(α -> ECDF(pval_Ftest, α), 0.005, 1; label="F-test", c=:red)
+    plot!(identity, 0.005, 1; label="", ls=:dot, c=:black, alpha=0.5)
+    plot!(xscale=:log10, yscale=:log10)
+    plot!(xtick=tick, ytick=tick)
+    plot!(xlim=(0.004, 1), ylim=(0.004, 1))
+    plot!(xguide="α", yguide="probability of P-value ≤ α")
+    title!("F-test")
+    plot!(size=(400, 400))
+
+    Q = plot()
+    plot!(α -> ECDF(pval_mixedtest, α), 0.005, 1; label="mixed t-test")
+    plot!(α -> ECDF(pval_Student, α), 0.005, 1; label="Student's t-test", ls=:dash)
+    plot!(α -> ECDF(pval_Welch, α), 0.005, 1; label="Welch's t-test", ls=:dashdot)
+    plot!(identity, 0.005, 1; label="", ls=:dot, c=:black, alpha=0.5)
+    plot!(xscale=:log10, yscale=:log10)
+    plot!(xtick=tick, ytick=tick)
+    plot!(xlim=(0.004, 1), ylim=(0.004, 1))
+    plot!(xguide="α", yguide="probability of P-value ≤ α")
+    title!("t-tests")
+    plot!(size=(400, 400))
+
+    plot(P, Q; size=(800, 400))
+    plot!(leftmargin=4Plots.mm)
 end
 
-@show ECDF(pval_Ftest, threshold)
-@show ECDF(pval_multiple, 0.05)
-@show ECDF(pval_Student, 0.05)
-@show ECDF(pval_Welch, 0.05)
-
-_tick = [0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1.0]
-tick = (_tick, string.(_tick))
-
-P = plot(α -> ECDF(pval_Ftest, α), 0.005, 1; label="")
-plot!(xscale=:log10, yscale=:log10)
-plot!(xtick=tick, ytick=tick)
-plot!(xlim=(0.004, 1), ylim=(0.004, 1))
-plot!(xguide="α", yguide="probability of P-value ≤ α")
-title!("F-test")
-plot!(size=(400, 400))
-
-Q = plot()
-plot!(α -> ECDF(pval_multiple, α), 0.005, 1; label="multiple")
-plot!(α -> ECDF(pval_Student, α), 0.005, 1; label="Student", ls=:dash)
-plot!(α -> ECDF(pval_Welch, α), 0.005, 1; label="Welch", ls=:dashdot)
-plot!(identity, 0.005, 1; label="", ls=:dot, c=:black, alpha=0.5)
-plot!(xscale=:log10, yscale=:log10)
-plot!(xtick=tick, ytick=tick)
-plot!(xlim=(0.004, 1), ylim=(0.004, 1))
-plot!(xguide="α", yguide="probability of P-value ≤ α")
-title!("t-tests")
-plot!(size=(400, 400))
-
-plot(P, Q; size=(800, 400))
-plot!(leftmargin=4Plots.mm)
+# %%
+plot_mixedtest(; distx=Normal(0, 1), disty=Normal(0, 1.5), m=25, n=15, threshold=0.05, α=0.05, L=10^7)
 
 # %%
-@show distx = Normal(0, 1)
-@show disty = Normal(0, 1.5)
-@show m = 25
-@show n = 15
-@show threshold = 0.4
+plot_mixedtest(; distx=Normal(0, 1), disty=Normal(0, 1.5), m=25, n=15, threshold=0.4, α=0.05, L=10^7)
 
-L = 10^6
-pval_Ftest = zeros(L)
-pval_Student = zeros(L)
-pval_Welch = zeros(L)
-pval_multiple = zeros(L)
+# %%
+plot_mixedtest(; distx=Normal(0, 1), disty=Normal(1, 1), m=25, n=15, threshold=0.05, α=0.05, L=10^7)
 
-Threads.@threads for i in 1:L
-    X = rand(distx, m)
-    Y = rand(disty, n)
-    pval_Ftest[i] = pvalue(VarianceFTest(X, Y))
-    pval_Student[i] = pvalue(EqualVarianceTTest(X, Y))
-    pval_Welch[i] = pvalue(UnequalVarianceTTest(X, Y))
-    pval_multiple[i] = pval_Ftest[i] < threshold ? pval_Welch[i] : pval_Student[i]
-end
+# %%
+plot_mixedtest(; distx=Normal(0, 1), disty=Normal(1, 1), m=10, n=10, threshold=0.05, α=0.05, L=10^7)
 
-@show ECDF(pval_Ftest, threshold)
-@show ECDF(pval_multiple, 0.05)
-@show ECDF(pval_Student, 0.05)
-@show ECDF(pval_Welch, 0.05)
+# %%
+plot_mixedtest(; distx=Normal(0, 10), disty=Normal(10, 10), m=10, n=10, threshold=0.05, α=0.05, L=10^7)
 
-_tick = [0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1.0]
-tick = (_tick, string.(_tick))
+# %%
+plot_mixedtest(; distx=Normal(0, 1), disty=Normal(1, 1), m=20, n=20, threshold=0.05, α=0.05, L=10^7)
 
-P = plot(α -> ECDF(pval_Ftest, α), 0.005, 1; label="")
-plot!(xscale=:log10, yscale=:log10)
-plot!(xtick=tick, ytick=tick)
-plot!(xlim=(0.004, 1), ylim=(0.004, 1))
-plot!(xguide="α", yguide="probability of P-value ≤ α")
-title!("F-test")
-plot!(size=(400, 400))
+# %%
+plot_mixedtest(; distx=Normal(0, 1), disty=Normal(0, 1), m=10, n=10, threshold=0.05, α=0.05, L=10^7)
 
-Q = plot()
-plot!(α -> ECDF(pval_multiple, α), 0.005, 1; label="multiple")
-plot!(α -> ECDF(pval_Student, α), 0.005, 1; label="Student", ls=:dash)
-plot!(α -> ECDF(pval_Welch, α), 0.005, 1; label="Welch", ls=:dashdot)
-plot!(identity, 0.005, 1; label="", ls=:dot, c=:black, alpha=0.5)
-plot!(xscale=:log10, yscale=:log10)
-plot!(xtick=tick, ytick=tick)
-plot!(xlim=(0.004, 1), ylim=(0.004, 1))
-plot!(xguide="α", yguide="probability of P-value ≤ α")
-title!("t-tests")
-plot!(size=(400, 400))
-
-plot(P, Q; size=(800, 400))
-plot!(leftmargin=4Plots.mm)
+# %%
+plot_mixedtest(; distx=Normal(0, 1), disty=Normal(0, 2), m=10, n=10, threshold=0.05, α=0.05, L=10^7)
 
 # %%
