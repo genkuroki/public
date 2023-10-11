@@ -55,12 +55,15 @@ end
 
 function pvalue_bayes_hdi(k, n, p; a=1, b=1)
     posterior = Beta(k+a, n-k+b)
-    if k+a ≤ 1
-        return ccdf(posterior, p)
+    if k+a == 1 && n-k+b == 1
+        1.0
+    elseif k+a ≤ 1
+        ccdf(posterior, p)
     elseif n-k+b ≤ 1
-        return cdf(posterior, p)
+        cdf(posterior, p)
+    else
+        pvalue_hdi(posterior, p)
     end
-    pvalue_hdi(posterior, p)
 end
 
 function hdi(dist::ContinuousUnivariateDistribution, α = 0.05; alg = Brent())
@@ -81,35 +84,60 @@ function plot_pvalue_functions_and_posterior(k, n; a=1, b=1)
     P = plot()
     plot!(ps, p -> pvalue_wilson(k, n, p); label="Wilson")
     plot!(ps, p -> pvalue_bayes_hdi(k, n, p; a, b); label="Bayesian", ls=:dash)
-    plot!(xtick=0:0.05:1, ytick=0:0.1:1)
-    title!("P-value functions for n=$n, k=$k")
+    plot!(xtick=0:0.05:1, ytick=0:0.1:1, ylim=(-0.03, 1.03))
+    title!("P-value functions for n=$n, k=$k, prior=Beta($a,$b)")
     
     posterior = Beta(k+a, n-k+b)
     A = pdf(posterior, k+a ≤ 1 ? 0.0 : n-k+b ≤ 1 ? 1.0 : mode(posterior))
     Q = plot()
     plot!(ps, p -> pdf(posterior, p)/A; label="", c=2)
-    plot!(xtick=0:0.05:1, ytick=0:0.1:1)
-    title!("posterior pdf normaluzed by max=1 for n=$n, k=$k")
+    plot!(xtick=0:0.05:1, ytick=0:0.1:1, ylim=(-0.03, 1.03))
+    title!("posterior pdf normalized by max=1 for n=$n, k=$k, prior=Beta($a,$b)")
 
     plot(P, Q; size=(600, 400), layout=(2, 1))
     plot!(titlefontsize=10, tickfontsize=6)
 end
 
 # %%
-plot_pvalue_functions_and_posterior(3, 10)
-
-# %%
-plot_pvalue_functions_and_posterior(6, 20)
-
-# %%
-N = 2000
-_ns = round.(Int, exp.(range(log(5), log(N), 400)))
-ns = [fill(_ns[1], 20); _ns; fill(_ns[end], 20)]
-
 p0 = 0.3
+a, b = 1, 1
+N = 2560
 K = cumsum(rand(Bernoulli(p0), N))
+
+plot_pvalue_functions_and_posterior(0, 0; a, b) |> display
+for n in (10, 20, 40, 80, 160, 320, 640, 1280, 2560)
+    plot_pvalue_functions_and_posterior(K[n], n; a, b) |> display
+end
+
+_ns = round.(Int, exp.(range(log(1), log(N), 400)))
+ns = [fill(0, 20); _ns; fill(_ns[end], 20)]
 @gif for n in ns
-    plot_pvalue_functions_and_posterior(K[n], n)
+    if n == 0
+        plot_pvalue_functions_and_posterior(0, 0; a, b)
+    else
+        plot_pvalue_functions_and_posterior(K[n], n; a, b)
+    end
+end
+
+# %%
+p0 = 0.3
+a, b = 7+1, 3+1
+N = 2560
+K = cumsum(rand(Bernoulli(p0), N))
+
+plot_pvalue_functions_and_posterior(0, 0; a, b) |> display
+for n in (10, 20, 40, 80, 160, 320, 640, 1280, 2560)
+    plot_pvalue_functions_and_posterior(K[n], n; a, b) |> display
+end
+
+_ns = round.(Int, exp.(range(log(1), log(N), 400)))
+ns = [fill(0, 20); _ns; fill(_ns[end], 20)]
+@gif for n in ns
+    if n == 0
+        plot_pvalue_functions_and_posterior(0, 0; a, b)
+    else
+        plot_pvalue_functions_and_posterior(K[n], n; a, b)
+    end
 end
 
 # %%

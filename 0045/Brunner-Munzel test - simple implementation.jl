@@ -417,3 +417,121 @@ plot!(xguide="a", yguide="p")
 title!("1 - (P-value function)")
 
 # %%
+using QuadGK
+
+function winningrate(
+        distx::ContinuousUnivariateDistribution,
+        disty::ContinuousUnivariateDistribution
+    )
+    quadgk(y -> cdf(distx, y)*pdf(disty, y), extrema(disty)...)[1]
+end
+
+winningrate(Exponential() - 1, 1.1*(Exponential() - 1))
+
+# %%
+using Roots
+
+function tieshift(
+        distx::ContinuousUnivariateDistribution,
+        disty::ContinuousUnivariateDistribution;
+        p = 0.5
+    )
+    find_zero(0.0) do a
+        winningrate(distx + a, disty) - p
+    end
+end
+
+@show a = tieshift(Exponential() - 1, 1.1*(Exponential() - 1))
+winningrate(Exponential() - 1 + a, 1.1*(Exponential() - 1))
+
+# %%
+using HypothesisTests
+ECDF(A, x) = count(≤(x), A)/length(A)
+
+@show distx = Exponential(1)
+@show disty = 3distx
+@show ts = tieshift(distx, disty)
+@show distx = distx + ts
+@show winningrate(distx, disty)
+@show mean(distx) mean(disty)
+@show median(distx) median(disty)
+
+a, b = -1, 10
+plot(distx, a, b; label="distx")
+plot!(disty, a, b; label="disty", ls=:dash)
+plot!(xtick=-10:10, size=(400, 250))
+plot!() |> display
+
+@show m = 100
+@show n = 100
+println()
+
+L = 10^6
+pval_bm = zeros(L)
+pval_mw = zeros(L)
+
+Threads.@threads for i in 1:L
+    X = rand(distx, m)
+    Y = rand(disty, n)
+    pval_bm[i] = pvalue_brunner_munzel(X, Y)
+    pval_mw[i] = HypothesisTests.pvalue(MannWhitneyUTest(X, Y))
+end
+
+@show α = 0.05
+@show ECDF(pval_bm, α)
+@show ECDF(pval_mw, α)
+
+_tick = [0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1]
+xtick = ytick = (_tick, string.(_tick))
+
+αs = exp.(range(log(0.002), log(1), 1000))
+plot(αs, α -> ECDF(pval_bm, α); label="Brunner-Munzel test")
+plot!(αs, α -> ECDF(pval_mw, α); label="Mann-Whitney U-test", ls=:dash)
+plot!(αs, identity; label="", ls=:dot)
+plot!(; xscale=:log10, yscale=:log10, xtick, ytick)
+plot!(size=(400, 400))
+
+# %%
+using HypothesisTests
+ECDF(A, x) = count(≤(x), A)/length(A)
+
+@show distx = Normal(0, 1)
+@show disty = Normal(0, 3)
+@show mean(distx) mean(disty)
+
+a, b = -10, 10
+plot(distx, a, b; label="distx")
+plot!(disty, a, b; label="disty", ls=:dash)
+plot!(size=(400, 250))
+plot!() |> display
+
+@show m = 50
+@show n = 50
+println()
+
+L = 10^6
+pval_bm = zeros(L)
+pval_mw = zeros(L)
+
+Threads.@threads for i in 1:L
+    X = rand(distx, m)
+    Y = rand(disty, n)
+    pval_bm[i] = pvalue_brunner_munzel(X, Y)
+    pval_mw[i] = HypothesisTests.pvalue(MannWhitneyUTest(X, Y))
+end
+
+@show α = 0.05
+@show ECDF(pval_bm, α)
+@show ECDF(pval_mw, α)
+
+_tick = [0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1]
+xtick = ytick = (_tick, string.(_tick))
+
+αs = exp.(range(log(0.002), log(1), 1000))
+plot(αs, α -> ECDF(pval_bm, α); label="Brunner-Munzel test")
+plot!(αs, α -> ECDF(pval_mw, α); label="Mann-Whitney U-test", ls=:dash)
+plot!(αs, identity; label="", ls=:dot)
+plot!(; xscale=:log10, yscale=:log10, xtick, ytick)
+plot!(size=(400, 400))
+
+# %%

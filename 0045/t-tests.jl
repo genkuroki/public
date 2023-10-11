@@ -27,6 +27,7 @@ function plot_mixedtest(; distx=Normal(0, 1), disty=Normal(0, 1.5), m=25, n=15, 
     @show disty
     @show m
     @show n
+    println()
     @show threshold
     @show α
     println()
@@ -58,7 +59,7 @@ function plot_mixedtest(; distx=Normal(0, 1), disty=Normal(0, 1.5), m=25, n=15, 
     plot!(xscale=:log10, yscale=:log10)
     plot!(xtick=tick, ytick=tick)
     plot!(xlim=(0.004, 1), ylim=(0.004, 1))
-    plot!(xguide="α", yguide="probability of P-value ≤ α")
+    plot!(xguide="threshold", yguide="probability of P-value ≤ threshold")
     title!("F-test")
     plot!(size=(400, 400))
 
