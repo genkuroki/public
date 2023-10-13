@@ -49,8 +49,6 @@ function plot_sim(x, β, dist, d; L=10^6)
     y0 = f.(x)
     A = x .^ (0:d)'
     
-    β̂ = sim(x, β, dist, d; L)
-    
     PP = []
     
     @show dist mean(dist) std(dist)
@@ -60,10 +58,15 @@ function plot_sim(x, β, dist, d; L=10^6)
     
     u = rand(dist, n)
     y = y0 + u
+    b = A \ y
+    f_lse(x) = evalpoly(x, b)
     P = scatter(x, y; label="example of data", msc=:auto, ms=3)
-    plot!(f, extrema(x)...; label="f(x)", ls=:dash)
+    plot!(f, extrema(x)...; label="true")
+    plot!(f_lse, extrema(x)...; label="LSE", ls=:dash)
     push!(PP, P)
     
+    β̂ = sim(x, β, dist, d; L)
+
     @show β
     @show meanβ̂ = rd.(vec(mean(β̂; dims=2)))
     @show rd.(std(dist) * .√diag(inv(A'A)))
@@ -126,8 +129,6 @@ function plot_sim_pval(x, β, dist, d; β₀ = β, α = 0.05, L=10^6)
     y0 = f.(x)
     A = x .^ (0:d)'
     
-    β̂, SEhat, T, pval = sim_pval(x, β, dist, d; β₀, L)
-    
     PP = []
     
     @show dist mean(dist) std(dist)
@@ -137,10 +138,15 @@ function plot_sim_pval(x, β, dist, d; β₀ = β, α = 0.05, L=10^6)
     
     u = rand(dist, n)
     y = y0 + u
+    b = A \ y
+    f_lse(x) = evalpoly(x, b)
     P = scatter(x, y; label="example of data", msc=:auto, ms=3)
-    plot!(f, extrema(x)...; label="f(x)", ls=:dash)
+    plot!(f, extrema(x)...; label="true")
+    plot!(f_lse, extrema(x)...; label="LSE", ls=:dash)
     push!(PP, P)
-    
+     
+    β̂, SEhat, T, pval = sim_pval(x, β, dist, d; β₀, L)
+
     @show β
     @show meanβ̂ = rd.(vec(mean(β̂; dims=2)))
     @show rd.(std(dist) * .√diag(inv(A'A)))
@@ -158,6 +164,8 @@ function plot_sim_pval(x, β, dist, d; β₀ = β, α = 0.05, L=10^6)
         @show ECDF(pval[i, :], α)
         P = plot(αs, α -> ECDF(pval[i, :], α); label="betahat[$i]")
         plot!(αs, identity; label="", ls=:dash)
+        plot!(αs, x -> 1.2x; label="", ls=:dot, c=:black, alpha=0.4)
+        plot!(αs, x -> 0.8x; label="", ls=:dot, c=:black, alpha=0.4)
         plot!(; xscale=:log10, yscale=:log10, xtick, ytick, xrotation=90)
         plot!(xguide="α", yguide="P(P-value ≤ α)")
         push!(PP, P)
@@ -174,6 +182,13 @@ x = range(-2, 2, 10)
 β = [0, 1, 0, -0.2]
 dist = Normal(0, 0.5)
 d = 3
+plot_sim(x, β, dist, d)
+
+# %%
+x = range(-2, 2, 10)
+β = [0, 1, 0, -0.2]
+dist = Normal(0, 0.5)
+d = 5
 plot_sim(x, β, dist, d)
 
 # %%
