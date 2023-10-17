@@ -16,6 +16,7 @@
 
 # %%
 using Distributions
+InverseChisq(ν) = InverseGamma(ν/2, 1/2)
 using LinearAlgebra
 using Random
 using StatsPlots
@@ -37,7 +38,7 @@ A = x .^ (0:1)'
 
 P = scatter(x, y; label="", msc=:auto, alpha=0.7)
 for _ in 1:200
-    σ² = rand(InverseGamma(n/2, (n-2)*ŝ²/2))
+    σ² = rand(ŝ²*(n-2)*InverseChisq(n-2))
     β = rand(MvNormal(β̂, σ²*invAA))
     plot!(x -> β[1]+β[2]*x, extrema(x)...; label="", lw=0.5, alpha=0.3, c=2)
 end
@@ -45,7 +46,7 @@ title!("posterior of regression lines")
 
 Q = scatter(x, y; label="", msc=:auto, alpha=0.7)
 for _ in 1:2000
-    σ² = rand(InverseGamma(n/2, (n-2)*ŝ²/2))
+    σ² = rand(ŝ²*(n-2)*InverseChisq(n-2))
     β = rand(MvNormal(β̂, σ²*invAA))
     xnew = rand(Uniform(extrema(x)...))
     ynew = β[1] + β[2]*xnew + √σ²*randn()
@@ -56,4 +57,3 @@ title!("posterior predictive distribution")
 plot(P, Q; size=(800, 400))
 
 # %%
-`
