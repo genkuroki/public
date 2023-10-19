@@ -22,6 +22,8 @@ using StatsPlots
 default(fmt=:png)
 
 ECDF(A, x) = count(≤(x), A)/length(A)
+safediv(x, y) = x == 0 ? zero(x/y) : x/y
+x ⪅ y = x < y || x ≈ y
 
 # %%
 function plot_ecdfpval(pvals;
@@ -54,10 +56,144 @@ pval = rand(10^6)
 plot_ecdfpval([pval]; labels=["sample of uniform dist."])
 
 # %%
-safediv(x, y) = x == 0 ? zero(x/y) : x/y
+randpoissons(E) = @. rand(Poisson(E))
 
-expectval(A) = safediv.(sum(A; dims=2) * sum(A; dims=1), sum(A))
+function randmultinomial((N, P))
+    A = rand(Multinomial(N, vec(P)))
+    reshape(A, size(P))
+end
 
+function randmultinomials((Ns, Ps))
+    r = length(Ns)
+    A = similar(Ps, Int)
+    for i in 1:r
+        rand!(Multinomial(Ns[i], @view(Ps[i,:])), @view(A[i,:]))
+    end
+    A
+end
+
+# %%
+expectval(A) = sum(A; dims=2) * sum(A; dims=1) / sum(A)
+
+function pvalue_pearson_chisq_2x2(A)
+    @assert size(A) == (2, 2)
+    a, b, c, d = A'
+    chi2 = (a+b+c+d)*safediv((a*d - b*c)^2, (a+b)*(c+d)*(a+c)*(b+d))
+    ccdf(Chisq(1), chi2)
+end
+
+function pvalue_yates_chisq_2x2(A)
+    @assert size(A) == (2, 2)
+    a, b, c, d = A'
+    N = a+b+c+d
+    chi2 = N*safediv(max(0, abs(a*d - b*c) - N/2)^2, (a+b)*(c+d)*(a+c)*(b+d))
+    ccdf(Chisq(1), chi2)
+end
+
+function pvalue_fisher_central_2x2(A)
+    @assert size(A) == (2, 2)
+    a, b, c, d = A'
+    hg = Hypergeometric(a+b, c+d, a+c)
+    min(1, 2cdf(hg, a), 2ccdf(hg, a-1))
+end
+
+function pvalue_fisher_minlike_2x2(A)
+    @assert size(A) == (2, 2)
+    a, b, c, d = A'
+    hg = Hypergeometric(a+b, c+d, a+c)
+    pa = pdf(hg, a)
+    sum(pdf(hg, x) for x in support(hg) if pdf(hg, x) ⪅ pa)
+end
+
+function sim_2x2(randfunc, param; L=10^6)
+    pval_fisher_central = zeros(L)
+    pval_fisher_minlike = zeros(L)
+    pval_pearson_chisq = zeros(L)
+    pval_yates_chisq = zeros(L)
+    Threads.@threads for i in 1:L
+        A = randfunc(param)
+        pval_fisher_central[i] = pvalue_fisher_central_2x2(A)
+        pval_fisher_minlike[i] = pvalue_fisher_minlike_2x2(A)
+        pval_pearson_chisq[i] = pvalue_pearson_chisq_2x2(A)
+        pval_yates_chisq[i] = pvalue_yates_chisq_2x2(A)
+    end
+    pval_fisher_central, pval_fisher_minlike, pval_pearson_chisq, pval_yates_chisq
+end
+
+function plot_2x2(A; L=10^6)
+    println("A =")
+    show(stdout, MIME("text/plain"), A)
+    println()
+    println()
+    
+    @show pvalue_pearson_chisq_2x2(A)
+    @show pvalue_yates_chisq_2x2(A)
+    @show pvalue_fisher_central_2x2(A)
+    @show pvalue_fisher_minlike_2x2(A)
+    println()
+
+    E = expectval(A)
+    println("E = expectval(A) =")
+    show(stdout, MIME("text/plain"), E)
+    println()
+    println()
+    @show N = sum(A)
+    @show Ns = sum(A; dims=2)
+    println()
+    
+    randfuncs = (
+        randpoissons, randpoissons,
+        randmultinomial, randmultinomial,
+        randmultinomials, randmultinomials,
+    )
+    params = (
+        E, A,
+        (N, E / N), (N, A / N),
+        (Ns, E ./ Ns), (Ns, A ./ Ns),
+    )
+    names = (
+        "Poissons under the null", "Poissons with expectation A", 
+        "Multinomial under the null", "Multinomial with expectation A", 
+        "Multinomials under the null", "Multinomials with expectation A", 
+    )
+
+    PP = []
+    for (randfunc, param, name) in zip(randfuncs, params, names)
+        (
+            pval_fisher_central,
+            pval_fisher_minlike,
+            pval_pearson_chisq,
+            pval_yates_chisq
+        ) = sim_2x2(randfunc, param; L)
+        println("-"^20, " $name")
+        @show ECDF(pval_pearson_chisq, 0.05)
+        @show ECDF(pval_yates_chisq, 0.05)
+        @show ECDF(pval_fisher_central, 0.05)
+        @show ECDF(pval_fisher_minlike, 0.05)
+        println()
+        @show ECDF(pval_pearson_chisq, 0.01)
+        @show ECDF(pval_yates_chisq, 0.01)
+        @show ECDF(pval_fisher_central, 0.01)
+        @show ECDF(pval_fisher_minlike, 0.01)
+        println()
+        P = plot_ecdfpval(
+            [pval_pearson_chisq, pval_yates_chisq, pval_fisher_central, pval_fisher_minlike];
+            labels=["pearson chisq", "yates chisq", "fisher central", "fisher minlike"])
+        title!("$name")
+        push!(PP, P)
+    end
+    
+    plot(PP...; size=(800, 1200), layout=(3, 2))
+    plot!(titlefontsize=10)
+end
+
+# %%
+plot_2x2([6 2; 2 7])
+
+# %%
+plot_2x2([9 2; 2 7])
+
+# %%
 function pearson_chisq_stat(A)
     E = expectval(A)
     sum(safediv((a - e)^2, e) for (a, e) in zip(A, E))
@@ -70,555 +206,84 @@ function pvalue_pearson_chisq(A)
     ccdf(Chisq(df), chi2)
 end
 
-# %%
-function sim_pearson_chisq_stat(randfunc, param; L=10^4)
-    A = randfunc(param)
-    r, c = size(A)
-    df = (r-1)*(c-1)
-    chisq = zeros(L)
+function sim_pearson_chisq_test(randfunc, param; L=10^6)
     pval = zeros(L)
     for i in 1:L
         A = randfunc(param)
-        chisq[i] = pearson_chisq_stat(A)
-        pval[i] = ccdf.(Chisq(df), chisq[i])
+        pval[i] = pvalue_pearson_chisq(A)
     end
-    (; pval, chisq)
+    pval
 end
 
-# %%
-x ⪅ y = x < y || x ≈ y
+function plot_pearson_chisq(A; L=10^6)
+    println("A =")
+    show(stdout, MIME("text/plain"), A)
+    println()
+    println()
+    
+    @show pvalue_pearson_chisq(A)
+    println()
 
-function pvalue_chisq(A)
-    @assert size(A) == (2, 2)
-    a, b, c, d = A'
-    chi2 = (a+b+c+d)*safediv((a*d - b*c)^2, (a+b)*(c+d)*(a+c)*(b+d))
-    ccdf(Chisq(1), chi2)
-end
+    E = expectval(A)
+    println("E = expectval(A) =")
+    show(stdout, MIME("text/plain"), E)
+    println()
+    println()
+    @show N = sum(A)
+    @show Ns = sum(A; dims=2)
+    println()
+    
+    randfuncs = (
+        randpoissons, randpoissons,
+        randmultinomial, randmultinomial,
+        randmultinomials, randmultinomials,
+    )
+    params = (
+        E, A,
+        (N, E / N), (N, A / N),
+        (Ns, E ./ Ns), (Ns, A ./ Ns),
+    )
+    names = (
+        "Poissons under the null", "Poissons with expectation A", 
+        "Multinomial under the null", "Multinomial with expectation A", 
+        "Multinomials under the null", "Multinomials with expectation A", 
+    )
 
-function pvalue_yates(A)
-    @assert size(A) == (2, 2)
-    a, b, c, d = A'
-    N = a+b+c+d
-    chi2 = N*safediv(max(0, abs(a*d - b*c) - N/2)^2, (a+b)*(c+d)*(a+c)*(b+d))
-    ccdf(Chisq(1), chi2)
-end
-
-function pvalue_fisher_central(A)
-    @assert size(A) == (2, 2)
-    a, b, c, d = A'
-    hg = Hypergeometric(a+b, c+d, a+c)
-    min(1, 2cdf(hg, a), 2ccdf(hg, a-1))
-end
-
-function pvalue_fisher_minlike(A)
-    @assert size(A) == (2, 2)
-    a, b, c, d = A'
-    hg = Hypergeometric(a+b, c+d, a+c)
-    pa = pdf(hg, a)
-    sum(pdf(hg, x) for x in support(hg) if pdf(hg, x) ⪅ pa)
-end
-
-function sim_fisher(randfunc, param; L=10^4)
-    pval_central = zeros(L)
-    pval_minlike = zeros(L)
-    pval_chisq = zeros(L)
-    pval_yates = zeros(L)
-    Threads.@threads for i in 1:L
-        A = randfunc(param)
-        pval_central[i] = pvalue_fisher_central(A)
-        pval_minlike[i] = pvalue_fisher_minlike(A)
-        pval_chisq[i] = pvalue_chisq(A)
-        pval_yates[i] = pvalue_yates(A)
+    PP = []
+    for (randfunc, param, name) in zip(randfuncs, params, names)
+        pval = sim_pearson_chisq_test(randfunc, param; L)
+        println("-"^20, " $name")
+        @show ECDF(pval, 0.05)
+        @show ECDF(pval, 0.01)
+        P = plot_ecdfpval([pval]; linestyles=[:solid])
+        title!("$name")
+        push!(PP, P)
     end
-    pval_central, pval_minlike, pval_chisq, pval_yates
+    println()
+    
+    plot(PP...; size=(800, 1200), layout=(3, 2))
+    plot!(titlefontsize=10)
 end
 
 # %%
-randpoissons(E) = @. rand(Poisson(E))
-
-@show A = [
-    1 2 3
-    4 5 6
-    7 8 9
-]
-
-@show E = expectval(A)
-
-@show [randpoissons(E) for _ in 1:10];
-
-@time (; pval) = sim_pearson_chisq_stat(randpoissons, E; L=10^6)
-
-@show ECDF(pval, 0.05)
-@show ECDF(pval, 0.01)
-plot_ecdfpval([pval]; linestyles=[:solid])
-
-# %%
-function randmultinomial((N, P))
-    A = rand(Multinomial(N, vec(P)))
-    reshape(A, size(P))
-end
-
-@show A = [
-    1 2 3
-    4 5 6
-    7 8 9
-]
-
-@show E = expectval(A)
-@show N = sum(A)
-@show P = E ./ N
-
-@show [randmultinomial((N, P)) for _ in 1:10]
-
-@time (; pval) = sim_pearson_chisq_stat(randmultinomial, (N, P); L=10^6)
-
-@show ECDF(pval, 0.05)
-@show ECDF(pval, 0.01)
-plot_ecdfpval([pval]; linestyles=[:solid])
-
-# %%
-function randmultinomials((Ns, Ps))
-    r = length(Ns)
-    A = similar(Ps, Int)
-    for i in 1:r
-        rand!(Multinomial(Ns[i], @view(Ps[i,:])), @view(A[i,:]))
-    end
-    A
-end
-
-@show A = [
-    1 2 3
-    4 5 6
-    7 8 9
-]
-
-@show E = expectval(A)
-@show Ns = sum(A; dims=2)
-@show Ps = E ./ Ns
-
-@show [randmultinomials((Ns, Ps)) for _ in 1:10]
-
-@time (; pval) = sim_pearson_chisq_stat(randmultinomials, (Ns, Ps); L=10^6)
-
-@show ECDF(pval, 0.05)
-@show ECDF(pval, 0.01)
-plot_ecdfpval([pval]; linestyles=[:solid])
-
-# %%
-@show A = [
-    1 2 3
-    4 5 6
-    7 8 9
-]
-
-@show pearson_chisq_stat(A)
-@show pvalue_pearson_chisq(A)
-@show E = expectval(A)
-@show N = sum(A)
-@show P = E ./ N
-@show Ns = sum(A; dims=2)
-@show Ps = E ./ Ns
-
-@time (; pval) = sim_pearson_chisq_stat(randmultinomials, (Ns, Ps); L=10^6)
-pval_multinomials = pval
-@time (; pval) = sim_pearson_chisq_stat(randmultinomial, (N, P); L=10^6)
-pval_multinomial = pval
-@time (; pval) = sim_pearson_chisq_stat(randpoissons, E; L=10^6)
-pval_poissons = pval
-
-@show ECDF(pval_multinomials, 0.05)
-@show ECDF(pval_multinomial, 0.05)
-@show ECDF(pval_poissons, 0.05)
-@show ECDF(pval_multinomials, 0.01)
-@show ECDF(pval_multinomial, 0.01)
-@show ECDF(pval_poissons, 0.01)
-
-plot_ecdfpval(
-    [pval_multinomials, pval_multinomial, pval_poissons];
-    labels=["multinomials", "multinomial", "poissons"])
-
-# %%
-@show A = [
+A = [
      7  4 23
     10  8  8
 ]
-
-@show pearson_chisq_stat(A)
-@show pvalue_pearson_chisq(A)
-@show E = expectval(A)
-@show N = sum(A)
-@show P = E ./ N
-@show Ns = sum(A; dims=2)
-@show Ps = E ./ Ns
-
-@time (; pval) = sim_pearson_chisq_stat(randmultinomials, (Ns, Ps); L=10^6)
-pval_multinomials = pval
-@time (; pval) = sim_pearson_chisq_stat(randmultinomial, (N, P); L=10^6)
-pval_multinomial = pval
-@time (; pval) = sim_pearson_chisq_stat(randpoissons, E; L=10^6)
-pval_poissons = pval
-
-@show ECDF(pval_multinomials, 0.05)
-@show ECDF(pval_multinomial, 0.05)
-@show ECDF(pval_poissons, 0.05)
-@show ECDF(pval_multinomials, 0.01)
-@show ECDF(pval_multinomial, 0.01)
-@show ECDF(pval_poissons, 0.01)
-
-plot_ecdfpval(
-    [pval_multinomials, pval_multinomial, pval_poissons];
-    labels=["multinomials", "multinomial", "poissons"])
+plot_pearson_chisq(A)
 
 # %%
-@show A = [
+A = [
      7  2 23
     10  4  8
 ]
-
-@show pearson_chisq_stat(A)
-@show pvalue_pearson_chisq(A)
-@show E = expectval(A)
-@show N = sum(A)
-@show P = E ./ N
-@show Ns = sum(A; dims=2)
-@show Ps = E ./ Ns
-
-@time (; pval) = sim_pearson_chisq_stat(randmultinomials, (Ns, Ps); L=10^6)
-pval_multinomials = pval
-@time (; pval) = sim_pearson_chisq_stat(randmultinomial, (N, P); L=10^6)
-pval_multinomial = pval
-@time (; pval) = sim_pearson_chisq_stat(randpoissons, E; L=10^6)
-pval_poissons = pval
-
-@show ECDF(pval_multinomials, 0.05)
-@show ECDF(pval_multinomial, 0.05)
-@show ECDF(pval_poissons, 0.05)
-@show ECDF(pval_multinomials, 0.01)
-@show ECDF(pval_multinomial, 0.01)
-@show ECDF(pval_poissons, 0.01)
-
-plot_ecdfpval(
-    [pval_multinomials, pval_multinomial, pval_poissons];
-    labels=["multinomials", "multinomial", "poissons"])
+plot_pearson_chisq(A)
 
 # %%
-@show A = [
+A = [
      7  4 23
      5  4  4
 ]
-
-@show pearson_chisq_stat(A)
-@show pvalue_pearson_chisq(A)
-@show E = expectval(A)
-@show N = sum(A)
-@show P = E ./ N
-@show Ns = sum(A; dims=2)
-@show Ps = E ./ Ns
-
-@time (; pval) = sim_pearson_chisq_stat(randmultinomials, (Ns, Ps); L=10^6)
-pval_multinomials = pval
-@time (; pval) = sim_pearson_chisq_stat(randmultinomial, (N, P); L=10^6)
-pval_multinomial = pval
-@time (; pval) = sim_pearson_chisq_stat(randpoissons, E; L=10^6)
-pval_poissons = pval
-
-@show ECDF(pval_multinomials, 0.05)
-@show ECDF(pval_multinomial, 0.05)
-@show ECDF(pval_poissons, 0.05)
-@show ECDF(pval_multinomials, 0.01)
-@show ECDF(pval_multinomial, 0.01)
-@show ECDF(pval_poissons, 0.01)
-
-plot_ecdfpval(
-    [pval_multinomials, pval_multinomial, pval_poissons];
-    labels=["multinomials", "multinomial", "poissons"])
-
-# %%
-@show A = [
-    7 2
-    2 9
-]
-
-@show pvalue_chisq(A)
-@show pvalue_yates(A)
-@show pvalue_fisher_central(A)
-@show pvalue_fisher_minlike(A)
-
-@show E = expectval(A)
-@show N = sum(A)
-@show P = E ./ N
-@show Ns = sum(A; dims=2)
-@show Ps = E ./ Ns
-
-@time pval_fisher_central, pval_fishet_minlike, pval_chisq, pval_yates = sim_fisher(randpoissons, A; L=10^6)
-
-@show ECDF(pval_chisq, 0.05)
-@show ECDF(pval_yates, 0.05)
-@show ECDF(pval_fisher_central, 0.05)
-@show ECDF(pval_fishet_minlike, 0.05)
-@show ECDF(pval_chisq, 0.01)
-@show ECDF(pval_yates, 0.01)
-@show ECDF(pval_fisher_central, 0.01)
-@show ECDF(pval_fishet_minlike, 0.01)
-
-plot_ecdfpval(
-    [pval_chisq, pval_yates, pval_fisher_central, pval_fishet_minlike];
-    labels=["chisq", "yates", "fisher central", "fisher minlike"])
-
-# %%
-@show A = [
-    7 2
-    2 6
-]
-
-@show pvalue_chisq(A)
-@show pvalue_yates(A)
-@show pvalue_fisher_central(A)
-@show pvalue_fisher_minlike(A)
-
-@show E = expectval(A)
-@show N = sum(A)
-@show P = E ./ N
-@show Ns = sum(A; dims=2)
-@show Ps = E ./ Ns
-
-@time pval_fisher_central, pval_fishet_minlike, pval_chisq, pval_yates = sim_fisher(randpoissons, A; L=10^6)
-
-@show ECDF(pval_chisq, 0.05)
-@show ECDF(pval_yates, 0.05)
-@show ECDF(pval_fisher_central, 0.05)
-@show ECDF(pval_fishet_minlike, 0.05)
-@show ECDF(pval_chisq, 0.01)
-@show ECDF(pval_yates, 0.01)
-@show ECDF(pval_fisher_central, 0.01)
-@show ECDF(pval_fishet_minlike, 0.01)
-
-plot_ecdfpval(
-    [pval_chisq, pval_yates, pval_fisher_central, pval_fishet_minlike];
-    labels=["chisq", "yates", "fisher central", "fisher minlike"])
-
-# %%
-@show A = [
-    7 2
-    2 6
-]
-
-@show pvalue_chisq(A)
-@show pvalue_yates(A)
-@show pvalue_fisher_central(A)
-@show pvalue_fisher_minlike(A)
-
-@show E = expectval(A)
-@show N = sum(A)
-@show P = E ./ N
-@show Ns = sum(A; dims=2)
-@show Ps = E ./ Ns
-
-@time pval_fisher_central, pval_fishet_minlike, pval_chisq, pval_yates = sim_fisher(randpoissons, E; L=10^6)
-
-@show ECDF(pval_chisq, 0.05)
-@show ECDF(pval_yates, 0.05)
-@show ECDF(pval_fisher_central, 0.05)
-@show ECDF(pval_fishet_minlike, 0.05)
-@show ECDF(pval_chisq, 0.01)
-@show ECDF(pval_yates, 0.01)
-@show ECDF(pval_fisher_central, 0.01)
-@show ECDF(pval_fishet_minlike, 0.01)
-
-plot_ecdfpval(
-    [pval_chisq, pval_yates, pval_fisher_central, pval_fishet_minlike];
-    labels=["chisq", "yates", "fisher central", "fisher minlike"])
-
-# %%
-@show A = [
-    7 2
-    2 9
-]
-
-@show pvalue_chisq(A)
-@show pvalue_yates(A)
-@show pvalue_fisher_central(A)
-@show pvalue_fisher_minlike(A)
-
-@show E = expectval(A)
-@show N = sum(A)
-@show P = E ./ N
-@show Ns = sum(A; dims=2)
-@show Ps = E ./ Ns
-
-@time pval_fisher_central, pval_fishet_minlike, pval_chisq, pval_yates = sim_fisher(randmultinomial, (N, A/N); L=10^6)
-
-@show ECDF(pval_chisq, 0.05)
-@show ECDF(pval_yates, 0.05)
-@show ECDF(pval_fisher_central, 0.05)
-@show ECDF(pval_fishet_minlike, 0.05)
-@show ECDF(pval_chisq, 0.01)
-@show ECDF(pval_yates, 0.01)
-@show ECDF(pval_fisher_central, 0.01)
-@show ECDF(pval_fishet_minlike, 0.01)
-
-plot_ecdfpval(
-    [pval_chisq, pval_yates, pval_fisher_central, pval_fishet_minlike];
-    labels=["chisq", "yates", "fisher central", "fisher minlike"])
-
-# %%
-@show A = [
-    7 2
-    2 6
-]
-
-@show pvalue_chisq(A)
-@show pvalue_yates(A)
-@show pvalue_fisher_central(A)
-@show pvalue_fisher_minlike(A)
-
-@show E = expectval(A)
-@show N = sum(A)
-@show P = E ./ N
-@show Ns = sum(A; dims=2)
-@show Ps = E ./ Ns
-
-@time pval_fisher_central, pval_fishet_minlike, pval_chisq, pval_yates = sim_fisher(randmultinomial, (N, A/N); L=10^6)
-
-@show ECDF(pval_chisq, 0.05)
-@show ECDF(pval_yates, 0.05)
-@show ECDF(pval_fisher_central, 0.05)
-@show ECDF(pval_fishet_minlike, 0.05)
-@show ECDF(pval_chisq, 0.01)
-@show ECDF(pval_yates, 0.01)
-@show ECDF(pval_fisher_central, 0.01)
-@show ECDF(pval_fishet_minlike, 0.01)
-
-plot_ecdfpval(
-    [pval_chisq, pval_yates, pval_fisher_central, pval_fishet_minlike];
-    labels=["chisq", "yates", "fisher central", "fisher minlike"])
-
-# %%
-@show A = [
-    7 2
-    2 6
-]
-
-@show pvalue_chisq(A)
-@show pvalue_yates(A)
-@show pvalue_fisher_central(A)
-@show pvalue_fisher_minlike(A)
-
-@show E = expectval(A)
-@show N = sum(A)
-@show P = E ./ N
-@show Ns = sum(A; dims=2)
-@show Ps = E ./ Ns
-
-@time pval_fisher_central, pval_fishet_minlike, pval_chisq, pval_yates = sim_fisher(randmultinomial, (N, P); L=10^6)
-
-@show ECDF(pval_chisq, 0.05)
-@show ECDF(pval_yates, 0.05)
-@show ECDF(pval_fisher_central, 0.05)
-@show ECDF(pval_fishet_minlike, 0.05)
-@show ECDF(pval_chisq, 0.01)
-@show ECDF(pval_yates, 0.01)
-@show ECDF(pval_fisher_central, 0.01)
-@show ECDF(pval_fishet_minlike, 0.01)
-
-plot_ecdfpval(
-    [pval_chisq, pval_yates, pval_fisher_central, pval_fishet_minlike];
-    labels=["chisq", "yates", "fisher central", "fisher minlike"])
-
-# %%
-@show A = [
-    7 2
-    2 9
-]
-
-@show pvalue_chisq(A)
-@show pvalue_yates(A)
-@show pvalue_fisher_central(A)
-@show pvalue_fisher_minlike(A)
-
-@show E = expectval(A)
-@show N = sum(A)
-@show P = E ./ N
-@show Ns = sum(A; dims=2)
-@show Ps = E ./ Ns
-
-@time pval_fisher_central, pval_fishet_minlike, pval_chisq, pval_yates = sim_fisher(randmultinomials, (Ns, A ./ Ns); L=10^6)
-
-@show ECDF(pval_chisq, 0.05)
-@show ECDF(pval_yates, 0.05)
-@show ECDF(pval_fisher_central, 0.05)
-@show ECDF(pval_fishet_minlike, 0.05)
-@show ECDF(pval_chisq, 0.01)
-@show ECDF(pval_yates, 0.01)
-@show ECDF(pval_fisher_central, 0.01)
-@show ECDF(pval_fishet_minlike, 0.01)
-
-plot_ecdfpval(
-    [pval_chisq, pval_yates, pval_fisher_central, pval_fishet_minlike];
-    labels=["chisq", "yates", "fisher central", "fisher minlike"])
-
-# %%
-@show A = [
-    7 2
-    2 6
-]
-
-@show pvalue_chisq(A)
-@show pvalue_yates(A)
-@show pvalue_fisher_central(A)
-@show pvalue_fisher_minlike(A)
-
-@show E = expectval(A)
-@show N = sum(A)
-@show P = E ./ N
-@show Ns = sum(A; dims=2)
-@show Ps = E ./ Ns
-
-@time pval_fisher_central, pval_fishet_minlike, pval_chisq, pval_yates = sim_fisher(randmultinomials, (Ns, A ./ Ns); L=10^6)
-
-@show ECDF(pval_chisq, 0.05)
-@show ECDF(pval_yates, 0.05)
-@show ECDF(pval_fisher_central, 0.05)
-@show ECDF(pval_fishet_minlike, 0.05)
-@show ECDF(pval_chisq, 0.01)
-@show ECDF(pval_yates, 0.01)
-@show ECDF(pval_fisher_central, 0.01)
-@show ECDF(pval_fishet_minlike, 0.01)
-
-plot_ecdfpval(
-    [pval_chisq, pval_yates, pval_fisher_central, pval_fishet_minlike];
-    labels=["chisq", "yates", "fisher central", "fisher minlike"])
-
-# %%
-@show A = [
-    7 2
-    2 6
-]
-
-@show pvalue_chisq(A)
-@show pvalue_yates(A)
-@show pvalue_fisher_central(A)
-@show pvalue_fisher_minlike(A)
-
-@show E = expectval(A)
-@show N = sum(A)
-@show P = E ./ N
-@show Ns = sum(A; dims=2)
-@show Ps = E ./ Ns
-
-@time pval_fisher_central, pval_fishet_minlike, pval_chisq, pval_yates = sim_fisher(randmultinomials, (Ns, Ps); L=10^6)
-
-@show ECDF(pval_chisq, 0.05)
-@show ECDF(pval_yates, 0.05)
-@show ECDF(pval_fisher_central, 0.05)
-@show ECDF(pval_fishet_minlike, 0.05)
-@show ECDF(pval_chisq, 0.01)
-@show ECDF(pval_yates, 0.01)
-@show ECDF(pval_fisher_central, 0.01)
-@show ECDF(pval_fishet_minlike, 0.01)
-
-plot_ecdfpval(
-    [pval_chisq, pval_yates, pval_fisher_central, pval_fishet_minlike];
-    labels=["chisq", "yates", "fisher central", "fisher minlike"])
+plot_pearson_chisq(A)
 
 # %%
