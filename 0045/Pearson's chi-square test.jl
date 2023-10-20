@@ -97,12 +97,47 @@ function pvalue_fisher_central_2x2(A)
     min(1, 2cdf(hg, a), 2ccdf(hg, a-1))
 end
 
-function pvalue_fisher_minlike_2x2(A)
+function pvalue_fisher_minlike_2x2_slow(A)
     @assert size(A) == (2, 2)
     a, b, c, d = A'
     hg = Hypergeometric(a+b, c+d, a+c)
     pa = pdf(hg, a)
     sum(pdf(hg, x) for x in support(hg) if pdf(hg, x) ⪅ pa)
+end
+
+_pdf_le(x, (dist, y)) =  pdf(dist, x) ⪅ y
+
+function _search_boundary(f, x0, Δx, param)
+    x = x0
+    if f(x, param)
+        while f(x - Δx, param) x -= Δx end
+    else
+        x += Δx
+        while !f(x, param) x += Δx end
+    end
+    x
+end
+
+function pvalue_minlike(dist::DiscreteUnivariateDistribution, x)
+    Px = pdf(dist, x)
+    Px == 0 && return Px
+    Px == 1 && return Px
+    m = mode(dist)
+    Px ≈ pdf(dist, m) && return one(Px)
+    if x < m
+        y = _search_boundary(_pdf_le, 2m - x, 1, (dist, Px))
+        cdf(dist, x) + ccdf(dist, y-1)
+    else # x > m
+        y = _search_boundary(_pdf_le, 2m - x, -1, (dist, Px))
+        cdf(dist, y) + ccdf(dist, x-1)
+    end
+end
+
+function pvalue_fisher_minlike_2x2(A)
+    @assert size(A) == (2, 2)
+    a, b, c, d = A'
+    hg = Hypergeometric(a+b, c+d, a+c)
+    pvalue_minlike(hg, a)
 end
 
 function sim_2x2(randfunc, param; L=10^6)
@@ -165,7 +200,7 @@ function plot_2x2(A; L=10^6)
             pval_pearson_chisq,
             pval_yates_chisq
         ) = sim_2x2(randfunc, param; L)
-        println("-"^20, " $name")
+        println("-"^20, " ", "Model: $name")
         @show ECDF(pval_pearson_chisq, 0.05)
         @show ECDF(pval_yates_chisq, 0.05)
         @show ECDF(pval_fisher_central, 0.05)
@@ -178,20 +213,26 @@ function plot_2x2(A; L=10^6)
         println()
         P = plot_ecdfpval(
             [pval_pearson_chisq, pval_yates_chisq, pval_fisher_central, pval_fisher_minlike];
-            labels=["pearson chisq", "yates chisq", "fisher central", "fisher minlike"])
-        title!("$name")
+            labels=["Pearson χ²", "Yates χ²", "Fisher central", "Fisher minlike"])
+        title!("Model: $name")
         push!(PP, P)
     end
     
-    plot(PP...; size=(800, 1200), layout=(3, 2))
-    plot!(titlefontsize=10)
+    plot(PP...; size=(820, 1200), layout=(3, 2))
+    plot!(titlefontsize=10, tickfontsize=6, leftmargin=6Plots.mm)
 end
+
+# %%
+plot_2x2([3 1; 1 3])
 
 # %%
 plot_2x2([6 2; 2 7])
 
 # %%
 plot_2x2([9 2; 2 7])
+
+# %%
+plot_2x2([19 9; 4 9])
 
 # %%
 function pearson_chisq_stat(A)
@@ -252,17 +293,17 @@ function plot_pearson_chisq(A; L=10^6)
     PP = []
     for (randfunc, param, name) in zip(randfuncs, params, names)
         pval = sim_pearson_chisq_test(randfunc, param; L)
-        println("-"^20, " $name")
+        println("-"^20, " ", "Model: $name")
         @show ECDF(pval, 0.05)
         @show ECDF(pval, 0.01)
         P = plot_ecdfpval([pval]; linestyles=[:solid])
-        title!("$name")
+        title!("Model: $name")
         push!(PP, P)
     end
     println()
     
-    plot(PP...; size=(800, 1200), layout=(3, 2))
-    plot!(titlefontsize=10)
+    plot(PP...; size=(820, 1200), layout=(3, 2))
+    plot!(titlefontsize=10, leftmargin=6Plots.mm)
 end
 
 # %%
