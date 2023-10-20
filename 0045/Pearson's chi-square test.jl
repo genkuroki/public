@@ -223,6 +223,21 @@ function plot_2x2(A; L=10^6)
 end
 
 # %%
+A = [
+    10000 10000
+    10000 10400
+]
+
+@time p1 = pvalue_fisher_minlike_2x2_slow(A)
+@time p1 = pvalue_fisher_minlike_2x2_slow(A)
+@time p1 = pvalue_fisher_minlike_2x2_slow(A)
+@time p2 = pvalue_fisher_minlike_2x2(A)
+@time p2 = pvalue_fisher_minlike_2x2(A)
+@time p2 = pvalue_fisher_minlike_2x2(A)
+@show p1 p2
+p1 ≈ p2
+
+# %%
 plot_2x2([3 1; 1 3])
 
 # %%
