@@ -19,7 +19,7 @@ using Distributions
 using Random
 using StatsBase: ecdf
 using StatsPlots
-default(fmt=:png)
+default(fmt=:png, titlefontsize=10, tickfontsize=6)
 
 ECDF(A, x) = count(≤(x), A)/length(A)
 safediv(x, y) = x == 0 ? zero(x/y) : x/y
@@ -37,7 +37,7 @@ function plot_ecdfpval(pvals;
     _tick = Any[0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1]
     xtick = ytick = (float.(_tick), string.(_tick))
     xlim = ylim = (0.0015, 1.1)
-    αs = range(0.002, 1, 1000)
+    αs = exp.(range(log(0.002), log(1), 1000))
     P = plot()
     for (pval, label, ls) in zip(pvals, labels, linestyles)
         _ecdf_pval = ecdf(pval)
@@ -54,6 +54,87 @@ end
 # %%
 pval = rand(10^6)
 plot_ecdfpval([pval]; labels=["sample of uniform dist."])
+
+# %%
+_pdf_le(x, (dist, y)) =  pdf(dist, x) ⪅ y
+
+function _search_boundary(f, x0, Δx, param)
+    x = x0
+    if f(x, param)
+        while f(x - Δx, param) x -= Δx end
+    else
+        x += Δx
+        while !f(x, param) x += Δx end
+    end
+    x
+end
+
+function pvalue_minlike(dist::DiscreteUnivariateDistribution, x)
+    Px = pdf(dist, x)
+    Px == 0 && return Px
+    Px == 1 && return Px
+    m = mode(dist)
+    Px ≈ pdf(dist, m) && return one(Px)
+    if x < m
+        y = _search_boundary(_pdf_le, 2m - x, 1, (dist, Px))
+        cdf(dist, x) + ccdf(dist, y-1)
+    else # x > m
+        y = _search_boundary(_pdf_le, 2m - x, -1, (dist, Px))
+        cdf(dist, y) + ccdf(dist, x-1)
+    end
+end
+
+function pvalue_score_bin(k, n, p)
+    p̂ = k/n
+    sehat = √(p*(1-p)/n)
+    z = safediv(p̂ - p, sehat)
+    2ccdf(Normal(), abs(z))
+end
+
+function pvalue_wald_bin(k, n, p)
+    p̂ = k/n
+    sehat = √(p̂*(1-p̂)/n)
+    z = safediv(p̂ - p, sehat)
+    2ccdf(Normal(), abs(z))
+end
+
+pvalue_minlike_bin(k, n, p) = pvalue_minlike(Binomial(n, p), k)
+
+function pvalue_central_bin(k, n, p)
+    bin = Binomial(n, p)
+    min(1, 2cdf(bin, k), 2ccdf(bin, k-1))
+end
+
+# %%
+function plot_bin(; n = 50, p = 0.2, L = 10^6)
+    @show bin = Binomial(n, p)
+    K = rand(bin, L)
+    pval_score = pvalue_score_bin.(K, n, p)
+    pval_wald = pvalue_wald_bin.(K, n, p)
+    pval_minlike = pvalue_minlike_bin.(K, n, p)
+    pval_central = pvalue_central_bin.(K, n, p)
+
+    X = [
+        (pval_score, "score test", 1),
+        (pval_wald, "Wald test", 2),
+        (pval_minlike, "exact test (minlike)", 3),
+        (pval_central, "exact test (central)", 4),
+    ]
+    PP = []
+    for (pval, name, c) in X
+        P = plot_ecdfpval([pval]; linestyles=[:solid], c)
+        title!("binomial $name")
+        push!(PP, P)
+    end
+
+    plot(PP...; size=(800, 800), layout=(2, 2))
+end
+
+# %%
+plot_bin(n = 20, p = 0.2)
+
+# %%
+plot_bin(n = 80, p = 0.05)
 
 # %%
 randpoissons(E) = @. rand(Poisson(E))
@@ -103,34 +184,6 @@ function pvalue_fisher_minlike_2x2_slow(A)
     hg = Hypergeometric(a+b, c+d, a+c)
     pa = pdf(hg, a)
     sum(pdf(hg, x) for x in support(hg) if pdf(hg, x) ⪅ pa)
-end
-
-_pdf_le(x, (dist, y)) =  pdf(dist, x) ⪅ y
-
-function _search_boundary(f, x0, Δx, param)
-    x = x0
-    if f(x, param)
-        while f(x - Δx, param) x -= Δx end
-    else
-        x += Δx
-        while !f(x, param) x += Δx end
-    end
-    x
-end
-
-function pvalue_minlike(dist::DiscreteUnivariateDistribution, x)
-    Px = pdf(dist, x)
-    Px == 0 && return Px
-    Px == 1 && return Px
-    m = mode(dist)
-    Px ≈ pdf(dist, m) && return one(Px)
-    if x < m
-        y = _search_boundary(_pdf_le, 2m - x, 1, (dist, Px))
-        cdf(dist, x) + ccdf(dist, y-1)
-    else # x > m
-        y = _search_boundary(_pdf_le, 2m - x, -1, (dist, Px))
-        cdf(dist, y) + ccdf(dist, x-1)
-    end
 end
 
 function pvalue_fisher_minlike_2x2(A)
@@ -187,9 +240,9 @@ function plot_2x2(A; L=10^6)
         (Ns, E ./ Ns), (Ns, A ./ Ns),
     )
     names = (
-        "Poissons under the null", "Poissons with expectation A", 
+        "4 Poissons under the null", "4 Poissons with expectation A", 
         "Multinomial under the null", "Multinomial with expectation A", 
-        "Multinomials under the null", "Multinomials with expectation A", 
+        "2 binomials under the null", "2 binomials with expectation A", 
     )
 
     PP = []
@@ -228,9 +281,11 @@ A = [
     10000 10400
 ]
 
+p1 = pvalue_fisher_minlike_2x2_slow(A)
 @time p1 = pvalue_fisher_minlike_2x2_slow(A)
 @time p1 = pvalue_fisher_minlike_2x2_slow(A)
 @time p1 = pvalue_fisher_minlike_2x2_slow(A)
+p2 = pvalue_fisher_minlike_2x2(A)
 @time p2 = pvalue_fisher_minlike_2x2(A)
 @time p2 = pvalue_fisher_minlike_2x2(A)
 @time p2 = pvalue_fisher_minlike_2x2(A)
