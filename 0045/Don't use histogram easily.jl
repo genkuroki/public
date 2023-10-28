@@ -150,9 +150,15 @@ plot(1dist; label="dist")
 X̄, S² = sim_clt(dist, 40)
 
 histogram(X̄; norm=true, alpha=0.3, label="sample mean")
+plot!(xlim=(-1, 6), xtick=-1:6)
+
+# %%
+histogram(X̄; norm=true, alpha=0.3, bin=-1:0.05:6, label="sample mean")
+plot!(xlim=(-1, 6), xtick=-1:6)
 
 # %%
 histogram(X̄; norm=true, alpha=0.3, bin=-1:0.25:6, label="sample mean")
+plot!(xlim=(-1, 6), xtick=-1:6)
 
 # %% [markdown]
 # このようにbinの取り方で出来上がるヒストグラムの印象はかなり変わる。
@@ -163,15 +169,92 @@ histogram(X̄; norm=true, alpha=0.3, bin=-1:0.25:6, label="sample mean")
 
 # %%
 stephist(X̄; norm=true, label="sample mean")
+plot!(xlim=(-1, 6), xtick=-1:6)
+
+# %%
+stephist(X̄; norm=true, bin=-1:0.05:6, label="sample mean")
+plot!(xlim=(-1, 6), xtick=-1:6)
 
 # %%
 stephist(X̄; norm=true, bin=-1:0.25:6, label="sample mean")
+plot!(xlim=(-1, 6), xtick=-1:6)
 
 # %% [markdown]
 # おまけ: 標本平均と不偏分散の同時分布の視覚化は面白い。
 
 # %%
+dist = MixtureModel([Normal(), Normal(20)], [0.95, 0.05])
+plot(1dist; label="dist")
+
+# %%
+X̄, S² = sim_clt(dist, 20; L=10^4)
+
+scatter(X̄, S²; ms=1, msc=:auto, alpha=1, label="")
+plot!(xguide="sample mean", yguide="unbiased sample variance")
+
+# %%
 X̄, S² = sim_clt(dist, 40; L=10^4)
+
+scatter(X̄, S²; ms=1, msc=:auto, alpha=1, label="")
+plot!(xguide="sample mean", yguide="unbiased sample variance")
+
+# %%
+X̄, S² = sim_clt(dist, 80; L=10^4)
+
+scatter(X̄, S²; ms=1, msc=:auto, alpha=1, label="")
+plot!(xguide="sample mean", yguide="unbiased sample variance")
+
+# %%
+X̄, S² = sim_clt(dist, 160; L=10^4)
+
+scatter(X̄, S²; ms=1, msc=:auto, alpha=1, label="")
+plot!(xguide="sample mean", yguide="unbiased sample variance")
+
+# %%
+X̄, S² = sim_clt(dist, 320; L=10^4)
+
+scatter(X̄, S²; ms=1, msc=:auto, alpha=1, label="")
+plot!(xguide="sample mean", yguide="unbiased sample variance")
+
+# %% [markdown]
+# このように標本平均と不偏分散の同時分布に関する中心極限定理によって, それらの同時分布は標本サイズを十分に大きくすると2変量正規分布で近似される.
+
+# %%
+dist = Poisson(1)
+bar(dist; alpha=0.3, label="dist")
+
+# %%
+X̄, S² = sim_clt(dist, 20; L=10^4)
+
+scatter(X̄, S²; ms=1, msc=:auto, alpha=1, label="")
+plot!(xguide="sample mean", yguide="unbiased sample variance")
+
+# %%
+X̄, S² = sim_clt(dist, 40; L=10^4)
+
+scatter(X̄, S²; ms=1, msc=:auto, alpha=1, label="")
+plot!(xguide="sample mean", yguide="unbiased sample variance")
+
+# %%
+X̄, S² = sim_clt(dist, 80; L=10^4)
+
+scatter(X̄, S²; ms=1, msc=:auto, alpha=1, label="")
+plot!(xguide="sample mean", yguide="unbiased sample variance")
+
+# %%
+X̄, S² = sim_clt(dist, 160; L=10^4)
+
+scatter(X̄, S²; ms=1, msc=:auto, alpha=1, label="")
+plot!(xguide="sample mean", yguide="unbiased sample variance")
+
+# %%
+X̄, S² = sim_clt(dist, 320; L=10^4)
+
+scatter(X̄, S²; ms=1, msc=:auto, alpha=1, label="")
+plot!(xguide="sample mean", yguide="unbiased sample variance")
+
+# %%
+X̄, S² = sim_clt(dist, 640; L=10^4)
 
 scatter(X̄, S²; ms=1, msc=:auto, alpha=1, label="")
 plot!(xguide="sample mean", yguide="unbiased sample variance")
