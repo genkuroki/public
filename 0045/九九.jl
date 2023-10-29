@@ -50,3 +50,9 @@ quote
 end
 
 # %%
+@code_warntype (a->a[a.∉(a*a',)])(2:100)
+
+# %%
+@code_typed (a->a[a.∉(a*a',)])(2:100)
+
+# %%
