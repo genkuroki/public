@@ -259,4 +259,18 @@ X̄, S² = sim_clt(dist, 640; L=10^4)
 scatter(X̄, S²; ms=1, msc=:auto, alpha=1, label="")
 plot!(xguide="sample mean", yguide="unbiased sample variance")
 
+# %% [markdown]
+# 動画も次のようにすれば簡単に作れる.
+
+# %%
+_ns = round.(Int, exp.(range(log(10), log(1000), 200)))
+ns = [fill(_ns[1], 40); _ns; fill(_ns[end], 60)]
+@gif for n in ns
+    X̄, S² = sim_clt(dist, n; L=10^4)
+    scatter(X̄, S²; ms=1, msc=:auto, alpha=1, label="")
+    plot!(xguide="sample mean", yguide="unbiased sample variance")
+    plot!(xlim=(0.4, 1.5), ylim=(0.2, 2.2))
+    title!("n = $n")
+end
+
 # %%
