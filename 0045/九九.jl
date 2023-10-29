@@ -32,3 +32,21 @@ a[a.∉(a*a',)]
 2:100|>a->a[a.∉(a*a',)]
 
 # %%
+:(2:100|>a->a[a.∉(a*a',)])
+
+# %%
+quote
+    2:100|>a->a[a.∉(a*a',)]
+end
+
+# %%
+quote
+    y = x < 0 ? -x : x
+end
+
+# %%
+quote
+    y = if x < 0; -x else x end
+end
+
+# %%
