@@ -75,7 +75,7 @@ end
 # https://nbviewer.org/github/genkuroki/public/blob/main/0033/probability%20of%20alpha%20error%20of%20Zou-Donner.ipynb
 
 P1 = plot(p -> pvalue_wilson(x, m, p), 0.01, 0.08; c=1, label="P-value of p")
-vline!([p0]; label="true", c=1, ls=:dot)
+vline!([p0]; label="true p", c=1, ls=:dot)
 plot!(xtick=0:0.01:1, ytick=0:0.1:1)
 P2 = plot(q -> pvalue_wilson(y, n, q), 0.01, 0.08; c=2, label="P-value of q")
 vline!([q0]; label="true q", c=2, ls=:dot)
