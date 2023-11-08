@@ -332,8 +332,8 @@ function brunner_munzel_test(X, Y; p=1/2)
     phat = mean(h_brunner_munzel(x, y) for x in X, y in Y)
     Hbarx = n*(1 - phat)
     Hbary = m*phat
-    sx2 = 1/n^2 * 1/(m-1) * sum((sum(h_brunner_munzel(y, x) for y in Y) - Hbarx)^2 for x in X)
-    sy2 = 1/m^2 * 1/(n-1) * sum((sum(h_brunner_munzel(x, y) for x in X) - Hbary)^2 for y in Y)
+    sx2 = 1/n^2 * 1/(m-1) * sum(x -> (sum(h_brunner_munzel(y, x) for y in Y) - Hbarx)^2, X)
+    sy2 = 1/m^2 * 1/(n-1) * sum(y -> (sum(h_brunner_munzel(x, y) for x in X) - Hbary)^2, Y)
     sehat = √(sx2/m + sy2/n)
     tvalue = (phat - p)/sehat
     df = (sx2/m + sy2/n)^2 / ((sx2/m)^2/(m-1) + (sy2/n)^2/(n-1))
@@ -342,7 +342,7 @@ function brunner_munzel_test(X, Y; p=1/2)
 end
 
 @doc raw"""
-    pvalue_brunner_munzel(X, Y; p = 1/2)
+    pvalue_brunner_munzel_test(X, Y; p = 1/2)
 
 この函数はBrunner-Munzel検定のP値 `pvalue` を返す.
 """
@@ -398,23 +398,29 @@ Y = rand(Normal(0, 1), 20)
 brunner_munzel_test(X, Y)
 
 # %%
+using Random
+Random.seed!(4649373)
+
+# %%
+using Random
+Random.seed!(4649373)
 using StatsPlots
 default(fmt=:png)
 
-f(X, Y, a, p) = 1 - pvalue_brunner_munzel_test(X .+ a, Y; p)
+f(X, Y, a, p) =  pvalue_brunner_munzel_test(X .+ a, Y; p)
 
 X = rand(Normal(0, 1), 30)
 Y = rand(Normal(0, 1), 20)
 
 ps = range(0, 1, 401)
 as = range(minimum(Y) - maximum(X) + 0.1, maximum(Y) - minimum(X) - 0.1, 401)
-levels = [0, 0.25, 0.5, 0.75, 0.95, 0.99, 1]
-contour(as, ps, (a, p) -> f(X, Y, a, p); levels, color=:darkrainbow)
+levels = [0, 0.01, 0.05, 0.2, 0.5, 0.8, 0.95]
+contour(as, ps, (a, p) -> f(X, Y, a, p); levels)
 vline!([0.0]; label="", ls=:dot, c=:black, alpha=0.5)
 hline!([0.5]; label="", ls=:dot, c=:black, alpha=0.5)
 plot!(xtick=-5:0.5:5, ytick=0:0.1:1, xrotation=90)
-plot!(xguide="a", yguide="p")
-title!("1 - (P-value function)")
+plot!(xguide="shift", yguide="winnning rate")
+title!("P-value function")
 
 # %%
 using QuadGK
@@ -473,7 +479,7 @@ pval_mw = zeros(L)
 Threads.@threads for i in 1:L
     X = rand(distx, m)
     Y = rand(disty, n)
-    pval_bm[i] = pvalue_brunner_munzel(X, Y)
+    pval_bm[i] = pvalue_brunner_munzel_test(X, Y)
     pval_mw[i] = HypothesisTests.pvalue(MannWhitneyUTest(X, Y))
 end
 
@@ -487,7 +493,9 @@ xtick = ytick = (_tick, string.(_tick))
 αs = exp.(range(log(0.002), log(1), 1000))
 plot(αs, α -> ECDF(pval_bm, α); label="Brunner-Munzel test")
 plot!(αs, α -> ECDF(pval_mw, α); label="Mann-Whitney U-test", ls=:dash)
-plot!(αs, identity; label="", ls=:dot)
+plot!(αs, identity; label="", ls=:dot, c=:black)
+plot!(αs, x->0.8x; label="", ls=:dot, c=:gray)
+plot!(αs, x->1.2x; label="", ls=:dot, c=:gray)
 plot!(; xscale=:log10, yscale=:log10, xtick, ytick)
 plot!(size=(400, 400))
 
@@ -516,7 +524,7 @@ pval_mw = zeros(L)
 Threads.@threads for i in 1:L
     X = rand(distx, m)
     Y = rand(disty, n)
-    pval_bm[i] = pvalue_brunner_munzel(X, Y)
+    pval_bm[i] = pvalue_brunner_munzel_test(X, Y)
     pval_mw[i] = HypothesisTests.pvalue(MannWhitneyUTest(X, Y))
 end
 
@@ -530,7 +538,9 @@ xtick = ytick = (_tick, string.(_tick))
 αs = exp.(range(log(0.002), log(1), 1000))
 plot(αs, α -> ECDF(pval_bm, α); label="Brunner-Munzel test")
 plot!(αs, α -> ECDF(pval_mw, α); label="Mann-Whitney U-test", ls=:dash)
-plot!(αs, identity; label="", ls=:dot)
+plot!(αs, identity; label="", ls=:dot, c=:black)
+plot!(αs, x->0.8x; label="", ls=:dot, c=:gray)
+plot!(αs, x->1.2x; label="", ls=:dot, c=:gray)
 plot!(; xscale=:log10, yscale=:log10, xtick, ytick)
 plot!(size=(400, 400))
 
