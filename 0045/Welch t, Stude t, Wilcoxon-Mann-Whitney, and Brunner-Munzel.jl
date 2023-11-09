@@ -429,8 +429,8 @@ function plot_sim(;
     plot!(; legend)
 
     P3 = plot()
-    stephist!(tval_we; norm=true, label="W")
-    stephist!(tval_st; norm=true, label="S", ls=:dash)
+    stephist!(tval_we; norm=true, label="We")
+    stephist!(tval_st; norm=true, label="St", ls=:dash)
     plot!(Normal(), -5, 5; label="", ls=:dot, c=:gray)
     vline!([0.0]; label="", ls=:dot, c=:gray)
     plot!(; yscale=:log10, ylim=(1e-4, 1))
@@ -442,9 +442,9 @@ function plot_sim(;
         @show (mean(sehat2_st)/se2, std(sehat2_st)/se2)
     end
     P4 = plot()
-    stephist!(sehat2_we/se2; norm=true, label="W", c=1)
+    stephist!(sehat2_we/se2; norm=true, label="We", c=1)
     vline!([mean(sehat2_we)/se2]; label="", ls=:dot, c=1)
-    stephist!(sehat2_st/se2; norm=true, label="S", ls=:dash, c=2)
+    stephist!(sehat2_st/se2; norm=true, label="St", ls=:dash, c=2)
     vline!([mean(sehat2_st)/se2]; label="", ls=:dot, c=2)
     plot!(; xlim = quantile.(([sehat2_we/se2; sehat2_st/se2],), (0.0, 0.99)))
     vline!([1.0]; label="", ls=:dot, c=:gray)
@@ -638,5 +638,54 @@ plot_sim(; distx, disty, m=80, n=100)
 distx = gammadist(1, 1.5)
 disty = gammadist(3, 1.5)
 plot_sim(; distx, disty, m=320, n=400, L=10^5)
+
+# %% [markdown]
+# * https://onlinelibrary.wiley.com/doi/10.1002/sim.3561
+#   * https://onlinelibrary.wiley.com/action/downloadSupplement?doi=10.1002%2Fsim.3561&file=sim_3561_sm_SupplMat.pdf
+
+# %%
+distx = gammadist(2, 3)
+disty = gammadist(1, 3)
+plot_sim(; distx, disty, m=25, n=25, ylim=(-0.1, 3.1), shifttype=:mean)
+
+# %%
+distx = gammadist(2, 3)
+disty = gammadist(1, 3)
+plot_sim(; distx, disty, m=25, n=25, ylim=(-0.1, 3.1), shifttype=:median)
+
+# %%
+distx = gammadist(2, 3)
+disty = gammadist(1, 3)
+plot_sim(; distx, disty, m=25, n=25, ylim=(-0.1, 3.1), shifttype=:tie)
+
+# %%
+distx = gammadist(2, 3)
+disty = gammadist(1, 3)
+plot_sim(; distx, disty, m=25, n=100, ylim=(-0.1, 3.1), shifttype=:mean)
+
+# %%
+distx = gammadist(2, 3)
+disty = gammadist(1, 3)
+plot_sim(; distx, disty, m=25, n=100, ylim=(-0.1, 3.1), shifttype=:median, verbose=true)
+
+# %%
+distx = gammadist(2, 3) - 0.2711292144816104
+disty = gammadist(1, 3)
+plot_sim(; distx, disty, m=25, n=100, ylim=(-0.1, 3.1), shifttype=:none, verbose=true)
+
+# %%
+distx = gammadist(2, 3) - 0.2711292144816104 - 0.042
+disty = gammadist(1, 3)
+plot_sim(; distx, disty, m=25, n=100, ylim=(-0.1, 3.1), shifttype=:none, verbose=true)
+
+# %%
+distx = gammadist(2, 3) - 0.2711292144816104 + 0.01
+disty = gammadist(1, 3)
+plot_sim(; distx, disty, m=100, n=25, ylim=(-0.1, 3.1), shifttype=:none, verbose=true)
+
+# %%
+distx = gammadist(2, 3)
+disty = gammadist(1, 3)
+plot_sim(; distx, disty, m=100, n=25, ylim=(-0.1, 3.1), shifttype=:mean, verbose=true)
 
 # %%
