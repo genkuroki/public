@@ -268,6 +268,7 @@ for k in 0.01:0.01:0.11
 end
 
 # %%
+using Printf
 undefvector(T::Type, m) = Vector{T}(undef, m)
 undefvector(m) = undefvector(Float64, m)
 ECDF(A, x) = count(≤(x), A)/length(A)
@@ -372,9 +373,10 @@ function plot_sim(;
         phat[i] = bm.phat
     end
     println()
-    @show std(distx) std(disty)
-    @show skewness(distx) skewness(disty)
-    @show kurtosis(distx) kurtosis(disty)
+    @printf "%6s  %6s  %10s  %10s\n" "" "std" "skewness" "kurtosis"
+    println("-"^40)
+    @printf "%6s  %6.1f  %10.1f  %10.1f\n" "distx" std(distx) skewness(distx) kurtosis(distx)
+    @printf "%6s  %6.1f  %10.1f  %10.1f\n" "disty" std(disty) skewness(disty) kurtosis(disty)
     println()
     
     e_we = ECDF(pval_we, α)
@@ -390,9 +392,8 @@ function plot_sim(;
 
     _tick = [0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1]
     xtick = ytick = (_tick, string.(_tick))
-
-    αs = exp.(range(log(0.002), log(1), 1000))
-    P2 = plot()
+    αs = exp.(range(log(_tick[begin]), log(_tick[end]), 1000))
+    P2a = plot()
     plot!(αs, α -> ECDF(pval_we, α); label="Welch ($(rd(100e_we))%)", c=1)
     plot!(αs, α -> ECDF(pval_st, α); label="Student ($(rd(100e_st))%)", ls=:dash, c=2)
     plot!(αs, α -> ECDF(pval_bm, α); label="BM ($(rd(100e_bm))%)", ls=:dashdot, c=3)
@@ -408,9 +409,28 @@ function plot_sim(;
     plot!(; xguide="α", yguide="probability of P-value ≤ α")
     plot!(; legend)
     
+    _tick = round.([0.2, 0.4, 1, 2, 4] * α; sigdigits=2)
+    xtick = ytick = (_tick, string.(_tick))
+    αs = exp.(range(log(_tick[begin]), log(_tick[end]), 1000))
+    P2b = plot()
+    plot!(αs, α -> ECDF(pval_we, α); label="Welch ($(rd(100e_we))%)", c=1)
+    plot!(αs, α -> ECDF(pval_st, α); label="Student ($(rd(100e_st))%)", ls=:dash, c=2)
+    plot!(αs, α -> ECDF(pval_bm, α); label="BM ($(rd(100e_bm))%)", ls=:dashdot, c=3)
+    plot!(αs, α -> ECDF(pval_mw, α); label="WMW ($(rd(100e_mw))%)", ls=:dashdotdot, c=4)
+    scatter!([α], [e_we]; ms=3, msc=:auto, label="", c=1)
+    scatter!([α], [e_st]; ms=3, msc=:auto, label="", c=2)
+    scatter!([α], [e_bm]; ms=3, msc=:auto, label="", c=3)
+    scatter!([α], [e_mw]; ms=3, msc=:auto, label="", c=4)
+    plot!(αs, identity; label="", ls=:dot, c=:gray)
+    plot!(αs, x->0.8x; label="", ls=:dot, c=:gray)
+    plot!(αs, x->1.2x; label="", ls=:dot, c=:gray)
+    plot!(; xscale=:log10, yscale=:log10, xtick, ytick)
+    plot!(; xguide="α", yguide="probability of P-value ≤ α")
+    plot!(; legend)
+
     P3 = plot()
-    stephist!(tval_we; norm=true, label="Welch")
-    stephist!(tval_st; norm=true, label="Student", ls=:dash)
+    stephist!(tval_we; norm=true, label="W")
+    stephist!(tval_st; norm=true, label="S", ls=:dash)
     plot!(Normal(), -5, 5; label="", ls=:dot, c=:gray)
     vline!([0.0]; label="", ls=:dot, c=:gray)
     plot!(; yscale=:log10, ylim=(1e-4, 1))
@@ -422,9 +442,9 @@ function plot_sim(;
         @show (mean(sehat2_st)/se2, std(sehat2_st)/se2)
     end
     P4 = plot()
-    stephist!(sehat2_we/se2; norm=true, label="Welch", c=1)
+    stephist!(sehat2_we/se2; norm=true, label="W", c=1)
     vline!([mean(sehat2_we)/se2]; label="", ls=:dot, c=1)
-    stephist!(sehat2_st/se2; norm=true, label="Student", ls=:dash, c=2)
+    stephist!(sehat2_st/se2; norm=true, label="S", ls=:dash, c=2)
     vline!([mean(sehat2_st)/se2]; label="", ls=:dot, c=2)
     plot!(; xlim = quantile.(([sehat2_we/se2; sehat2_st/se2],), (0.0, 0.99)))
     vline!([1.0]; label="", ls=:dot, c=:gray)
@@ -450,12 +470,15 @@ function plot_sim(;
     vline!([1.0]; label="", ls=:dot, c=:gray)
     title!("SEhat²/SE²"; titlefontsize=10)
     
-    layout = @layout [[a{0.3h} ; b] [c; d] [e; f]]
-    plot(P1, P2, P3, P4, P5, P6; size=(1200, 570), layout)
+    layout = @layout [[a{0.2h} ; b; c] [d; e; f; g]]
+    plot(P1, P2a, P2b, P3, P4, P5, P6; size=(800, 1000), layout)
     plot!(leftmargin=4Plots.mm, bottommargin=4Plots.mm)
 end
 
 plot_sim(; L=10^5)
+
+# %%
+@printf "%f %f" π exp(1)
 
 # %%
 plot_sim(; shifttype=:mean)
@@ -475,6 +498,11 @@ plot_sim(; distx, disty, m=25, n=100)
 distx = inversegammadist(1, 5)
 disty = inversegammadist(1, 5)
 plot_sim(; distx, disty, m=100, n=400, L=10^5)
+
+# %%
+distx = inversegammadist(1, 5)
+disty = inversegammadist(1, 5)
+plot_sim(; distx, disty, m=400, n=1600, L=10^5)
 
 # %%
 distx = inversegammadist(1.2, 5)
