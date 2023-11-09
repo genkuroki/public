@@ -248,6 +248,28 @@ std.(igam), skewness.(igam), kurtosis.(igam)
 @doc inversegammadist
 
 # %%
+function prc(s, x, α)
+    if x < α/2
+        printstyled(s, x; color=:blue, bold=true)
+    elseif x < α/1.3
+        printstyled(s, x; color=:blue)
+    elseif x < 1.3α
+        print(s, x)
+    elseif x < 2α
+        printstyled(s, x; color=:red)
+    else
+        printstyled(s, x; color=:red, bold=true)
+    end
+    println()
+end
+
+for k in 0.01:0.01:0.11
+    prc("hoge: ", k, 0.05)
+end
+
+# %%
+undefvector(T::Type, m) = Vector{T}(undef, m)
+undefvector(m) = undefvector(Float64, m)
 ECDF(A, x) = count(≤(x), A)/length(A)
 rd(x) = round(x; digits=1)
 
@@ -313,24 +335,24 @@ function plot_sim(;
     plot!(; ylim)
     title!("m = $m,  n = $n,  Niters = $L"; titlefontsize=10)
 
-    pval_we = zeros(L)
-    pval_st = zeros(L)
-    tval_we = zeros(L)
-    tval_st = zeros(L)
-    sehat2_we = zeros(L)
-    sehat2_st = zeros(L)
+    pval_we = undefvector(L)
+    pval_st = undefvector(L)
+    tval_we = undefvector(L)
+    tval_st = undefvector(L)
+    sehat2_we = undefvector(L)
+    sehat2_st = undefvector(L)
     
-    pval_bm = zeros(L)
-    pval_mw = zeros(L)
-    tval_bm = zeros(L)
-    tval_mw = zeros(L)
-    sehat2_bm = zeros(L)
-    sehat2_mw = zeros(L)
-    phat = zeros(L)
+    pval_bm = undefvector(L)
+    pval_mw = undefvector(L)
+    tval_bm = undefvector(L)
+    tval_mw = undefvector(L)
+    sehat2_bm = undefvector(L)
+    sehat2_mw = undefvector(L)
+    phat = undefvector(L)
 
     nth = Threads.nthreads()
-    Xtmp = [zeros(m) for _ in 1:nth]
-    Ytmp = [zeros(n) for _ in 1:nth]
+    Xtmp = [undefvector(m) for _ in 1:nth]
+    Ytmp = [undefvector(n) for _ in 1:nth]
     
     @time Threads.@threads for i in 1:L
         tid = Threads.threadid()
@@ -355,10 +377,15 @@ function plot_sim(;
     @show kurtosis(distx) kurtosis(disty)
     println()
     
-    e_we = @show ECDF(pval_we, α)
-    e_st = @show ECDF(pval_st, α)
-    e_bm = @show ECDF(pval_bm, α)
-    e_mw = @show ECDF(pval_mw, α)
+    e_we = ECDF(pval_we, α)
+    e_st = ECDF(pval_st, α)
+    e_bm = ECDF(pval_bm, α)
+    e_mw = ECDF(pval_mw, α)
+    println("true α-error rate for α = $α")
+    prc("  Welch t-test:        ", e_we, α)
+    prc("  Student t-test:      ", e_st, α)
+    prc("  Brunner-Munzel test: ", e_bm, α)
+    prc("  WMW test:            ", e_mw, α)
     println()
 
     _tick = [0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1]
@@ -428,7 +455,7 @@ function plot_sim(;
     plot!(leftmargin=4Plots.mm, bottommargin=4Plots.mm)
 end
 
-plot_sim()
+plot_sim(; L=10^5)
 
 # %%
 plot_sim(; shifttype=:mean)
@@ -540,13 +567,28 @@ disty = inversegammadist(1, 5)
 plot_sim(; distx, disty, m=80, n=100)
 
 # %%
-distx = inversegammadist(3, 5)
+distx = inversegammadist(2, 5)
 disty = inversegammadist(1, 5)
-plot_sim(; distx, disty, m=80, n=100)
+plot_sim(; distx, disty, m=320, n=400, L=10^5)
 
 # %%
 distx = inversegammadist(3, 5)
 disty = inversegammadist(1, 5)
+plot_sim(; distx, disty, m=80, n=100)
+
+# %% tags=[]
+distx = inversegammadist(3, 5)
+disty = inversegammadist(1, 5)
+plot_sim(; distx, disty, m=320, n=400, L=10^5)
+
+# %%
+distx = inversegammadist(1, 5)
+disty = inversegammadist(3, 5)
+plot_sim(; distx, disty, m=80, n=100)
+
+# %% tags=[]
+distx = inversegammadist(1, 5)
+disty = inversegammadist(3, 5)
 plot_sim(; distx, disty, m=320, n=400, L=10^5)
 
 # %%
@@ -557,6 +599,16 @@ plot_sim(; distx, disty, m=80, n=100)
 # %%
 distx = gammadist(3, 1.5)
 disty = gammadist(1, 1.5)
+plot_sim(; distx, disty, m=320, n=400, L=10^5)
+
+# %%
+distx = gammadist(1, 1.5)
+disty = gammadist(3, 1.5)
+plot_sim(; distx, disty, m=80, n=100)
+
+# %%
+distx = gammadist(1, 1.5)
+disty = gammadist(3, 1.5)
 plot_sim(; distx, disty, m=320, n=400, L=10^5)
 
 # %%
