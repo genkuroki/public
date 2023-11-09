@@ -355,10 +355,12 @@ Y = rand(20)
 p = 0.3
 (; phat, sehat, tvalue, df, pvalue) = statistics_brunner_munzel(X, Y; p)
 A = [phat, sehat, tvalue, df, pvalue, p]
-(; phat, sehat, tvalue, df, pvalue, p) =brunner_munzel_test(X, Y; p)
+(; phat, sehat, tvalue, df, pvalue, p) = brunner_munzel_test(X, Y; p)
 B = [phat, sehat, tvalue, df, pvalue, p]
 @show A ≈ B
 [A B]
+
+# %%
 
 # %%
 @doc h_brunner_munzel

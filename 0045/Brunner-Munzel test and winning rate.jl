@@ -33,7 +33,7 @@ end
 function tieshift(
         distx::ContinuousUnivariateDistribution,
         disty::ContinuousUnivariateDistribution;
-        p = 0.5
+        p = 1/2
     )
     find_zero(0.0) do a
         winningrate(distx + a, disty) - p
@@ -227,6 +227,15 @@ Y = rand(100)
 @time @show mann_whitney_u_test(X, Y);
 
 # %%
+distx = Exponential(1)
+disty = Exponential(3)
+distx = distx - mean(distx)
+disty = disty - mean(disty)
+a = minimum(quantile.((distx, disty), 0.01))
+b = maximum(quantile.((distx, disty), 0.99))
+a, b
+
+# %%
 using HypothesisTests
 ECDF(A, x) = count(≤(x), A)/length(A)
 using StatsPlots
@@ -236,14 +245,15 @@ using Random
 function plot_sim_bm_mw(;
         distx = Exponential(1),
         disty = Exponential(3),
-        a = -1,
-        b = 10,
+        xlim = :auto,
+        ylim = :auto,
         m = 100,
         n = 100,
         L = 10^6,
         shifttype = :median,
         α = 0.05,
         legend = :bottomright,
+        correct = true,
     )
     @show distx
     @show disty
@@ -263,8 +273,19 @@ function plot_sim_bm_mw(;
     @show median(distx) median(disty)
     @show mean(distx) mean(disty)
 
+    if xlim == :auto
+        a = minimum(quantile.((distx, disty), 0.01))
+        b = maximum(quantile.((distx, disty), 0.99))
+        l = b - a
+        a = a - l/10
+        b = b + l/10
+    else
+        a, b = xlim
+    end
     P1 = plot(distx, a, b; label="distx")
     plot!(disty, a, b; label="disty", ls=:dash)
+    plot!(; ylim)
+    title!("m = $m,  n = $n"; titlefontsize=10)
 
     @show m
     @show n
@@ -282,7 +303,7 @@ function plot_sim_bm_mw(;
         X = rand!(distx, Xtmp[tid])
         Y = rand!(disty, Ytmp[tid])
         pval_bm[i] = pvalue_brunner_munzel_test(X, Y)
-        pval_mw[i] = pvalue_mann_whitney_u_test(X, Y)
+        pval_mw[i] = pvalue_mann_whitney_u_test(X, Y; correct)
     end
 
     @show α
@@ -322,5 +343,245 @@ plot_sim_bm_mw(; m=500, n=500, shifttype=:median, L=5*10^4)
 
 # %%
 plot_sim_bm_mw(; m=1000, n=1000, shifttype=:median, L=10^4)
+
+# %%
+"""
+gammadist(σ, β)
+
+returns the gamma distribution with standard deviation `σ` and skewness `β`.
+"""
+gammadist(σ, β) = Gamma(4/β^2, β*σ/2)
+
+# %%
+gam = gammadist.(1:5, 2:2:10)
+std.(gam), skewness.(gam)
+
+# %%
+[(β, shape(gammadist(1, β)), gammadist(1, β)) for β in 0.2:0.2:3]
+
+# %%
+P = plot()
+for β in [0.4; 1:3]
+    dist = gammadist(1, β)
+    @eval @show (mean(gammadist(1, $β)), median(gammadist(1, $β)), shape(gammadist(1, $β)))
+    dist = dist - median(dist)
+    plot!(dist, -3, 3; label="$β", ls=:auto)
+    plot!(ylim=(-0.05, 2.05))
+end
+plot!()
+
+# %%
+distx = gammadist(1, 2.5)
+disty = gammadist(1, 3)
+xlim = (-1.0, 1.5)
+ylim = (-0.2, 5.2)
+@show std(distx) std(disty)
+@show skewness(distx) skewness(disty)
+plot_sim_bm_mw(; distx, disty, xlim, ylim, m=100, n=100, shifttype=:median, L=10^5)
+
+# %%
+distx = gammadist(1, 2.5)
+disty = gammadist(1, 3)
+xlim = (-1.0, 1.5)
+ylim = (-0.2, 5.2)
+@show std(distx) std(disty)
+@show skewness(distx) skewness(disty)
+plot_sim_bm_mw(; distx, disty, xlim, ylim, m=100, n=100, shifttype=:tie, L=10^5)
+
+# %%
+distx = gammadist(1, 2.5)
+disty = gammadist(1.5, 3)
+xlim = (-1.0, 1.5)
+ylim = (-0.2, 5.2)
+@show std(distx) std(disty)
+@show skewness(distx) skewness(disty)
+plot_sim_bm_mw(; distx, disty, xlim, ylim, m=100, n=100, shifttype=:median, L=10^5)
+
+# %%
+distx = gammadist(1, 2.5)
+disty = gammadist(1.5, 3)
+xlim = (-1.0, 1.5)
+ylim = (-0.2, 5.2)
+@show std(distx) std(disty)
+@show skewness(distx) skewness(disty)
+plot_sim_bm_mw(; distx, disty, xlim, ylim, m=100, n=100, shifttype=:tie, L=10^5)
+
+# %%
+distx = gammadist(1, 2.5)
+disty = gammadist(2, 3)
+xlim = (-0.5, 1.5)
+ylim = (-0.2, 5.2)
+@show std(distx) std(disty)
+@show skewness(distx) skewness(disty)
+plot_sim_bm_mw(; distx, disty, xlim, ylim, m=100, n=100, shifttype=:median, L=10^5)
+
+# %%
+distx = gammadist(1, 2.5)
+disty = gammadist(2, 3)
+xlim = (-0.5, 1.5)
+ylim = (-0.2, 5.2)
+@show std(distx) std(disty)
+@show skewness(distx) skewness(disty)
+plot_sim_bm_mw(; distx, disty, xlim, ylim, m=100, n=100, shifttype=:tie, L=10^5)
+
+# %%
+distx = gammadist(1.5, 2.5)
+disty = gammadist(1, 3)
+xlim = (-1, 1.5)
+ylim = (-0.2, 5.2)
+@show std(distx) std(disty)
+@show skewness(distx) skewness(disty)
+plot_sim_bm_mw(; distx, disty, xlim, ylim, m=100, n=100, shifttype=:median, L=10^5)
+
+# %%
+distx = gammadist(1.5, 2.5)
+disty = gammadist(1, 3)
+xlim = (-1, 1.5)
+ylim = (-0.2, 5.2)
+@show std(distx) std(disty)
+@show skewness(distx) skewness(disty)
+plot_sim_bm_mw(; distx, disty, xlim, ylim, m=100, n=100, shifttype=:tie, L=10^5)
+
+# %%
+distx = gammadist(2, 2.5)
+disty = gammadist(1, 3)
+xlim = (-1, 1.5)
+ylim = (-0.2, 5.2)
+@show std(distx) std(disty)
+@show skewness(distx) skewness(disty)
+plot_sim_bm_mw(; distx, disty, xlim, ylim, m=100, n=100, shifttype=:median, L=10^5)
+
+# %%
+distx = gammadist(2, 2.5)
+disty = gammadist(1, 3)
+xlim = (-1.0, 1.5)
+ylim = (-0.2, 5.2)
+@show std(distx) std(disty)
+@show skewness(distx) skewness(disty)
+plot_sim_bm_mw(; distx, disty, xlim, ylim, m=100, n=100, shifttype=:tie, L=10^5)
+
+# %%
+distx = gammadist(3, 2.5)
+disty = gammadist(1, 3)
+xlim = (-1.5, 1.5)
+ylim = (-0.2, 5.2)
+@show std(distx) std(disty)
+@show skewness(distx) skewness(disty)
+plot_sim_bm_mw(; distx, disty, xlim, ylim, m=100, n=100, shifttype=:median, L=10^5)
+
+# %%
+distx = gammadist(3, 2.5)
+disty = gammadist(1, 3)
+xlim = (-1.5, 1.5)
+ylim = (-0.2, 5.2)
+@show std(distx) std(disty)
+@show skewness(distx) skewness(disty)
+plot_sim_bm_mw(; distx, disty, xlim, ylim, m=100, n=100, shifttype=:tie, L=10^5)
+
+# %%
+distx = gammadist(1, 3)
+disty = gammadist(2, 3)
+xlim = (-1.0, 2.0)
+ylim = (-0.2, 5.2)
+@show std(distx) std(disty)
+@show skewness(distx) skewness(disty)
+plot_sim_bm_mw(; distx, disty, xlim, ylim, m=100, n=100, shifttype=:median, L=10^6, correct=false)
+
+# %%
+distx = gammadist(1, 3)
+disty = gammadist(2, 3)
+xlim = (-1.0, 2.0)
+ylim = (-0.2, 5.2)
+@show std(distx) std(disty)
+@show skewness(distx) skewness(disty)
+plot_sim_bm_mw(; distx, disty, xlim, ylim, m=100, n=100, shifttype=:median, L=10^6, correct=true)
+
+# %%
+function inversegammadist(σ, β)
+    α = 3 + 8/β^2 + 4/β * √(1 + 4/β^2)
+    θ = σ * (α - 1) * √(α - 2)
+    InverseGamma(α, θ)
+end
+
+# %%
+igam = inversegammadist.(1:5, 2:2:10)
+std.(igam), skewness.(igam)
+
+# %%
+@show igam = inversegammadist.(1, Inf)
+std.(igam), skewness.(igam)
+
+# %%
+P = plot()
+for β in [0.4; 1:3]
+    dist = inversegammadist(1, β)
+    @show (β, mean(dist), median(dist), shape(dist))
+    dist = dist - median(dist)
+    plot!(dist, -3, 6; label="$β", ls=:auto)
+end
+plot!()
+
+# %%
+distx = inversegammadist(1, 1)
+disty = inversegammadist(1, 10)
+@show std(distx) std(disty)
+@show skewness(distx) skewness(disty)
+plot_sim_bm_mw(; distx, disty, m=100, n=100, shifttype=:median, L=10^5)
+
+# %%
+distx = inversegammadist(1, 1)
+disty = inversegammadist(1, 10)
+@show std(distx) std(disty)
+@show skewness(distx) skewness(disty)
+plot_sim_bm_mw(; distx, disty, m=100, n=100, shifttype=:mean, L=10^5)
+
+# %%
+distx = inversegammadist(1, 1)
+disty = inversegammadist(1, 10)
+@show std(distx) std(disty)
+@show skewness(distx) skewness(disty)
+plot_sim_bm_mw(; distx, disty, m=100, n=100, shifttype=:tie, L=10^5)
+
+# %%
+distx = inversegammadist(1, 1)
+disty = inversegammadist(1, 10)
+@show std(distx) std(disty)
+@show skewness(distx) skewness(disty)
+plot_sim_bm_mw(; distx, disty, m=50, n=100, shifttype=:median, L=10^5)
+
+# %%
+distx = inversegammadist(1, 1)
+disty = inversegammadist(1, 10)
+@show std(distx) std(disty)
+@show skewness(distx) skewness(disty)
+plot_sim_bm_mw(; distx, disty, m=50, n=100, shifttype=:mean, L=10^5)
+
+# %%
+distx = inversegammadist(1, 1)
+disty = inversegammadist(1, 10)
+@show std(distx) std(disty)
+@show skewness(distx) skewness(disty)
+plot_sim_bm_mw(; distx, disty, m=50, n=100, shifttype=:tie, L=10^5)
+
+# %%
+distx = inversegammadist(2, 1)
+disty = inversegammadist(1, 10)
+@show std(distx) std(disty)
+@show skewness(distx) skewness(disty)
+plot_sim_bm_mw(; distx, disty, m=50, n=100, shifttype=:median, L=10^5)
+
+# %%
+distx = inversegammadist(2, 1)
+disty = inversegammadist(1, 10)
+@show std(distx) std(disty)
+@show skewness(distx) skewness(disty)
+plot_sim_bm_mw(; distx, disty, m=50, n=100, shifttype=:mean, L=10^5)
+
+# %%
+distx = inversegammadist(2, 1)
+disty = inversegammadist(1, 10)
+@show std(distx) std(disty)
+@show skewness(distx) skewness(disty)
+plot_sim_bm_mw(; distx, disty, m=50, n=100, shifttype=:tie, L=10^5)
 
 # %%
