@@ -15,7 +15,7 @@
 # ---
 
 # %% [markdown]
-# # Fagerland-Sandvik (2009)の再現
+# # Fagerland-Sandvik (2009) の再現
 #
 # * 黒木 玄
 # * 2023-11-10
@@ -445,7 +445,7 @@ end
 # %%
 @time print_sim(gammadist(1.1, 3), gammadist(1, 3), 1000, 1000; shifttype=:mean, L=10^4)
 
-# %%
+# %% tags=[]
 @time print_sim(gammadist(1.1, 3), gammadist(1, 3), 1000, 1000; shifttype=:median, L=10^4)
 
 # %%
