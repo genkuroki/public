@@ -439,7 +439,6 @@ function print_sim(distx, disty, m, n; shifttype=:mean, L=10^5, α=0.05)
     println("Student t:             ", rd(er_st), "%")
     println("Welch t:               ", rd(er_we), "%")
     println()
-    
 end
 
 # %%
@@ -837,5 +836,40 @@ plot(inversegammadist(1, 3), -0.2, 6; label="inversegammadist(1, 3)")
 
 # %%
 @time print_sim(gammadist(5, 5), gammadist(1, 5), 1000, 1000; shifttype=:tie, L=10^4)
+
+# %% [markdown]
+# ## その他の計算
+
+# %%
+@time print_sim(Normal(0, 4), Normal(0, 1), 100, 100; shifttype=:mean, L=10^6)
+
+# %%
+@time print_sim(Normal(0, 4), Normal(0, 1), 100, 200; shifttype=:mean, L=10^6)
+
+# %%
+gammadist2(μ, σ) = Gamma(μ^2/σ^2, σ^2/μ)
+[
+    [shape(gammadist2(3, σ)) for σ in (√3, √3/2, √3/3, √3/4)],
+    [scale(gammadist2(3, σ)) for σ in (√3, √3/2, √3/3, √3/4)],
+    [mean(gammadist2(3, σ)) for σ in (√3, √3/2, √3/3, √3/4)],
+    [var(gammadist2(3, σ)) for σ in (√3, √3/2, √3/3, √3/4)],
+    [std(gammadist2(3, σ)) for σ in (√3, √3/2, √3/3, √3/4)]
+]
+
+# %%
+# 等母平均の場合: この場合はWMW検定とBM検定にとって不利な状況になっている.
+
+for σ in (√3, √3/2, √3/3, √3/4)
+    println("-"^20, " 標準治療側の標準偏差 = $(round(√3; digits=2)),  試験治療側の標準偏差 = $(round(σ; digits=2))")
+    print_sim(gammadist2(3, √3), gammadist2(3, σ), 100, 100; shifttype=:mean)
+end
+
+# %%
+# フェアな比較: WMWとBMでは P(X<Y)+P(X=Y)/2 = 1/2 という状況で確認を行う.
+
+for σ in (√3, √3/2, √3/3, √3/4)
+    println("-"^20, " 標準治療側の標準偏差 = $(round(√3; digits=2)),  試験治療側の標準偏差 = $(round(σ; digits=2))")
+    print_sim(gammadist2(3, √3), gammadist2(3, σ), 100, 100; shifttype=:auto)
+end
 
 # %%
