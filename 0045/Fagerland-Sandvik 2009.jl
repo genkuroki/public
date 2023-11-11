@@ -847,7 +847,13 @@ plot(inversegammadist(1, 3), -0.2, 6; label="inversegammadist(1, 3)")
 @time print_sim(Normal(0, 4), Normal(0, 1), 100, 200; shifttype=:mean, L=10^6)
 
 # %%
+"""
+gammadist2(μ, σ)
+
+returns the gamma distribution with mean `μ` and standard deviation `σ`.
+"""
 gammadist2(μ, σ) = Gamma(μ^2/σ^2, σ^2/μ)
+
 [
     [shape(gammadist2(3, σ)) for σ in (√3, √3/2, √3/3, √3/4)],
     [scale(gammadist2(3, σ)) for σ in (√3, √3/2, √3/3, √3/4)],
@@ -857,11 +863,20 @@ gammadist2(μ, σ) = Gamma(μ^2/σ^2, σ^2/μ)
 ]
 
 # %%
+plot()
+for σ in (√3, √3/2, √3/3, √3/4)
+    dist = gammadist2(3, σ)
+    plot!(dist; label="μ=3, σ=$(round(σ; digits=2))", ls=:auto)
+    plot!(xlim=(-0.3, 10), xtick=0:10)
+end
+title!("Gamma distribution")
+
+# %%
 # 等母平均の場合: この場合はWMW検定とBM検定にとって不利な状況になっている.
 
 for σ in (√3, √3/2, √3/3, √3/4)
     println("-"^20, " 標準治療側の標準偏差 = $(round(√3; digits=2)),  試験治療側の標準偏差 = $(round(σ; digits=2))")
-    print_sim(gammadist2(3, √3), gammadist2(3, σ), 100, 100; shifttype=:mean)
+    print_sim(gammadist2(3, √3), gammadist2(3, σ), 100, 100; shifttype=:mean, L=10^6)
 end
 
 # %%
@@ -869,7 +884,7 @@ end
 
 for σ in (√3, √3/2, √3/3, √3/4)
     println("-"^20, " 標準治療側の標準偏差 = $(round(√3; digits=2)),  試験治療側の標準偏差 = $(round(σ; digits=2))")
-    print_sim(gammadist2(3, √3), gammadist2(3, σ), 100, 100; shifttype=:auto)
+    print_sim(gammadist2(3, √3), gammadist2(3, σ), 100, 100; shifttype=:auto, L=10^6)
 end
 
 # %%
