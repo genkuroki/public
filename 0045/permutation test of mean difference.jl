@@ -15,12 +15,13 @@
 # ---
 
 # %%
+using Printf
 using Random
 Random.seed!(4649373)
 
 using Distributions
 using StatsPlots
-default(fmt=:png, titlefontsize=10, size=(400, 250))
+default(fmt=:png, titlefontsize=10, size=(500, 350))
 
 ECDF(A, x) = count(≤(x), A) / length(A)
 
@@ -111,6 +112,25 @@ Y = randn(100)
 pvalue_welch_t_test(X, Y), pvalue(UnequalVarianceTTest(X, Y))
 
 # %%
+function student_t_test(X, Y; μ = 0.0)
+    m, X̄, SX2 = length(X), mean(X), var(X)
+    n, Ȳ, SY2 = length(Y), mean(Y), var(Y)
+    S2 = ((m-1)*SX2 + (n-1)*SY2) / (m+n-2)
+    sehat2 = S2 * (1/m + 1/n)
+    tvalue = (X̄ - Ȳ - μ) / √sehat2
+    df = m + n - 2
+    pvalue = 2ccdf(TDist(df), abs(tvalue))
+    (; pvalue, tvalue, sehat2, df)
+end
+
+pvalue_student_t_test(X, Y; μ = 0.0) = student_t_test(X, Y; μ).pvalue
+
+using HypothesisTests
+X = randn(100)
+Y = randn(100)
+pvalue_student_t_test(X, Y), pvalue(EqualVarianceTTest(X, Y))
+
+# %%
 """
 inversegammadist(σ, β)
 
@@ -131,26 +151,31 @@ function plot_sim_diff_shuffle(;
         distx = Normal(0, 1), m = 200,
         disty = Normal(0, 4), n = 50,
         difffunc1 = (X, Y) -> mean(X) - mean(Y),
+        name1 = "perm(Δmean)",
         difffunc2 = (X, Y) -> (mean(X) - mean(Y)) / √(var(X)/length(X) + var(Y)/length(Y)),
-        L = 4000,
-        Nshuffles = 4000,
+        name2 = "perm(T-stat)",
+        L = 5000,
+        Nshuffles = 5000,
+        α = 0.05,
     )
 
     @show distx disty m n
-    @show se_true = √(var(distx)/m + var(disty)/n)
-    @show se_shuffle = √(var(distx)/n + var(disty)/m)
+#     @show se_true = √(var(distx)/m + var(disty)/n)
+#     @show se_shuffle = √(var(distx)/n + var(disty)/m)
+    println()
 
     nth = Threads.nthreads()
     XYtmp = [zeros(m+n) for _ in 1:nth]
     diffshuffle1tmp = [zeros(Nshuffles) for _ in 1:nth]
     diffshuffle2tmp = [zeros(Nshuffles) for _ in 1:nth]
 
-    pval1 = zeros(L)
-    pval2 = zeros(L)
-    pvalw = zeros(L)
     diff1 = zeros(L)
     diff2 = zeros(L)
-    @time Threads.@threads for i in 1:L
+    pval1 = zeros(L)
+    pval2 = zeros(L)
+    pval_welch = zeros(L)
+    pval_student = zeros(L)
+    Threads.@threads for i in 1:L
         tid = Threads.threadid()
         XY = XYtmp[tid]
         diffshuffle1 = diffshuffle1tmp[tid]
@@ -159,7 +184,8 @@ function plot_sim_diff_shuffle(;
         Y = rand!(disty, @view XY[m+1:m+n])
         diff1[i] = difffunc1(X, Y)
         diff2[i] = difffunc2(X, Y)
-        pvalw[i] = pvalue_welch_t_test(X, Y)
+        pval_welch[i] = pvalue_welch_t_test(X, Y)
+        pval_student[i] = pvalue_student_t_test(X, Y)
         for j in 1:Nshuffles
             shuffle!(XY)
             @views X, Y = XY[1:m], XY[m+1:m+n]
@@ -172,186 +198,117 @@ function plot_sim_diff_shuffle(;
         pval2[i] = min(1, P2, 2-P2)
     end
 
-    @show mean(diff1) std(diff1)
-    @show mean(diff2) std(diff2)
-
-    @show ECDF.((pval1, pval2, pvalw), 0.10)
-    @show ECDF.((pval1, pval2, pvalw), 0.05)
-    plot()
-    stephist!(pval1; norm=true, label="1", bin=0:0.025:1.025)
-    stephist!(pval2; norm=true, label="2", bin=0:0.025:1.025, ls=:dash)
-    stephist!(pvalw; norm=true, label="Welch", bin=0:0.025:1.025, ls=:dashdot)
-    plot!(xtick=0:0.1:1)
+#     @show mean(diff1) std(diff1)
+#     @show mean(diff2) std(diff2)
+#     println()
+    
+    er1 = ECDF(pval1, α)
+    er2 = ECDF(pval2, α)
+    er_student = ECDF(pval_student, α)
+    er_welch = ECDF(pval_welch, α)
+    @printf "Probabilities of P-valune ≤ %3.1f%%\n" 100α
+    @printf "  %-15s %4.1f%%\n" name1*":" 100er1
+    @printf "  %-15s %4.1f%%\n" "Student:" 100er_student
+    @printf "  %-15s %4.1f%%\n" name2*":" 100er2
+    @printf "  %-15s %4.1f%%\n" "Welch:" 100er_welch
+    println()
+    
+#     αs = range(0, 1, 1001)
+#     xtick = ytick = 0:0.1:1
+#     P = plot()
+#     plot!(αs, α -> ECDF(pval1, α), label="1", bin=0:0.025:1.025)
+#     plot!(αs, α -> ECDF(pval_student, α), label="Student", bin=0:0.025:1.025, ls=:dash)
+#     plot!(αs, α -> ECDF(pval2, α), label="2", bin=0:0.025:1.025, ls=:dashdot)
+#     plot!(αs, α -> ECDF(pval_welch, α), label="Welch", bin=0:0.025:1.025, ls=:dashdotdot)
+#     plot!(αs, identity; label="", ls=:dot, c=:black, alpha=0.7)
+#     plot!(; xtick, ytick)
+#     plot!(; xguide="α", yguide="probablity of P-value ≤ α")
+#     plot!(; size=(400, 400))
+    
+    αs = range(0, 0.1, 1001)
+    xtick = ytick = 0:0.01:1
+    Q = plot()
+    plot!(αs, α -> ECDF(pval1, α), label=name1, bin=0:0.025:1.025)
+    plot!(αs, α -> ECDF(pval_student, α), label="Student", bin=0:0.025:1.025, ls=:dash)
+    plot!(αs, α -> ECDF(pval2, α), label=name2, bin=0:0.025:1.025, ls=:dashdot)
+    plot!(αs, α -> ECDF(pval_welch, α), label="Welch", bin=0:0.025:1.025, ls=:dashdotdot)
+    plot!(αs, identity; label="", ls=:dot, c=:black, alpha=0.7)
+    plot!(; xtick, ytick)
+    plot!(; xguide="α", yguide="probablity of P-value ≤ α")
+    plot!(; size=(400, 400))
+    
+#    plot(P, Q; size=(400, 400))
 end
 
 # %%
-plot_sim_diff_shuffle(;
-    distx = Normal(0, 1), m = 100,
-    disty = Normal(0, 2), n = 50,
-    difffunc1 = (X, Y) -> mean(X) - mean(Y),
-    difffunc2 = (X, Y) -> (mean(X) - mean(Y)) / √(var(X)/length(X) + var(Y)/length(Y)),
-    L = 10000,
-    Nshuffles = 10000,
-)
+distx, disty = Normal(0, 2), Normal(0, 1)
+m, n = 50, 50
+L = Nshuffles = 5000
+@time plot_sim_diff_shuffle(; distx, m, disty, n, L, Nshuffles)
 
 # %%
-plot_sim_diff_shuffle(;
-    distx = Normal(0, 1), m = 50,
-    disty = Normal(0, 2), n = 100,
-    difffunc1 = (X, Y) -> mean(X) - mean(Y),
-    difffunc2 = (X, Y) -> (mean(X) - mean(Y)) / √(var(X)/length(X) + var(Y)/length(Y)),
-    L = 10000,
-    Nshuffles = 10000,
-)
+distx, disty = Normal(0, 2), Normal(0, 1)
+m, n = 25, 100
+L = Nshuffles = 5000
+@time plot_sim_diff_shuffle(; distx, m, disty, n, L, Nshuffles)
 
 # %%
-plot_sim_diff_shuffle(;
-    distx = Normal(0, 1), m = 75,
-    disty = Normal(0, 2), n = 75,
-    difffunc1 = (X, Y) -> mean(X) - mean(Y),
-    difffunc2 = (X, Y) -> (mean(X) - mean(Y)) / √(var(X)/length(X) + var(Y)/length(Y)),
-    L = 10000,
-    Nshuffles = 10000,
-)
+distx, disty = Normal(0, 2), Normal(0, 1)
+m, n = 100, 25
+L = Nshuffles = 5000
+@time plot_sim_diff_shuffle(; distx, m, disty, n, L, Nshuffles)
 
 # %%
-plot_sim_diff_shuffle(;
-    distx = Normal(0, 1), m = 100,
-    disty = Normal(0, 4), n = 50,
-    difffunc1 = (X, Y) -> mean(X) - mean(Y),
-    difffunc2 = (X, Y) -> (mean(X) - mean(Y)) / √(var(X)/length(X) + var(Y)/length(Y)),
-    L = 10000,
-    Nshuffles = 10000,
-)
+distx, disty = inversegammadist(1, 3), inversegammadist(1, 3)
+m, n = 50, 50
+L = Nshuffles = 5000
+@time plot_sim_diff_shuffle(; distx, m, disty, n, L, Nshuffles)
 
 # %%
-plot_sim_diff_shuffle(;
-    distx = Normal(0, 1), m = 50,
-    disty = Normal(0, 4), n = 100,
-    difffunc1 = (X, Y) -> mean(X) - mean(Y),
-    difffunc2 = (X, Y) -> (mean(X) - mean(Y)) / √(var(X)/length(X) + var(Y)/length(Y)),
-    L = 10000,
-    Nshuffles = 10000,
-)
+distx, disty = inversegammadist(1, 3), inversegammadist(1, 3)
+m, n = 25, 100
+L = Nshuffles = 5000
+@time plot_sim_diff_shuffle(; distx, m, disty, n, L, Nshuffles)
 
 # %%
-plot_sim_diff_shuffle(;
-    distx = Normal(0, 1), m = 75,
-    disty = Normal(0, 4), n = 75,
-    difffunc1 = (X, Y) -> mean(X) - mean(Y),
-    difffunc2 = (X, Y) -> (mean(X) - mean(Y)) / √(var(X)/length(X) + var(Y)/length(Y)),
-    L = 10000,
-    Nshuffles = 10000,
-)
+distx, disty = inversegammadist(1, 3), inversegammadist(1, 3)
+m, n = 100, 400
+L = Nshuffles = 5000
+@time plot_sim_diff_shuffle(; distx, m, disty, n, L, Nshuffles)
 
 # %%
-distx = inversegammadist(1, 3)
-disty = inversegammadist(1, 3)
-m = 25
-n = 100
-
-plot_sim_diff_shuffle(;
-    distx, m,
-    disty, n,
-    difffunc1 = (X, Y) -> mean(X) - mean(Y),
-    difffunc2 = (X, Y) -> (mean(X) - mean(Y)) / √(var(X)/length(X) + var(Y)/length(Y)),
-    L = 10000,
-    Nshuffles = 10000,
-)
-
-# %%
-distx = inversegammadist(1, 10)
-disty = inversegammadist(1, 10)
-m = 25
-n = 100
-
-plot_sim_diff_shuffle(;
-    distx, m,
-    disty, n,
-    difffunc1 = (X, Y) -> mean(X) - mean(Y),
-    difffunc2 = (X, Y) -> (mean(X) - mean(Y)) / √(var(X)/length(X) + var(Y)/length(Y)),
-    L = 10000,
-    Nshuffles = 10000,
-)
-
-# %%
-distx = inversegammadist(1, 3)
-disty = inversegammadist(1, 2)
+distx, disty = inversegammadist(2, 3), inversegammadist(1, 3)
 distx = distx + mean(disty) - mean(distx)
-m = 25
-n = 100
-
-plot_sim_diff_shuffle(;
-    distx, m,
-    disty, n,
-    difffunc1 = (X, Y) -> mean(X) - mean(Y),
-    difffunc2 = (X, Y) -> (mean(X) - mean(Y)) / √(var(X)/length(X) + var(Y)/length(Y)),
-    L = 10000,
-    Nshuffles = 10000,
-)
+m, n = 50, 50
+L = Nshuffles = 5000
+@time plot_sim_diff_shuffle(; distx, m, disty, n, L, Nshuffles)
 
 # %%
-distx = inversegammadist(1, 3)
-disty = inversegammadist(1, 0)
+distx, disty = inversegammadist(2, 3), inversegammadist(1, 3)
 distx = distx + mean(disty) - mean(distx)
-m = 25
-n = 100
-
-plot_sim_diff_shuffle(;
-    distx, m,
-    disty, n,
-    difffunc1 = (X, Y) -> mean(X) - mean(Y),
-    difffunc2 = (X, Y) -> (mean(X) - mean(Y)) / √(var(X)/length(X) + var(Y)/length(Y)),
-    L = 10000,
-    Nshuffles = 10000,
-)
+m, n = 100, 100
+L = Nshuffles = 5000
+@time plot_sim_diff_shuffle(; distx, m, disty, n, L, Nshuffles)
 
 # %%
-distx = inversegammadist(1, 10)
-disty = inversegammadist(1, 0)
+distx, disty = inversegammadist(2, 3), inversegammadist(1, 3)
 distx = distx + mean(disty) - mean(distx)
-m = 25
-n = 100
-
-plot_sim_diff_shuffle(;
-    distx, m,
-    disty, n,
-    difffunc1 = (X, Y) -> mean(X) - mean(Y),
-    difffunc2 = (X, Y) -> (mean(X) - mean(Y)) / √(var(X)/length(X) + var(Y)/length(Y)),
-    L = 10000,
-    Nshuffles = 10000,
-)
+m, n = 25, 100
+L = Nshuffles = 5000
+@time plot_sim_diff_shuffle(; distx, m, disty, n, L, Nshuffles)
 
 # %%
-distx = inversegammadist(2, 3)
-disty = inversegammadist(1, 3)
+distx, disty = inversegammadist(2, 3), inversegammadist(1, 3)
 distx = distx + mean(disty) - mean(distx)
-m = 25
-n = 100
-
-plot_sim_diff_shuffle(;
-    distx, m,
-    disty, n,
-    difffunc1 = (X, Y) -> mean(X) - mean(Y),
-    difffunc2 = (X, Y) -> (mean(X) - mean(Y)) / √(var(X)/length(X) + var(Y)/length(Y)),
-    L = 10000,
-    Nshuffles = 10000,
-)
+m, n = 100, 400
+L = Nshuffles = 5000
+@time plot_sim_diff_shuffle(; distx, m, disty, n, L, Nshuffles)
 
 # %%
-distx = inversegammadist(2, 3)
-disty = inversegammadist(1, 3)
+distx, disty = inversegammadist(2, 3), inversegammadist(1, 3)
 distx = distx + mean(disty) - mean(distx)
-m = 5
-n = 20
-
-plot_sim_diff_shuffle(;
-    distx, m,
-    disty, n,
-    difffunc1 = (X, Y) -> mean(X) - mean(Y),
-    difffunc2 = (X, Y) -> (mean(X) - mean(Y)) / √(var(X)/length(X) + var(Y)/length(Y)),
-    L = 10000,
-    Nshuffles = 10000,
-)
+m, n = 100, 25
+L = Nshuffles = 5000
+@time plot_sim_diff_shuffle(; distx, m, disty, n, L, Nshuffles)
 
 # %%
