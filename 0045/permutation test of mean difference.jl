@@ -332,15 +332,13 @@ L = Nshuffles = 5000
 # # 検出力
 
 # %%
-Random.seed!(4649373)
-
-# %%
 distx, disty = Normal(1.5, 1.8), Normal(0, 1)
 plot(distx; label="distx")
 plot!(disty; label="disty", ls=:dash)
 plot!(size=(300, 180))
 
 # %%
+Random.seed!(4649373)
 distx, disty = Normal(1.5, 1.8), Normal(0, 1)
 m, n = 20, 10
 L = Nshuffles = 5000
@@ -351,6 +349,33 @@ legend = :bottomright
 # %%
 distx, disty = Normal(0, 1.8), Normal(0, 1)
 m, n = 20, 10
+L = Nshuffles = 5000
+ytick = 0:0.01:1
+legend = :bottomright
+@time plot_sim_diff_shuffle(; distx, m, disty, n, L, Nshuffles, ytick, legend)
+
+# %%
+distx, disty = gammadist(2, 1.12), gammadist(1, 1)
+@show mean(distx), mean(disty)
+@show std(distx), std(disty)
+plot(distx; label="distx")
+plot!(disty; label="disty", ls=:dash)
+plot!(size=(300, 180), xlim=(0, 12))
+
+# %%
+Random.seed!(4649373)
+distx, disty = gammadist(2, 1.12), gammadist(1, 1)
+m, n = 20, 10
+L = Nshuffles = 5000
+ytick = 0:0.1:1
+legend = :bottomright
+@time plot_sim_diff_shuffle(; distx, m, disty, n, L, Nshuffles, ytick, legend)
+
+# %%
+Random.seed!(4649373)
+distx, disty = gammadist(2, 1.12), gammadist(1, 1)
+distx = distx + mean(disty) - mean(distx)
+m, n = 10, 20
 L = Nshuffles = 5000
 ytick = 0:0.01:1
 legend = :bottomright
