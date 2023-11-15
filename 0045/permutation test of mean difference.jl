@@ -375,6 +375,9 @@ legend = :bottomright
 Random.seed!(4649373)
 distx, disty = gammadist(2, 1.12), gammadist(1, 1)
 distx = distx + mean(disty) - mean(distx)
+@show mean(distx), mean(disty)
+@show std(distx), std(disty)
+println()
 m, n = 10, 20
 L = Nshuffles = 5000
 ytick = 0:0.01:1
