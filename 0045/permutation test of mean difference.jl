@@ -132,6 +132,17 @@ pvalue_student_t_test(X, Y), pvalue(EqualVarianceTTest(X, Y))
 
 # %%
 """
+gammadist(σ, β)
+
+returns the gamma distribution with standard deviation `σ` and skewness `β`.
+"""
+gammadist(σ, β) = β == 0 ? Normal(0, σ) : Gamma(4/β^2, β*σ/2)
+
+gam = gammadist.(1:5, 2:2:10)
+[std.(gam), skewness.(gam), kurtosis.(gam), shape.(gam)]
+
+# %%
+"""
 inversegammadist(σ, β)
 
 returns the inverse gamma distribution with standard deviation `σ` and skewness `β`.
@@ -157,6 +168,9 @@ function plot_sim_diff_shuffle(;
         L = 5000,
         Nshuffles = 5000,
         α = 0.05,
+        xtick = 0:0.01:1,
+        ytick = 0:0.01:1,
+        kwargs...,
     )
 
     @show distx disty m n
@@ -213,20 +227,7 @@ function plot_sim_diff_shuffle(;
     @printf "  %-15s %4.1f%%\n" "Welch:" 100er_welch
     println()
     
-#     αs = range(0, 1, 1001)
-#     xtick = ytick = 0:0.1:1
-#     P = plot()
-#     plot!(αs, α -> ECDF(pval1, α), label="1", bin=0:0.025:1.025)
-#     plot!(αs, α -> ECDF(pval_student, α), label="Student", bin=0:0.025:1.025, ls=:dash)
-#     plot!(αs, α -> ECDF(pval2, α), label="2", bin=0:0.025:1.025, ls=:dashdot)
-#     plot!(αs, α -> ECDF(pval_welch, α), label="Welch", bin=0:0.025:1.025, ls=:dashdotdot)
-#     plot!(αs, identity; label="", ls=:dot, c=:black, alpha=0.7)
-#     plot!(; xtick, ytick)
-#     plot!(; xguide="α", yguide="probablity of P-value ≤ α")
-#     plot!(; size=(400, 400))
-    
     αs = range(0, 0.1, 1001)
-    xtick = ytick = 0:0.01:1
     Q = plot()
     plot!(αs, α -> ECDF(pval1, α), label=name1, bin=0:0.025:1.025)
     plot!(αs, α -> ECDF(pval_student, α), label="Student", bin=0:0.025:1.025, ls=:dash)
@@ -236,9 +237,13 @@ function plot_sim_diff_shuffle(;
     plot!(; xtick, ytick)
     plot!(; xguide="α", yguide="probablity of P-value ≤ α")
     plot!(; size=(400, 400))
+    plot!(; kwargs...)
     
 #    plot(P, Q; size=(400, 400))
 end
+
+# %% [markdown]
+# # 頑健性/脆弱性
 
 # %%
 distx, disty = Normal(0, 2), Normal(0, 1)
@@ -255,6 +260,18 @@ L = Nshuffles = 5000
 # %%
 distx, disty = Normal(0, 2), Normal(0, 1)
 m, n = 100, 25
+L = Nshuffles = 5000
+@time plot_sim_diff_shuffle(; distx, m, disty, n, L, Nshuffles)
+
+# %%
+distx, disty = Normal(0, 2), Normal(0, 1)
+m, n = 70, 100
+L = Nshuffles = 5000
+@time plot_sim_diff_shuffle(; distx, m, disty, n, L, Nshuffles)
+
+# %%
+distx, disty = Normal(0, 1.5), Normal(0, 1)
+m, n = 50, 100
 L = Nshuffles = 5000
 @time plot_sim_diff_shuffle(; distx, m, disty, n, L, Nshuffles)
 
@@ -310,6 +327,37 @@ distx = distx + mean(disty) - mean(distx)
 m, n = 100, 25
 L = Nshuffles = 5000
 @time plot_sim_diff_shuffle(; distx, m, disty, n, L, Nshuffles)
+
+# %% [markdown]
+# # 検出力
+
+# %%
+Random.seed!(4649373)
+
+# %%
+distx, disty = Normal(1.5, 1.8), Normal(0, 1)
+plot(distx; label="distx")
+plot!(disty; label="disty", ls=:dash)
+plot!(size=(300, 180))
+
+# %%
+distx, disty = Normal(1.5, 1.8), Normal(0, 1)
+m, n = 20, 10
+L = Nshuffles = 5000
+ytick = 0:0.1:1
+legend = :bottomright
+@time plot_sim_diff_shuffle(; distx, m, disty, n, L, Nshuffles, ytick, legend)
+
+# %%
+distx, disty = Normal(0, 1.8), Normal(0, 1)
+m, n = 20, 10
+L = Nshuffles = 5000
+ytick = 0:0.01:1
+legend = :bottomright
+@time plot_sim_diff_shuffle(; distx, m, disty, n, L, Nshuffles, ytick, legend)
+
+# %% [markdown]
+# # ベンチマーク
 
 # %%
 distx, disty = Normal(0, 2), Normal(0, 1)
