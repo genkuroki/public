@@ -131,6 +131,39 @@ Y = randn(100)
 pvalue_student_t_test(X, Y), pvalue(EqualVarianceTTest(X, Y))
 
 # %%
+function pvalue_permutation_test(f, X, Y, XY=[X; Y]; Nshuffles=10^4)
+    m, n = length(X), length(Y)
+    f_obs = f(X, Y)
+    c = 0
+    for _ in 1:Nshuffles
+        shuffle!(XY)
+        @views X, Y = XY[1:m], XY[m+1:m+n]
+        c += f(X, Y) ≤ f_obs
+    end
+    p = c/Nshuffles
+    min(1, 2p, 2(1-p))
+end
+
+function pvalue_permutation_diffmean_test(X, Y, XY=[X; Y]; Nshuffles=10^4)
+    pvalue_permutation_test(X, Y, XY; Nshuffles) do X, Y
+        mean(X) - mean(Y)
+    end
+end
+
+function pvalue_permutation_t_test(X, Y, XY=[X; Y]; Nshuffles=10^4)
+    pvalue_permutation_test(X, Y, XY; Nshuffles) do X, Y
+        (mean(X) - mean(Y)) / √(var(X)/length(X) + var(Y)/length(Y))
+    end
+end
+
+X = [2, 4, 3, 4, 4, 5]
+Y = [1, 7, 8, 9, 7, 8]
+@show pvalue_permutation_diffmean_test(X, Y; Nshuffles=10^7)
+@show pvalue_student_t_test(X, Y)
+@show pvalue_permutation_t_test(X, Y; Nshuffles=10^7)
+@show pvalue_welch_t_test(X, Y);
+
+# %%
 """
 gammadist(σ, β)
 
