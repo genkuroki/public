@@ -9,7 +9,7 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.10.3
 #   kernelspec:
-#     display_name: Julia 1.9.3
+#     display_name: Julia 1.9.4
 #     language: julia
 #     name: julia-1.9
 # ---
@@ -206,7 +206,7 @@ function plot_sim_diff_shuffle(;
     er2 = ECDF(pval2, α)
     er_student = ECDF(pval_student, α)
     er_welch = ECDF(pval_welch, α)
-    @printf "Probabilities of P-valune ≤ %3.1f%%\n" 100α
+    @printf "Probabilities of P-value ≤ %3.1f%%\n" 100α
     @printf "  %-15s %4.1f%%\n" name1*":" 100er1
     @printf "  %-15s %4.1f%%\n" "Student:" 100er_student
     @printf "  %-15s %4.1f%%\n" name2*":" 100er2
@@ -309,6 +309,36 @@ distx, disty = inversegammadist(2, 3), inversegammadist(1, 3)
 distx = distx + mean(disty) - mean(distx)
 m, n = 100, 25
 L = Nshuffles = 5000
+@time plot_sim_diff_shuffle(; distx, m, disty, n, L, Nshuffles)
+
+# %%
+distx, disty = Normal(0, 2), Normal(0, 1)
+m, n = 25, 100
+L = Nshuffles = 500
+@time plot_sim_diff_shuffle(; distx, m, disty, n, L, Nshuffles)
+
+# %%
+distx, disty = Normal(0, 2), Normal(0, 1)
+m, n = 25, 100
+L = Nshuffles = 1000
+@time plot_sim_diff_shuffle(; distx, m, disty, n, L, Nshuffles)
+
+# %%
+distx, disty = Normal(0, 2), Normal(0, 1)
+m, n = 25, 100
+L = Nshuffles = 2000
+@time plot_sim_diff_shuffle(; distx, m, disty, n, L, Nshuffles)
+
+# %%
+distx, disty = Normal(0, 2), Normal(0, 1)
+m, n = 25, 100
+L = Nshuffles = 3000
+@time plot_sim_diff_shuffle(; distx, m, disty, n, L, Nshuffles)
+
+# %%
+distx, disty = Normal(0, 2), Normal(0, 1)
+m, n = 25, 100
+L = Nshuffles = 4000
 @time plot_sim_diff_shuffle(; distx, m, disty, n, L, Nshuffles)
 
 # %%
