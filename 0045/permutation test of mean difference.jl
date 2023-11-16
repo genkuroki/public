@@ -131,17 +131,19 @@ Y = randn(100)
 pvalue_student_t_test(X, Y), pvalue(EqualVarianceTTest(X, Y))
 
 # %%
+x ⪅ y = x < y || x ≈ y
+
 function pvalue_permutation_test(f, X, Y, XY=[X; Y]; Nshuffles=10^4)
     m, n = length(X), length(Y)
     f_obs = f(X, Y)
-    c = 0
+    a = b = 0
     for _ in 1:Nshuffles
         shuffle!(XY)
         @views X, Y = XY[1:m], XY[m+1:m+n]
-        c += f(X, Y) ≤ f_obs
+        a += f(X, Y) ⪅ f_obs
+        b += f_obs ⪅ f(X, Y)
     end
-    p = c/Nshuffles
-    min(1, 2p, 2(1-p))
+    min(1, 2a/Nshuffles, 2b/Nshuffles)
 end
 
 function pvalue_permutation_diffmean_test(X, Y, XY=[X; Y]; Nshuffles=10^4)
@@ -150,18 +152,125 @@ function pvalue_permutation_diffmean_test(X, Y, XY=[X; Y]; Nshuffles=10^4)
     end
 end
 
-function pvalue_permutation_t_test(X, Y, XY=[X; Y]; Nshuffles=10^4)
+function pvalue_permutation_student_t_test(X, Y, XY=[X; Y]; Nshuffles=10^4)
+    pvalue_permutation_test(X, Y, XY; Nshuffles) do X, Y
+        m, n = length(X), length(Y)
+        S² = ((m-1)*var(X) + (n-1)*var(Y)) / (m+n-2)
+        (mean(X) - mean(Y)) / √(S²*(1/m + 1/n))
+    end
+end
+
+function pvalue_permutation_welch_t_test(X, Y, XY=[X; Y]; Nshuffles=10^4)
     pvalue_permutation_test(X, Y, XY; Nshuffles) do X, Y
         (mean(X) - mean(Y)) / √(var(X)/length(X) + var(Y)/length(Y))
     end
 end
 
+function true_pvalue(f, distx, disty, X, Y; randfunc! = rand!, Nsamples=10^4)
+    f_obs = f(X, Y)
+    Xtmp = similar(X)
+    Ytmp = similar(Y)
+    a = b = 0
+    for _ in 1:Nsamples
+        XX = randfunc!(distx, Xtmp)
+        YY = randfunc!(disty, Ytmp)
+        a += f(XX, YY) ⪅ f_obs
+        b += f_obs ⪅ f(XX, YY)
+    end
+    min(1, 2a/Nsamples, 2b/Nsamples)
+end
+
+function true_pvalue_diffmean(distx, disty, X, Y; randfunc! = rand!, Nsamples=10^4)
+    true_pvalue(distx, disty, X, Y; randfunc!, Nsamples) do X, Y
+        mean(X) - mean(Y)
+    end
+end
+
+function true_pvalue_student_t_test(distx, disty, X, Y; randfunc! = rand!, Nsamples=10^4)
+    true_pvalue(distx, disty, X, Y; randfunc!, Nsamples) do X, Y
+        m, n = length(X), length(Y)
+        S² = ((m-1)*var(X) + (n-1)*var(Y)) / (m+n-2)
+        (mean(X) - mean(Y)) / √(S²*(1/m + 1/n))
+    end
+end
+
+function true_pvalue_welch_t_test(distx, disty, X, Y; randfunc! = rand!, Nsamples=10^4)
+    true_pvalue(distx, disty, X, Y; randfunc!, Nsamples) do X, Y
+        (mean(X) - mean(Y)) / √(var(X)/length(X) + var(Y)/length(Y))
+    end
+end
+
+function pvalue_resampling(X, Y; Nsamples=10^4)
+    true_pvalue_diffmean(X, Y, zero(X), zero(Y); randfunc! = sample!, Nsamples)
+end
+
+# %%
 X = [2, 4, 3, 4, 4, 5]
 Y = [1, 7, 8, 9, 7, 8]
 @show pvalue_permutation_diffmean_test(X, Y; Nshuffles=10^7)
+@show pvalue_permutation_student_t_test(X, Y; Nshuffles=10^7)
 @show pvalue_student_t_test(X, Y)
-@show pvalue_permutation_t_test(X, Y; Nshuffles=10^7)
-@show pvalue_welch_t_test(X, Y);
+@show pvalue_permutation_welch_t_test(X, Y; Nshuffles=10^7)
+@show pvalue_welch_t_test(X, Y)
+@show pvalue_resampling(X, Y; Nsamples=10^7)
+;
+
+# %%
+X = [2, 4, 3, 4, 4, 2, 3, 3, 4]
+Y = [1, 7, 8, 9]
+@show pvalue_permutation_diffmean_test(X, Y; Nshuffles=10^6)
+@show pvalue_permutation_student_t_test(X, Y; Nshuffles=10^6)
+@show pvalue_student_t_test(X, Y)
+@show pvalue_permutation_welch_t_test(X, Y; Nshuffles=10^6)
+@show pvalue_welch_t_test(X, Y)
+@show pvalue_resampling(X, Y; Nsamples=10^7)
+;
+
+# %%
+Random.seed!(4649373_4)
+distx = Normal(0, 1)
+disty = Normal(0, 2)
+m, n = 20, 10
+X = rand(distx, m)
+Y = rand(disty, n)
+@show mean(X) - mean(Y)
+@show std(X), std(Y)
+@show (mean(X) - mean(Y)) / √(var(X)/length(X) + var(Y)/length(Y))
+println()
+
+@show pvalue_permutation_diffmean_test(X, Y; Nshuffles=10^6)
+@show pvalue_permutation_student_t_test(X, Y; Nshuffles=10^6)
+@show pvalue_student_t_test(X, Y)
+@show true_pvalue_diffmean(distx, disty, X, Y; randfunc! = rand!, Nsamples=10^6)
+@show true_pvalue_student_t_test(distx, disty, X, Y; randfunc! = rand!, Nsamples=10^6)
+@show pvalue_permutation_welch_t_test(X, Y; Nshuffles=10^6)
+@show pvalue_welch_t_test(X, Y)
+@show true_pvalue_welch_t_test(distx, disty, X, Y; randfunc! = rand!, Nsamples=10^6)
+@show pvalue_resampling(X, Y; Nsamples=10^7)
+;
+
+# %%
+Random.seed!(4649373_11)
+distx = Normal(0, 1)
+disty = Normal(0, 2)
+m, n = 10, 20
+X = rand(distx, m)
+Y = rand(disty, n)
+@show mean(X) - mean(Y)
+@show std(X), std(Y)
+@show (mean(X) - mean(Y)) / √(var(X)/length(X) + var(Y)/length(Y))
+println()
+
+@show pvalue_permutation_diffmean_test(X, Y; Nshuffles=10^6)
+@show pvalue_permutation_student_t_test(X, Y; Nshuffles=10^6)
+@show pvalue_student_t_test(X, Y)
+@show true_pvalue_diffmean(distx, disty, X, Y; randfunc! = rand!, Nsamples=10^6)
+@show true_pvalue_student_t_test(distx, disty, X, Y; randfunc! = rand!, Nsamples=10^6)
+@show pvalue_permutation_welch_t_test(X, Y; Nshuffles=10^6)
+@show pvalue_welch_t_test(X, Y)
+@show true_pvalue_welch_t_test(distx, disty, X, Y; randfunc! = rand!, Nsamples=10^6)
+@show pvalue_resampling(X, Y; Nsamples=10^7)
+;
 
 # %%
 """
