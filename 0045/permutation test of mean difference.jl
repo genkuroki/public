@@ -483,7 +483,7 @@ function plot_sim_diff_shuffle(;
         difffunc1 = (X, Y) -> mean(X) - mean(Y),
         name1 = "perm(Δmean)",
         difffunc2 = (X, Y) -> (mean(X) - mean(Y)) / √(var(X)/length(X) + var(Y)/length(Y)),
-        name2 = "perm(T-stat)",
+        name2 = "perm(Welch)",
         L = 5000,
         Nshuffles = 5000,
         α = 0.05,
@@ -770,6 +770,22 @@ plot!(size=(300, 180)) |> display
 @show mean(distx) ≈ mean(disty)
 @show std(distx), std(disty)
 println()
+m, n = 5, 10
+
+L = Nshuffles = 5000
+@time plot_sim_diff_shuffle(; distx, m, disty, n, L, Nshuffles)
+
+# %%
+distx = Normal(0, 4)
+disty = Normal(0, 1)
+plot(1distx; label="distx")
+plot!(1disty; label="disty", ls=:dash)
+plot!(xlim=(-15, 15))
+plot!(size=(300, 180)) |> display
+
+@show mean(distx) ≈ mean(disty)
+@show std(distx), std(disty)
+println()
 m, n = 10, 20
 
 L = Nshuffles = 5000
@@ -786,7 +802,7 @@ plot!(size=(300, 180)) |> display
 @show mean(distx) ≈ mean(disty)
 @show std(distx), std(disty)
 println()
-m, n = 5, 10
+m, n = 10, 20
 
 L = Nshuffles = 5000
 @time plot_sim_diff_shuffle(; distx, m, disty, n, L, Nshuffles)
@@ -819,6 +835,22 @@ plot!(size=(300, 180)) |> display
 @show std(distx), std(disty)
 println()
 m, n = 20, 40
+
+L = Nshuffles = 5000
+@time plot_sim_diff_shuffle(; distx, m, disty, n, L, Nshuffles)
+
+# %%
+distx = inversegammadist(4, 2)
+disty = Normal(mean(distx), 1)
+plot(1distx; label="distx")
+plot!(1disty; label="disty", ls=:dash)
+plot!(xlim=(0, 20))
+plot!(size=(300, 180)) |> display
+
+@show mean(distx) ≈ mean(disty)
+@show std(distx), std(disty)
+println()
+m, n = 10, 20
 
 L = Nshuffles = 5000
 @time plot_sim_diff_shuffle(; distx, m, disty, n, L, Nshuffles)
