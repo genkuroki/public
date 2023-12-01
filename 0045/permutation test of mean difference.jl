@@ -652,7 +652,7 @@ distx = inversegammadist(4, 10)
 disty = Normal(mean(distx), 1)
 plot(1distx; label="distx")
 plot!(1disty; label="disty", ls=:dash)
-plot!(xlim=(-0.1, 20))
+plot!(xlim=(-0.1, 15))
 plot!(size=(300, 180)) |> display
 
 @show mean(distx) ≈ mean(disty)
@@ -668,7 +668,7 @@ distx = inversegammadist(4, 10)
 disty = Normal(mean(distx), 1)
 plot(1distx; label="distx")
 plot!(1disty; label="disty", ls=:dash)
-plot!(xlim=(-0.1, 20))
+plot!(xlim=(-0.1, 15))
 plot!(size=(300, 180)) |> display
 
 @show mean(distx) ≈ mean(disty)
@@ -684,7 +684,7 @@ distx = inversegammadist(4, 10)
 disty = Normal(mean(distx), 1)
 plot(1distx; label="distx")
 plot!(1disty; label="disty", ls=:dash)
-plot!(xlim=(-0.1, 20))
+plot!(xlim=(-0.1, 15))
 plot!(size=(300, 180)) |> display
 
 @show mean(distx) ≈ mean(disty)
@@ -700,7 +700,7 @@ distx = inversegammadist(4, 10)
 disty = Normal(mean(distx), 1)
 plot(1distx; label="distx")
 plot!(1disty; label="disty", ls=:dash)
-plot!(xlim=(-0.1, 20))
+plot!(xlim=(-0.1, 15))
 plot!(size=(300, 180)) |> display
 
 @show mean(distx) ≈ mean(disty)
@@ -716,7 +716,7 @@ distx = inversegammadist(4, 10)
 disty = Normal(mean(distx), 1)
 plot(1distx; label="distx")
 plot!(1disty; label="disty", ls=:dash)
-plot!(xlim=(-0.1, 20))
+plot!(xlim=(-0.1, 15))
 plot!(size=(300, 180)) |> display
 
 @show mean(distx) ≈ mean(disty)
@@ -732,7 +732,7 @@ distx = inversegammadist(4, 10)
 disty = Normal(mean(distx), 1)
 plot(1distx; label="distx")
 plot!(1disty; label="disty", ls=:dash)
-plot!(xlim=(-0.1, 20))
+plot!(xlim=(-0.1, 15))
 plot!(size=(300, 180)) |> display
 
 @show mean(distx) ≈ mean(disty)
@@ -744,11 +744,142 @@ L = Nshuffles = 5000
 @time plot_sim_diff_shuffle(; distx, m, disty, n, L, Nshuffles)
 
 # %%
+distx = inversegammadist(1.2, 10)
+disty = inversegammadist(1, 10)
+distx = distx - mean(distx) + mean(disty)
+plot(1distx; label="distx")
+plot!(1disty; label="disty", ls=:dash)
+plot!(xlim=(-0.5, 5))
+plot!(size=(300, 180)) |> display
+
+@show mean(distx) ≈ mean(disty)
+@show std(distx), std(disty)
+println()
+m, n = 5, 10
+
+L = Nshuffles = 5000
+@time plot_sim_diff_shuffle(; distx, m, disty, n, L, Nshuffles)
+
+# %%
+distx = inversegammadist(1.4, 10)
+disty = inversegammadist(1, 10)
+distx = distx - mean(distx) + mean(disty)
+plot(1distx; label="distx")
+plot!(1disty; label="disty", ls=:dash)
+plot!(xlim=(-0.5, 5))
+plot!(size=(300, 180)) |> display
+
+@show mean(distx) ≈ mean(disty)
+@show std(distx), std(disty)
+println()
+m, n = 5, 10
+
+L = Nshuffles = 5000
+@time plot_sim_diff_shuffle(; distx, m, disty, n, L, Nshuffles)
+
+# %%
+distx = inversegammadist(2, 10)
+disty = inversegammadist(1, 10)
+distx = distx - mean(distx) + mean(disty)
+plot(1distx; label="distx")
+plot!(1disty; label="disty", ls=:dash)
+plot!(xlim=(-1.2, 5))
+plot!(size=(300, 180)) |> display
+
+@show mean(distx) ≈ mean(disty)
+@show std(distx), std(disty)
+println()
+m, n = 5, 10
+
+L = Nshuffles = 5000
+@time plot_sim_diff_shuffle(; distx, m, disty, n, L, Nshuffles)
+
+# %%
+distx = inversegammadist(1.2, 10)
+disty = Normal(mean(distx), 1)
+plot(1distx; label="distx")
+plot!(1disty; label="disty", ls=:dash)
+plot!(xlim=(-3, 6))
+plot!(size=(300, 180)) |> display
+
+@show mean(distx) ≈ mean(disty)
+@show std(distx), std(disty)
+println()
+m, n = 5, 10
+
+L = Nshuffles = 5000
+@time plot_sim_diff_shuffle(; distx, m, disty, n, L, Nshuffles)
+
+# %%
+distx = inversegammadist(1.4, 10)
+disty = Normal(mean(distx), 1)
+plot(1distx; label="distx")
+plot!(1disty; label="disty", ls=:dash)
+plot!(xlim=(-3, 6))
+plot!(size=(300, 180)) |> display
+
+@show mean(distx) ≈ mean(disty)
+@show std(distx), std(disty)
+println()
+m, n = 5, 10
+
+L = Nshuffles = 5000
+@time plot_sim_diff_shuffle(; distx, m, disty, n, L, Nshuffles)
+
+# %%
+distx = inversegammadist(2, 10)
+disty = Normal(mean(distx), 1)
+plot(1distx; label="distx")
+plot!(1disty; label="disty", ls=:dash)
+plot!(xlim=(-2, 8))
+plot!(size=(300, 180)) |> display
+
+@show mean(distx) ≈ mean(disty)
+@show std(distx), std(disty)
+println()
+m, n = 5, 10
+
+L = Nshuffles = 5000
+@time plot_sim_diff_shuffle(; distx, m, disty, n, L, Nshuffles)
+
+# %%
+distx = inversegammadist(3, 10)
+disty = Normal(mean(distx), 1)
+plot(1distx; label="distx")
+plot!(1disty; label="disty", ls=:dash)
+plot!(xlim=(-1, 12))
+plot!(size=(300, 180)) |> display
+
+@show mean(distx) ≈ mean(disty)
+@show std(distx), std(disty)
+println()
+m, n = 5, 10
+
+L = Nshuffles = 5000
+@time plot_sim_diff_shuffle(; distx, m, disty, n, L, Nshuffles)
+
+# %%
 distx = inversegammadist(4, 10)
 disty = Normal(mean(distx), 1)
 plot(1distx; label="distx")
 plot!(1disty; label="disty", ls=:dash)
-plot!(xlim=(-0.1, 20))
+plot!(xlim=(-0.1, 15))
+plot!(size=(300, 180)) |> display
+
+@show mean(distx) ≈ mean(disty)
+@show std(distx), std(disty)
+println()
+m, n = 5, 10
+
+L = Nshuffles = 5000
+@time plot_sim_diff_shuffle(; distx, m, disty, n, L, Nshuffles)
+
+# %%
+distx = inversegammadist(4, 10)
+disty = Normal(mean(distx), 1)
+plot(1distx; label="distx")
+plot!(1disty; label="disty", ls=:dash)
+plot!(xlim=(-0.1, 15))
 plot!(size=(300, 180)) |> display
 
 @show mean(distx) ≈ mean(disty)
