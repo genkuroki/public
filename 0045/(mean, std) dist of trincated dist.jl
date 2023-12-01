@@ -55,7 +55,7 @@ plot_sim(dist=Exponential(1))
 # %%
 using LinearAlgebra
 
-function plot_sim_mv(; 
+function plot_sim2(;
         Nsamples = 1000,
         n = 10, 
         prior = Normal(0, 2), 
@@ -73,9 +73,9 @@ function plot_sim_mv(;
 end
 
 # %%
-plot_sim_mv(prior = Normal(0, 4), distfunc = μ -> Normal(μ, 1))
+plot_sim2(prior = Normal(0, 4), distfunc = μ -> Normal(μ, 1))
 
 # %%
-plot_sim_mv(prior = Normal(0, 4), distfunc = μ -> truncated(Normal(μ, 1), -2, 2))
+plot_sim2(prior = Normal(0, 4), distfunc = μ -> truncated(Normal(μ, 1), -2, 2))
 
 # %%
