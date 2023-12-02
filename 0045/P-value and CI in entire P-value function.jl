@@ -46,7 +46,7 @@
 # \op{confint}(k|n,\alpha) = \{\, p\in [0,1] \mid \op{pvalue}(k|n,p) \ge \alpha\,\}.
 # $$
 #
-# これを__Wilsonの信頼区間__と呼ぶ.
+# これを __Wilsonの信頼区間__ と呼ぶ.
 #
 # 以下では, 標準正規分布 $\op{Normal}(0,1)$ の分位点函数(quantile function, 累積分布函数の逆函数)を $\op{quantile}(\op{Normal}(0,1), p)$ と書くことにする.
 #
