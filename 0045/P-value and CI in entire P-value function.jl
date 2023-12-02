@@ -36,7 +36,7 @@ end
 
 r2(x) = @sprintf "%.2g" x
 
-function plot_binomial_test(; k=19, n=50, α=0.05, p0=0.5, p1=0.6)
+function plot_binomial_test(; k=19, n=50, α=0.05, p0=0.5, p1=0.6, plotCI=true)
     plot(p -> pvalue_binomial_wilson(k, n, p), 0, 1; label="P-value function")
     c = 2
     p = p0
@@ -51,10 +51,12 @@ function plot_binomial_test(; k=19, n=50, α=0.05, p0=0.5, p1=0.6)
     c = :blue
     phat = k/n
     vline!([phat]; label="point estimate = $(r2(phat))", msc=:auto, c)
-    c = :red
-    hline!([α]; label="α = $(100α)%", ls=:dot, c)
-    L, U = confint_binomia_wilson(k, n, α)
-    plot!([L, U], fill(α, 2); label="$(100(1-α))% CI = [$(r2(L)), $(r2(U))]", lw=3, c)
+    plotCI && begin
+        c = :red
+        hline!([α]; label="α = $(100α)%", ls=:dot, c)
+        L, U = confint_binomia_wilson(k, n, α)
+        plot!([L, U], fill(α, 2); label="$(100(1-α))% CI = [$(r2(L)), $(r2(U))]", lw=3, c)
+    end
     plot!(xtick=0:0.05:1, ytick=0:0.05:1, xrotation=45)
     plot!(xguide="p", yguide="P-value")
     title!("P-value function for data k=$k, n=$n
@@ -63,6 +65,9 @@ end
 
 # %%
 plot_binomial_test(; k=19, n=50, α=0.05, p0=0.5, p1=0.6)
+
+# %%
+plot_binomial_test(; k=19, n=50, α=0.05, p0=0.5, p1=0.6, plotCI=false)
 
 # %%
 plot_binomial_test(; k=113, n=200, α=0.05, p0=0.5, p1=0.6)
