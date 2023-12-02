@@ -74,6 +74,7 @@
 # * [ウィルソンの信頼区間](https://ja.wikipedia.org/wiki/%E3%82%A6%E3%82%A3%E3%83%AB%E3%82%BD%E3%83%B3%E3%81%AE%E4%BF%A1%E9%A0%BC%E5%8C%BA%E9%96%93)
 # * https://scholar.google.co.jp/scholar?cluster=5129299358902170657
 # * https://x.com/genkuroki/status/1730818456881377514
+# * https://x.com/genkuroki/status/1730917888184529149
 #
 # このノートではWilsonのP値函数のグラフをプロットし, そこに信頼区間や点推定値も描き込む.
 
