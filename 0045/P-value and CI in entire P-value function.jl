@@ -18,7 +18,7 @@
 # # P値函数のプロットの例
 #
 # * 黒木玄
-# * 2023-12-02
+# * 2023-12-02～2023-12-03
 # $
 # \newcommand\op{\operatorname}
 # $
@@ -27,30 +27,30 @@
 #
 # 中心極限定理によって, モデルの確率変数 $K$ について $\dfrac{K/n - p}{\sqrt{p(1-p)/n}}$ は近似的に標準正規分布に従う.
 #
-# このことを使うと, データの数値「$n$ 回中 $k$ 回」に関する仮説「表の出る確率は $p$ である」のP値 $\op{pvalue}(k|n,p)$ を次のように定めることができる:
+# このことを使うと, データの数値「$n$ 回中 $k$ 回」に関する仮説「表の出る確率は $p$ である」のP値 $\op{pvalue}_{\op{Wilson}}(k|n,p)$ を次のように定めることができる:
 #
 # $$
-# \op{pvalue}(k|n,p) = 2(1 - \op{cdf}(\op{Normal}(0, 1), |z|)), \quad
+# \op{pvalue}_{\op{Wilson}}(k|n,p) = 2(1 - \op{cdf}(\op{Normal}(0, 1), |z|)), \quad
 # z = \frac{k/n - p}{\sqrt{p(1-p)/n}}.
 # $$
 #
-# ただし, ここで $\op{cdf}(\op{Normal}(0, 1), x)$ は標準正規分布 $\op{Normal}(0,1)$ の累積分布函数 (cumulative distribution function)であるとする.
+# ここで $\op{cdf}(\op{Normal}(0, 1), x)$ は標準正規分布 $\op{Normal}(0,1)$ の累積分布函数 (cumulative distribution function)である.
 #
 # 上の定義によって得られる函数 $p\mapsto \op{pvalue}(k|n,p)$ を __WilsonのP値函数__ と呼ぶことにする.
 #
 # $0\le\alpha\le 1$ であると仮定する.
 #
-# 上のP値の定義に対応する表の出る確率 $p$ の $100(1-\alpha)\%$ 信頼区間 $\op{confint}(k|n,\alpha)$ は次のように定義される:
+# 上のP値の定義に対応する表の出る確率 $p$ の $100(1-\alpha)\%$ 信頼区間 $\op{confint}_{\op{Wilson}}(k|n,\alpha)$ は次のように定義される:
 #
 # $$
-# \op{confint}(k|n,\alpha) = \{\, p\in [0,1] \mid \op{pvalue}(k|n,p) \ge \alpha\,\}.
+# \op{confint}_{\op{Wilson}}(k|n,\alpha) = \{\, p\in [0,1] \mid \op{pvalue}_{\op{Wilson}}(k|n,p) \ge \alpha\,\}.
 # $$
 #
 # これを __Wilsonの信頼区間__ と呼ぶ.
 #
 # 以下では, 標準正規分布 $\op{Normal}(0,1)$ の分位点函数(quantile function, 累積分布函数の逆函数)を $\op{quantile}(\op{Normal}(0,1), p)$ と書くことにする.
 #
-# __練習問題 (Wilsonの信頼区間の具体的な表示):__ 以上の状況の下で
+# __練習問題1 (Wilsonの信頼区間の具体的な表示):__ 以上の状況の下で
 #
 # $$
 # \begin{aligned}
@@ -64,7 +64,7 @@
 # とおき, $p$ に関する二次方程式 $ap^2-2bp+c=0$ の2つの解を小さい順に $L$, $U$ と書くとき, 
 #
 # $$
-# \op{confint}(k|n,\alpha) = [L, U]
+# \op{confint}_{\op{Wilson}}(k|n,\alpha) = [L, U]
 # $$
 #
 # となることを示せ. (注意: $0\le L \le U \le 1$ も示す必要がある.  この問題の解答例はこのノートの終わりの方にある.)
@@ -146,7 +146,7 @@ plot_binomial_test(; k=268, n=500, α=0.05, p0=0.5, p1=0.6)
 plot_binomial_test(; k=268, n=500, α=0.05, p0=0.5, p1=0.6, plotest=false)
 
 # %% [markdown]
-# __練習問題解答例:__ 分位点函数は累積分布函数の逆函数なので, $z_{\alpha/2} = \op{quantile}(\op{Normal}(0,1), 1-\alpha/2))$ は $\op{cdf}(\op{Normal}(0,1), z_{\alpha/2}) = 1 - \alpha/2$ と同値であり, その条件はさらに次と同値である:
+# __練習問題1解答例:__ 分位点函数は累積分布函数の逆函数なので, $z_{\alpha/2} = \op{quantile}(\op{Normal}(0,1), 1-\alpha/2))$ は $\op{cdf}(\op{Normal}(0,1), z_{\alpha/2}) = 1 - \alpha/2$ と同値であり, その条件はさらに次と同値である:
 #
 # $$
 # 2(1 - \op{cdf}(\op{Normal}(0, 1), z_{\alpha/2})) = \alpha.
@@ -157,7 +157,7 @@ plot_binomial_test(; k=268, n=500, α=0.05, p0=0.5, p1=0.6, plotest=false)
 # $2(1 - \op{cdf}(\op{Normal}(0, 1), x))$ は実数 $x$ の狭義単調減少函数なので, 
 #
 # $$
-# \op{pvalue}(k|n,p) 
+# \op{pvalue}_{\op{Wilson}}(k|n,p) 
 # = 2\left(1 - \op{cdf}\left(\op{Normal}(0, 1), \frac{|\hat{p} - p|}{\sqrt{p(1-p)/n}} \right)\right)
 # \ge \alpha
 # $$
@@ -190,9 +190,120 @@ plot_binomial_test(; k=268, n=500, α=0.05, p0=0.5, p1=0.6, plotest=false)
 #
 # $$
 # ap^2-2bp+c=0, \quad
-# a = 1+\frac{z_{\alpha/2}^2}{n}, \quad b = \hat{p}+\frac{z_{\alpha/2}^2}{2n}, \quad c = \hat{p}^2
+# a = 1+\frac{z_{\alpha/2}^2}{n}, \quad
+# b = \hat{p}+\frac{z_{\alpha/2}^2}{2n}, \quad
+# c = \hat{p}^2
 # $$
 #
-# の解になっている.  これで示すべきことが示された.
+# の解になっている.  これでWilsonの信頼区間
+#
+# $$
+# \op{confint}_{\op{Wilson}}(k|n,\alpha) = \{\, p\in [0,1] \mid \op{pvalue}_{\op{Wilson}}(k|n,p) \ge \alpha\,\}.
+# $$
+#
+# の両端の点が $p$ に関する2次方程式 $ap^2-2bp+c=0$ の2つの解に等しいことがわかった.
+
+# %% [markdown]
+# __定義:__ 以上の記号の下で __Waldの信頼区間__ が次のように定義される:
+#
+# $$
+# \op{confint}_{\op{Wald}}(k|n,\alpha) = 
+# \left[
+# \hat{p} - z_{\alpha/2}\sqrt{\frac{\hat{p}(1-\hat{p})}{n}},\;
+# \hat{p} + z_{\alpha/2}\sqrt{\frac{\hat{p}(1-\hat{p})}{n}}
+# \right].
+# $$
+#
+# Waldの信頼区間は区間 $[0, 1]$ をはみだすことがあり得ることに注意せよ. さらに, $\hat{p}=k/n$ が $0$ または $1$ の場合にWaldの信頼区間は定義されない. これらの性質はWaldの信頼区間の欠点である.
+#
+# __練習問題2 (Waldの信頼区間による近似):__ Waldの信頼区間はWilsonの信頼区間のどのような近似になっているか?
+
+# %% [markdown]
+# __解答例:__
+#
+# $$
+# a = 1+\frac{z_{\alpha/2}^2}{n}, \quad
+# b = \hat{p}+\frac{z_{\alpha/2}^2}{2n}, \quad
+# c = \hat{p}^2
+# $$
+#
+# より, 
+#
+# $$
+# \begin{aligned}
+# b^2-ac &=
+# \hat{p}^2 + \frac{z_{\alpha/2}^2}{n} \hat{p} + \frac{z_{\alpha/2}^4}{4n^2}
+# - \hat{p}^2 - \frac{z_{\alpha/2}^2}{n} \hat{p}^2
+# \\ &=
+# \frac{z_{\alpha/2}^2}{n} \hat{p}(1-\hat{p}) + \frac{z_{\alpha/2}^4}{4n^2}
+# \\ &=
+# z_{\alpha/2}^2 \frac{\hat{p}(1-\hat{p})}{n}
+# \left(1 + \frac{z_{\alpha/2}^2}{4n\hat{p}(1-\hat{p})}\right).
+# \end{aligned}
+# $$
+#
+# これより, Wilsonの信頼区間の両端の値(それらは練習問題1の結果より $p$ に関する2次方程式 $ap^2-2bp+c=0$ の2つの解に等しい)は次のように表される:
+#
+# $$
+# \frac{b\pm\sqrt{b^2-ac}}{a} =
+# \frac
+# {
+# \hat{p}+\dfrac{z_{\alpha/2}^2}{2n}
+# \pm z_{\alpha/2} \sqrt{\dfrac{\hat{p}(1-\hat{p})}{n}}
+# \sqrt{1 + \dfrac{z_{\alpha/2}^2}{4n\hat{p}(1-\hat{p})}}
+# }
+# {1+\dfrac{z_{\alpha/2}^2}{n}}.
+# $$
+#
+# ゆえに, $0<\hat{p}<1$ のとき, $n$ を十分大きくすると, $\dfrac{z_{\alpha/2}^2}{4n\hat{p}(1-\hat{p})}$ は十分小さくなり, そのとき $\dfrac{z_{\alpha/2}^2}{n}$, $\dfrac{z_{\alpha/2}^2}{2n}$ も十分小さくなるので, Wilsonの信頼区間の両端の値はWaldの信頼区間の両端の値
+#
+# $$
+# \hat{p} \pm z_{\alpha/2}\sqrt{\frac{\hat{p}(1-\hat{p})}{n}}
+# $$
+#
+# で近似される. $\hat{p}=k/n$ が $0$ または $1$ に近いとき, $\hat{p}(1-\hat{p})$ は小さな値になるので, その分だけ $n$ を大きくしないと, Waldの信頼区間によるWilsonの信頼区間の近似の精度が上がらないことに注意せよ.
+
+# %% [markdown]
+# __練習問題3 (Waldの信頼区間に対応するP値函数):__ Waldの信頼区間を与えるP値函数を構成せよ.
+
+# %% [markdown]
+# __解答例:__ 次のように __WaldのP値函数__ $\op{pvalue}_{\op{Wald}}(k|n,p)$ を定める:
+#
+# $$
+# \op{pvalue}_{\op{Wald}}(k|n,p) = 2(1 - \op{cdf}(\op{Normal}(0, 1), |\tilde{z}|)), \quad
+# \tilde{z} = \frac{\hat{p} - p}{\sqrt{\hat{p}(1-\hat{p})/n}}.
+# $$
+#
+# ここで $\hat{p}=k/n$. WaldのP値函数の定義とWaldのP値函数の定義
+#
+# $$
+# \op{pvalue}_{\op{Wilson}}(k|n,p) = 2(1 - \op{cdf}(\op{Normal}(0, 1), |z|)), \quad
+# z = \frac{\hat{p} - p}{\sqrt{p(1-p)/n}}
+# $$
+#
+# の違いは $z$ と $\tilde{z}$ の定義式の分母における $p$ と $\hat{p}$ の違いである.
+#
+# このとき, 練習問題1の解答例と同様に考えると, 
+#
+# $$
+# \begin{aligned}
+# &
+# \op{pvalue}_{\op{Wald}}(k|n,p) \ge \alpha
+# \\ &\iff
+# |\tilde{z}| = \frac{|\hat{p} - p|}{\sqrt{\hat{p}(1-\hat{p})/n}} \le z_{\alpha/2}
+# \\ &\iff
+# \hat{p} - z_{\alpha/2}\sqrt{\frac{\hat{p}(1-\hat{p})}{n}}
+# \le p \le
+# \hat{p} + z_{\alpha/2}\sqrt{\frac{\hat{p}(1-\hat{p})}{n}}.
+# \end{aligned}
+# $$
+#
+# すなわち,
+#
+# $$
+# \op{confint}_{\op{Wald}}(k|n,\alpha) = \{\, p \in \mathbb{R} \mid \op{pvalue}_{\op{Wald}}(k|n,p) \ge \alpha\,\}.
+# $$
+#
+# これでWaldのP値函数がWaldの信頼区間を与えることがわかった.
 
 # %%
