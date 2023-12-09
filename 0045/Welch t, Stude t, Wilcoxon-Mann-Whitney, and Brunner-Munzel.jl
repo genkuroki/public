@@ -9,10 +9,13 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.10.3
 #   kernelspec:
-#     display_name: Julia 1.9.3
+#     display_name: Julia 1.9.4
 #     language: julia
 #     name: julia-1.9
 # ---
+
+# %% [markdown]
+# See https://github.com/genkuroki/public/blob/main/0045/Welch%20t%2C%20Student%2C%20Wilcoxon-Mann-Whitney%2C%20and%20Brunner-Munzel.ipynb
 
 # %%
 using Random
