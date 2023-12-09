@@ -91,7 +91,7 @@ default(fmt=:png, titlefontsize=10, guidefontsize=10, tickfontsize=6)
 # 「$n$ 回中当たりが $k$ 回」というデータの数値が得られたときの事後分布 $\varphi(p|k,n)$ はベータ分布 $\op{Beta}(k+1, n-k+1)$ になる:
 #
 # $$
-# \varphi(p|k,n) = \frac{p^k(1-p)^{n-k}}{B(k+1, n-k+1} \quad (0\le p\le 1).
+# \varphi(p|k,n) = \frac{p^k(1-p)^{n-k}}{B(k+1, n-k+1)} \quad (0\le p\le 1).
 # $$
 #
 # これは尤度函数と定数倍の違いを除いて等しいでの, MAP推定値は最尤推定値に一致する.
