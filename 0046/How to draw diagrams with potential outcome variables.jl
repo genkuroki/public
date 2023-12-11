@@ -19,6 +19,8 @@
 #
 # * 黒木玄
 # * 2023-12-11
+# * [View html version](https://nbviewer.org/github/genkuroki/public/blob/main/0046/How%20to%20draw%20diagrams%20with%20potential%20outcome%20variables.ipynb)
+# * [Download pdf version](https://github.com/genkuroki/public/raw/main/0046/How%20to%20draw%20diagrams%20with%20potential%20outcome%20variables.pdf)
 #
 # __要約:__ \[黒木学 2017\] の図6-1, 図6-2, 図6-3, 図8-4, 図8-5では $Y_x$ のように表記された潜在反応変数から元の変数 $Y$ に向けて矢線が描かれている.  その部分は, シンプルな標準的ルールに従って, $Y_x$ から $Y$ に矢線を描かない別のダイアグラムに描き変えた方がよい.
 #
@@ -52,7 +54,7 @@
 # * 介入で固定した値 $a,b$ をダイアグラムに描かない場合には, $C_{a,b}, D_{a,b}, \epsilon_z$ から $Z_{a,b}$ への矢線を描き, $Z_{a,b}$ に向けての矢線はその3本だけにする.
 # * 例えば $C = C_{a,b}$ となっている場合には変数 $C_{a,b}$ を新たにダイアグラムに追加せずに $C_{a,b}$ の代わりに $C$ を用いる.
 #
-# このルールは標準的である.
+# 以上のルールは標準的である.
 
 # %% [markdown]
 # ### 図6-1とその訂正案
