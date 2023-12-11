@@ -15,12 +15,12 @@
 # ---
 
 # %% [markdown]
-# # 黒木学著『構造的因果モデルの基礎』(2017)における潜在反応変数を含む因果ダイアグラムの描き方について
+# # 潜在反応変数を含むダイアグラムの描き方について
 #
 # * 黒木玄
 # * 2023-12-11
 #
-# __要約:__ \[黒木学 2017\] の図6-1, 図6-2, 図6-3, 図8-4, 図8-5では $Y_x$ のように表記された潜在反応変数から元の変数 $Y$ に向けて矢線が描かれている.  その部分は $Y_x$ から $Y$ に矢線を描かない別のダイアグラムに描き変えた方がよい.
+# __要約:__ \[黒木学 2017\] の図6-1, 図6-2, 図6-3, 図8-4, 図8-5では $Y_x$ のように表記された潜在反応変数から元の変数 $Y$ に向けて矢線が描かれている.  その部分は, シンプルな標準的ルールに従って, $Y_x$ から $Y$ に矢線を描かない別のダイアグラムに描き変えた方がよい.
 #
 # __参照文献__
 #
@@ -30,7 +30,7 @@
 
 # %% [markdown] toc=true
 # <h1>目次<span class="tocSkip"></span></h1>
-# <div class="toc"><ul class="toc-item"><li><span><a href="#[黒木学-2017]-の図6-1,-図6-2,-図6-3,-図8-4,-図8-5およびそれらの訂正案" data-toc-modified-id="[黒木学-2017]-の図6-1,-図6-2,-図6-3,-図8-4,-図8-5およびそれらの訂正案-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>[黒木学 2017] の図6-1, 図6-2, 図6-3, 図8-4, 図8-5およびそれらの訂正案</a></span><ul class="toc-item"><li><span><a href="#図6-1" data-toc-modified-id="図6-1-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>図6-1</a></span></li><li><span><a href="#図6-2" data-toc-modified-id="図6-2-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>図6-2</a></span></li><li><span><a href="#図6-3" data-toc-modified-id="図6-3-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>図6-3</a></span></li><li><span><a href="#図8-4" data-toc-modified-id="図8-4-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>図8-4</a></span></li><li><span><a href="#図8-5" data-toc-modified-id="図8-5-1.5"><span class="toc-item-num">1.5&nbsp;&nbsp;</span>図8-5</a></span></li></ul></li><li><span><a href="#訂正した方が良い理由" data-toc-modified-id="訂正した方が良い理由-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>訂正した方が良い理由</a></span></li><li><span><a href="#他の文献でのダイアグラムの描き方の例" data-toc-modified-id="他の文献でのダイアグラムの描き方の例-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>他の文献でのダイアグラムの描き方の例</a></span></li></ul></div>
+# <div class="toc"><ul class="toc-item"><li><span><a href="#[黒木学-2017]-の図6-1,-図6-2,-図6-3,-図8-4,-図8-5およびそれらの訂正案" data-toc-modified-id="[黒木学-2017]-の図6-1,-図6-2,-図6-3,-図8-4,-図8-5およびそれらの訂正案-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>[黒木学 2017] の図6-1, 図6-2, 図6-3, 図8-4, 図8-5およびそれらの訂正案</a></span><ul class="toc-item"><li><span><a href="#図6-1とその訂正案" data-toc-modified-id="図6-1とその訂正案-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>図6-1とその訂正案</a></span></li><li><span><a href="#図6-2とその訂正案" data-toc-modified-id="図6-2とその訂正案-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>図6-2とその訂正案</a></span></li><li><span><a href="#図6-3とその訂正案" data-toc-modified-id="図6-3とその訂正案-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>図6-3とその訂正案</a></span></li><li><span><a href="#図8-4とその訂正案" data-toc-modified-id="図8-4とその訂正案-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>図8-4とその訂正案</a></span></li><li><span><a href="#図8-5とその訂正案" data-toc-modified-id="図8-5とその訂正案-1.5"><span class="toc-item-num">1.5&nbsp;&nbsp;</span>図8-5とその訂正案</a></span></li></ul></li><li><span><a href="#訂正した方が良い理由" data-toc-modified-id="訂正した方が良い理由-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>訂正した方が良い理由</a></span></li><li><span><a href="#他の文献でのダイアグラムの描き方の例" data-toc-modified-id="他の文献でのダイアグラムの描き方の例-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>他の文献でのダイアグラムの描き方の例</a></span></li></ul></div>
 
 # %% [markdown]
 # ## \[黒木学 2017\] の図6-1, 図6-2, 図6-3, 図8-4, 図8-5およびそれらの訂正案
@@ -38,7 +38,7 @@
 # この節では \[黒木学 2017\] の図6-1, 図6-2, 図6-3, 図8-4, 図8-5およびその訂正案を示す.
 
 # %% [markdown]
-# 訂正の仕方は非常にシンプルである.  構造的因果モデル内で
+# 訂正の仕方は非常にシンプルである. 例えば, 構造的因果モデル内で
 #
 # $$
 # Z = g_z(A, B, C, D, \epsilon_z), \quad
@@ -50,35 +50,36 @@
 # * $A,B,C,D,\epsilon_z$ から $Z$ への矢線を描き, $Z$ に向けての矢線はその5本だけにする.
 # * 特に $Z_{a,b}$ から $Z$ への矢線は描かない.
 # * 介入で固定した値 $a,b$ をダイアグラムに描かない場合には, $C_{a,b}, D_{a,b}, \epsilon_z$ から $Z_{a,b}$ への矢線を描き, $Z_{a,b}$ に向けての矢線はその3本だけにする.
+# * 例えば $C = C_{a,b}$ となっている場合には変数 $C_{a,b}$ を新たにダイアグラムに追加せずに $C_{a,b}$ の代わりに $C$ を用いる.
 #
 # このルールは標準的である.
 
 # %% [markdown]
-# ### 図6-1
+# ### 図6-1とその訂正案
 
 # %% [markdown]
 # <img src="https://raw.githubusercontent.com/genkuroki/public/main/0046/images/fig6-1_corrected.jpg" width=70%>
 
 # %% [markdown]
-# ### 図6-2
+# ### 図6-2とその訂正案
 
 # %% [markdown]
 # <img src="https://raw.githubusercontent.com/genkuroki/public/main/0046/images/fig6-2_corrected.jpg" width=70%>
 
 # %% [markdown]
-# ### 図6-3
+# ### 図6-3とその訂正案
 
 # %% [markdown]
 # <img src="https://raw.githubusercontent.com/genkuroki/public/main/0046/images/fig6-3_corrected.jpg" width=70%>
 
 # %% [markdown]
-# ### 図8-4
+# ### 図8-4とその訂正案
 
 # %% [markdown]
 # <img src="https://raw.githubusercontent.com/genkuroki/public/main/0046/images/fig8-4_corrected.jpg" width=70%>
 
 # %% [markdown]
-# ### 図8-5
+# ### 図8-5とその訂正案
 
 # %% [markdown]
 # <img src="https://raw.githubusercontent.com/genkuroki/public/main/0046/images/fig8-5_corrected.jpg">
@@ -102,7 +103,7 @@
 # Y = Y_x \quad \text{if $X=x$}
 # $$
 #
-# が自明に成立する.  このことを理由に因果ダイアグラムで $Y_x$ から $Y$ に矢線を描くことは複数通りの意味で誤りになる.
+# が自明に成立する.  このことを理由に因果ダイアグラムで $Y_x$ から $Y$ に矢線を描くことは複数通りの意味で不適切になる.
 #
 # __理由1:__ 因果ダイアグラムの描き方はシンプルな標準的ルールとして決まっている. 標準的ルールを勝手に変更して読者を惑わせることはやらない方がよい.
 #
@@ -125,7 +126,7 @@
 # $X, Y, Y_x$ で構成されるモデルに対応するダイアグラムは標準的ルールに従うと次のようになる:
 
 # %% [markdown]
-# <img src="https://raw.githubusercontent.com/genkuroki/public/main/0046/images/2a.jpg" width=25%>
+# <img src="https://raw.githubusercontent.com/genkuroki/public/main/0046/images/2a.jpg" width=35%>
 
 # %% [markdown]
 # 仮に $X$ の取り得る値は $1,0$ の2通りであるとする. そのとき
@@ -133,34 +134,33 @@
 # $$
 # Y = \begin{cases}
 # Y_1 & \text{if X=1,} \\
-# Y_0 & \text{if X=0.} \\
+# Y_0 & \text{if X=0} \\
 # \end{cases}
 # $$
 #
-# これの右辺は $Y_1, Y_0$ の両方に依存しているので, この等式を
+# が自明に成立している. この右辺は $Y_1, Y_0$ の両方と $X$ で決まるので, この等式を
 #
 # $$
-# Y = h(Y_1, Y_0)
+# Y = h(X, Y_1, Y_0)
 # $$
 #
-# と要約する. この等式を
+# と要約しよう. これと
 #
 # $$
-# Y_1 = g_y(1, \epsilon_y), \quad Y_0 = g_y(0, \epsilon_y)
+# X = g_x(\epsilon_x), \quad
+# Y_1 = g_y(1, \epsilon_y), \quad Y_0 = g_y(0, \epsilon_y),
 # $$
 #
 # と合わせて得られる構造的因果モデルを仮に考えたとする. そのような考え方はしない方がよいが仮にそう考えたとする. そのとき, そのモデルに対応するダイアグラムは次のようになる:
 
 # %% [markdown]
-# <img src="https://raw.githubusercontent.com/genkuroki/public/main/0046/images/2b.jpg" width=20%>
+# <img src="https://raw.githubusercontent.com/genkuroki/public/main/0046/images/2b.jpg" width=50%>
 
 # %% [markdown]
 # これを単独の $x=1,0$ に関する次のダイアグラムで要約することはできない:
 
 # %% [markdown]
-# $$
-# \epsilon_y \longrightarrow Y_x \longrightarrow Y
-# $$
+# <img src="https://raw.githubusercontent.com/genkuroki/public/main/0046/images/2c.jpg" width=25%>
 
 # %% [markdown]
 # $Y$ の挙動を確定させるためには $Y_1$, $Y_0$ の両方が必要である.
