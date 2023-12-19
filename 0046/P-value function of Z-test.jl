@@ -80,7 +80,7 @@ a, b = 1482, 1682+40
     vline!([X̄]; label="point estimate = $X̄", c=3, ls=:dash)
     vline!([μ]; label="", c=4, ls=:dashdot)
     scatter!([μ], [pval]; label="P-value($μ) = $(pvalstr)", msc=:auto, c=4)
-    plot!(ytick=:0:0.05:1, xtick=1000:20:2000, xrotation=30)
+    plot!(ytick=:0:0.05:1, xtick=1000:20:2000)#, xrotation=30)
     plot!(xguide="μ", yguide="P-value", ylim=(-0.03, 1.03))
     title!("P-value function for sample mean=$(X̄), σ=$σ, n=$n")
 
