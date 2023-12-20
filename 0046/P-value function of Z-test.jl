@@ -71,7 +71,7 @@ a, b = 1482, 1682+40
     vline!([μ]; label="", c=4, ls=:dashdot)
     plot!(Normal(μ, σ/√n), a, c; fillrange=0, fa=0.5, label="P-value($μ) = $(pvalstr)", c=4)
     plot!(Normal(μ, σ/√n), d, b; fillrange=0, fa=0.5, label="", c=4)
-    plot!(xtick=1000:20:2000, xrotation=30)
+    plot!(xtick=1000:20:2000)#, xrotation=30)
     title!("Statistical model for μ=$μ, σ=$σ, n=$n")
 
     Q = plot(μ -> pvalue_ztest(X̄, n; μ, σ), a, b; label="P-value function", c=1)
