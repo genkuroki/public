@@ -17,11 +17,10 @@
 # https://x.com/kame_no_mori/status/1734888762914820124?s=61&t=_KnHkB3gSNKRbi3Ce1GncA
 
 # %%
-function main()
+function main(nt = 100000000)
     mass = 1.0
     k = 1.0
     dt = 1e-2
-    nt = 100000000
 
     xt = zeros(Float64, nt+1)
     vt = zeros(Float64, nt+1)
@@ -70,11 +69,10 @@ end
 @time main()
 
 # %%
-function main()
+function main_inline(nt = 100000000)
     mass = 1.0
     k = 1.0
     dt = 1e-2
-    nt = 10000000
 
     xt = zeros(Float64, nt+1)
     vt = zeros(Float64, nt+1)
@@ -85,7 +83,7 @@ function main()
     for it = 1:nt+1
         xt[it] = x
         vt[it] = v
-        x, v = Runge_Kutta_4th!(x, v, dt, mass, k)
+        x, v = Runge_Kutta_4th_inline!(x, v, dt, mass, k)
     end
 
     open("result_julia.out", "w") do file
@@ -95,7 +93,7 @@ function main()
     end
 end
 
-@inline function Runge_Kutta_4th!(x, v, dt, mass, k)
+@inline function Runge_Kutta_4th_inline!(x, v, dt, mass, k)
     x1 = v
     v1 = force(x, mass, k)
 
@@ -118,16 +116,15 @@ function force(x, mass, k)
     return -x * k / mass
 end
 
-@time main()
-@time main()
-@time main()
+@time main_inline()
+@time main_inline()
+@time main_inline()
 
 # %%
-function main()
+function main_inline_simd(nt = 100000000)
     mass = 1.0
     k = 1.0
     dt = 1e-2
-    nt = 100000000
 
     xt = zeros(Float64, nt+1)
     vt = zeros(Float64, nt+1)
@@ -135,10 +132,10 @@ function main()
     x = 0.0
     v = 1.0
 
-    @simd for it in eachindex(xt, vt)
+    @simd for it in 1:nt+1
         xt[it] = x
         vt[it] = v
-        x, v = Runge_Kutta_4th!(x, v, dt, mass, k)
+        x, v = Runge_Kutta_4th_inline!(x, v, dt, mass, k)
     end
 
     open("result_julia.out", "w") do file
@@ -148,7 +145,7 @@ function main()
     end
 end
 
-@inline function Runge_Kutta_4th!(x, v, dt, mass, k)
+@inline function Runge_Kutta_4th_inline!(x, v, dt, mass, k)
     x1 = v
     v1 = force(x, mass, k)
 
@@ -171,8 +168,19 @@ function force(x, mass, k)
     return -x * k / mass
 end
 
-@time main()
-@time main()
-@time main()
+@time main_inline_simd()
+@time main_inline_simd()
+@time main_inline_simd()
+
+# %%
+using BenchmarkTools
+
+nt = 10^6
+@btime main(nt)
+@btime main_inline(nt)
+@btime main_inline_simd(nt)
+
+# %%
+versioninfo()
 
 # %%
