@@ -15,7 +15,30 @@
 # ---
 
 # %% [markdown]
-# https://x.com/kame_no_mori/status/1734888762914820124?s=61&t=_KnHkB3gSNKRbi3Ce1GncA
+# * https://twitter.com/kame_no_mori/status/1734888762914820124
+# * https://twitter.com/genkuroki/status/1739876470682697877
+#
+# >#Julia言語 https://kamemori.com/research/fortran/speed_harmonic_oscillator_1d_ja.html のJuliaのコードに18文字追加して比較し直してみました。3回実行して最短の値を採用。<br>
+# ><br>
+# >1.64秒 ← gfortran -O3<br>
+# >3.50秒 ← julia newton.jl<br>
+# >1.63秒 ← julia newton_inline_fastmath.jl (18文字追加)<br>
+# >1.18秒 ← julia> include("newton_inline_fastmath.jl")<br>
+
+# %% [markdown]
+# __gfortranとの比較__
+
+# %% [markdown]
+# <img src="https://raw.githubusercontent.com/genkuroki/public/main/0046/runge-kutra%20benchmark/2023-12-27a%20gfortran%20-O3.png">
+
+# %% [markdown]
+# <img src="https://raw.githubusercontent.com/genkuroki/public/main/0046/runge-kutra%20benchmark/2023-12-27b%20julia%20newton.jl.png">
+
+# %% [markdown]
+# <img src="https://raw.githubusercontent.com/genkuroki/public/main/0046/runge-kutra%20benchmark/2023-12-27c%20julia%20newton_inline_fastmath.jl.png">
+
+# %% [markdown]
+# <img src="https://raw.githubusercontent.com/genkuroki/public/main/0046/runge-kutra%20benchmark/2023-12-27d%20julia%20include.png">
 
 # %%
 function main(nt = 100000000)
@@ -295,20 +318,5 @@ print("main_inline_fastmath(nt):")
 
 # %%
 versioninfo()
-
-# %% [markdown]
-# __gfortranとの比較__
-
-# %% [markdown]
-# <img src="https://raw.githubusercontent.com/genkuroki/public/main/0046/runge-kutra%20benchmark/2023-12-27a%20gfortran%20-O3.png">
-
-# %% [markdown]
-# <img src="https://raw.githubusercontent.com/genkuroki/public/main/0046/runge-kutra%20benchmark/2023-12-27b%20julia%20newton.jl.png">
-
-# %% [markdown]
-# <img src="https://raw.githubusercontent.com/genkuroki/public/main/0046/runge-kutra%20benchmark/2023-12-27c%20julia%20newton_inline_fastmath.jl.png">
-
-# %% [markdown]
-# <img src="https://raw.githubusercontent.com/genkuroki/public/main/0046/runge-kutra%20benchmark/2023-12-27d%20julia%20include.png">
 
 # %%
