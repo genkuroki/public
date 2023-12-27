@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # ---
 # jupyter:
 #   jupytext:
@@ -28,21 +29,33 @@ end
 @code_native debuginfo=:none dump_module=false f_fastmath(1.0, 2.0, 0.1)
 
 # %%
-function repeatf(f, n=10^6, x0=0.0, v=1.0, dt=1/n)
+"""
+Solve x(0) = 0, x'(t) = x(t) + 1, 0 ≤ t ≤ 1.
+
+Exact solution: x(t) = exp(t) - 1, x(1) = exp(1) - 1 = 1.718281828⋯.
+"""
+function solveode(f, n=10^6, x0=0.0, dt=1/n)
     x = x0
     for _ in 1:n
-        x = f(x, v, dt)
+        x = f(x, x+1, dt)
     end
     x
 end
 
-@show repeatf(f)
-@show repeatf(f_fastmath);
+@show solveode(f)
+@show solveode(f_fastmath)
+@show exp(1) - 1;
 
 # %%
 using BenchmarkTools
 
-@btime repeatf(f)
-@btime repeatf(f_fastmath);
+@btime solveode(f)
+@btime solveode(f_fastmath);
+
+# %%
+@code_native debuginfo=:none dump_module=false solveode(f)
+
+# %%
+@code_native debuginfo=:none dump_module=false solveode(f_fastmath)
 
 # %%
