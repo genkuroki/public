@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # ---
 # jupyter:
 #   jupytext:
@@ -294,5 +295,20 @@ print("main_inline_fastmath(nt):")
 
 # %%
 versioninfo()
+
+# %% [markdown]
+# __gfortranとの比較__
+
+# %% [markdown]
+# <img src="https://raw.githubusercontent.com/genkuroki/public/main/0046/runge-kutra%20benchmark/2023-12-27a%20gfortran%20-O3.png">
+
+# %% [markdown]
+# <img src="https://raw.githubusercontent.com/genkuroki/public/main/0046/runge-kutra%20benchmark/2023-12-27b%20julia%20newton.jl.png">
+
+# %% [markdown]
+# <img src="https://raw.githubusercontent.com/genkuroki/public/main/0046/runge-kutra%20benchmark/2023-12-27c%20julia%20newton_inline_fastmath.jl.png">
+
+# %% [markdown]
+# <img src="https://raw.githubusercontent.com/genkuroki/public/main/0046/runge-kutra%20benchmark/2023-12-27d%20julia%20include.png">
 
 # %%
