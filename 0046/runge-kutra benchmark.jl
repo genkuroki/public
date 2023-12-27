@@ -18,7 +18,7 @@
 # * https://twitter.com/kame_no_mori/status/1734888762914820124
 # * https://twitter.com/genkuroki/status/1739876470682697877
 #
-# >#Julia言語 https://kamemori.com/research/fortran/speed_harmonic_oscillator_1d_ja.html のJuliaのコードに18文字追加して比較し直してみました。3回実行して最短の値を採用。<br>
+# >\#Julia言語 https://kamemori.com/research/fortran/speed_harmonic_oscillator_1d_ja.html のJuliaのコードに18文字追加して比較し直してみました。3回実行して最短の値を採用。<br>
 # ><br>
 # >1.64秒 ← gfortran -O3<br>
 # >3.50秒 ← julia newton.jl<br>
