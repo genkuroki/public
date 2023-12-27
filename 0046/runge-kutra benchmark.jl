@@ -24,6 +24,17 @@
 # >3.50秒 ← julia newton.jl<br>
 # >1.63秒 ← julia newton_inline_fastmath.jl (18文字追加)<br>
 # >1.18秒 ← julia> include("newton_inline_fastmath.jl")<br>
+#
+# * https://x.com/genkuroki/status/1739999710998618530?s=20
+#
+# >#Julia言語 さらなる訂正<br>
+# ><br>
+# >Julia版では34文字追加しないとかなり遅くなるという結果<br>
+# ><br>
+# >1.64秒 ← gfortran -O3<br>
+# >3.50秒 ← julia newton.jl<br>
+# >1.41秒 ← julia newton_inline_fastmath_inbounds_simd.jl (34文字追加)<br>
+# >1.06秒 ← julia> include("newton_inline_fastmath.jl")<br>
 
 # %% [markdown]
 # __gfortranとの比較__
@@ -41,10 +52,10 @@
 # <img src="https://raw.githubusercontent.com/genkuroki/public/main/0046/runge-kutta%20benchmark/2023-12-27d%20julia%20include.png">
 
 # %% [markdown]
-# <img src="https://raw.githubusercontent.com/genkuroki/public/main/0046/runge-kutta%20benchmark/2023-12-27e%20julia%20include%20newton_inline_fastmath_inbounds_simd.jl.png">
+# <img src="https://raw.githubusercontent.com/genkuroki/public/main/0046/runge-kutta%20benchmark/2023-12-27e%20julia%20newton_inline_fastmath_inbounds_simd.jl.png">
 
 # %% [markdown]
-# <img src="https://raw.githubusercontent.com/genkuroki/public/main/0046/runge-kutta%20benchmark/2023-12-27f%20julia%20newton_inline_fastmath_inbounds_simd.jl.png">
+# <img src="https://raw.githubusercontent.com/genkuroki/public/main/0046/runge-kutta%20benchmark/2023-12-27f%20julia%20include%20newton_inline_fastmath_inbounds_simd.jl.png">
 
 # %%
 function main(nt = 100000000)
