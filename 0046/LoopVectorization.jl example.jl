@@ -75,3 +75,17 @@ end
 @time mcpi_turbo()
 
 # %%
+using CUDA
+using Statistics
+
+square(x) = x^2
+
+function mcpi_cuda_count(L=10^8, t::Type{T}=Float32) where T
+    4count(≤(1), sum(square, CUDA.rand(T, 2, L); dims=1)) / L
+end
+
+@time mean(mcpi_cuda_count() for _ in 1:10)
+@time mean(mcpi_cuda_count() for _ in 1:10)
+@time mean(mcpi_cuda_count() for _ in 1:10)
+
+# %%
