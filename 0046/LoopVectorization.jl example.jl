@@ -76,16 +76,16 @@ end
 
 # %%
 using CUDA
-using Statistics
-
-square(x) = x^2
+using BenchmarkTools
 
 function mcpi_cuda_count(L=10^8, t::Type{T}=Float32) where T
-    4count(≤(1), sum(square, CUDA.rand(T, 2, L); dims=1)) / L
+    4count(≤(1), sum(x->x^2, CUDA.rand(T, 2, L); dims=1)) / L
 end
 
-@time mean(mcpi_cuda_count() for _ in 1:10)
-@time mean(mcpi_cuda_count() for _ in 1:10)
-@time mean(mcpi_cuda_count() for _ in 1:10)
+a = @btime mcpi(10^8)
+b = @btime mcpi_threads(10^8)
+c = @btime mcpi_turbo(10^8)
+d = @btime mcpi_cuda_count(10^8)
+a, b, c, d
 
 # %%
