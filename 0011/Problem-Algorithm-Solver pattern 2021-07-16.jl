@@ -7,11 +7,11 @@
 #       extension: .jl
 #       format_name: hydrogen
 #       format_version: '1.3'
-#       jupytext_version: 1.11.2
+#       jupytext_version: 1.10.3
 #   kernelspec:
-#     display_name: Julia 1.8.0-DEV
+#     display_name: Julia 1.10.0
 #     language: julia
-#     name: julia-1.8
+#     name: julia-1.10
 # ---
 
 # %% [markdown]
@@ -28,9 +28,11 @@
 # In order to resolve this misunderstanding, they can try the problem-algorithm-solver pattern explained below.
 #
 # In order to use the `(; a, b, c) = p` syntax, require VERSION ≥ v"1.7.0-beta" [#39285](https://github.com/JuliaLang/julia/pull/39285).
+#
+# * 2023-12-29 update: Julia v1.7 → v1.10
 
 # %%
-VERSION ≥ v"1.7.0-beta" #> true
+VERSION ≥ v"1.9" #> true
 
 # %% [markdown]
 # ## A minimal working example of the problem-algorithm-solver pattern
@@ -39,7 +41,7 @@ VERSION ≥ v"1.7.0-beta" #> true
 module FreeFall
 
 """Problem type"""
-Base.@kwdef struct Problem{G, Y0, V0, TS}
+@kwdef struct Problem{G, Y0, V0, TS}
     g::G = 9.80665
     y0::Y0 = 0.0
     v0::V0 = 30.0
@@ -47,8 +49,8 @@ Base.@kwdef struct Problem{G, Y0, V0, TS}
 end
 
 """Algorithm types"""
-Base.@kwdef struct EulerMethod{T}  dt::T = 0.1 end
-Base.@kwdef struct ExactFormula{T} dt::T = 0.1 end
+@kwdef struct EulerMethod{T}  dt::T = 0.1 end
+@kwdef struct ExactFormula{T} dt::T = 0.1 end
 default_algorithm(::Problem) = EulerMethod()
 
 """Solution type"""
@@ -101,7 +103,7 @@ end
 # ### Example 1: Compare a numerical solution and an exact one
 
 # %%
-using Plots
+using Plots; default(fmt=:png)
 
 earth = FreeFall.Problem()
 sol_euler = FreeFall.solve(earth)
@@ -149,7 +151,7 @@ module SomeExtension
 using ..FreeFall
 using ..FreeFall: Problem, Solution
 
-Base.@kwdef struct Symplectic2ndOrder{T}  dt::T = 0.1 end
+@kwdef struct Symplectic2ndOrder{T}  dt::T = 0.1 end
 
 function FreeFall.solve(prob::Problem, alg::Symplectic2ndOrder)
     (; g, y0, v0, tspan) = prob
