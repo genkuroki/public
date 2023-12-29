@@ -15,7 +15,7 @@
 # ---
 
 # %%
-function mcmcpi(L=10^9)
+function mcpi(L=10^9)
     c = 0
     for i in 1:L
         c += rand()^2 + rand()^2 ≤ 1
@@ -23,12 +23,12 @@ function mcmcpi(L=10^9)
     4c/L
 end
 
-@time mcmcpi()
-@time mcmcpi()
-@time mcmcpi()
+@time mcpi()
+@time mcpi()
+@time mcpi()
 
 # %%
-function mcmcpi_threads(L=10^9)
+function mcpi_threads(L=10^9)
     c = zeros(Int, Threads.nthreads())
     Threads.@threads for i in 1:L
         tid = Threads.threadid()
@@ -37,15 +37,15 @@ function mcmcpi_threads(L=10^9)
     4sum(c)/L
 end
 
-@time mcmcpi_threads()
-@time mcmcpi_threads()
-@time mcmcpi_threads()
+@time mcpi_threads()
+@time mcpi_threads()
+@time mcpi_threads()
 
 # %%
 using LoopVectorization
 
 # The result shall be 4.0 or 0.0.
-function mcmcpi_turbo_incorrect(L=10^9)
+function mcpi_turbo_incorrect(L=10^9)
     c = 0
     @turbo for i in 1:L
         c += rand()^2 + rand()^2 ≤ 1
@@ -53,16 +53,16 @@ function mcmcpi_turbo_incorrect(L=10^9)
     4c/L
 end
 
-@time mcmcpi_turbo_incorrect()
-@time mcmcpi_turbo_incorrect()
-@time mcmcpi_turbo_incorrect()
+@time mcpi_turbo_incorrect()
+@time mcpi_turbo_incorrect()
+@time mcpi_turbo_incorrect()
 
 # %%
 using LoopVectorization
 
 rand_is_in_unit_circle(i) = rand()^2 + rand()^2 ≤ 1
 
-function mcmcpi_turbo(L=10^9)
+function mcpi_turbo(L=10^9)
     c = 0
     @turbo for i in 1:L
         c += rand_is_in_unit_circle(i)
@@ -70,8 +70,8 @@ function mcmcpi_turbo(L=10^9)
     4c/L
 end
 
-@time mcmcpi_turbo()
-@time mcmcpi_turbo()
-@time mcmcpi_turbo()
+@time mcpi_turbo()
+@time mcpi_turbo()
+@time mcpi_turbo()
 
 # %%
