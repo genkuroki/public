@@ -75,6 +75,24 @@ end
 @time mcpi_turbo()
 
 # %%
+using LoopVectorization
+
+rand_is_in_unit_circle(i) = rand()^2 + rand()^2 ≤ 1
+
+function mcpi_tturbo(L=10^9)
+    c = 0
+    @tturbo for i in 1:L
+        c += rand_is_in_unit_circle(i)
+    end
+    4c/L
+end
+
+@show Threads.nthreads()
+@time mcpi_tturbo()
+@time mcpi_tturbo()
+@time mcpi_tturbo()
+
+# %%
 using CUDA
 using BenchmarkTools
 
@@ -83,9 +101,10 @@ function mcpi_cuda_count(L=10^8, t::Type{T}=Float32) where T
 end
 
 a = @btime mcpi(10^8)
-b = @btime mcpi_threads(10^8)
-c = @btime mcpi_turbo(10^8)
-d = @btime mcpi_cuda_count(10^8)
-a, b, c, d
+b = @btime mcpi_threads(10^8) # Threads.@threads
+c = @btime mcpi_turbo(10^8) # LoopVectorization.@turbo (single thread)
+d = @btime mcpi_tturbo(10^8) # LoopVectorization.@tturbo (multi-thread)
+e = @btime mcpi_cuda_count(10^8) # CUDA (GPU)
+a, b, c, d, e
 
 # %%
