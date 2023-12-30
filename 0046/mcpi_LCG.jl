@@ -32,7 +32,7 @@ const m = Int32(2147483647)
 const q = m ÷ a
 const r = m % a
 
-@inline function (f::LinearCongruentialGenerator)()
+function (f::LinearCongruentialGenerator)()
     seed = f.seed
     hi, lo = divrem(seed, q)
     seed = a * lo - r * hi
