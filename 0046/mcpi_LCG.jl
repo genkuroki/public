@@ -15,35 +15,36 @@
 # ---
 
 # %%
+using Random
+
 module O
 
-export rand_LCG, seed_LCG!
+export TaskLocalLCG, LCG
 
-# Linear congruential generators (LCGs)
-# Parameters are provided by Park and Miller
-# See https://c-faq.com/lib/rand.html
-
-mutable struct LinearCongruentialGenerator <: Function
-    seed::Int32
-end
+using Random: Random, AbstractRNG, RandomDevice
 
 const a = Int32(48271)
-const m = Int32(2147483647)
+const m = Int32(2^31 - 1)
 const q = m ÷ a
 const r = m % a
 
-function (f::LinearCongruentialGenerator)()
-    seed = f.seed
-    hi, lo = divrem(seed, q)
-    seed = a * lo - r * hi
-    seed = ifelse(seed > zero(seed), seed, seed + m)
-    f.seed = seed
-    seed / m
+struct TaskLocalLCG <: AbstractRNG end
+const LCG = TaskLocalLCG()
+
+@inline getstate(::TaskLocalLCG) = mod(current_task().rngState0, Int32)
+@inline setstate!(lcg::TaskLocalLCG, x::Integer) = (current_task().rngState0 = x; lcg)
+
+@inline function Random.rand(lcg::TaskLocalLCG) # 手抜き
+    x = getstate(lcg)
+    hi, lo = divrem(x, q)
+    x = a * lo - r * hi
+    x = ifelse(x > zero(x), x, x + m)
+    setstate!(lcg, x)
+    x / m # 本当は (x - 1) / m とするべき。
 end
 
-const rand_LCG = LinearCongruentialGenerator(Int32(20231226))
-
-seed_LCG!(seed) = rand_LCG.seed = Int32(seed)
+Random.seed!(lcg::TaskLocalLCG) = setstate!(lcg, rand(RandomDevice(), UInt64))
+Random.seed!(lcg::TaskLocalLCG, x) = setstate!(lcg, x)
 
 end
 
@@ -51,10 +52,10 @@ using .O
 
 # %%
 function mcpi_LCG(num_points = 10^9, seed = 20231226)
-    seed_LCG!(seed)
+    Random.seed!(LCG, seed)
     num_inside = 0
     for i in 1:num_points
-        num_inside += rand_LCG()^2 + rand_LCG()^2 < 1
+        num_inside += rand(LCG)^2 + rand(LCG)^2 < 1
     end
     4num_inside / num_points
 end
@@ -66,10 +67,10 @@ end
 # %%
 using LoopVectorization
 
-isinside(i) = rand_LCG()^2 + rand_LCG()^2 < 1
+@inline isinside(i) = rand(LCG)^2 + rand(LCG)^2 < 1
 
 function mcpi_LCG_turbo(num_points = 10^9, seed = 20231226)
-    seed_LCG!(seed)
+    Random.seed!(LCG, seed)
     num_inside = 0
     @turbo for i in 1:num_points
         num_inside += isinside(i)
@@ -80,5 +81,20 @@ end
 @time mcpi_LCG_turbo()
 @time mcpi_LCG_turbo()
 @time mcpi_LCG_turbo()
+
+# %%
+function mcpi_LCG_tturbo(num_points = 10^9, seed = 20231226)
+    Random.seed!(LCG, seed)
+    num_inside = 0
+    @tturbo for i in 1:num_points
+        num_inside += isinside(i)
+    end
+    4num_inside / num_points
+end
+
+mcpi_LCG_tturbo()
+@time mcpi_LCG_tturbo()
+@time mcpi_LCG_tturbo()
+@time mcpi_LCG_tturbo()
 
 # %%
