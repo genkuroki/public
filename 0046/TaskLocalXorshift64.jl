@@ -78,6 +78,9 @@ end
 @time mcpi()
 @time mcpi()
 @time mcpi()
+@time mcpi()
+@time mcpi()
+@time mcpi()
 
 # %%
 using LoopVectorization
@@ -96,6 +99,9 @@ end
 @time mcpi_turbo()
 @time mcpi_turbo()
 @time mcpi_turbo()
+@time mcpi_turbo()
+@time mcpi_turbo()
+@time mcpi_turbo()
 
 # %%
 function mcpi_tturbo(L=10^9, isinsiderng=isinside)
@@ -107,6 +113,9 @@ function mcpi_tturbo(L=10^9, isinsiderng=isinside)
 end
 
 mcpi_tturbo()
+@time mcpi_tturbo()
+@time mcpi_tturbo()
+@time mcpi_tturbo()
 @time mcpi_tturbo()
 @time mcpi_tturbo()
 @time mcpi_tturbo()

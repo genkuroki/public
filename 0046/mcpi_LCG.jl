@@ -63,6 +63,9 @@ end
 @time mcpi_LCG()
 @time mcpi_LCG()
 @time mcpi_LCG()
+@time mcpi_LCG()
+@time mcpi_LCG()
+@time mcpi_LCG()
 
 # %%
 using LoopVectorization
@@ -81,6 +84,9 @@ end
 @time mcpi_LCG_turbo()
 @time mcpi_LCG_turbo()
 @time mcpi_LCG_turbo()
+@time mcpi_LCG_turbo()
+@time mcpi_LCG_turbo()
+@time mcpi_LCG_turbo()
 
 # %%
 function mcpi_LCG_tturbo(num_points = 10^9, seed = 20231226)
@@ -93,6 +99,9 @@ function mcpi_LCG_tturbo(num_points = 10^9, seed = 20231226)
 end
 
 mcpi_LCG_tturbo()
+@time mcpi_LCG_tturbo()
+@time mcpi_LCG_tturbo()
+@time mcpi_LCG_tturbo()
 @time mcpi_LCG_tturbo()
 @time mcpi_LCG_tturbo()
 @time mcpi_LCG_tturbo()
