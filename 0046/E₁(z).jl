@@ -18,8 +18,7 @@
 # # E₁(z)の教訓
 #
 # * 黒木玄
-# * 2020-09-28, 2024-01-02 (rerun)
-#
+# * 2020-09-28, 2024-01-02 (rerun with Julia v1.10.0)
 # $
 # \newcommand\real{\operatorname{Re}}
 # \newcommand\imag{\operatorname{Im}}
@@ -35,6 +34,17 @@ using BenchmarkTools
 using Plots
 default(fmt=:png)
 versioninfo()
+
+# %%
+# Override
+# https://github.com/jverzani/SymPyCore.jl/blob/main/src/SymPy/show_sympy.jl#L31-L34
+@eval SymPy begin
+function Base.show(io::IO,  ::MIME"text/latex", x::SymbolicObject)
+    out = _sympy_.latex(↓(x), mode="inline",fold_short_frac=false)
+    out = replace(out, r"\\frac{"=>"\\dfrac{")
+    print(io, string(out))
+end
+end
 
 # %% [markdown]
 # ## 文脈
