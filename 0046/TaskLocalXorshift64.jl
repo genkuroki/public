@@ -29,10 +29,8 @@ const XOS = TaskLocalXorshift64()
 
 @inline getstate(::TaskLocalXorshift64) = current_task().rngState0
 
-@inline function setstate!(xos::TaskLocalXorshift64, seed::Integer)
-    current_task().rngState0 = mod(seed, UInt64)
-    xos
-end
+@inline setstate!(xos::TaskLocalXorshift64, seed::Integer) =
+    (current_task().rngState0 = mod(seed, UInt64); xos)
 
 @inline function Random.rand(xos::TaskLocalXorshift64, ::SamplerType{UInt64})
     x = res = getstate(xos)
@@ -43,9 +41,8 @@ end
     res
 end
 
-@inline function Random.rand(xos::TaskLocalXorshift64, ::SamplerTrivial{CloseOpen01_64})
-    (rand(xos, UInt64) & UInt64(2^52 - 1)) / 2^52
-end
+@inline Random.rand(xos::TaskLocalXorshift64, ::SamplerTrivial{CloseOpen01_64}) =
+    Float64(rand(xos, UInt64) >>> 11) * 0x1.0p-53
 
 Random.seed!(xos::TaskLocalXorshift64) =
     setstate!(xos, rand(RandomDevice(), UInt64))
