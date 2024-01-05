@@ -1,4 +1,4 @@
-program avx
+program sumofsinc
 implicit none
 integer, parameter :: dp = kind(0.d0)
 real(dp) :: t1, t2, r
@@ -19,7 +19,7 @@ contains
     do i = 1, N
         r = r + sin(real(i,dp)) / real(i,dp)
     end do
-    r = 1.0d0 + 2.0d0 * r
+    r = 1 + 2 * r
     end function
 
 end program
