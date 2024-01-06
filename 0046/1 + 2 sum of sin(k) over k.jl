@@ -34,7 +34,7 @@ end
 # %%
 using LoopVectorization
 
-"single-thread optimization"
+"single-thread optimized version"
 function f_turbo(L=10^8)
     s = 0.0
     @turbo for k in 1:L
@@ -48,7 +48,7 @@ end
 # %%
 using LoopVectorization
 
-"multi-thread optimization"
+"multi-thread optimized version"
 function f_tturbo(L=10^8)
     s = 0.0
     @tturbo for k in 1:L
@@ -74,5 +74,37 @@ end
 
 # %%
 @time f_tturbo(10^9)
+
+# %%
+using LoopVectorization
+
+@inline g(x) = sin(x)/x
+
+"single-thread optimization"
+function f_turbo_inline(L=10^8)
+    s = 0.0
+    @turbo for k in 1:L
+        s += g(k)
+    end
+    1 + 2s
+end
+
+@btime f_turbo_inline()
+
+# %%
+using LoopVectorization
+
+@noinline g(x) = sin(x)/x
+
+"single-thread optimization"
+function f_turbo_noinline(L=10^8)
+    s = 0.0
+    @turbo for k in 1:L
+        s += g(k)
+    end
+    1 + 2s
+end
+
+@btime f_turbo_noinline()
 
 # %%
