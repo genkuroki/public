@@ -85,7 +85,7 @@ end
 end
 
 # %%
-res = O.chisq_test_for_risk_ratio([5 1; 1 4])
+O.chisq_test_for_risk_ratio([5 1; 1 4])
 
 # %%
 module O
@@ -197,6 +197,9 @@ dump(res)
 show(res)
 
 # %%
+display(res)
+
+# %%
 string(res)
 
 # %%
@@ -204,6 +207,13 @@ res2 = eval(Meta.parse("O." * string(res)))
 
 # %%
 res == res2
+
+# %%
+foo_jl = read("foo.jl", String)
+display(MIME"text/markdown"(), "```julia\n$(foo_jl)```")
+
+# %%
+; julia foo.jl
 
 # %%
 using StatsPlots
