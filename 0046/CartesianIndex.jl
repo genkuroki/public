@@ -26,15 +26,18 @@ A = [collect(1:N[l]) for l in 1:L]
 keys(T)
 
 # %%
-for c in keys(T)
-    T[c] = prod(k -> A[k][c[k]], eachindex(A))
+collect(keys(T))
+
+# %%
+for i in keys(T)
+    T[i] = prod(k -> A[k][i[k]], eachindex(A))
 end
 T
 
 # %%
 @btime begin
-    for c in keys(TT)
-        TT[c] = prod(k -> AA[k][c[k]], eachindex(AA))
+    for i in keys(TT)
+        TT[i] = prod(k -> AA[k][i[k]], eachindex(AA))
     end
     TT
 end setup = begin
