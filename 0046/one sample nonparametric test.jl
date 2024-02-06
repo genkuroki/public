@@ -18,6 +18,7 @@
 using Distributions
 using HypothesisTests
 using QuadGK
+using Random
 using Roots
 using StatsPlots
 default(fmt=:png)
@@ -191,5 +192,38 @@ plot(x -> empirical_cdf(pval, x), 0, 0.1; label="")
 plot!(identity; label="")
 plot!(xtick=0:0.01:1, ytick=0:0.01:1)
 plot!(size=(400, 400))
+
+# %%
+function nonparametric_phat_sigmahat2(X)
+    n = length(X)
+    phat = 2/(n*(n-1)) * sum(h2(X[i], X[j]) for i in 1:n for j in i+1:n)
+    sigmahat2 = 1/(n-1) * sum((mean(h2(X[i], X[j]) for j in 1:n if j != i) - phat)^2 for i in 1:n)
+    phat, sigmahat2
+end
+
+function ptilde_sigmatilde2(dist, X)
+    ptilde = mean(ccdf(dist, -x) for x in X)
+    sigmatilde2 = var(ccdf(dist, -x) for x in X)
+    ptilde, sigmatilde2
+end
+
+function p_sigma2(dist, n; L=10^5)
+    p = 1 - cdfsum(dist, 0)
+    Xtmp = zeros(n)
+    phat = zeros(L)
+    ptilde = zeros(L)
+    for i in 1:L
+        X = rand!(dist, Xtmp)
+        phat[i] = 2/(n*(n-1)) * sum(h2(X[i], X[j]) for i in 1:n for j in i+1:n)
+        ptilde[i] = mean(ccdf(dist, -x) for x in X)
+    end
+    p, mean(phat), n*var(phat)/4, mean(ptilde), n*var(ptilde)
+end
+
+dist = Gamma(2, 1) - 2
+n = 2^7
+L = 10^5
+X = rand(dist, n)
+[nonparametric_phat_sigmahat2(X), ptilde_sigmatilde2(dist, X), p_sigma2(dist, n; L)]
 
 # %%
