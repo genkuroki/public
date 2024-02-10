@@ -17,7 +17,7 @@
 # %%
 using Distributions
 using StatsPlots
-default(fmt=:png)
+default(fmt=:png, titlefontsize=10, guidefontsize=9, tickfontsize=7)
 
 prob_p_is_between_L_and_U(L, U, n, p) = 
     sum((L(n,k) ≤ p ≤ U(n,k)) * pdf(Binomial(n, p), k) for k in 0:n)
@@ -26,6 +26,7 @@ function plot_prob_p_is_between_L_and_U(L, U, n)
     f(p) = prob_p_is_between_L_and_U(L, U, n, p)
     ps = range(0, 1, 1001)
     plot(ps, f; label="", title="n=$n")
+    plot!(xguide="p", yguide="probability of L ≤ p ≤ U")
 end
 
 function plot2x2_prob_p_is_between_L_and_U(L, U;
@@ -35,13 +36,16 @@ function plot2x2_prob_p_is_between_L_and_U(L, U;
         P = plot_prob_p_is_between_L_and_U(L, U, n)
         push!(PP, P)
     end
-    plot(PP...; size=(1000, 600), layout=(2,2), kwargs...)
+    plot(PP...; size=(1000, 600), layout=(2, 2))
+    plot!(xtick=0:0.1:1, ytick=0:0.01:1)
+    plot!(leftmargin=4Plots.mm, bottommargin=4Plots.mm)
+    plot!(; kwargs...)
 end
 
 # %%
 L(n, k) = (p̂ = k/n; p̂ - 0.9/√n)
 U(n, k) = (p̂ = k/n; p̂ + 0.9/√n)
-plot2x2_prob_p_is_between_L_and_U(L, U)
+plot2x2_prob_p_is_between_L_and_U(L, U; ylim=(0.8, 1.01))
 
 # %%
 # 95% confidence interval of Wald
