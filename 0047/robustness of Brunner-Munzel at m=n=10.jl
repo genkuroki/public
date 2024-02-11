@@ -92,9 +92,9 @@ function plot_sim(; distx=Normal(0, 1), disty=Normal(0, 4), m=10, n=10, L=10^5)
     plot!(disty-sh; label="disty-sh, n=$n", ls=:dash)
 
     ecdf_pval_welch, ecdf_pval_wmw, ecdf_pval_bm = sim(; distx, disty, m, n)
-    Q = plot(ecdf_pval_welch, 0, 0.1; label="Welch")
-    plot!(ecdf_pval_wmw, 0, 0.1; label="WMW", ls=:dash)
-    plot!(ecdf_pval_bm, 0, 0.1; label="BM", ls=:dash)
+    Q = plot(ecdf_pval_welch, 0, 0.1; label="Welch t")
+    plot!(ecdf_pval_wmw, 0, 0.1; label="Wilcoxon-Mann-Whitney", ls=:dash)
+    plot!(ecdf_pval_bm, 0, 0.1; label="Brunner-Munzel", ls=:dash)
     plot!(identity; label="", ls=:dot, c=:gray)
     plot!(xtick=0:0.01:1, ytick=0:0.01:1)
     plot!(xguide="α", yguide="probability of P-value ≤ α")
@@ -116,5 +116,23 @@ plot_sim(; distx=Gamma(1, 1), disty=Gamma(16, 1), m=10, n=10)
 
 # %%
 plot_sim(; distx=Gamma(1, 4), disty=Gamma(16, 1/4), m=10, n=10)
+
+# %%
+plot_sim(; distx=Normal(0, 1), disty=Normal(0, 4), m=40, n=40)
+
+# %%
+plot_sim(; distx=Gamma(8, 1), disty=Gamma(8, 4), m=40, n=40)
+
+# %%
+plot_sim(; distx=Gamma(2, 1), disty=Gamma(2, 4), m=40, n=40)
+
+# %%
+plot_sim(; distx=Gamma(1, 1), disty=Gamma(16, 1), m=40, n=40)
+
+# %%
+plot_sim(; distx=Gamma(1, 4), disty=Gamma(16, 1/4), m=40, n=40)
+
+# %%
+plot_sim(; distx=Gamma(1, 4), disty=Gamma(16, 1/4), m=160, n=160)
 
 # %%
