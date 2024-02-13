@@ -79,7 +79,7 @@ function sim(; distx=Normal(0, 1), disty=Normal(0, 4), m=10, n=10, L=10^5)
     ecdf_pval_welch, ecdf_pval_wmw, ecdf_pval_bm
 end
 
-function plot_sim(; distx=Normal(0, 1), disty=Normal(0, 4), m=10, n=10, L=10^5)
+function plot_sim(; distx=Normal(0, 1), disty=Normal(0, 4), m=10, n=10, L=10^5, kwargs...)
     @show distx disty m n
     @show Δμ = mean(disty) - mean(distx)
     @show sh = fair_shift(distx, disty)
@@ -87,9 +87,11 @@ function plot_sim(; distx=Normal(0, 1), disty=Normal(0, 4), m=10, n=10, L=10^5)
     μ_x = mean(distx)
     stdmax = max(std(distx), std(disty))
     P1 = plot(distx, μ_x-4stdmax, μ_x+4stdmax; label="distx, m=$m")
-    plot!(disty-Δμ; label="disty-Δμ, n=$n", ls=:dash)
+    plot!(disty-Δμ, μ_x-4stdmax, μ_x+4stdmax; label="disty-Δμ, n=$n", ls=:dash)
+    plot!(; kwargs...)
     P2 = plot(distx, μ_x-4stdmax, μ_x+4stdmax; label="distx, m=$m")
-    plot!(disty-sh; label="disty-sh, n=$n", ls=:dash)
+    plot!(disty-sh, μ_x-4stdmax, μ_x+4stdmax; label="disty-sh, n=$n", ls=:dash)
+    plot!(; kwargs...)
 
     ecdf_pval_welch, ecdf_pval_wmw, ecdf_pval_bm = sim(; distx, disty, m, n)
     Q = plot(ecdf_pval_welch, 0, 0.1; label="Welch t")
@@ -134,5 +136,14 @@ plot_sim(; distx=Gamma(1, 4), disty=Gamma(16, 1/4), m=40, n=40)
 
 # %%
 plot_sim(; distx=Gamma(1, 4), disty=Gamma(16, 1/4), m=160, n=160)
+
+# %%
+plot_sim(; distx=Gamma(1, 4), disty=Gamma(16, 1/4), m=30, n=30)
+
+# %%
+plot_sim(; distx=InverseGamma(3, 8), disty=Normal(4, 1), m=30, n=30, xlim=(-1, 21))
+
+# %%
+plot_sim(; distx=InverseGamma(3, 8), disty=InverseGamma(3, 2), m=30, n=30, xlim=(-1, 21))
 
 # %%
