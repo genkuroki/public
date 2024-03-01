@@ -199,6 +199,75 @@ function confint_or_pearson_chisq(a, b, c, d; α=0.05, correction=0.0)
 end
 
 # %%
+### score P-value for rate difference
+
+riskdiffhat_score(a, b, c, d) = safediv(a, a+b) - safediv(c, c+d)
+
+function loglik_rd(a, b, c, d, q, Δ=0.0)
+    p = q + Δ
+    safemul(a, log(p)) + safemul(b, log(1-p)) + safemul(c, log(q)) + safemul(d, log(1-q))
+end
+
+function scorestat_q_rd(a, b, c, d, q, Δ=0.0)
+    Δ == 1 && return a-d + (-b+c)/q
+    Δ == 1 && return a-d + (-b+c)/q
+    p = q + Δ
+    safediv(a, p) - safediv(b, 1-p) + safediv(c, q) - safediv(d, 1-q)
+end
+
+function scorestat_Δ_rd(a, b, c, d, q, Δ=0.0)
+    p = q + Δ
+    safediv(a, p) - safediv(b, 1-p)
+end
+
+function estimate_q_given_Δ_rd(a, b, c, d, Δ=0.0; alg=Bisection())
+    qmin, qmax = max(0.0, -Δ), min(1.0, 1.0-Δ)
+    a+c==0 && return qmin
+    b+d==0 && return qmax
+    f(q) = scorestat_q_rd(a, b, c, d, q, Δ)
+    S_qmin = f(qmin + eps())
+    S_qmax = f(qmax - eps())
+    S_qmin ≥ 0 && S_qmax ≥ 0 && return S_qmin < S_qmax ? qmin : qmax
+    S_qmin ≤ 0 && S_qmax ≤ 0 && return S_qmin < S_qmax ? qmax : qmin
+    find_zero(f, (qmin + eps(), qmax - eps()), alg)
+end
+
+function varinv_scorestat_q_rd(a, b, c, d, q, Δ=0.0)
+    p = q + Δ
+    safediv(p*(1-p), a+b) + safediv(q*(1-q), c+d)
+end
+
+function chisqstat_rd_score(a, b, c, d; Δ=0.0, alg=Bisection())
+    abs(Δ) == 1 && return Inf
+    q̃ = estimate_q_given_Δ_rd(a, b, c, d, Δ; alg)
+    S = scorestat_Δ_rd(a, b, c, d, q̃, Δ)
+    Vinv = varinv_scorestat_q_rd(a, b, c, d, q̃, Δ)
+    safemul(S^2, Vinv)
+end
+
+function pvalue_rd_score(a, b, c, d; Δ=0.0, alg=Bisection())
+    χ² = chisqstat_rd_score(a, b, c, d; Δ, alg)
+    ccdf(Chisq(1), χ²)
+end
+
+function confint_rd_score(a, b, c, d; α=0.05, alg=Bisection())
+    χ²_α = cquantile(Chisq(1), α)
+    g(Δ) = chisqstat_rd_score(a, b, c, d; Δ, alg) - χ²_α
+    Δ0 = riskdiffhat_score(a, b, c, d)
+    L = if g(-1 + eps()) > 0
+        find_zero(g, (-1 + eps(), Δ0), alg)
+    else
+        -1.0
+    end
+    U = if g(1 - eps()) > 0
+        find_zero(g, (Δ0, 1 - eps()), alg)
+    else
+        1.0
+    end
+    [L, U]
+end
+
+# %%
 """Bayes版P値函数達を作る函数"""
 function make_pvalue_rd_bayes(a, b, c, d; M=10^6, conjprior=(0.5, 0.5))
     α, β = conjprior
@@ -216,6 +285,7 @@ pvalue_rd_bayes = make_pvalue_rd_bayes(a, b, c, d)
 plot(legend=:topleft)
 plot!(Δ -> pvalue_rd_zou_donner(a, b, c, d; Δ), -1, 1; label="ZD")
 plot!(Δ -> pvalue_rd_wald(a, b, c, d; Δ); label="Wald", ls=:dash)
+plot!(Δ -> pvalue_rd_score(a, b, c, d; Δ); label="score", ls=:dashdot)
 plot!(Δ -> pvalue_rd_bayes(Δ); label="Bayes", ls=:dashdotdot)
 
 # %%
@@ -227,29 +297,36 @@ function sim_alphaerrors(m, n, p, q=p; L=10^5)
     bin1, bin2 = Binomial(m, p), Binomial(n, q)
     pval_wald = similar(zeros(), L)
     pval_zou_donner = similar(zeros(), L)
-    pval_chisq = similar(zeros(), L)
+    pval_score = similar(zeros(), L)
+    #pval_chisq = similar(zeros(), L)
     Threads.@threads for i in 1:L
         a, c = rand(bin1), rand(bin2)
         b, d = m-a, n-c
         pval_wald[i] = pvalue_rd_wald(a, b, c, d; Δ)
         pval_zou_donner[i] = pvalue_rd_zou_donner(a, b, c, d; Δ)
-        pval_chisq[i] = pvalue_or_pearson_chisq(a, b, c, d; ω)
+        pval_score[i] = pvalue_rd_score(a, b, c, d; Δ)
+        #pval_chisq[i] = pvalue_or_pearson_chisq(a, b, c, d; ω)
     end
     ecdf_wald = ecdf(pval_wald)
     ecdf_zou_donner = ecdf(pval_zou_donner)
-    ecdf_chisq = ecdf(pval_chisq)
+    ecdf_score = ecdf(pval_score)
+    #ecdf_chisq = ecdf(pval_chisq)
     F_wald(x) = ecdf_wald(x)
     F_zou_donner(x) = ecdf_zou_donner(x)
-    F_chisq(x) = ecdf_chisq(x)
-    (; F_wald, F_zou_donner, F_chisq)
+    F_score(x) = ecdf_score(x)
+    #F_chisq(x) = ecdf_chisq(x)
+    #(; F_wald, F_zou_donner, F_score, F_chisq)
+    (; F_wald, F_zou_donner, F_score)
 end
 
 function plot_alphaerrors(m, n, p, q=p; L=10^5, kwargs...)
-    (; F_wald, F_zou_donner, F_chisq) = sim_alphaerrors(m, n, p, q)
+    #(; F_wald, F_zou_donner, F_score, F_chisq) = sim_alphaerrors(m, n, p, q)
+    (; F_wald, F_zou_donner, F_score) = sim_alphaerrors(m, n, p, q)
     plot(legend=:bottomright)
     plot!(F_zou_donner, 0, 0.1; label="ZD")
     plot!(F_wald, 0, 0.1; label="Wald", ls=:dash)
-    plot!(F_chisq, 0, 0.1; label="chisq", ls=:dashdot)
+    plot!(F_score, 0, 0.1; label="score", ls=:dashdot)
+    #plot!(F_chisq, 0, 0.1; label="chisq", ls=:dashdotdot)
     plot!(identity, 0, 0.1; label="", c=:red, ls=:dot, alpha=0.7)
     plot!(xtick=0:0.01:1, ytick=0:0.01:1, xrotation=30)
     title!("Bin(m=$m, p=$p)×Bin(n=$n, q=$q)")
