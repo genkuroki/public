@@ -262,8 +262,9 @@
 # $a,b,c,d$ が観測値の場合の $Z$ の値 $z$ はちょうど $a,b,c,d,\Delta$ のみから計算される値になっていることに注意せよ. $m=a+b$, $n=c+d$ であり, $\tq$ の値は条件 $U_2(\Delta, \tq)=0$ によって $a,b,c,d,\Delta$ から決まるのであった.
 #
 # 以上のように定義されるP値を __スコア法__ のP値と呼ぶ.
-#
-# 上の代わりに, 
+
+# %% [markdown]
+# __Pearsonのχ²検定との関係:__ 上の代わりに, 
 #
 # $$
 # Z^2 = U_1(\Delta, \tq)^2V(\Delta, \tq)^{-1}
@@ -276,6 +277,41 @@
 # $$
 #
 # によって同じP値を別の方法で定義することもできる.  ここで $\op{ccdf}(\op{Chisq}(1), z^2)$ は自由度 $1$ の $\chi^2$ 分布　$\op{Chisq}(1)$ で値が $z^2$ 以上になる確率を意味している.  ($\op{ccdf}$ は補累積分布函数(complementary cumulative distribution function)を意味している.)
+#
+# $\Delta=0$ のとき, $Z^2$ は2×2の分割表のPearsonのχ²統計量に一致するので, このP値は2×2の分割表の独立性のPearsonのχ²検定のP値にぴったり一致する.
+#
+# $\Delta=0$ のとき, $Z^2$ が2×2の分割表のPearsonのχ²統計量に一致することを証明しよう.
+#
+# __証明:__ $\Delta=0$ のとき,
+#
+# $$
+# 0 = U_2(\Delta=0, \tq) = \frac{a}{\tq}-\frac{b}{1-\tq}+\frac{c}{\tq}-\frac{d}{1-\tq} =
+# \frac{a+c}{\tq} - \frac{b+d}{1-\tq}
+# $$
+#
+# より $\tq = \dfrac{a+c}{a+b+c+d}$ なので,
+#
+# $$
+# \begin{aligned}
+# &
+# U_1(\Delta=0, \tq) = \frac{a}{\tq} - \frac{b}{1-\tq} =
+# \frac{(a+b+c+d)(ad-bc)}{(a+c)(b+d)},
+# \\ &
+# V(\Delta=0, \tq)^{-1} = \frac{\tq(1-\tq)}{a+b} + \frac{\tq(1-\tq)}{c+d} =
+# \frac{(a+c)(b+d)}{(a+b+c+d)(a+b)(c+d)}.
+# \end{aligned}
+# $$
+#
+# ゆえに, $\Delta=0$ のとき, 
+#
+# $$
+# Z^2 = U_1(\Delta=0, \tq)^2 V(\Delta=0, \tq)^{-1} = 
+# \frac{(a+b+c+d)(ad-bc)^2}{(a+b)(c+d)(a+c)(b+d)}.
+# $$
+#
+# これは2×2の分割表のPearsonのχ²統計量の有名な公式に一致する.
+#
+# __証明終__
 
 # %% [markdown]
 # __信頼区間:__ 信頼区間はP値が $\alpha$ 以上になるパラメータの値の集合として定義される.  以上の文脈では母比率の差のモデル化になっているモデルのパラメータ $\Delta$ の信頼区間が次にように定義される:
@@ -283,7 +319,8 @@
 # $$
 # \confint_\Delta(a,b,c,d|\alpha) = \{\,\Delta\in[-1,1]\mid \pvalue(a,b,c,d|\Delta) \ge \alpha\,\}.
 # $$
-#
+
+# %% [markdown]
 # __実装例:__ 以下では以上を実際に実装してみる.
 
 # %%
