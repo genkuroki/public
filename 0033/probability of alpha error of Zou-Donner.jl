@@ -209,8 +209,6 @@ function loglik_rd(a, b, c, d, q, Δ=0.0)
 end
 
 function scorestat_q_rd(a, b, c, d, q, Δ=0.0)
-    Δ == 1 && return a-d + (-b+c)/q
-    Δ == 1 && return a-d + (-b+c)/q
     p = q + Δ
     safediv(a, p) - safediv(b, 1-p) + safediv(c, q) - safediv(d, 1-q)
 end
