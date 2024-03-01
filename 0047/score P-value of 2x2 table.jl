@@ -24,6 +24,7 @@ myecdf(A, x) = count(≤(x), A)/length(A)
 safemul(x, y) = x == 0 ? zero(x*y) : y == 0 ? zero(x*y) : x*y
 safediv(x, y) = x == 0 ? zero(x/y) : isinf(y) ? zero(x/y) : x/y
 
+# %%
 ### score P-value for rate difference
 
 riskdiffhat_score(a, b, c, d) = safediv(a, a+b) - safediv(c, c+d)
@@ -34,10 +35,13 @@ function loglik_rd(a, b, c, d, q, Δ=0.0)
 end
 
 function scorestat_q_rd(a, b, c, d, q, Δ=0.0)
-    Δ == 1 && return a-d + (-b+c)/q
-    Δ == 1 && return a-d + (-b+c)/q
     p = q + Δ
     safediv(a, p) - safediv(b, 1-p) + safediv(c, q) - safediv(d, 1-q)
+end
+
+function d_scorestat_q_rd(a, b, c, d, q, Δ=0.0)
+    p = q + Δ
+    -safediv(a, p^2) - safediv(b, (1-p)^2) - safediv(c, q^2) - safediv(d, (1-q)^2)
 end
 
 function scorestat_Δ_rd(a, b, c, d, q, Δ=0.0)
