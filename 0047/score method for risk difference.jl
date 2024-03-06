@@ -390,15 +390,15 @@ end
 
 function confint_rd_score(a, b, c, d; α=0.05, alg=Bisection())
     χ²_α = cquantile(Chisq(1), α)
+    RDhat = riskdiffhat_score(a, b, c, d)
     g(Δ) = chisqstat_rd_score(a, b, c, d; Δ, alg) - χ²_α
-    Δ0 = riskdiffhat_score(a, b, c, d)
     L = if g(-1 + eps()) > 0
-        find_zero(g, (-1 + eps(), Δ0), alg)
+        find_zero(g, (-1 + eps(), RDhat), alg)
     else
         -1.0
     end
     U = if g(1 - eps()) > 0
-        find_zero(g, (Δ0, 1 - eps()), alg)
+        find_zero(g, (RDhat, 1 - eps()), alg)
     else
         1.0
     end
@@ -466,8 +466,7 @@ function confint_rd_zou_donner(a, b, c, d; α=0.05, u=1)
     [tanh(m-d), tanh(m+d)]
 end
 
-a, b = 58, 22
-c, d = 62, 38
+a, b, c, d  = 58, 22, 62, 38
 
 @show riskdiffhat(a, b, c, d)
 @show stderr_riskdiffhat(a, b, c, d)
@@ -669,6 +668,12 @@ plot!(xguide="ratio difference", yguide="P-value")
 plot!(xtick=-1:0.2:1, ytick=0:0.05:1)
 
 # %%
+
+# %%
+
+# %%
+
+# %%
 a, b = 8, 0
 c, d = 8, 1
 
@@ -684,148 +689,70 @@ plot(q -> scorestat_q_rd(a, b, c, d, q, 0.2), 0.2, 0.79)
 # %%
 
 # %%
+function plot_ecdf_pvals(; m=10, n=10, p=0.8, q=0.3, Δ=p-q, L=10^5)
+    a = rand(Binomial(m, p), L)
+    b = m .- a
+    c = rand(Binomial(n, q), L)
+    d = n .- c
+    pval_wald = pvalue_rd_wald.(a, b, c, d; Δ)
+    pval_zd = pvalue_rd_zou_donner.(a, b, c, d; Δ)
+    pval_score = pvalue_rd_score.(a, b, c, d; Δ)
+
+    P = plot(α -> myecdf(pval_wald, α), 0, 0.1; label="Wald")
+    plot!(α -> myecdf(pval_zd, α); label="Zou-Donner")
+    plot!(α -> myecdf(pval_score, α); label="socre")
+    plot!(identity; label="", c=:gray, ls=:dot)
+    plot!(xtick=0:0.01:0.1)
+    Δ == p - q && plot!(ytick=0:0.01:1)
+    
+    Q = plot(α -> myecdf(pval_wald, α), 0, 1; label="Wald")
+    plot!(α -> myecdf(pval_zd, α); label="Zou-Donner")
+    plot!(α -> myecdf(pval_score, α); label="socre")
+    plot!(identity; label="", c=:gray, ls=:dot)
+    plot!(xtick=0:0.1:1, ytick=0:0.1:1)
+
+    plot(P, Q; size=(800, 420), layout=(1, 2))
+    plot!(plot_title="m=$m, n=$n, p=$p, q=$q, Δ=$Δ", plot_titlefontsize=10)
+end
 
 # %%
-m = n = 10
-L = 10^4
-a = rand(Binomial(m, 0.8), L)
-b = m .- a
-c = rand(Binomial(n, 0.3), L)
-d = n .- c
-pval_wald = pvalue_rd_wald.(a, b, c, d; Δ=0.5)
-pval_zd = pvalue_rd_zou_donner.(a, b, c, d; Δ=0.5)
-pval_score = pvalue_rd_score.(a, b, c, d; Δ=0.5)
-
-plot(α -> myecdf(pval_wald, α), 0, 0.1; label="Wald")
-plot!(α -> myecdf(pval_zd, α); label="Zou-Donner")
-plot!(α -> myecdf(pval_score, α); label="socre")
-plot!(identity; label="", c=:gray, ls=:dot)
-plot!(size=(400, 400))
+plot_ecdf_pvals(; m=10, n=10, p=0.8, q=0.3)
 
 # %%
-m, n = 20, 20
-L = 10^4
-a = rand(Binomial(m, 0.8), L)
-b = m .- a
-c = rand(Binomial(n, 0.3), L)
-d = n .- c
-pval_wald = pvalue_rd_wald.(a, b, c, d; Δ=0.5)
-pval_zd = pvalue_rd_zou_donner.(a, b, c, d; Δ=0.5)
-pval_score = pvalue_rd_score.(a, b, c, d; Δ=0.5)
-
-plot(α -> myecdf(pval_wald, α), 0, 0.1; label="Wald")
-plot!(α -> myecdf(pval_zd, α); label="Zou-Donner")
-plot!(α -> myecdf(pval_score, α); label="socre")
-plot!(identity; label="", c=:gray, ls=:dot)
-plot!(size=(400, 400))
+plot_ecdf_pvals(; m=20, n=20, p=0.8, q=0.3)
 
 # %%
-m, n = 40, 40
-L = 10^4
-a = rand(Binomial(m, 0.8), L)
-b = m .- a
-c = rand(Binomial(n, 0.3), L)
-d = n .- c
-pval_wald = pvalue_rd_wald.(a, b, c, d; Δ=0.5)
-pval_zd = pvalue_rd_zou_donner.(a, b, c, d; Δ=0.5)
-pval_score = pvalue_rd_score.(a, b, c, d; Δ=0.5)
-
-plot(α -> myecdf(pval_wald, α), 0, 0.1; label="Wald")
-plot!(α -> myecdf(pval_zd, α); label="Zou-Donner")
-plot!(α -> myecdf(pval_score, α); label="score")
-plot!(identity; label="", c=:gray, ls=:dot)
-plot!(size=(400, 400))
+plot_ecdf_pvals(; m=40, n=40, p=0.8, q=0.3)
 
 # %%
-m, n = 20, 100
-L = 10^4
-a = rand(Binomial(m, 0.8), L)
-b = m .- a
-c = rand(Binomial(n, 0.3), L)
-d = n .- c
-pval_wald = pvalue_rd_wald.(a, b, c, d; Δ=0.5)
-pval_zd = pvalue_rd_zou_donner.(a, b, c, d; Δ=0.5)
-pval_score = pvalue_rd_score.(a, b, c, d; Δ=0.5)
-
-plot(α -> myecdf(pval_wald, α), 0, 0.1; label="Wald")
-plot!(α -> myecdf(pval_zd, α); label="Zou-Donner")
-plot!(α -> myecdf(pval_score, α); label="score")
-plot!(identity; label="", c=:gray, ls=:dot)
-plot!(size=(400, 400))
+plot_ecdf_pvals(; m=20, n=100, p=0.8, q=0.3)
 
 # %%
-m, n = 100, 20
-L = 10^4
-a = rand(Binomial(m, 0.8), L)
-b = m .- a
-c = rand(Binomial(n, 0.3), L)
-d = n .- c
-pval_wald = pvalue_rd_wald.(a, b, c, d; Δ=0.5)
-pval_zd = pvalue_rd_zou_donner.(a, b, c, d; Δ=0.5)
-pval_score = pvalue_rd_score.(a, b, c, d; Δ=0.5)
-
-plot(α -> myecdf(pval_wald, α), 0, 0.1; label="Wald")
-plot!(α -> myecdf(pval_zd, α); label="Zou-Donner")
-plot!(α -> myecdf(pval_score, α); label="score")
-plot!(identity; label="", c=:gray, ls=:dot)
-plot!(size=(400, 400))
+plot_ecdf_pvals(; m=100, n=20, p=0.8, q=0.3)
 
 # %%
-m, n = 20, 100
-p, q = 0.1, 0.2
-Δ = p - q
-L = 10^4
-a = rand(Binomial(m, p), L)
-b = m .- a
-c = rand(Binomial(n, q), L)
-d = n .- c
-pval_wald = pvalue_rd_wald.(a, b, c, d; Δ)
-pval_zd = pvalue_rd_zou_donner.(a, b, c, d; Δ)
-pval_score = pvalue_rd_score.(a, b, c, d; Δ)
-
-plot(α -> myecdf(pval_wald, α), 0, 0.1; label="Wald")
-plot!(α -> myecdf(pval_zd, α); label="Zou-Donner")
-plot!(α -> myecdf(pval_score, α); label="score")
-plot!(identity; label="", c=:gray, ls=:dot)
-plot!(size=(400, 400))
+plot_ecdf_pvals(; m=20, n=100, p=0.5, q=0.5)
 
 # %%
-m, n = 100, 20
-p, q = 0.1, 0.2
-Δ = p - q
-L = 10^4
-a = rand(Binomial(m, p), L)
-b = m .- a
-c = rand(Binomial(n, q), L)
-d = n .- c
-pval_wald = pvalue_rd_wald.(a, b, c, d; Δ)
-pval_zd = pvalue_rd_zou_donner.(a, b, c, d; Δ)
-pval_score = pvalue_rd_score.(a, b, c, d; Δ)
-
-plot(α -> myecdf(pval_wald, α), 0, 0.1; label="Wald")
-plot!(α -> myecdf(pval_zd, α); label="Zou-Donner")
-plot!(α -> myecdf(pval_score, α); label="score")
-plot!(identity; label="", c=:gray, ls=:dot)
-plot!(size=(400, 400))
+plot_ecdf_pvals(; m=100, n=20, p=0.5, q=0.5)
 
 # %%
-m, n = 60, 60
-p, q = 0.1, 0.2
-Δ = p - q
-L = 10^4
-a = rand(Binomial(m, p), L)
-b = m .- a
-c = rand(Binomial(n, q), L)
-d = n .- c
-pval_wald = pvalue_rd_wald.(a, b, c, d; Δ)
-pval_zd = pvalue_rd_zou_donner.(a, b, c, d; Δ)
-pval_score = pvalue_rd_score.(a, b, c, d; Δ)
+plot_ecdf_pvals(; m=60, n=60, p=0.5, q=0.5)
 
-plot(α -> myecdf(pval_wald, α), 0, 0.1; label="Wald")
-plot!(α -> myecdf(pval_zd, α); label="Zou-Donner")
-plot!(α -> myecdf(pval_score, α); label="score")
-plot!(identity; label="", c=:gray, ls=:dot)
-plot!(size=(400, 400))
+# %%
+plot_ecdf_pvals(; m=60, n=60, p=0.3, q=0.5)
+
+# %%
+a, b, c, d  = 58, 22, 62, 38
+plot_ecdf_pvals(; m=a+b, n=c+d, p=a/(a+b), q=c/(c+d))
+
+# %%
+a, b, c, d  = 58, 22, 62, 38
+plot_ecdf_pvals(; m=a+b, n=c+d, p=a/(a+b), q=c/(c+d), Δ=0.0)
+
+# %%
+a, b, c, d  = 58, 22, 62, 38
+plot_ecdf_pvals(; m=a+b, n=c+d, p=a/(a+b), q=c/(c+d), Δ=0.2)
 
 # %%
 
@@ -849,5 +776,7 @@ plot(P, Q; layout=(1, 2), size=(800, 250))
 
 # %%
 plot(q -> loglik_rd(a, b, c, d, q, Δ), 1-Δ-0.1, 1-Δ)
+
+# %%
 
 # %%
