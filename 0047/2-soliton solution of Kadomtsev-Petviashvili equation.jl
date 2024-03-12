@@ -8,7 +8,7 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.10.3
 #   kernelspec:
-#     display_name: Julia 1.10.1
+#     display_name: Julia 1.10.2
 #     language: julia
 #     name: julia-1.10
 # ---
@@ -161,7 +161,7 @@ tau2(x, y, t; u1=1, v1=-1, c1=0, u2=1.5, v2=-1.2, c2=0) = 1 + exp(c1 + (u1-v1)*x
 @syms x y t
 
 expr2 = 2SymPy.diff(log(tau2(x, y, t)), x, x) |> simplify
-expr2 |> display
+#expr2 |> display
 
 code2 = string(expr2)
 code2 |> display
