@@ -148,13 +148,13 @@ using StatsPlots
 default(fmt=:png)
 ecdf(A, x) = count(≤(x), A)/length(A)
 
-function plot_sim(; m=20, n=30, p=0.3, q=0.3, Niters=10^5, ytick=0:0.01:1)
-    @show distx = Binomial(m, 0.3)
-    @show disty = Binomial(n, 0.3)
+function plot_sim(; m=20, n=30, p=0.3, q=0.3, Niters=10^5, ytick=0:0.01:1, kwargs...)
+    @show distx = Binomial(m, p)
+    @show disty = Binomial(n, q)
     @show Niters
     pval1 = zeros(Niters)
     pval2 = zeros(Niters)
-    pcal3 = zeros(Niters)
+    pval3 = zeros(Niters)
     for i in 1:Niters
         a = rand(distx)
         b = m - a
@@ -170,9 +170,12 @@ function plot_sim(; m=20, n=30, p=0.3, q=0.3, Niters=10^5, ytick=0:0.01:1)
     plot!(identity; label="", ls=:dot, c=:gray)
     plot!(; xguide="α", yguide="probability of P-value ≤ α")
     plot!(; xtick=0:0.01:1, ytick)
-    plot!(; size=(400, 400))
+    plot!(; size=(400, 400), kwargs...)
 end
 
 plot_sim(; m=20, n=30, p=0.3, q=0.3)
+
+# %%
+plot_sim(; m=20, n=30, p=0.2, q=0.5, ytick=0:0.05:1, legend=:bottomright)
 
 # %%
