@@ -58,7 +58,7 @@ plot()
 plot!(ns, n -> power(pvalue_score, n, p0, p1); label="pvalue_score", c=1)
 plot!(ns, n -> power(pvalue_clopper_pearson, n, p0, p1); label="pvalue_clopper_pearson", ls=:dashdot, c=2)
 plot!(ns, n -> power(pvalue_sterne, n, p0, p1); label="pvalue_sterne", ls=:dash, c=3)
-plot!(xguide="n", yguide="power", ytick=0:0.1:1, legend=:bottomright)
+plot!(xguide="n", yguide="power", xtick=0:2:100, ytick=0:0.1:1, legend=:bottomright)
 title!("power of binomial tests for null=$p0 and alt=$p1")
 
 # %%
@@ -68,7 +68,7 @@ plot()
 plot!(ns, n -> power(pvalue_score, n, p0, p1); label="pvalue_score", c=1)
 plot!(ns, n -> power(pvalue_clopper_pearson, n, p0, p1); label="pvalue_clopper_pearson", ls=:dashdot, c=2)
 #plot!(ns, n -> power(pvalue_sterne, n, p0, p1); label="pvalue_sterne", ls=:dash, c=3)
-plot!(xguide="n", yguide="power", ytick=0:0.1:1, legend=:bottomright)
+plot!(xguide="n", yguide="power", xtick=0:2:100, ytick=0:0.1:1, legend=:bottomright)
 title!("power of binomial tests for null=$p0 and alt=$p1")
 
 # %%
@@ -78,7 +78,7 @@ plot()
 #plot!(ns, n -> power(pvalue_score, n, p0, p1); label="pvalue_score", c=1)
 plot!(ns, n -> power(pvalue_clopper_pearson, n, p0, p1); label="pvalue_clopper_pearson", ls=:dashdot, c=2)
 plot!(ns, n -> power(pvalue_sterne, n, p0, p1); label="pvalue_sterne", ls=:dash, c=3)
-plot!(xguide="n", yguide="power", ytick=0:0.1:1, legend=:bottomright)
+plot!(xguide="n", yguide="power", xtick=0:2:100, ytick=0:0.1:1, legend=:bottomright)
 title!("power of binomial tests for null=$p0 and alt=$p1")
 
 # %%
@@ -88,7 +88,7 @@ plot()
 plot!(ns, n -> power(pvalue_score, n, p0, p1); label="pvalue_score", c=1)
 #plot!(ns, n -> power(pvalue_clopper_pearson, n, p0, p1); label="pvalue_clopper_pearson", ls=:dashdot, c=2)
 plot!(ns, n -> power(pvalue_sterne, n, p0, p1); label="pvalue_sterne", ls=:dash, c=3)
-plot!(xguide="n", yguide="power", ytick=0:0.1:1, legend=:bottomright)
+plot!(xguide="n", yguide="power", xtick=0:2:100, ytick=0:0.1:1, legend=:bottomright)
 title!("power of binomial tests for null=$p0 and alt=$p1")
 
 # %%
@@ -98,7 +98,7 @@ plot()
 plot!(ns, n -> power(pvalue_score, n, p0, p1); label="pvalue_score", c=1)
 plot!(ns, n -> power(pvalue_clopper_pearson, n, p0, p1); label="pvalue_clopper_pearson", ls=:dashdot, c=2)
 plot!(ns, n -> power(pvalue_sterne, n, p0, p1); label="pvalue_sterne", ls=:dash, c=3)
-plot!(xguide="n", yguide="power", ytick=0:0.1:1, legend=:bottomright)
+plot!(xguide="n", yguide="power", xtick=0:5:200, ytick=0:0.1:1, legend=:bottomright)
 title!("power of binomial tests for null=$p0 and alt=$p1")
 
 # %%
@@ -108,7 +108,7 @@ plot()
 plot!(ns, n -> power(pvalue_score, n, p0, p1); label="pvalue_score", c=1)
 plot!(ns, n -> power(pvalue_clopper_pearson, n, p0, p1); label="pvalue_clopper_pearson", ls=:dashdot, c=2)
 #plot!(ns, n -> power(pvalue_sterne, n, p0, p1); label="pvalue_sterne", ls=:dash, c=3)
-plot!(xguide="n", yguide="power", ytick=0:0.1:1, legend=:bottomright)
+plot!(xguide="n", yguide="power", xtick=0:5:200, ytick=0:0.1:1, legend=:bottomright)
 title!("power of binomial tests for null=$p0 and alt=$p1")
 
 # %%
@@ -118,7 +118,7 @@ plot()
 #plot!(ns, n -> power(pvalue_score, n, p0, p1); label="pvalue_score", c=1)
 plot!(ns, n -> power(pvalue_clopper_pearson, n, p0, p1); label="pvalue_clopper_pearson", ls=:dashdot, c=2)
 plot!(ns, n -> power(pvalue_sterne, n, p0, p1); label="pvalue_sterne", ls=:dash, c=3)
-plot!(xguide="n", yguide="power", ytick=0:0.1:1, legend=:bottomright)
+plot!(xguide="n", yguide="power", xtick=0:5:200, ytick=0:0.1:1, legend=:bottomright)
 title!("power of binomial tests for null=$p0 and alt=$p1")
 
 # %%
@@ -128,7 +128,7 @@ plot()
 plot!(ns, n -> power(pvalue_score, n, p0, p1); label="pvalue_score", c=1)
 #plot!(ns, n -> power(pvalue_clopper_pearson, n, p0, p1); label="pvalue_clopper_pearson", ls=:dashdot, c=2)
 plot!(ns, n -> power(pvalue_sterne, n, p0, p1); label="pvalue_sterne", ls=:dash, c=3)
-plot!(xguide="n", yguide="power", ytick=0:0.1:1, legend=:bottomright)
+plot!(xguide="n", yguide="power", xtick=0:5:200, ytick=0:0.1:1, legend=:bottomright)
 title!("power of binomial tests for null=$p0 and alt=$p1")
 
 # %%
@@ -138,7 +138,67 @@ plot()
 plot!(ns, n -> power(pvalue_score, n, p0, p1); label="pvalue_score", c=1)
 plot!(ns, n -> power(pvalue_clopper_pearson, n, p0, p1); label="pvalue_clopper_pearson", ls=:dashdot, c=2)
 plot!(ns, n -> power(pvalue_sterne, n, p0, p1); label="pvalue_sterne", ls=:dash, c=3)
-plot!(xguide="n", yguide="power", ytick=0:0.05:1, legend=:bottomright)
+plot!(xguide="n", yguide="power", xtick=0:10:500, ytick=0:0.05:1, legend=:bottomright)
+title!("power of binomial tests for null=$p0 and alt=$p1")
+
+# %%
+p0, p1 = 0.1, 0.15
+ns = 280:400
+plot()
+plot!(ns, n -> power(pvalue_score, n, p0, p1); label="pvalue_score", c=1)
+plot!(ns, n -> power(pvalue_clopper_pearson, n, p0, p1); label="pvalue_clopper_pearson", ls=:dashdot, c=2)
+#plot!(ns, n -> power(pvalue_sterne, n, p0, p1); label="pvalue_sterne", ls=:dash, c=3)
+plot!(xguide="n", yguide="power", xtick=0:10:500, ytick=0:0.05:1, legend=:bottomright)
+title!("power of binomial tests for null=$p0 and alt=$p1")
+
+# %%
+p0, p1 = 0.1, 0.15
+ns = 280:400
+plot()
+#plot!(ns, n -> power(pvalue_score, n, p0, p1); label="pvalue_score", c=1)
+plot!(ns, n -> power(pvalue_clopper_pearson, n, p0, p1); label="pvalue_clopper_pearson", ls=:dashdot, c=2)
+plot!(ns, n -> power(pvalue_sterne, n, p0, p1); label="pvalue_sterne", ls=:dash, c=3)
+plot!(xguide="n", yguide="power", xtick=0:10:500, ytick=0:0.05:1, legend=:bottomright)
+title!("power of binomial tests for null=$p0 and alt=$p1")
+
+# %%
+p0, p1 = 0.1, 0.15
+ns = 280:400
+plot()
+plot!(ns, n -> power(pvalue_score, n, p0, p1); label="pvalue_score", c=1)
+#plot!(ns, n -> power(pvalue_clopper_pearson, n, p0, p1); label="pvalue_clopper_pearson", ls=:dashdot, c=2)
+plot!(ns, n -> power(pvalue_sterne, n, p0, p1); label="pvalue_sterne", ls=:dash, c=3)
+plot!(xguide="n", yguide="power", xtick=0:10:500, ytick=0:0.05:1, legend=:bottomright)
+title!("power of binomial tests for null=$p0 and alt=$p1")
+
+# %%
+p0, p1 = 0.1, 0.14
+ns = 200:700
+plot()
+plot!(ns, n -> power(pvalue_score, n, p0, p1); label="pvalue_score", c=1)
+plot!(ns, n -> power(pvalue_clopper_pearson, n, p0, p1); label="pvalue_clopper_pearson", ls=:dashdot, c=2)
+#plot!(ns, n -> power(pvalue_sterne, n, p0, p1); label="pvalue_sterne", ls=:dash, c=3)
+plot!(xguide="n", yguide="power", xtick=0:50:1000, ytick=0:0.05:1, legend=:bottomright)
+title!("power of binomial tests for null=$p0 and alt=$p1")
+
+# %%
+p0, p1 = 0.1, 0.15
+ns = 200:700
+plot()
+plot!(ns, n -> power(pvalue_score, n, p0, p1); label="pvalue_score", c=1)
+plot!(ns, n -> power(pvalue_clopper_pearson, n, p0, p1); label="pvalue_clopper_pearson", ls=:dashdot, c=2)
+#plot!(ns, n -> power(pvalue_sterne, n, p0, p1); label="pvalue_sterne", ls=:dash, c=3)
+plot!(xguide="n", yguide="power", xtick=0:50:1000, ytick=0:0.05:1, legend=:bottomright)
+title!("power of binomial tests for null=$p0 and alt=$p1")
+
+# %%
+p0, p1 = 0.1, 0.16
+ns = 200:700
+plot()
+plot!(ns, n -> power(pvalue_score, n, p0, p1); label="pvalue_score", c=1)
+plot!(ns, n -> power(pvalue_clopper_pearson, n, p0, p1); label="pvalue_clopper_pearson", ls=:dashdot, c=2)
+#plot!(ns, n -> power(pvalue_sterne, n, p0, p1); label="pvalue_sterne", ls=:dash, c=3)
+plot!(xguide="n", yguide="power", xtick=0:50:1000, ytick=0:0.05:1, legend=:bottomright)
 title!("power of binomial tests for null=$p0 and alt=$p1")
 
 # %%
