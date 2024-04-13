@@ -91,7 +91,7 @@ function plot_pvalue_functions(k, n;
     F[2] && plot!(p, g1; label="Sterne",          c=2)
     F[3] && plot!(p, h1; label="Wilson",          c=3)
     F[4] && plot!(p, k1; label="Wald",            c=4)
-    F[5] && plot!(p, f2; label="Bayes equal-taild",     c=5, ls = :dash)
+    F[5] && plot!(p, f2; label="Bayes equal-tailed",    c=5, ls = :dash)
     F[6] && plot!(p, g2; label="Bayes highest density", c=6, ls = :dash)
     ttl = "P-value functions for (k, n) = ($k, $n)"
     F[5] && (ttl *= ", prior_et=($(rd(α_et)), $(rd(β_et)))")
