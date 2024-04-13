@@ -103,35 +103,35 @@ function plot_pvalue_functions(k, n;
 end
 
 # %%
-plot_pvalue_functions(9, 20;
+plot_pvalue_functions(5, 15;
     α_et=1/3, β_et=1/3,
     α_hd=1.0, β_hd=1.0,
     xlim=(0.0, 1.0), xtick=0:0.1:1,
     F=trues(6))
 
 # %%
-plot_pvalue_functions(9, 20;
+plot_pvalue_functions(5, 15;
     α_et=0.5, β_et=0.5,
     α_hd=1.0, β_hd=1.0,
     xlim=(0.0, 1.0), xtick=0:0.1:1,
     F=Bool[0,0,0,0,1,0])
 
 # %%
-plot_pvalue_functions(9, 20;
+plot_pvalue_functions(5, 15;
     α_et=0.5, β_et=0.5,
     α_hd=1.0, β_hd=1.0,
     xlim=(0.0, 1.0), xtick=0:0.1:1,
     F=Bool[0,0,0,1,1,0])
 
 # %%
-plot_pvalue_functions(9, 20;
+plot_pvalue_functions(5, 15;
     α_et=0.5, β_et=0.5,
     α_hd=1.0, β_hd=1.0,
     xlim=(0.1, 0.8), xtick=0:0.05:1,
     F=Bool[0,0,1,1,1,0])
 
 # %%
-plot_pvalue_functions(9, 20;
+plot_pvalue_functions(5, 15;
     α_et=0.5, β_et=0.5,
     α_hd=1.0, β_hd=1.0,
     xlim=(0.1, 0.8), xtick=0:0.05:1,
