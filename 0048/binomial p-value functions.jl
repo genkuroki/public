@@ -165,4 +165,41 @@ plot_pvalue_functions(30, 200;
     xlim=(0.0, 0.3), xtick=0:0.05:1,
     F=Bool[0,0,1,1,0,1])
 
+# %% [markdown]
+# https://x.com/mochi__math/status/1778687505711436001
+#
+# <img src="IMG_3636.jpeg">
+
+# %%
+using Roots
+
+# 手抜き
+function confint(pvaluefunc, k, n; α=0.05)
+    find_zeros(p -> pvaluefunc(k, n, p) - α, 0, 1)
+end
+
+all_methods = (:clopper_pearson, :sterne, :wilson, :wald, :bayes_equal_tailed, :bayes_highest_density)
+
+for t in all_methods
+    f = Symbol(:confint_, t)
+    g = Symbol(:pvalue_, t)
+    @eval $f(k, n; α=0.05) = confint($g, k, n; α)
+end
+
+n, k = 2400, 960
+
+for t in all_methods
+    f = Symbol(:confint_, t)
+    @eval @show $f(k, n; α=0.05)
+end
+
+for (k, t) in enumerate(all_methods)
+    P = Symbol(:P, k)
+    g = Symbol(:pvalue_, t)
+    @eval $P = plot(p -> $g(k, n, p), 0, 1; label="")
+    plot!(xtick=0:0.01:1, ytick=0:0.1:1, xlim=(0.35, 0.45))
+    title!("$t")
+end
+plot(P1, P2, P3, P4, P5, P6; size=(800, 750), layout=(3, 2))
+
 # %%
