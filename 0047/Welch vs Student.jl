@@ -9,7 +9,7 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.10.3
 #   kernelspec:
-#     display_name: Julia 1.10.2
+#     display_name: Julia 1.10.3
 #     language: julia
 #     name: julia-1.10
 # ---
@@ -76,7 +76,7 @@ function plot_ecdf_pvals(; distx=Poisson(0.05), disty=Poisson(0.05), m=100, n=90
     plot!(α->myecdf(pval_student, α); label="Student")
     plot!(identity; label="", ls=:dot, c=:gray)
     plot!(xtick=0:0.01:1, ytick=0:0.01:1)
-    plot!(xguid="α", yguide="probability of P-value ≤ α")
+    plot!(xguide="α", yguide="probability of P-value ≤ α")
     plot!(size=(400, 400))
 end
 
@@ -115,5 +115,39 @@ plot_ecdf_pvals(; distx=Poisson(0.10), disty=Poisson(0.05)+0.05, m=1000, n=9000)
 
 # %%
 plot_ecdf_pvals(; distx=Poisson(0.05)+0.05, disty=Poisson(0.10), m=1000, n=9000)
+
+# %%
+
+# %%
+plot_ecdf_pvals(; distx=Normal(0, 1), disty=Normal(0, 4), m=200, n=100)
+
+# %%
+plot_ecdf_pvals(; distx=Normal(0, 1), disty=Normal(0, 4), m=100, n=200)
+
+# %%
+
+# %%
+dist = InverseGamma(3.1, 5)
+dist = dist - mean(dist)
+plot(dist; label="dist")
+plot!(xlim=(-3, 8))
+
+# %%
+plot_ecdf_pvals(; distx=dist, disty=dist, m=80, n=20)
+
+# %%
+plot_ecdf_pvals(; distx=dist, disty=dist, m=320, n=80)
+
+# %%
+plot_ecdf_pvals(; distx=dist, disty=2dist, m=80, n=20)
+
+# %%
+plot_ecdf_pvals(; distx=dist, disty=2dist, m=20, n=80)
+
+# %%
+plot_ecdf_pvals(; distx=dist, disty=2dist, m=320, n=80)
+
+# %%
+plot_ecdf_pvals(; distx=dist, disty=2dist, m=80, n=320)
 
 # %%
