@@ -9,7 +9,7 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.10.3
 #   kernelspec:
-#     display_name: Julia 1.10.2
+#     display_name: Julia 1.10.3
 #     language: julia
 #     name: julia-1.10
 # ---
@@ -135,6 +135,64 @@ plot!(xguide="α", yguide="probability of P-value ≤ α", size=(400, 400))
 
 # %%
 using Distributions
+using HypothesisTests
+using StatsPlots
+default(fmt=:png)
+ecdf(A, x) = count(≤(x), A)/length(A)
+
+safediv(x, y) = x == 0 ? zero(x/y) : x/y
+
+function pvalue_chisq(a, b, c, d; yates=false)
+    N = a+b+c+d
+    chisqstat = safediv(N*max(0, abs(a*d - b*c) - (N/2)yates)^2, (a+b)*(c+d)*(a+c)*(b+d))
+    ccdf(Chisq(1), chisqstat)
+end
+
+m, n = 20, 30
+@show distx = Binomial(m, 0.3)
+@show disty = Binomial(n, 0.3)
+Niters = 10^5
+@show Niters
+@time pval3 = [(
+            a = rand(distx); b = m - a;
+            c = rand(disty); d = n - c;
+            pvalue_chisq(a, b, c, d; yates=false)
+        ) for _ in 1:Niters]
+plot(α -> ecdf(pval3, α), 0, 0.1; label="")
+plot!(identity; label="", ls=:dot, c=:gray)
+plot!(xguide="α", yguide="probability of P-value ≤ α", size=(400, 400))
+
+# %%
+using Distributions
+using HypothesisTests
+using StatsPlots
+default(fmt=:png)
+ecdf(A, x) = count(≤(x), A)/length(A)
+
+safediv(x, y) = x == 0 ? zero(x/y) : x/y
+
+function pvalue_chisq(a, b, c, d; yates=false)
+    N = a+b+c+d
+    chisqstat = safediv(N*max(0, abs(a*d - b*c) - (N/2)yates)^2, (a+b)*(c+d)*(a+c)*(b+d))
+    ccdf(Chisq(1), chisqstat)
+end
+
+m, n = 20, 30
+@show distx = Binomial(m, 0.3)
+@show disty = Binomial(n, 0.3)
+Niters = 10^5
+@show Niters
+@time pval4 = [(
+            a = rand(distx); b = m - a;
+            c = rand(disty); d = n - c;
+            pvalue_chisq(a, b, c, d; yates=true)
+        ) for _ in 1:Niters]
+plot(α -> ecdf(pval4, α), 0, 0.1; label="")
+plot!(identity; label="", ls=:dot, c=:gray)
+plot!(xguide="α", yguide="probability of P-value ≤ α", size=(400, 400))
+
+# %%
+using Distributions
 using StatsPlots
 default(fmt=:png)
 ecdf(A, x) = count(≤(x), A)/length(A)
@@ -165,15 +223,15 @@ m, n = 20, 30
 @show disty = Binomial(n, 0.3)
 Niters = 10^5
 @show Niters
-@time pval45 = [(
+@time pval56 = [(
             a = rand(distx); b = m - a;
             c = rand(disty); d = n - c;
             (pvalue_gtest(a, b, c, d), pvalue_gtest(a, b, c, d; firth=true))
         ) for _ in 1:Niters]
-pval4 = getindex.(pval45, 1)
-pval5 = getindex.(pval45, 2)
-plot(α -> ecdf(pval4, α), 0, 0.1; label="G-test")
-plot!(α -> ecdf(pval5, α), 0, 0.1; label="G-test (Firth)")
+pval5 = getindex.(pval56, 1)
+pval6 = getindex.(pval56, 2)
+plot(α -> ecdf(pval5, α), 0, 0.1; label="G-test")
+plot!(α -> ecdf(pval6, α), 0, 0.1; label="G-test (Firth)")
 plot!(identity; label="", ls=:dot, c=:gray)
 plot!(xguide="α", yguide="probability of P-value ≤ α", size=(400, 400))
 
@@ -181,8 +239,9 @@ plot!(xguide="α", yguide="probability of P-value ≤ α", size=(400, 400))
 plot(α -> ecdf(pval1, α), 0, 0.1; label="Fisher (central)")
 plot!(α -> ecdf(pval2, α); label="Fisher (minlike)", ls=:dash)
 plot!(α -> ecdf(pval3, α); label="Pearson's χ²", ls=:dashdot)
-plot!(α -> ecdf(pval4, α); label="G-test", ls=:dashdotdot)
-plot!(α -> ecdf(pval5, α); label="G-test (Firth)", ls=:dot)
+plot!(α -> ecdf(pval4, α); label="Pearson's χ² (Yates)", ls=:dot)
+plot!(α -> ecdf(pval5, α); label="G-test", ls=:dashdotdot)
+plot!(α -> ecdf(pval6, α); label="G-test (Firth)", ls=:dot)
 plot!(identity; label="", ls=:dot, c=:gray)
 plot!(xguide="α", yguide="probability of P-value ≤ α", size=(400, 400))
 
@@ -196,6 +255,12 @@ ecdf(A, x) = count(≤(x), A)/length(A)
 
 safemul(x, y) = x == 0 ? zero(x*y) : x*y
 safediv(x, y) = x == 0 ? zero(x/y) : x/y
+
+function pvalue_chisq(a, b, c, d; yates=false)
+    N = a+b+c+d
+    chisqstat = safediv(N*max(0, abs(a*d - b*c) - (N/2)yates)^2, (a+b)*(c+d)*(a+c)*(b+d))
+    ccdf(Chisq(1), chisqstat)
+end
 
 function _gstat_or(a, b, c, d)
     N = a + b + c + d
@@ -222,6 +287,7 @@ function plot_sim(; m=20, n=30, p=0.3, q=0.3, Niters=10^5, ytick=0:0.01:1, kwarg
     pval3 = zeros(Niters)
     pval4 = zeros(Niters)
     pval5 = zeros(Niters)
+    pval6 = zeros(Niters)
     Threads.@threads for i in 1:Niters
         a = rand(distx)
         b = m - a
@@ -229,15 +295,17 @@ function plot_sim(; m=20, n=30, p=0.3, q=0.3, Niters=10^5, ytick=0:0.01:1, kwarg
         d = n - c
         pval1[i] = pvalue(FisherExactTest(a, b, c, d); method=:central)
         pval2[i] = pvalue(FisherExactTest(a, b, c, d); method=:minlike)
-        pval3[i] = pvalue(ChisqTest(@SMatrix [a b; c d]))
-        pval4[i] = pvalue_gtest(a, b, c, d)
-        pval5[i] = pvalue_gtest(a, b, c, d; firth=true)
+        pval3[i] = pvalue_chisq(a, b, c, d)
+        pval4[i] = pvalue_chisq(a, b, c, d; yates=true)
+        pval5[i] = pvalue_gtest(a, b, c, d)
+        pval6[i] = pvalue_gtest(a, b, c, d; firth=true)
     end
     plot(α -> ecdf(pval1, α), 0, 0.1; label="Fisher (central)")
     plot!(α -> ecdf(pval2, α); label="Fisher (minlike)", ls=:dash)
     plot!(α -> ecdf(pval3, α); label="Pearson's χ²", ls=:dashdot)
-    plot!(α -> ecdf(pval4, α); label="G-test", ls=:dashdotdot)
-    plot!(α -> ecdf(pval5, α); label="G-test (Firth)", ls=:dot)
+    plot!(α -> ecdf(pval4, α); label="Pearson's χ² (Yates)", ls=:dot)
+    plot!(α -> ecdf(pval5, α); label="G-test", ls=:dashdotdot)
+    plot!(α -> ecdf(pval6, α); label="G-test (Firth)", ls=:dot)
     plot!(identity; label="", ls=:dot, c=:gray)
     plot!(; xguide="α", yguide="probability of P-value ≤ α")
     plot!(; xtick=0:0.01:1, ytick)
@@ -257,5 +325,8 @@ plot_sim(; m=5, n=45, p=0.35, q=0.35)
 
 # %%
 plot_sim(; m=10, n=15, p=0.15, q=0.15)
+
+# %%
+plot_sim(; m=10, n=15, p=0.15, q=0.5, ytick=0:0.05:1, legend=:bottomright)
 
 # %%
