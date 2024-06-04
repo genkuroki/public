@@ -20,6 +20,7 @@ squarednorm(x) = dot(x, x)
 using Distributions
 using StatsPlots
 default(fmt=:png)
+using Random
 r(x) = round(x; sigdigits=3)
 
 function simplelinreg(x, y)
@@ -31,10 +32,13 @@ function simplelinreg(x, y)
     sehat = ŝ*√(inv(A'A)[2,2])
     tval = β̂[2]/sehat
     pval = 2ccdf(TDist(df), abs(tval))
-    (; A, β̂, df, sehat, tval, pval)
+    pvalfunc(β₁) = 2ccdf(TDist(df), abs((β̂[2]-β₁)/sehat))
+    (; A, β̂, df, sehat, tval, pval, pvalfunc)
 end
 
 # %%
+Random.seed!(4649373)
+
 x = 1:10
 @show n = length(x)
 A = x .^ (0:1)'
@@ -49,7 +53,7 @@ dist = Normal()
 #dist = Gamma(4, 1/2)-2
 for i in 1:L
     y = rand(dist, n)
-    (; A, β̂, df, sehat, tval, pval) = simplelinreg(x, y)
+    (; A, β̂, df, sehat, tval, pval, pvalfunc) = simplelinreg(x, y)
     betahat1[i] = β̂[2]
     pval_beta1[i] = pval
     c += pval < α
@@ -65,6 +69,7 @@ plot!(ylim=(-0.05, 1.4))
 plot(P, Q; size=(600, 500), layout=@layout[a{0.6h}; b])
 
 # %%
+Random.seed!(4649373)
 x = 1:10
 @show n = length(x)
 A = x .^ (0:1)'
@@ -79,7 +84,7 @@ dist = Exponential()-1
 #dist = Gamma(4, 1/2)-2
 for i in 1:L
     y = rand(dist, n)
-    (; A, β̂, df, sehat, tval, pval) = simplelinreg(x, y)
+    (; A, β̂, df, sehat, tval, pval, pvalfunc) = simplelinreg(x, y)
     betahat1[i] = β̂[2]
     pval_beta1[i] = pval
     c += pval < α
@@ -95,6 +100,7 @@ plot!(ylim=(-0.05, 1.4))
 plot(P, Q; size=(600, 500), layout=@layout[a{0.6h}; b])
 
 # %%
+Random.seed!(4649373)
 x = 1:30
 @show n = length(x)
 A = x .^ (0:1)'
@@ -109,7 +115,7 @@ dist = Exponential()-1
 #dist = Gamma(4, 1/2)-2
 for i in 1:L
     y = rand(dist, n)
-    (; A, β̂, df, sehat, tval, pval) = simplelinreg(x, y)
+    (; A, β̂, df, sehat, tval, pval, pvalfunc) = simplelinreg(x, y)
     betahat1[i] = β̂[2]
     pval_beta1[i] = pval
     c += pval < α
@@ -125,6 +131,7 @@ plot!(ylim=(-0.05, 1.4))
 plot(P, Q; size=(600, 500), layout=@layout[a{0.6h}; b])
 
 # %%
+Random.seed!(4649373)
 x = 1:10
 @show n = length(x)
 A = x .^ (0:1)'
@@ -139,7 +146,7 @@ c = 0
 dist = Gamma(4, 1/2)-2
 for i in 1:L
     y = rand(dist, n)
-    (; A, β̂, df, sehat, tval, pval) = simplelinreg(x, y)
+    (; A, β̂, df, sehat, tval, pval, pvalfunc) = simplelinreg(x, y)
     betahat1[i] = β̂[2]
     pval_beta1[i] = pval
     c += pval < α
@@ -155,7 +162,8 @@ plot!(ylim=(-0.05, 1.4))
 plot(P, Q; size=(600, 500), layout=@layout[a{0.6h}; b])
 
 # %%
-x = 0:30
+Random.seed!(4649373)
+x = 1:30
 n = length(x)
 A = x .^ (0:1)'
 @show se = √(inv(A'A)[2,2])
@@ -173,7 +181,7 @@ dist = Normal()
 #dist = Gamma(4, 1/2)-2
 for i in 1:L
     y = rand(dist, n)
-    (; A, β̂, df, sehat, tval, pval) = simplelinreg(x, y)
+    (; A, β̂, df, sehat, tval, pval, pvalfunc) = simplelinreg(x, y)
     betahat1[i] = β̂[2]
     pval_beta1[i] = pval
     c += pval < α
@@ -196,7 +204,8 @@ plot(PP...; size=(1000, 800), layout=(4, 4)) |> display
 plot(QQ...; size=(1000, 800), layout=(4, 4))
 
 # %%
-x = 0:30
+Random.seed!(4649373)
+x = 1:30
 n = length(x)
 A = x .^ (0:1)'
 @show se = √(inv(A'A)[2,2])
@@ -214,7 +223,7 @@ dist = Exponential()-1
 #dist = Gamma(4, 1/2)-2
 for i in 1:L
     y = rand(dist, n)
-    (; A, β̂, df, sehat, tval, pval) = simplelinreg(x, y)
+    (; A, β̂, df, sehat, tval, pval, pvalfunc) = simplelinreg(x, y)
     betahat1[i] = β̂[2]
     pval_beta1[i] = pval
     c += pval < α
@@ -237,7 +246,8 @@ plot(PP...; size=(1000, 800), layout=(4, 4)) |> display
 plot(QQ...; size=(1000, 800), layout=(4, 4))
 
 # %%
-x = 0:30
+Random.seed!(4649373)
+x = 1:30
 n = length(x)
 A = x .^ (0:1)'
 @show se = √(inv(A'A)[2,2])
@@ -255,13 +265,139 @@ npmax = nqmax = 16
 dist = Gamma(4, 1/2)-2
 for i in 1:L
     y = rand(dist, n)
-    (; A, β̂, df, sehat, tval, pval) = simplelinreg(x, y)
+    (; A, β̂, df, sehat, tval, pval, pvalfunc) = simplelinreg(x, y)
     betahat1[i] = β̂[2]
     pval_beta1[i] = pval
     c += pval < α
     P = scatter(x, y; label="", ms=3, msc=:auto)
     plot!(x -> evalpoly(x, β̂), extrema(x)...; label="")
     title!("P = $(r(pval)),  t = $(r(tval)),  β̂₁ = $(r(β̂[2]))")
+    plot!(tickfontsize=5, titlefontsize=8)
+    if np < npmax && pval < α
+        push!(PP, P)
+        np += 1
+    elseif nq < nqmax && pval ≥ α
+        push!(QQ, P)
+        nq += 1
+    elseif np ≥ npmax && nq ≥ nqmax
+        break
+    end
+end
+plot(dist; label="", title="dist. of residual error", size=(400, 250)) |> display
+plot(PP...; size=(1000, 800), layout=(4, 4)) |> display
+plot(QQ...; size=(1000, 800), layout=(4, 4))
+
+# %%
+Random.seed!(4649373)
+x = 1:30
+n = length(x)
+A = x .^ (0:1)'
+@show se = √(inv(A'A)[2,2])
+L = 10^5
+betahat1 = zeros(L)
+pval_beta1 = zeros(L)
+c = 0
+PP = []
+QQ = []
+np = nq = 0
+α = 0.05
+npmax = nqmax = 16
+dist = Normal()
+#dist = Exponential()-1
+#dist = Gamma(4, 1/2)-2
+for i in 1:L
+    y = rand(dist, n)
+    (; A, β̂, df, sehat, tval, pval, pvalfunc) = simplelinreg(x, y)
+    betahat1[i] = β̂[2]
+    pval_beta1[i] = pval
+    c += pval < α
+    P = plot(pvalfunc, β̂[2]-5sehat, β̂[2]+5sehat; label="")
+    vline!([0.0]; label="")
+    title!("n = $(n),  P = $(r(pval)),  β̂₁ = $(r(β̂[2]))")
+    plot!(tickfontsize=5, titlefontsize=8)
+    if np < npmax && pval < α
+        push!(PP, P)
+        np += 1
+    elseif nq < nqmax && pval ≥ α
+        push!(QQ, P)
+        nq += 1
+    elseif np ≥ npmax && nq ≥ nqmax
+        break
+    end
+end
+plot(dist; label="", title="dist. of residual error", size=(400, 250)) |> display
+plot(PP...; size=(1000, 800), layout=(4, 4)) |> display
+plot(QQ...; size=(1000, 800), layout=(4, 4))
+
+# %%
+Random.seed!(4649373)
+x = 1:30
+n = length(x)
+A = x .^ (0:1)'
+@show se = √(inv(A'A)[2,2])
+L = 10^5
+betahat1 = zeros(L)
+pval_beta1 = zeros(L)
+c = 0
+PP = []
+QQ = []
+np = nq = 0
+α = 0.05
+npmax = nqmax = 16
+#dist = Normal()
+dist = Exponential()-1
+#dist = Gamma(4, 1/2)-2
+for i in 1:L
+    y = rand(dist, n)
+    (; A, β̂, df, sehat, tval, pval, pvalfunc) = simplelinreg(x, y)
+    betahat1[i] = β̂[2]
+    pval_beta1[i] = pval
+    c += pval < α
+    P = plot(pvalfunc, β̂[2]-5sehat, β̂[2]+5sehat; label="")
+    vline!([0.0]; label="")
+    title!("n = $(n),  P = $(r(pval)),  β̂₁ = $(r(β̂[2]))")
+    plot!(tickfontsize=5, titlefontsize=8)
+    if np < npmax && pval < α
+        push!(PP, P)
+        np += 1
+    elseif nq < nqmax && pval ≥ α
+        push!(QQ, P)
+        nq += 1
+    elseif np ≥ npmax && nq ≥ nqmax
+        break
+    end
+end
+plot(dist; label="", title="dist. of residual error", size=(400, 250)) |> display
+plot(PP...; size=(1000, 800), layout=(4, 4)) |> display
+plot(QQ...; size=(1000, 800), layout=(4, 4))
+
+# %%
+Random.seed!(4649373)
+x = 1:30
+n = length(x)
+A = x .^ (0:1)'
+@show se = √(inv(A'A)[2,2])
+L = 10^5
+betahat1 = zeros(L)
+pval_beta1 = zeros(L)
+c = 0
+PP = []
+QQ = []
+np = nq = 0
+α = 0.05
+npmax = nqmax = 16
+#dist = Normal()
+#dist = Exponential()-1
+dist = Gamma(4, 1/2)-2
+for i in 1:L
+    y = rand(dist, n)
+    (; A, β̂, df, sehat, tval, pval, pvalfunc) = simplelinreg(x, y)
+    betahat1[i] = β̂[2]
+    pval_beta1[i] = pval
+    c += pval < α
+    P = plot(pvalfunc, β̂[2]-5sehat, β̂[2]+5sehat; label="")
+    vline!([0.0]; label="")
+    title!("n = $(n),  P = $(r(pval)),  β̂₁ = $(r(β̂[2]))")
     plot!(tickfontsize=5, titlefontsize=8)
     if np < npmax && pval < α
         push!(PP, P)
