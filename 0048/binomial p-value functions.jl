@@ -9,7 +9,7 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.10.3
 #   kernelspec:
-#     display_name: Julia 1.10.2
+#     display_name: Julia 1.10.4
 #     language: julia
 #     name: julia-1.10
 # ---
@@ -93,7 +93,7 @@ function plot_pvalue_functions(k, n;
     F[4] && plot!(p, k1; label="Wald",            c=4)
     F[5] && plot!(p, f2; label="Bayes equal-tailed",    c=5, ls = :dash)
     F[6] && plot!(p, g2; label="Bayes highest density", c=6, ls = :dash)
-    ttl = "P-value functions for (k, n) = ($k, $n)"
+    ttl = "P-value function$(count(F) > 1 ? "s" : "") for (k, n) = ($k, $n)"
     F[5] && (ttl *= ", prior_et=($(rd(α_et)), $(rd(β_et)))")
     F[6] && (ttl *= ", prior_hd=($(rd(α_hd)), $(rd(β_hd)))")
     title!(ttl)
@@ -201,5 +201,9 @@ for (k, t) in enumerate(all_methods)
     title!("$t")
 end
 plot(P1, P2, P3, P4, P5, P6; size=(800, 750), layout=(3, 2))
+
+# %%
+@show pvalue_wilson(5, 20, 1/2)
+plot_pvalue_functions(5, 20; F=Bool[0,0,1,0,0,0])
 
 # %%

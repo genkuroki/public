@@ -9,7 +9,7 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.10.3
 #   kernelspec:
-#     display_name: Julia 1.10.3
+#     display_name: Julia 1.10.4
 #     language: julia
 #     name: julia-1.10
 # ---
@@ -192,6 +192,7 @@ function plot_pvalfun_posterior(x, y)
     (; A, β̂, df, sehat, tval, pval, pvalfunc, posterior) = simplelinreg(x, y)
     β̂₁ = β̂[2]
     @show β̂₁
+    @show pval
     a, b = β̂₁ - 5sehat, β̂₁ + 5sehat
     scatter(x, y; label="data")
     plot!(x -> evalpoly(x, β̂), extrema(x)...; label="")
