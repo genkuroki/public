@@ -204,6 +204,7 @@ plot(P1, P2, P3, P4, P5, P6; size=(800, 750), layout=(3, 2))
 
 # %%
 @show pvalue_wilson(5, 20, 1/2)
+@show pvalue_wilson(5, 20, 0.1)
 plot_pvalue_functions(5, 20; F=Bool[0,0,1,0,0,0])
 
 # %%
