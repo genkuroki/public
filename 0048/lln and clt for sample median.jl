@@ -71,6 +71,6 @@ plot_lln_clt_median(dist, 30)
 plot_lln_clt_median(dist, 100)
 
 # %%
-plot_lln_clt_median(dist, 1)
+plot_lln_clt_median(dist, 300)
 
 # %%
