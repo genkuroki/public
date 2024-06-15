@@ -8,9 +8,9 @@ jupyter:
       format_version: '1.3'
       jupytext_version: 1.10.3
   kernelspec:
-    display_name: Julia 1.7.1
+    display_name: Julia 1.10.4
     language: julia
-    name: julia-1.7
+    name: julia-1.10
 ---
 
 # 一様最強力不偏検定の実装
@@ -137,6 +137,7 @@ using RCall
 using Roots
 using StatsFuns
 using StatsPlots
+default(fmt=:png)
 plot(Normal(); size=(300, 200))
 ```
 
