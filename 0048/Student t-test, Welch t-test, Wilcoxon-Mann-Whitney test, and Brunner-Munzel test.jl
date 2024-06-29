@@ -9,7 +9,7 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.10.3
 #   kernelspec:
-#     display_name: Julia 1.10.2
+#     display_name: Julia 1.10.4
 #     language: julia
 #     name: julia-1.10
 # ---
@@ -129,5 +129,14 @@ plot_sim(; distx=InverseGamma(3, 8), disty=Normal(4, 1), m=100, n=400, xlim=(-1,
 
 # %%
 plot_sim(; distx=InverseGamma(3, 8), disty=Normal(4, 1), m=400, n=100, xlim=(-1, 21))
+
+# %%
+plot_sim(; distx=Gamma(1.2, 1/1.2), disty=Gamma(1.2, 2/1.2), m=500, n=100)
+
+# %%
+plot_sim(; distx=Gamma(2, 1/2), disty=Gamma(1.2, 1/1.2), m=500, n=100)
+
+# %%
+plot_sim(; distx=InverseGamma(2.1, 8/2.1), disty=truncated(Normal(0, 4); lower=2), m=500, n=100, xlim=(-2, 10))
 
 # %%
