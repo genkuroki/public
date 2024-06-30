@@ -51,9 +51,9 @@ end
 pvalue_brunner_munzel(X, Y; p=1/2) =
     brunner_munzel_test(X, Y; p=1/2).pvalue
 
-function sim(; distx=Normal(0, 1), disty=Normal(0, 4), m=10, n=10, L=10^5)
-    Δμ = mean(disty) - mean(distx)
-    sh = fair_shift(distx, disty)
+function sim(; distx=Normal(0, 1), disty=Normal(0, 4), m=10, n=10, L=10^5, shift=true)
+    Δμ = shift ? mean(disty) - mean(distx) : 0.0
+    sh = shift ? fair_shift(distx, disty) : 0.0
     pval_student = zeros(L)
     pval_welch = zeros(L)
     pval_wmw = zeros(L)
@@ -83,10 +83,11 @@ function sim(; distx=Normal(0, 1), disty=Normal(0, 4), m=10, n=10, L=10^5)
     ecdf_pval_student, ecdf_pval_welch, ecdf_pval_wmw, ecdf_pval_bm
 end
 
-function plot_sim(; distx=Normal(0, 1), disty=Normal(0, 4), m=10, n=10, L=10^5, kwargs...)
-    @show distx disty m n
-    @show Δμ = mean(disty) - mean(distx)
-    @show sh = fair_shift(distx, disty)
+function plot_sim(; distx=Normal(0, 1), disty=Normal(0, 4), m=10, n=10, L=10^5, shift=true,
+        ytick2=0:0.01:1, legend2=true, kwargs...)
+    Δμ = shift ? mean(disty) - mean(distx) : 0.0
+    sh = shift ? fair_shift(distx, disty) : 0.0
+    @show distx disty m n Δμ sh
     
     μ_x = mean(distx)
     stdmax = max(std(distx), std(disty))
@@ -97,13 +98,13 @@ function plot_sim(; distx=Normal(0, 1), disty=Normal(0, 4), m=10, n=10, L=10^5, 
     plot!(disty-sh, μ_x-4stdmax, μ_x+4stdmax; label="disty-sh, n=$n", ls=:dash)
     plot!(; kwargs...)
 
-    ecdf_pval_student, ecdf_pval_welch, ecdf_pval_wmw, ecdf_pval_bm = sim(; distx, disty, m, n)
+    ecdf_pval_student, ecdf_pval_welch, ecdf_pval_wmw, ecdf_pval_bm = sim(; distx, disty, m, n, shift)
     Q = plot(ecdf_pval_welch, 0, 0.1; label="Welch t-test")
     plot!(ecdf_pval_student, 0, 0.1; label="Student t-test", ls=:dash)
     plot!(ecdf_pval_wmw, 0, 0.1; label="Wilcoxon-Mann-Whitney", ls=:dashdot)
     plot!(ecdf_pval_bm, 0, 0.1; label="Brunner-Munzel test", ls=:dashdotdot)
     plot!(identity; label="", ls=:dot, c=:gray)
-    plot!(xtick=0:0.01:1, ytick=0:0.01:1)
+    plot!(xtick=0:0.01:1, ytick=ytick2, legend=legend2)
     plot!(xguide="α", yguide="probability of P-value ≤ α")
 
     plot(P1, P2, Q; size=(800, 400), layout=@layout [[a; b] c])
@@ -138,5 +139,19 @@ plot_sim(; distx=Gamma(2, 1/2), disty=Gamma(1.2, 1/1.2), m=500, n=100)
 
 # %%
 plot_sim(; distx=InverseGamma(2.1, 8/2.1), disty=truncated(Normal(0, 4); lower=2), m=500, n=100, xlim=(-2, 10))
+
+# %%
+plot_sim(; distx=Normal(0, 1), disty=Normal(0, 0.5), m=64, n=16, shift=false)
+
+# %%
+plot_sim(; distx=Normal(0, 1), disty=Normal(0.5, 0.5), m=64, n=16, shift=false,
+    legend=:topleft, legend2=:bottomright, ytick2=0:0.05:1)
+
+# %%
+plot_sim(; distx=Normal(0, 1), disty=Normal(0, 2), m=64, n=16, shift=false)
+
+# %%
+plot_sim(; distx=Normal(0, 1), disty=Normal(0.5, 2), m=64, n=16, shift=false,
+    legend=:topleft, legend2=:bottomright, ytick2=0:0.05:1)
 
 # %%
