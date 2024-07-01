@@ -9,9 +9,9 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.10.3
 #   kernelspec:
-#     display_name: Julia 1.8.4
+#     display_name: Julia 1.10.4
 #     language: julia
-#     name: julia-1.8
+#     name: julia-1.10
 # ---
 
 # %% [markdown]
@@ -653,6 +653,64 @@ plot(P1, P2; size=(1000, 300))
 P1 = plot_bf2pval(1//30, 0.3; ytick=0:0.0002:1, nmin=10, nstep=1, nmax=100, xtick=10:10:100)
 P2 = plot_bf2pval(1//30, 0.3; ytick=0:0.0002:1)
 plot(P1, P2; size=(1000, 300))
+
+# %% [markdown]
+# ### BFの検出力
+
+# %%
+function bf_power(p, p_true; n=20, bf_threshold=1.0)
+    bin_true = Binomial(n, p_true)
+    μ_true = mean(bin_true)
+    σ_true = std(bin_true)
+    a = n ≤ 100 ? 0 : max(0, round(Int, μ_true - 6σ_true))
+    b = n ≤ 100 ? n : min(n, round(Int, μ_true + 6σ_true))
+    sum(k -> (bayes_factor(k, p; n) < bf_threshold) * pdf(bin_true, k), a:b)
+end
+
+# %%
+function plot_bf_power(p, p_true;
+        bf_threshold_func=(p, n)->1, is_const=true,
+        nmin=10, nstep=1, nmax=1000, xtick=0:100:1000, kwargs...)
+    n = nmin:nstep:nmax
+    plot(n, n -> bf_power(p, p_true; n, bf_threshold=bf_threshold_func(p, n)); label="power")
+    plot!(n, n -> bf_power(p, p; n, bf_threshold=bf_threshold_func(p, n)); label="α-error rate")
+    hline!([0.8]; label="", c=:gray, ls=:dot)
+    plot!(xguide="$nmin ≤ n ≤ $nmax", yguide="probability of BF < threshold")
+    title!("H₀: p=$p,  H₁: p=$p_true" * (is_const ? ",  BF_threshold=$(bf_threshold_func(p, 1))" : ""))
+    plot!(; xtick, kwargs...)
+end
+
+# %%
+plot_bf_power(0.3, 0.35;
+    bf_threshold_func=(p, n)->pval2bf(0.05, p; n), is_const=false,
+    nmin=50, nstep=50, nmax=1600, xtick=0:100:1600, ylim=(-0.03, 1.03), ytick=0:0.05:1)
+
+# %%
+plot_bf_power(0.3, 0.35;
+    bf_threshold_func=(p, n)->pval2bf(0.01, p; n), is_const=false,
+    nmin=50, nstep=50, nmax=1600, xtick=0:100:1600, ylim=(-0.03, 1.03), ytick=0:0.05:1)
+
+# %%
+plot_bf_power(0.3, 0.35;
+    bf_threshold_func=(p, n)->pval2bf(0.001, p; n), is_const=false,
+    nmin=50, nstep=50, nmax=1600, xtick=0:100:1600, ylim=(-0.03, 1.03), ytick=0:0.05:1)
+
+# %%
+plot_bf_power(0.3, 0.35; bf_threshold_func=(p, n)->1,
+    nmin=50, nstep=50, nmax=1600, xtick=0:100:1600, ylim=(-0.03, 1.03), ytick=0:0.05:1)
+
+# %%
+plot_bf_power(0.3, 0.35; bf_threshold_func=(p, n)->1//2,
+    nmin=50, nstep=50, nmax=1600, xtick=0:100:1600, ylim=(-0.03, 1.03), ytick=0:0.05:1)
+
+# %%
+plot_bf_power(0.3, 0.35; bf_threshold_func=(p, n)->1//3,
+    nmin=50, nstep=50, nmax=1600, xtick=0:100:1600, ylim=(-0.03, 1.03), ytick=0:0.05:1)
+
+# %%
+plot_bf_power(0.3, 0.35;
+    bf_threshold_func=(p, n)->1//10,
+    nmin=50, nstep=50, nmax=1600, xtick=0:100:1600, ylim=(-0.03, 1.03), ytick=0:0.05:1)
 
 # %% [markdown]
 # ### 一般の事前分布の場合に関する補足
