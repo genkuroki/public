@@ -585,6 +585,35 @@ function pval2bf(pval, p; n=20)
     exp(-neg2logBF/2)
 end
 
+# %%
+function plot_bf_and_pval(; n=20, k=6, kwargs...)
+    p = range(0, 1, 1000)
+    P1 = plot(p, p -> bayes_factor(k, p; n); label="", c=1)
+    title!("Bayes factor for flat prior and data n=$n, k=$k")
+    plot!(xtick=0:0.1:1)
+    plot!(; kwargs...)
+    P2 = plot(p, p -> pvalue_bin_wilson(k, p; n); label="", c=2)
+    title!("Wilson's P-value function for data n=$n, k=$k")
+    plot!(xtick=0:0.1:1, ytick=0:0.1:1)
+    plot!(; kwargs...)
+    plot(P1, P2; layout=(2, 1))
+end
+
+# %%
+P1 = plot_bf_and_pval(n = 30, k = 9)
+
+# %%
+P2 = plot_bf_and_pval(n = 100, k = 30)
+
+# %%
+P3 = plot_bf_and_pval(n = 300, k = 90)
+
+# %%
+P4 = plot_bf_and_pval(n = 1000, k = 300)
+
+# %%
+plot(P1, P2, P3, P4; layout=(2, 2), size=(1000, 700))
+
 # %% [markdown]
 # ### Bayes factor経由で計算したP値と通常のP値の比較
 
@@ -596,7 +625,7 @@ function plot_pvalue_function_bf(; n = 20, k = 6, kwargs...)
     plot!(p, p -> pvalue_bin_wilson(k, p; n); ls=:dash,
         label="Wilson's P-value function")
     plot!(xtick=0:0.1:1, ytick=0:0.05:1)
-    title!("n=$n, k=$k")
+    title!("data: n=$n, k=$k")
     plot!(; kwargs...)
 end
 
