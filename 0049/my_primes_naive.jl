@@ -154,3 +154,9 @@ My_primes = @time my_primes(2*10^9);
 ;"c:/Program Files/Git/usr/bin/diff" -u ideone_usLDXm.c.orig ideone_usLDXm.c
 
 # %%
+; gcc --version
+
+# %%
+versioninfo()
+
+# %%
