@@ -102,7 +102,6 @@ My_primes = @time primes(2*10^9);
 @show length(My_primes);
 
 # %%
-using BenchmarkTools
 using Primes
 using Primes: wheel, wheel_index, wheel_prime
 
