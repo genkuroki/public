@@ -51,12 +51,13 @@ println("\n\$ echo 2000000000 | ./ideone_usLDXm.exe")
 run(pipeline(`echo 2000000000`, `./ideone_usLDXm.exe`))
 
 # %%
-using BenchmarkTools
+# https://x.com/dc1394/status/1809778241525485747
 
 function my_primes_naive(limit)
     smax = (limit - 1) ÷ 2
+    s2max = floor(Int, sqrt(smax)) + 1
     pSieve = trues(smax)
-    @inbounds for i in 1:smax
+    @inbounds for i in 1:s2max
         if pSieve[i]
             for j in (2i*(i+1)):(2i+1):smax
                 pSieve[j] = false
@@ -86,7 +87,6 @@ My_primes = @time my_primes_naive(2*10^9);
 @show length(My_primes);
 
 # %%
-using BenchmarkTools
 using Primes
 
 primes(100); # compile
@@ -147,7 +147,7 @@ My_primes = @time my_primes(10^9);
 
 @time my_primes(2*10^9);
 @time my_primes(2*10^9);
-My_primes = @time my_primes(2*10^9);
+My_primes = @time my_primes(2*10^9);\
 @show length(My_primes);
 
 # %%
@@ -158,5 +158,15 @@ My_primes = @time my_primes(2*10^9);
 
 # %%
 versioninfo()
+
+# %%
+N = 10^10
+A = @time my_primes_naive(N);
+B = @time Primes.primes(N);
+@show A == B;
+length(A)
+
+# %%
+length(@time my_primes(N))
 
 # %%
