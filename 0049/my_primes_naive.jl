@@ -78,13 +78,13 @@ my_primes_naive(100); # compile
 
 @time my_primes_naive(10^9);
 @time my_primes_naive(10^9);
-My_primes = @time my_primes_naive(10^9);
-@show length(My_primes);
+A = @time my_primes_naive(10^9);
+@show length(A);
 
 @time my_primes_naive(2*10^9);
 @time my_primes_naive(2*10^9);
-My_primes = @time my_primes_naive(2*10^9);
-@show length(My_primes);
+A = @time my_primes_naive(2*10^9);
+@show length(A);
 
 # %%
 using Primes
@@ -93,13 +93,13 @@ primes(100); # compile
 
 @time primes(10^9);
 @time primes(10^9);
-My_primes = @time primes(10^9);
-@show length(My_primes);
+A = @time primes(10^9);
+@show length(A);
 
 @time primes(2*10^9);
 @time primes(2*10^9);
-My_primes = @time primes(2*10^9);
-@show length(My_primes);
+A = @time primes(2*10^9);
+@show length(A);
 
 # %%
 using Primes
@@ -141,13 +141,13 @@ my_primes(100); # compile
 
 @time my_primes(10^9);
 @time my_primes(10^9);
-My_primes = @time my_primes(10^9);
-@show length(My_primes);
+A = @time my_primes(10^9);
+@show length(A);
 
 @time my_primes(2*10^9);
 @time my_primes(2*10^9);
-My_primes = @time my_primes(2*10^9);\
-@show length(My_primes);
+A = @time my_primes(2*10^9);\
+@show length(A);
 
 # %%
 ;"c:/Program Files/Git/usr/bin/diff" -u ideone_usLDXm.c.orig ideone_usLDXm.c
@@ -159,13 +159,13 @@ My_primes = @time my_primes(2*10^9);\
 versioninfo()
 
 # %%
-N = 10^10
-A = @time my_primes_naive(N);
-B = @time Primes.primes(N);
+A = @time my_primes_naive(10^10);
+B = @time Primes.primes(10^10);
 @show A == B;
 length(A)
 
 # %%
-length(@time my_primes(N))
+B = @time my_primes(10^10)
+@show A == B;
 
 # %%
