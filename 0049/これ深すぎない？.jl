@@ -118,6 +118,109 @@ plot!(xtick=0:0.1:1)
 
 # %%
 using Distributions
+using Roots
+using StatsPlots
+default(fmt=:png)
+
+myecdf(A, x) = count(≤(x), A)/length(A)
+safemul(x, y) = x == 0 ? zero(x*y) : y == 0 ? zero(x*y) : x*y
+safediv(x, y) = x == 0 ? zero(x/y) : isinf(y) ? zero(x/y) : x/y
+
+### score method for risk difference
+
+riskdiffhat_score(a, b, c, d) = safediv(a, a+b) - safediv(c, c+d)
+
+function loglik_rd(a, b, c, d, q, Δ=0.0)
+    p = q + Δ
+    safemul(a, log(p)) + safemul(b, log(1-p)) + safemul(c, log(q)) + safemul(d, log(1-q))
+end
+
+function scorestat_q_rd(a, b, c, d, q, Δ=0.0)
+    p = q + Δ
+    safediv(a, p) - safediv(b, 1-p) + safediv(c, q) - safediv(d, 1-q)
+end
+
+function d_scorestat_q_rd(a, b, c, d, q, Δ=0.0)
+    p = q + Δ
+    -safediv(a, p^2) - safediv(b, (1-p)^2) - safediv(c, q^2) - safediv(d, (1-q)^2)
+end
+
+function scorestat_Δ_rd(a, b, c, d, q, Δ=0.0)
+    p = q + Δ
+    safediv(a, p) - safediv(b, 1-p)
+end
+
+function estimate_q_given_Δ_rd(a, b, c, d, Δ=0.0; alg=Bisection())
+    qmin, qmax = max(0.0, -Δ), min(1.0, 1.0-Δ)
+    a+c==0 && return qmin
+    b+d==0 && return qmax
+    f(q) = scorestat_q_rd(a, b, c, d, q, Δ)
+    S_qmin = f(qmin + eps())
+    S_qmax = f(qmax - eps())
+    S_qmin ≥ 0 && S_qmax ≥ 0 && return S_qmin < S_qmax ? qmin : qmax
+    S_qmin ≤ 0 && S_qmax ≤ 0 && return S_qmin < S_qmax ? qmax : qmin
+    find_zero(f, (qmin + eps(), qmax - eps()), alg)
+end
+
+function varinv_scorestat_q_rd(a, b, c, d, q, Δ=0.0)
+    p = q + Δ
+    safediv(p*(1-p), a+b) + safediv(q*(1-q), c+d)
+end
+
+function chisqstat_rd_score(a, b, c, d; Δ=0.0, alg=Bisection())
+    Δ = clamp(Δ, -1 + eps(), 1 - eps())
+    q̃ = estimate_q_given_Δ_rd(a, b, c, d, Δ; alg)
+    S = scorestat_Δ_rd(a, b, c, d, q̃, Δ)
+    Vinv = varinv_scorestat_q_rd(a, b, c, d, q̃, Δ)
+    safemul(S^2, Vinv)
+end
+
+function pvalue_rd_score(a, b, c, d; Δ=0.0, alg=Bisection())
+    χ² = chisqstat_rd_score(a, b, c, d; Δ, alg)
+    ccdf(Chisq(1), χ²)
+end
+
+function confint_rd_score(a, b, c, d; α=0.05, alg=Bisection())
+    χ²_α = cquantile(Chisq(1), α)
+    RDhat = riskdiffhat_score(a, b, c, d)
+    g(Δ) = chisqstat_rd_score(a, b, c, d; Δ, alg) - χ²_α
+    L = if g(-1 + eps()) > 0
+        find_zero(g, (-1 + eps(), RDhat), alg)
+    else
+        -1.0
+    end
+    U = if g(1 - eps()) > 0
+        find_zero(g, (RDhat, 1 - eps()), alg)
+    else
+        1.0
+    end
+    [L, U]
+end
+
+a, b, c, d = 4, 5-4, 60, 100-60
+
+null_pval_bayes = pvalue_hdi(pdf_Δp, cdf_Δp, -1.0, 1.0, 0.0)
+null_pval_score = pvalue_rd_score(a, b, c, d; Δ=0.0)
+
+@show null_pval_bayes
+@show null_pval_score
+
+α = 0.06
+@show α
+ci_bayes = collect(highest_density_interval(quantile_Δp, α))
+ci_score = confint_rd_score(a, b, c, d; α)
+@show ci_score
+@show ci_bayes
+
+plot(δ -> pvalue_hdi(pdf_Δp, cdf_Δp, -1.0, 1.0, δ), -0.75, 0.75; label="Bayesian P-value for flat prior")
+plot!(δ -> pvalue_rd_score(a, b, c, d; Δ=δ); label="score P-value", ls=:dash)
+vline!([0.0]; label="", c=:gray, ls=:dot)
+plot!(xguide="p_X - p_Y", yguide="probability density")
+plot!(xtick=-1:0.25:1)
+plot!(legend=:outertop)
+
+# %%
+using Distributions
 using StatsPlots
 default(fmt=:png)
 
@@ -176,5 +279,3 @@ vline!([0.0]; label="", c=:gray, ls=:dot)
 plot!(xguide="p_X - p_Y", yguide="probability density")
 plot!(xtick=-1:0.25:1)
 plot!(legend=:outertop)
-
-# %%
