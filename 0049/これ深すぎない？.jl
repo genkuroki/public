@@ -110,6 +110,13 @@ plot!(xtick=-1:0.25:1)
 plot!(legend=:outertop)
 
 # %%
+@show mean(posterior_p_X)
+@show mean(posterior_p_Y)
+plot(δ -> pdf(posterior_p_X, δ), 0, 1; label="pdf of p_X")
+plot!(δ -> pdf(posterior_p_Y, δ), 0, 1; label="pdf of p_Y", ls=:dash)
+plot!(xtick=0:0.1:1)
+
+# %%
 using Distributions
 using StatsPlots
 default(fmt=:png)
