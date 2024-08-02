@@ -59,17 +59,17 @@ function plotsim(X, n; L=10^4, M=10^6, samplingfunc! =sample!)
     plot!(plot_title="n = $n")
 end
 
-for n in (5, 20, 40, 80, 160, 320)
+for n in (5, 10, 20, 40, 80, 160, 320)
     plotsim(X, n) |> display
 end
 
 # %%
-for n in (5, 20, 40, 80, 160, 320)
+for n in (5, 10, 20, 40, 80, 160, 320)
     plotsim(Normal(2, 3), n; samplingfunc! = rand!) |> display
 end
 
 # %%
-for n in (5, 20, 40, 80, 160, 320)
+for n in (5, 1, 20, 40, 80, 160, 320)
     plotsim(Gamma(2, 3), n; samplingfunc! = rand!) |> display
 end
 
@@ -77,5 +77,3 @@ end
 for n in (2, 3, 4, 5, 6, 7, 8)
     plotsim(Uniform(-2, 3), n; samplingfunc! = rand!) |> display
 end
-
-# %%
