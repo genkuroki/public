@@ -17,7 +17,6 @@
 # %%
 using Distributions
 using FiniteDifferences
-using HypothesisTests
 using Roots
 using StatsPlots
 default(fmt=:png)
@@ -165,21 +164,29 @@ plot!(ps, p -> pdf(posterior_bin(6, 20; prior), p); label="pdf(posterior_bin(6, 
 
 # %%
 x, n = 6, 20
-pdfhdi_pvalue_score = pval2pdfhdi(p -> pvalue_score(x, n, clamp(p, 0.0, 1.0)), x/n, 0.0, 1.0)
+pdfhdi_pvalue_score =
+    pval2pdfhdi(p -> pvalue_score(x, n, clamp(p, 0.0, 1.0)), x/n, 0.0, 1.0)
 ps = 0:0.001:1
-plot(ps, pdfhdi_pvalue_score; label="score")
+plot(ps, pdfhdi_pvalue_score; label="pdf converted from the score P-value function")
 plot!(ps, p -> pdf(posterior_bin(x, n; prior=Beta(1, 1)), p);
-    label="pdf(posterior_bin(x, n; prior=Beta(1, 1)), p)", ls=:dash)
+    label="pdf of posterior for x, n, prior=Beta(1, 1)", ls=:dash)
 plot!(xtick=0:0.1:1)
+title!("x = $x,  n = $n")
+
+# %%
+using QuadGK
+quadgk(pdfhdi_pvalue_score, 0, 1)
 
 # %%
 x, n = 30, 100
-pdfhdi_pvalue_score = pval2pdfhdi(p -> pvalue_score(x, n, clamp(p, 0.0, 1.0)), x/n, 0.0, 1.0)
+pdfhdi_pvalue_score =
+    pval2pdfhdi(p -> pvalue_score(x, n, clamp(p, 0.0, 1.0)), x/n, 0.0, 1.0)
 ps = 0:0.001:1
-plot(ps, pdfhdi_pvalue_score; label="score")
+plot(ps, pdfhdi_pvalue_score; label="pdf converted from the score P-value function")
 plot!(ps, p -> pdf(posterior_bin(x, n; prior=Beta(1, 1)), p);
-    label="pdf(posterior_bin(x, n; prior=Beta(1, 1)), p)", ls=:dash)
+    label="pdf of posterior for x, n, prior=Beta(1, 1)", ls=:dash)
 plot!(xtick=0:0.1:1)
+title!("x = $x,  n = $n")
 
 # %%
 using QuadGK
