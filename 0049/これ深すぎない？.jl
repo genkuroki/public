@@ -83,38 +83,67 @@ function posterior_dist(k, n, prior::Beta=Beta(1, 1))
     Beta(a+k, b+n-k)
 end
 
-α = 0.06
-@show α
+function plot_result(;
+        prior_X = Beta(1, 1), 
+        prior_Y = Beta(1, 1), 
+        x = 4, m = 5,
+        y = 60, n = 100,
+        α = 0.06,
+    )
 
-@show prior = Beta(1, 1)
-@show posterior_p_X = posterior_dist(4, 5, prior)
-@show posterior_p_Y = posterior_dist(60, 100, prior)
+    @show prior_X
+    @show prior_Y
+    
+    P = plot(p_X -> pdf(prior_X, p_X), -0.02, 1.02; label="prior of p_X")
+    plot!(p_Y -> pdf(prior_Y, p_Y); label="prior of p_Y", ls=:dash)
+    plot!(xguide="p_X or p_Y", yguide="probability density")
+    plot!(legend=:outertop)
+    plot!(xtick=0:0.1:1)
 
-pdf_Δp = get_pdf_of_diff(posterior_p_X, posterior_p_Y)
-cdf_Δp = get_cdf_of_diff(posterior_p_X, posterior_p_Y)
-quantile_Δp = get_quantile(cdf_Δp, -1.0, 1.0)
+    @show (x, m)
+    @show (y, n)
+    @show posterior_X = posterior_dist(x, m, prior_X)
+    @show posterior_Y = posterior_dist(y, n, prior_Y)
+    @show mean(posterior_X)
+    @show mean(posterior_Y)
+    @show median(posterior_X)
+    @show median(posterior_Y)
+    
+    Q = plot(δ -> pdf(posterior_X, δ), -0.02, 1.02; label="posterior of p_X")
+    plot!(δ -> pdf(posterior_Y, δ); label="posterior of p_Y", ls=:dash)
+    plot!(xguide="p_X or p_Y", yguide="probability density")
+    plot!(legend=:outertop)
+    plot!(xtick=0:0.1:1)
 
-@show cdf_Δp(0.0), 1-cdf_Δp(0.0)
-@show expectation_value(identity, pdf_Δp, -1.0, 1.0)
-@show ci = highest_density_interval(quantile_Δp, α)
-#@show cdf_Δp(ci[2]) - cdf_Δp(ci[1])
-@show pval = pvalue_hdi(pdf_Δp, cdf_Δp, -1.0, 1.0, 0.0)
-#@show ci_pval = highest_density_interval(quantile_Δp, pval)
+    pdf_Δp = get_pdf_of_diff(posterior_X, posterior_Y)
+    cdf_Δp = get_cdf_of_diff(posterior_X, posterior_Y)
+    quantile_Δp = get_quantile(cdf_Δp, -1.0, 1.0)
 
-ci_rounded = collect(round.(ci; sigdigits=4))
-plot(pdf_Δp, -0.75, 0.75; label="pdf of p_X - p_Y")
-plot!(collect(ci), fill(pdf_Δp(ci[1]), 2); label="$(100(1-α))% CI (HDI) $(ci_rounded)", lw=3)
-vline!([0.0]; label="", c=:gray, ls=:dot)
-plot!(xguide="p_X - p_Y", yguide="probability density")
-plot!(xtick=-1:0.25:1)
-plot!(legend=:outertop)
+    @show cdf_Δp(0.0), 1-cdf_Δp(0.0)
+    @show expectation_value(identity, pdf_Δp, -1.0, 1.0)
+    @show α
+    @show ci = highest_density_interval(quantile_Δp, α)
+    #@show cdf_Δp(ci[2]) - cdf_Δp(ci[1])
+    @show pval = pvalue_hdi(pdf_Δp, cdf_Δp, -1.0, 1.0, 0.0)
+    #@show ci_pval = highest_density_interval(quantile_Δp, pval)
+    ci_rounded = collect(round.(ci; sigdigits=4))
+    
+    R = plot(pdf_Δp, -0.75, 0.75; label="posterior of p_X - p_Y", c=:blue)
+    plot!(collect(ci), fill(pdf_Δp(ci[1]), 2); label="$(100(1-α))% CI (HDI) $(ci_rounded)", lw=3, c=:red)
+    vline!([0.0]; label="", c=:gray, ls=:dot)
+    plot!(xtick=-1:0.25:1)
+    plot!(xguide="p_X - p_Y", yguide="probability density")
+    plot!(legend=:outertop)
+    
+    plot(P, Q, R; size=(500, 900), layout=(3, 1))
+    plot!(leftmargin=4Plots.mm)
+end
 
 # %%
-@show mean(posterior_p_X)
-@show mean(posterior_p_Y)
-plot(δ -> pdf(posterior_p_X, δ), 0, 1; label="pdf of p_X")
-plot!(δ -> pdf(posterior_p_Y, δ), 0, 1; label="pdf of p_Y", ls=:dash)
-plot!(xtick=0:0.1:1)
+plot_result()
+
+# %%
+plot_result(; prior_X=Beta(3, 5), prior_Y=Beta(3, 5))
 
 # %%
 using Distributions
@@ -198,6 +227,14 @@ function confint_rd_score(a, b, c, d; α=0.05, alg=Bisection())
 end
 
 a, b, c, d = 4, 5-4, 60, 100-60
+
+prior_X = Beta(1, 1)
+prior_Y = Beta(1, 1)
+posterior_X = posterior_dist(a, a+b, prior_X)
+posterior_Y = posterior_dist(c, c+d, prior_Y)
+pdf_Δp = get_pdf_of_diff(posterior_X, posterior_Y)
+cdf_Δp = get_cdf_of_diff(posterior_X, posterior_Y)
+quantile_Δp = get_quantile(cdf_Δp, -1.0, 1.0)
 
 null_pval_bayes = pvalue_hdi(pdf_Δp, cdf_Δp, -1.0, 1.0, 0.0)
 null_pval_score = pvalue_rd_score(a, b, c, d; Δ=0.0)
