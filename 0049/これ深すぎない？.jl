@@ -128,7 +128,7 @@ function plot_result(;
     #@show ci_pval = highest_density_interval(quantile_Δp, pval)
     ci_rounded = collect(round.(ci; sigdigits=4))
     
-    R = plot(pdf_Δp, -0.75, 0.75; label="posterior of p_X - p_Y", c=:blue)
+    R = plot(pdf_Δp, -1, 1; label="posterior of p_X - p_Y", c=:blue)
     plot!(collect(ci), fill(pdf_Δp(ci[1]), 2); label="$(100(1-α))% CI (HDI) $(ci_rounded)", lw=3, c=:red)
     vline!([0.0]; label="", c=:gray, ls=:dot)
     plot!(xtick=-1:0.25:1)
@@ -249,7 +249,7 @@ ci_score = confint_rd_score(a, b, c, d; α)
 @show ci_score
 @show ci_bayes
 
-plot(δ -> pvalue_hdi(pdf_Δp, cdf_Δp, -1.0, 1.0, δ), -0.75, 0.75; label="Bayesian P-value for flat prior")
+plot(δ -> pvalue_hdi(pdf_Δp, cdf_Δp, -1.0, 1.0, δ), -1, 1; label="Bayesian P-value for flat prior")
 plot!(δ -> pvalue_rd_score(a, b, c, d; Δ=δ); label="score P-value", ls=:dash)
 vline!([0.0]; label="", c=:gray, ls=:dot)
 plot!(xguide="p_X - p_Y", yguide="probability density")
@@ -310,9 +310,11 @@ p_Y = rand(posterior_p_Y, L)
 #@show ci_pval = myhdi(Δ, pval)
 
 ci_rounded = collect(round.(ci; sigdigits=4))
-stephist(Δ; norm=true, label="pdf", xlim=(-0.75, 0.75))
+stephist(Δ; norm=true, label="pdf", xlim=(-1, 1))
 plot!(collect(ci), fill(myepdf(Δ, ci[1]), 2); label="$(100(1-α))% CI (HDI) $ci_rounded", lw=3)
 vline!([0.0]; label="", c=:gray, ls=:dot)
 plot!(xguide="p_X - p_Y", yguide="probability density")
 plot!(xtick=-1:0.25:1)
 plot!(legend=:outertop)
+
+# %%
