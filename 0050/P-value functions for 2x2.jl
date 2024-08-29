@@ -137,8 +137,8 @@ end
 
 # correction = 0.5 は連続性補正を与える.
 function _chisqstat_or(a, b, c, d, δ; correction=0.0)
-    ã, b̃, c̃, d̃ = a-δ, b+δ, c+δ, d-δ
-    safemul(max(0, abs(δ)-correction)^2, 1/ã + 1/b̃ + 1/c̃ + 1/d̃)
+    ã, b̃, c̃, d̃ = a-δ, b+δ, c+δ, d-δ
+    safemul(max(0, abs(δ)-correction)^2, 1/ã + 1/b̃ + 1/c̃ + 1/d̃)
 end
 
 function chisqstat_or(a, b, c, d; ω=1, correction=0.0)
@@ -453,7 +453,7 @@ function plot_pvaluefunctions2x2(a, b, c, d;
     RRlim = confint_rr_wald(a, b, c, d; α=0.0005)
     RRtick = logtick(; xlim=RRlim)
     RR_wald = plot(ρ -> pvalue_rr_wald(a, b, c, d; ρ), RRlim...;
-        label="", title="Wald for RR", xguide="RR (log scale)", c=2, xscale=:log10, xtick=RRtick)
+        label="", title="Wald for logRR", xguide="RR (log scale)", c=2, xscale=:log10, xtick=RRtick)
     RR_score = plot(ρ -> pvalue_rr_pearson_chisq(a, b, c, d; ρ), RRlim...;
         label="", title="Score for RR", xguide="RR (log scale)", c=2, xscale=:log10, xtick=RRtick)
 
@@ -468,13 +468,22 @@ function plot_pvaluefunctions2x2(a, b, c, d;
     OR_central = plot(ω -> pvalue_or_clopper_pearson(a, b, c, d; ω), ORlim...;
         label="", title="Fisher (central) for OR", xguide="OR", c=3, xscale=:log10, xtick=ORtick)
     
-    plot(RD_wald, RD_zou_donner, RD_score, RR_wald, RR_score, OR_wald, OR_score, OR_minlike, OR_central; layout=(3, 3))
+    plot(RD_wald, RD_zou_donner, RD_score,
+        RR_wald, RR_score,
+        OR_wald, OR_score,
+        OR_minlike, OR_central; 
+        layout=@layout [
+            a b c
+            d e _
+            f g _
+            g i _
+        ])
     plot!(; size, titlefontsize, guidefontsize, tickfontsize, ytick, kwargs...)
     plot!(; plot_title="P-value finctions")
 end
 
 function print_and_plot_results2x2(a, b, c, d; sigdigits=3, α=0.05,
-        size=(1000, 700), titlefontsize=12, guidefontsize=10, tickfontsize=6, ytick=0:0.1:1, kwargs...)
+        size=(1000, 1000), titlefontsize=12, guidefontsize=10, tickfontsize=6, ytick=0:0.1:1, kwargs...)
     print_results2x2(a, b, c, d; sigdigits, α)
     println()
     plot_pvaluefunctions2x2(a, b, c, d; size, titlefontsize, tickfontsize, guidefontsize, ytick, kwargs...)
