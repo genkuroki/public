@@ -382,7 +382,7 @@ end
 function print_results2x2(a, b, c, d; sigdigits=3, α=0.05)
     r(x) = round(x; sigdigits)
     ORhat = oddsratiohat(a, b, c, d)
-    RRhat = oddsratiohat(a, b, c, d)
+    RRhat = riskratiohat(a, b, c, d)
     RDhat = riskdiffhat(a, b, c, d)
     ORhat_fisher = oddsratiohat_fisher(a, b, c, d)
     
@@ -396,17 +396,18 @@ function print_results2x2(a, b, c, d; sigdigits=3, α=0.05)
     pval_or_fisher_minlike = pvalue_or_sterne(a, b, c, d)
     pval_or_fisher_central = pvalue_or_clopper_pearson(a, b, c, d)
 
-    ci_or_wald = confint_or_wald(a, b, c, d)
-    ci_rr_wald = confint_rr_wald(a, b, c, d)
-    ci_rd_wald = confint_rd_wald(a, b, c, d)
-    ci_rd_zou_donner = confint_rd_zou_donner(a, b, c, d)
-    ci_or_score = confint_or_pearson_chisq(a, b, c, d)
-    ci_rr_score = confint_rr_pearson_chisq(a, b, c, d)
-    ci_rd_score = confint_rd_score(a, b, c, d)
-    ci_or_fisher_minlike = confint_or_sterne(a, b, c, d)
-    ci_or_fisher_central = confint_or_clopper_pearson(a, b, c, d)
+    ci_or_wald = confint_or_wald(a, b, c, d; α)
+    ci_rr_wald = confint_rr_wald(a, b, c, d; α)
+    ci_rd_wald = confint_rd_wald(a, b, c, d; α)
+    ci_rd_zou_donner = confint_rd_zou_donner(a, b, c, d; α)
+    ci_or_score = confint_or_pearson_chisq(a, b, c, d; α)
+    ci_rr_score = confint_rr_pearson_chisq(a, b, c, d; α)
+    ci_rd_score = confint_rd_score(a, b, c, d; α)
+    ci_or_fisher_minlike = confint_or_sterne(a, b, c, d; α)
+    ci_or_fisher_central = confint_or_clopper_pearson(a, b, c, d; α)
     
     println("Data: ", [a b; c d])
+    println("Null hypothesis: RD = 0,  RR = 1,  OR = 1")
     println("Confidence level: ", 100(1 - α), "%")
     println("Wald             for RD:    RDhat = $(r(RDhat)),  CI_RD = $(r.(ci_rd_wald)),  null P-value = $(r(pval_rd_wald))")
     println("Zou-Donner       for RD:    RDhat = $(r(RDhat)),  CI_RD = $(r.(ci_rd_zou_donner)),  null P-value = $(r(pval_rd_zou_donner))")
@@ -419,30 +420,68 @@ function print_results2x2(a, b, c, d; sigdigits=3, α=0.05)
     println("Fisher (central) for OR:    ORhat = $(r(ORhat_fisher)),  CI_OR = $(r.(ci_or_fisher_central)),  null P-value = $(r(pval_or_fisher_central))")
 end
 
-function plot_pvaluefunctions2x2(a, b, c, d; size=(1000, 700), titlefontsize=12, guidefontsize=10, kwargs...)
-    RDlim = confint_rd_wald(a, b, c, d; α=0.001)
-    RD_wald = plot(Δ -> pvalue_rd_wald(a, b, c, d; Δ), RDlim...; label="", title="Wald for RD", xguide="RD", c=1)
-    RD_zou_donner = plot(Δ -> pvalue_rd_zou_donner(a, b, c, d; Δ), RDlim...; label="", title="Zou-Donner for RD", xguide="RD", c=1)
-    RD_score = plot(Δ -> pvalue_rd_score(a, b, c, d; Δ), RDlim...; label="", title="Score for RD", xguide="RD", c=1)
+function logtick(; xlim=(0.03, 500))
+    xmin, xmax = xlim
+    a = floor(Int, log10(xmin))
+    b = ceil(Int, log10(xmax))
+    nums =     [1, 2, 3, 4, 5, 6, 7, 8, 9]
+    mask = Bool[1, 1, 0, 0, 1, 0, 0, 0, 0]
+    
+    logtick = foldl(vcat, ([10.0^k*x for x in nums if xmin ≤ 10.0^k*x ≤ xmax] for k in a:b))
+    logticklabel_a = foldl(vcat,
+        ([mask[i] ? string(round(10.0^k*x; digits=-k)) : ""
+                for (i, x) in enumerate(nums) if xmin ≤ 10.0^k*x ≤ xmax]
+            for k in a:-1))
+    logticklabel_b = foldl(vcat,
+        ([mask[i] ? string(10^k*x) : ""
+                for (i, x) in enumerate(nums) if xmin ≤ 10.0^k*x ≤ xmax]
+            for k in 0:b))
+    logticklabel = vcat(logticklabel_a, logticklabel_b)
+    (logtick, logticklabel)
+end
 
-    RRlim = confint_rr_wald(a, b, c, d; α=0.001)
-    RR_wald = plot(ρ -> pvalue_rr_wald(a, b, c, d; ρ), RRlim...; label="", title="Wald for RR", xguide="RR", c=2)
-    RR_score = plot(ρ -> pvalue_rr_pearson_chisq(a, b, c, d; ρ), RRlim...; label="", title="Score for RR", xguide="RR", c=2)
+function plot_pvaluefunctions2x2(a, b, c, d;
+        size=(1000, 700), titlefontsize=12, guidefontsize=10, tickfontsize=6, ytick=0:0.1:1, kwargs...)
+    RDlim = confint_rd_wald(a, b, c, d; α=0.0005)
+    RD_wald = plot(Δ -> pvalue_rd_wald(a, b, c, d; Δ), RDlim...;
+        label="", title="Wald for RD", xguide="RD", c=1)
+    RD_zou_donner = plot(Δ -> pvalue_rd_zou_donner(a, b, c, d; Δ), RDlim...;
+        label="", title="Zou-Donner for RD", xguide="RD", c=1)
+    RD_score = plot(Δ -> pvalue_rd_score(a, b, c, d; Δ), RDlim...;
+        label="", title="Score for RD", xguide="RD", c=1)
 
-    ORlim = confint_or_wald(a, b, c, d; α=0.001)
-    OR_wald = plot(ω -> pvalue_or_wald(a, b, c, d; ω), ORlim...; label="", title="Wald for logOR", xguide="OR", c=3)
-    OR_score = plot(ω -> pvalue_or_pearson_chisq(a, b, c, d; ω), ORlim...; label="", title="Score for OR", xguide="OR", c=3)
-    OR_minlike = plot(ω -> pvalue_or_sterne(a, b, c, d; ω), ORlim...; label="", title="Fisher (minlike) for OR", xguide="OR", c=3)
-    OR_central = plot(ω -> pvalue_or_clopper_pearson(a, b, c, d; ω), ORlim...; label="", title="Fisher (central) for OR", xguide="OR", c=3)
+    RRlim = confint_rr_wald(a, b, c, d; α=0.0005)
+    RRtick = logtick(; xlim=RRlim)
+    RR_wald = plot(ρ -> pvalue_rr_wald(a, b, c, d; ρ), RRlim...;
+        label="", title="Wald for RR", xguide="RR (log scale)", c=2, xscale=:log10, xtick=RRtick)
+    RR_score = plot(ρ -> pvalue_rr_pearson_chisq(a, b, c, d; ρ), RRlim...;
+        label="", title="Score for RR", xguide="RR (log scale)", c=2, xscale=:log10, xtick=RRtick)
+
+    ORlim = confint_or_wald(a, b, c, d; α=0.0005)
+    ORtick = logtick(; xlim=ORlim)
+    OR_wald = plot(ω -> pvalue_or_wald(a, b, c, d; ω), ORlim...;
+        label="", title="Wald for logOR", xguide="OR", c=3, xscale=:log10, xtick=ORtick)
+    OR_score = plot(ω -> pvalue_or_pearson_chisq(a, b, c, d; ω), ORlim...;
+        label="", title="Score for OR", xguide="OR", c=3, xscale=:log10, xtick=ORtick)
+    OR_minlike = plot(ω -> pvalue_or_sterne(a, b, c, d; ω), ORlim...;
+        label="", title="Fisher (minlike) for OR", xguide="OR", c=3, xscale=:log10, xtick=ORtick)
+    OR_central = plot(ω -> pvalue_or_clopper_pearson(a, b, c, d; ω), ORlim...;
+        label="", title="Fisher (central) for OR", xguide="OR", c=3, xscale=:log10, xtick=ORtick)
     
     plot(RD_wald, RD_zou_donner, RD_score, RR_wald, RR_score, OR_wald, OR_score, OR_minlike, OR_central; layout=(3, 3))
-    plot!(; size, titlefontsize, guidefontsize, kwargs...)
+    plot!(; size, titlefontsize, guidefontsize, tickfontsize, ytick, kwargs...)
     plot!(; plot_title="P-value finctions")
+end
+
+function print_and_plot_results2x2(a, b, c, d; sigdigits=3, α=0.05,
+        size=(1000, 700), titlefontsize=12, guidefontsize=10, tickfontsize=6, ytick=0:0.1:1, kwargs...)
+    print_results2x2(a, b, c, d; sigdigits, α)
+    println()
+    plot_pvaluefunctions2x2(a, b, c, d; size, titlefontsize, tickfontsize, guidefontsize, ytick, kwargs...)
 end
 
 # %%
 a, b, c, d = 15, 13, 5, 15
-print_results2x2(a, b, c, d)
-plot_pvaluefunctions2x2(a, b, c, d)
+print_and_plot_results2x2(a, b, c, d)
 
 # %%
