@@ -167,10 +167,63 @@ end
 
 
 # %%
+# log maximum likelihood ratio method for OR
+
+function _gstat_or(a, b, c, d, δ)
+    ã, b̃, c̃, d̃ = a-δ, b+δ, c+δ, d-δ
+    2(
+        safemul(a, log(safediv(a, ã))) +
+        safemul(b, log(safediv(b, b̃))) +
+        safemul(c, log(safediv(c, c̃))) +
+        safemul(d, log(safediv(d, d̃)))
+    )
+end
+
+# Firth補正
+_firth(a, b, c, d; firth=0.5) = (a, b, c, d) .+ firth
+
+# firth = 0.5 はFirth補正を与える.
+function gstat_or(a0, b0, c0, d0; ω=1, firth=0.5)
+    a, b, c, d = _firth(a0, b0, c0, d0; firth)
+    δ = delta(a, b, c, d; ω)
+    _gstat_or(a, b, c, d, δ)
+end
+
+function pvalue_or_gtest(a, b, c, d; ω=1, firth=0.5)
+    χ² = gstat_or(a, b, c, d; ω, firth)
+    ccdf(Chisq(1), χ²)
+end
+
+function confint_or_gtest(a0, b0, c0, d0; α=0.05, firth=0.5)
+    a, b, c, d = _firth(a0, b0, c0, d0; firth)
+    (a+b==0 || c+d==0 || a+c==0 || b+d==0) && return [0, Inf]
+    f(logω) = logit(pvalue_or_gtest(a0, b0, c0, d0; ω=exp(logω), firth)) - logit(α)
+    ps = if a == 0 || d == 0
+        [0, exp(find_zero(f, 0.0))]
+    elseif b == 0 || c == 0
+        [exp(find_zero(f, 0.0)), Inf]
+    else
+        ORhat = oddsratiohat(a, b, c, d)
+        ω_L, ω_U = ORhat/2, 2ORhat
+        [exp(find_zero(f, log(ω_L))), exp(find_zero(f, log(ω_U)))]
+    end
+end
+
+# %%
+a, b, c, d = 15, 13, 5, 15
+@show pvalue_or_pearson_chisq(a, b, c, d);
+@show pvalue_or_gtest(a, b, c, d);
+@show pvalue_or_gtest(a, b, c, d; firth=0);
+@show confint_or_pearson_chisq(a, b, c, d);
+@show confint_or_gtest(a, b, c, d);
+@show confint_or_gtest(a, b, c, d; firth=0);
+
+# %%
 # score method for RR
 
 _riskratiohat(a, b, c, d) = safediv(a*(c+d), (a+b)*c)
 
+# ((a-Δ)/(a-Δ+b))/((c+Δ)/(c+Δ+d)) = ρ if Δ = Delta(a, b, c, d; ρ)
 function Delta(a, b, c, d; ρ=1.0)
     m, n = a+b, c+d
     A, B, C = ρ-1, n-a+ρ*(m-c), a*n-ρ*m*c
@@ -211,6 +264,61 @@ function confint_rr_pearson_chisq(a, b, c, d; α=0.05)
     end
     [exp(L), exp(U)]
 end
+
+# %%
+# log maximum likelihood ratio method for RR
+
+function _gstat_rr(a, b, c, d, Δ)
+    ã, b̃, c̃, d̃ = a-Δ, b, c+Δ, d
+    2(
+        safemul(a, log(safediv(a, ã))) +
+        safemul(b, log(safediv(b, b̃))) +
+        safemul(c, log(safediv(c, c̃))) +
+        safemul(d, log(safediv(d, d̃)))
+    )
+end
+
+# firth = 0.5 はFirth補正を与える.
+function gstat_rr(a0, b0, c0, d0; ρ=1.0, firth=0.5)
+    a, b, c, d = _firth(a0, b0, c0, d0; firth)
+    Δ = Delta(a, b, c, d; ρ)
+    _chisqstat_rr(a, b, c, d, Δ)
+end
+
+function pvalue_rr_gtest(a, b, c, d; ρ=1.0, firth=0.5)
+    χ² = gstat_rr(a, b, c, d; ρ, firth)
+    ccdf(Chisq(1), χ²)
+end
+
+function confint_rr_gtest(a0, b0, c0, d0; α=0.05, firth=0.5)
+    a, b, c, d = _firth(a0, b0, c0, d0; firth)
+    (a+b==0 || c+d==0 || a+c==0 || b+d==0) && return [0.0, Inf]
+    f(logρ) = logit(pvalue_rr_gtest(a0, b0, c0, d0; ρ=exp(logρ), firth)) - logit(α)
+    L = if f(-Inf) > 0
+        -Inf
+    else
+        logRRhat = log(_riskratiohat(a, b, c, d))
+        x0 = logRRhat == -Inf ? -10.0 : logRRhat == Inf ? 10.0 : logRRhat - 1
+        find_zero(f, x0)
+    end
+    U = if f(Inf) > 0
+        Inf
+    else
+        logRRhat = log(_riskratiohat(a, b, c, d))
+        x0 = logRRhat == -Inf ? -10.0 : logRRhat == Inf ? 10.0 : logRRhat + 1
+        find_zero(f, x0)
+    end
+    [exp(L), exp(U)]
+end
+
+# %%
+a, b, c, d = 15, 13, 5, 15
+@show pvalue_rr_pearson_chisq(a, b, c, d);
+@show pvalue_rr_gtest(a, b, c, d);
+@show pvalue_rr_gtest(a, b, c, d; firth=0);
+@show confint_rr_pearson_chisq(a, b, c, d);
+@show confint_rr_gtest(a, b, c, d);
+@show confint_rr_gtest(a, b, c, d; firth=0);
 
 # %%
 ### score method for RD
@@ -283,6 +391,56 @@ function confint_rd_score(a, b, c, d; α=0.05, alg=Bisection())
     end
     [L, U]
 end
+
+# %%
+# log maximum likelihood ratio method for RD
+
+# firth = 0.5 はFirth補正を与える.
+function gstat_rd_score(a0, b0, c0, d0; Δ=0.0, firth=0.5, alg=Bisection())
+    a, b, c, d = _firth(a0, b0, c0, d0; firth)
+    Δ = clamp(Δ, -1 + eps(), 1 - eps())
+    q̃ = estimate_q_given_Δ_rd(a, b, c, d, Δ; alg)
+    p̃ = q̃ + Δ
+    ã, b̃, c̃, d̃ = (a+b)*p̃, (a+b)*(1-p̃), (c+d)*q̃, (c+d)*(1-q̃)
+    2(
+        safemul(a, log(safediv(a, ã))) +
+        safemul(b, log(safediv(b, b̃))) +
+        safemul(c, log(safediv(c, c̃))) +
+        safemul(d, log(safediv(d, d̃)))
+    )
+end
+
+function pvalue_rd_gtest(a, b, c, d; Δ=0.0, firth=0.5, alg=Bisection())
+    χ² = gstat_rd_score(a, b, c, d; Δ, firth, alg)
+    ccdf(Chisq(1), χ²)
+end
+
+function confint_rd_gtest(a0, b0, c0, d0; α=0.05, firth=0.5, alg=Bisection())
+    a, b, c, d = _firth(a0, b0, c0, d0; firth)
+    χ²_α = cquantile(Chisq(1), α)
+    RDhat = riskdiffhat_score(a, b, c, d)
+    g(Δ) = gstat_rd_score(a0, b0, c0, d0; Δ, firth, alg) - χ²_α
+    L = if g(-1 + eps()) > 0
+        find_zero(g, (-1 + eps(), RDhat), alg)
+    else
+        -1.0
+    end
+    U = if g(1 - eps()) > 0
+        find_zero(g, (RDhat, 1 - eps()), alg)
+    else
+        1.0
+    end
+    [L, U]
+end
+
+# %%
+a, b, c, d = 15, 13, 5, 15
+@show pvalue_rd_score(a, b, c, d);
+@show pvalue_rd_gtest(a, b, c, d);
+@show pvalue_rd_gtest(a, b, c, d; firth=0);
+@show confint_rd_score(a, b, c, d);
+@show confint_rd_gtest(a, b, c, d);
+@show confint_rd_gtest(a, b, c, d; firth=0);
 
 # %%
 # Fisher's method (minlike) for OR
@@ -379,12 +537,16 @@ function confint_or_clopper_pearson(a, b, c, d; α = 0.05)
 end
 
 # %%
-function print_results2x2(a, b, c, d; sigdigits=3, α=0.05)
+function print_results2x2(a, b, c, d; sigdigits=3, α=0.05, firth=0.5)
     r(x) = round(x; sigdigits)
     ORhat = oddsratiohat(a, b, c, d)
     RRhat = riskratiohat(a, b, c, d)
     RDhat = riskdiffhat(a, b, c, d)
     ORhat_fisher = oddsratiohat_fisher(a, b, c, d)
+    af, bf, cf, df = _firth(a, b, c, d; firth)
+    ORhat_firth = oddsratiohat(af, bf, cf, df)
+    RRhat_firth = riskratiohat(af, bf, cf, df)
+    RDhat_firth = riskdiffhat(af, bf, cf, df)
     
     pval_or_wald = pvalue_or_wald(a, b, c, d)
     pval_rr_wald = pvalue_rr_wald(a, b, c, d)
@@ -393,6 +555,9 @@ function print_results2x2(a, b, c, d; sigdigits=3, α=0.05)
     pval_or_score = pvalue_or_pearson_chisq(a, b, c, d)
     pval_rr_score = pvalue_rr_pearson_chisq(a, b, c, d)
     pval_rd_score = pvalue_rd_score(a, b, c, d)
+    pval_or_gtest = pvalue_or_gtest(a, b, c, d; firth)
+    pval_rr_gtest = pvalue_rr_gtest(a, b, c, d; firth)
+    pval_rd_gtest = pvalue_rd_gtest(a, b, c, d; firth)
     pval_or_fisher_minlike = pvalue_or_sterne(a, b, c, d)
     pval_or_fisher_central = pvalue_or_clopper_pearson(a, b, c, d)
 
@@ -403,6 +568,9 @@ function print_results2x2(a, b, c, d; sigdigits=3, α=0.05)
     ci_or_score = confint_or_pearson_chisq(a, b, c, d; α)
     ci_rr_score = confint_rr_pearson_chisq(a, b, c, d; α)
     ci_rd_score = confint_rd_score(a, b, c, d; α)
+    ci_or_gtest = confint_or_gtest(a, b, c, d; α, firth)
+    ci_rr_gtest = confint_rr_gtest(a, b, c, d; α, firth)
+    ci_rd_gtest = confint_rd_gtest(a, b, c, d; α, firth)
     ci_or_fisher_minlike = confint_or_sterne(a, b, c, d; α)
     ci_or_fisher_central = confint_or_clopper_pearson(a, b, c, d; α)
     
@@ -411,11 +579,14 @@ function print_results2x2(a, b, c, d; sigdigits=3, α=0.05)
     println("Confidence level: ", 100(1 - α), "%")
     println("Wald             for RD:    RDhat = $(r(RDhat)),  CI_RD = $(r.(ci_rd_wald)),  null P-value = $(r(pval_rd_wald))")
     println("Zou-Donner       for RD:    RDhat = $(r(RDhat)),  CI_RD = $(r.(ci_rd_zou_donner)),  null P-value = $(r(pval_rd_zou_donner))")
-    println("Score            for RD:    RDhat = $(r(RDhat)),  CI_RD = $(r.(ci_rd_score)),  null P-value = $(r(pval_or_score))")
+    println("Score            for RD:    RDhat = $(r(RDhat)),  CI_RD = $(r.(ci_rd_score)),  null P-value = $(r(pval_rd_score))")
+    println("G-test (Firth)   for RD:    RDhat = $(r(RDhat_firth)),  CI_RD = $(r.(ci_rd_gtest)),  null P-value = $(r(pval_rd_gtest))")
     println("Wald             for logRR: RRhat = $(r(RRhat)),  CI_RR = $(r.(ci_rr_wald)),  null P-value = $(r(pval_rr_wald))")
-    println("Score            for RR:    RRhat = $(r(RRhat)),  CI_RR = $(r.(ci_rr_score)),  null P-value = $(r(pval_or_score))")
+    println("Score            for RR:    RRhat = $(r(RRhat)),  CI_RR = $(r.(ci_rr_score)),  null P-value = $(r(pval_rr_score))")
+    println("G-test (Firth)   for RR:    RRhat = $(r(RRhat_firth)),  CI_RD = $(r.(ci_rr_gtest)),  null P-value = $(r(pval_rr_gtest))")
     println("Wald             for logOR: ORhat = $(r(ORhat)),  CI_OR = $(r.(ci_or_wald)),  null P-value = $(r(pval_or_wald))")
     println("Score            for OR:    ORhat = $(r(ORhat)),  CI_OR = $(r.(ci_or_score)),  null P-value = $(r(pval_or_score))")
+    println("G-test (Firth)   for RR:    ORhat = $(r(ORhat_firth)),  CI_RD = $(r.(ci_or_gtest)),  null P-value = $(r(pval_or_gtest))")
     println("Fisher (minlike) for OR:    ORhat = $(r(ORhat_fisher)),  CI_OR = $(r.(ci_or_fisher_minlike)),  null P-value = $(r(pval_or_fisher_minlike))")
     println("Fisher (central) for OR:    ORhat = $(r(ORhat_fisher)),  CI_OR = $(r.(ci_or_fisher_central)),  null P-value = $(r(pval_or_fisher_central))")
 end
@@ -440,8 +611,8 @@ function logtick(; xlim=(0.03, 500))
     (logtick, logticklabel)
 end
 
-function plot_pvaluefunctions2x2(a, b, c, d;
-        size=(1000, 700), titlefontsize=12, guidefontsize=10, tickfontsize=6, ytick=0:0.1:1, kwargs...)
+function plot_pvaluefunctions2x2(a, b, c, d; firth=0.5,
+        size=(1000, 1000), titlefontsize=12, guidefontsize=10, tickfontsize=6, ytick=0:0.1:1, kwargs...)
     RDlim = confint_rd_wald(a, b, c, d; α=0.0005)
     RD_wald = plot(Δ -> pvalue_rd_wald(a, b, c, d; Δ), RDlim...;
         label="", title="Wald for RD", xguide="RD", c=1)
@@ -449,6 +620,8 @@ function plot_pvaluefunctions2x2(a, b, c, d;
         label="", title="Zou-Donner for RD", xguide="RD", c=1)
     RD_score = plot(Δ -> pvalue_rd_score(a, b, c, d; Δ), RDlim...;
         label="", title="Score for RD", xguide="RD", c=1)
+    RD_gtest = plot(Δ -> pvalue_rd_gtest(a, b, c, d; Δ, firth), RDlim...;
+        label="", title="G-test (Firth) for RD", xguide="RD", c=1)
 
     RRlim = confint_rr_wald(a, b, c, d; α=0.0005)
     RRtick = logtick(; xlim=RRlim)
@@ -456,43 +629,52 @@ function plot_pvaluefunctions2x2(a, b, c, d;
         label="", title="Wald for logRR", xguide="RR (log scale)", c=2, xscale=:log10, xtick=RRtick)
     RR_score = plot(ρ -> pvalue_rr_pearson_chisq(a, b, c, d; ρ), RRlim...;
         label="", title="Score for RR", xguide="RR (log scale)", c=2, xscale=:log10, xtick=RRtick)
+    RR_gtest = plot(ρ -> pvalue_rr_gtest(a, b, c, d; ρ, firth), RRlim...;
+        label="", title="G-test (Firth) for RR", xguide="RR (log scale)", c=2, xscale=:log10, xtick=RRtick)
 
     ORlim = confint_or_wald(a, b, c, d; α=0.0005)
     ORtick = logtick(; xlim=ORlim)
     OR_wald = plot(ω -> pvalue_or_wald(a, b, c, d; ω), ORlim...;
-        label="", title="Wald for logOR", xguide="OR", c=3, xscale=:log10, xtick=ORtick)
+        label="", title="Wald for logOR", xguide="OR (log scale)", c=3, xscale=:log10, xtick=ORtick)
     OR_score = plot(ω -> pvalue_or_pearson_chisq(a, b, c, d; ω), ORlim...;
-        label="", title="Score for OR", xguide="OR", c=3, xscale=:log10, xtick=ORtick)
+        label="", title="Score for OR", xguide="OR (log scale)", c=3, xscale=:log10, xtick=ORtick)
+    OR_gtest = plot(ω -> pvalue_or_gtest(a, b, c, d; ω, firth), ORlim...;
+        label="", title="G-test (Firth) for OR", xguide="OR (log scale)", c=3, xscale=:log10, xtick=ORtick)
     OR_minlike = plot(ω -> pvalue_or_sterne(a, b, c, d; ω), ORlim...;
-        label="", title="Fisher (minlike) for OR", xguide="OR", c=3, xscale=:log10, xtick=ORtick)
+        label="", title="Fisher (minlike) for OR", xguide="OR (log scale)", c=3, xscale=:log10, xtick=ORtick)
     OR_central = plot(ω -> pvalue_or_clopper_pearson(a, b, c, d; ω), ORlim...;
-        label="", title="Fisher (central) for OR", xguide="OR", c=3, xscale=:log10, xtick=ORtick)
+        label="", title="Fisher (central) for OR", xguide="OR (log scale)", c=3, xscale=:log10, xtick=ORtick)
     
-    plot(RD_wald, RD_zou_donner, RD_score,
-        RR_wald, RR_score,
-        OR_wald, OR_score,
+    plot(
+        RD_wald, RD_score, RD_gtest,
+        RD_zou_donner, RD_score, RD_gtest,
+        RR_wald, RR_score, RR_gtest,
+        OR_wald, OR_score, OR_gtest,
         OR_minlike, OR_central; 
         layout=@layout [
             a b c
-            d e _
-            f g _
-            g i _
+            d e f
+            g h i
+            j k l
+            m n _
         ])
-    plot!(; size, titlefontsize, guidefontsize, tickfontsize, ytick, kwargs...)
     plot!(; plot_title="P-value finctions")
+    plot!(; size, titlefontsize, guidefontsize, tickfontsize, ytick, kwargs...)
 end
 
-function print_and_plot_results2x2(a, b, c, d; sigdigits=3, α=0.05,
+function print_and_plot_results2x2(a, b, c, d; sigdigits=3, α=0.05, firth=0.5,
         size=(1000, 1000), titlefontsize=12, guidefontsize=10, tickfontsize=6, ytick=0:0.1:1, kwargs...)
-    print_results2x2(a, b, c, d; sigdigits, α)
+    print_results2x2(a, b, c, d; sigdigits, α, firth)
     println()
-    plot_pvaluefunctions2x2(a, b, c, d; size, titlefontsize, tickfontsize, guidefontsize, ytick, kwargs...)
+    plot_pvaluefunctions2x2(a, b, c, d; firth, size, titlefontsize, tickfontsize, guidefontsize, ytick, kwargs...)
 end
+
+# %%
+a, b, c, d = 47, 51-47, 352, 370-352
+print_and_plot_results2x2(a, b, c, d)
 
 # %%
 a, b, c, d = 15, 13, 5, 15
 print_and_plot_results2x2(a, b, c, d)
 
 # %%
-a, b, c, d = 47, 51-47, 352, 370-352
-print_and_plot_results2x2(a, b, c, d)
