@@ -109,8 +109,7 @@ end
 using Distributions
 using Random: rand!
 
-function sim_dice(; n=10^4, relerr=0.05, L=10^7)
-    p = 1/6
+function sim_dice_relerr(; n=10^4, p=1/6, relerr=0.05, L=10^7)
     dice = Multinomial(n, fill(p, 6))
     nth = Threads.nthreads()
     Xtmp = [rand(dice) for _ in 1:nth]
@@ -118,17 +117,54 @@ function sim_dice(; n=10^4, relerr=0.05, L=10^7)
     Threads.@threads :static for i in 1:L
         tid = Threads.threadid()
         X = rand!(dice, Xtmp[tid])
-        c[tid] += maximum(k->abs(X[k]/(n*p) - 1), 1:6) ≥ relerr
+        c[tid] += any(k-> abs(X[k]/(n*p) - 1) > relerr, 1:6)
     end
     sum(c)/L
 end
 
+n = 10^4
+println("(X₁,…,X₆) ~ Multinomial(n=$n, [1/6, 1/6, 1/6, 1/6, 1/6, 1/6])")
 for relerr in 0.01:0.01:0.1
-    @eval @show round(sim_dice(; relerr=$relerr); digits=3)
+    prob = sim_dice_relerr(; n, relerr)
+    prob1 = round(prob; digits=3)
+    prob2 = round(prob; sigdigits=3)
+    print("(probability that |Xₖ/(np) - 1| > $relerr for some k) = ")
+    if prob1 == prob2
+        println(prob1)
+    else
+        println(prob1, " (= ", prob2, ")")
+    end
 end
-println()
-for relerr in 0.01:0.01:0.1
-    @eval @show round(sim_dice(; relerr=$relerr); sigdigits=3)
+
+# %%
+using Distributions
+using Random: rand!
+
+function sim_dice_abserr(; n=10^4, p=1/6, abserr=0.01, L=10^7)
+    dice = Multinomial(n, fill(p, 6))
+    nth = Threads.nthreads()
+    Xtmp = [rand(dice) for _ in 1:nth]
+    c = zeros(Int, nth)
+    Threads.@threads :static for i in 1:L
+        tid = Threads.threadid()
+        X = rand!(dice, Xtmp[tid])
+        c[tid] += any(k-> abs(X[k]/n - p) > abserr, 1:6)
+    end
+    sum(c)/L
+end
+
+n = 10000
+println("(X₁,…,X₆) ~ Multinomial(n=$n, [1/6, 1/6, 1/6, 1/6, 1/6, 1/6])")
+for abserr in 0.001:0.001:0.016
+    prob = sim_dice_abserr(; n, abserr)
+    prob1 = round(prob; digits=3)
+    prob2 = round(prob; sigdigits=3)
+    print("(probability that |Xₖ/n - p| > $abserr for some k) = ")
+    if prob1 == prob2
+        println(prob1)
+    else
+        println(prob1, " (= ", prob2, ")")
+    end
 end
 
 # %%
@@ -246,5 +282,59 @@ end
 
 Random.seed!(4649373)
 plot_clt()
+
+# %%
+using Distributions
+using DataFrames
+using StatsPlots
+default(fmt=:png, titlefontsize=10, tickfontsize=6)
+
+df = DataFrame(
+    n = [50; 100; 200:200:2000],
+    k = [9, 14, 31, 69, 91, 126, 163, 205, 238, 267, 301, 333]
+)
+@show df
+
+PP = []
+p = 1//6
+for i in 1:12
+    n = df.n[i]
+    bin = Binomial(n, p)
+    μ, σ = mean(bin), std(bin)
+    P = bar(bin; alpha=0.3, lc=:match, label="")
+    plot!(xlim=round.(Int, (μ-4σ, μ+4σ)))
+    plot!(xtick=round.(Int, μ-4σ:σ:μ+4σ))
+    vline!([μ]; label="", c=:black)
+    vline!([df.k[i]]; label="data", c=:red)
+    title!("Binomial(n=$n, p=$p)")
+    push!(PP, P)
+end
+plot(PP...; size=(1000, 1000), layout=(4, 3))
+
+# %% tags=[]
+using Distributions
+using DataFrames
+using StatsPlots
+default(fmt=:png, titlefontsize=10, tickfontsize=6)
+
+PP = []
+p = 1//6
+for m in 2:7
+    n = 10^m
+    bin = Binomial(n, p)
+    μ, σ = mean(bin), std(bin)
+    P = plot()
+    if n < 10^4
+        bar!(bin; alpha=0.3, lc=:match, label="")
+    else
+        plot!(Normal(μ, σ), μ-4.2σ, μ+4.2σ; label="")
+    end
+    plot!(xlim=round.(Int, (μ-4.2σ, μ+4.2σ)))
+    plot!(xtick=round.(Int, μ-5σ:σ:μ+5σ))
+    vline!([μ]; label="", c=:black)
+    title!("Binomial(n=10^$m, p=$p)")
+    push!(PP, P)
+end
+plot(PP...; size=(1000, 600), layout=(3, 2))
 
 # %%
