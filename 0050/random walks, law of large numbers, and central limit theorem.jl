@@ -249,6 +249,24 @@ plot!(ns, ys; label="data", c=:blue)
 plot!(xtick=0:100:1000)
 
 # %%
+Random.seed!(4649373)
+plot_lln(n=1000, p=1/2, ylim=(-0.16, 0.16))
+
+ns = [
+     10,  20,  30,  40,  50,  60,  70,  80,  90, 100,
+    150, 200, 300, 400, 500, 600, 700, 800, 900, 1000]
+ks = [
+      6,  10,  18,  23,  28,  34,  38,  45,  49,  54,
+     77,  91, 147, 192, 247, 299, 353, 400, 448, 497,
+]
+ys = @. ks/ns - 0.5
+plot!(ns, ys; label="data", c=:blue)
+plot!(xtick=0:100:1000)
+
+# %% [markdown]
+# <img src="IMG_5571.jpg" width=610>
+
+# %%
 using Distributions
 using Random
 using StatsPlots
