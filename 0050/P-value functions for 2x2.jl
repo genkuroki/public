@@ -682,3 +682,7 @@ a, b, c, d = 15, 13, 5, 15
 print_and_plot_results2x2(a, b, c, d)
 
 # %%
+a, b, c, d = 15, 5, 13, 15
+print_and_plot_results2x2(a, b, c, d)
+
+# %%
