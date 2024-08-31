@@ -577,18 +577,18 @@ function print_results2x2(a, b, c, d; sigdigits=3, α=0.05, firth=0.5)
     println("Data: ", [a b; c d])
     println("Null hypothesis: RD = 0,  RR = 1,  OR = 1")
     println("Confidence level: ", 100(1 - α), "%")
-    println("Wald             for RD:    RDhat = $(r(RDhat)),  CI_RD = $(r.(ci_rd_wald)),  null P-value = $(r(pval_rd_wald))")
-    println("Zou-Donner       for RD:    RDhat = $(r(RDhat)),  CI_RD = $(r.(ci_rd_zou_donner)),  null P-value = $(r(pval_rd_zou_donner))")
-    println("Score            for RD:    RDhat = $(r(RDhat)),  CI_RD = $(r.(ci_rd_score)),  null P-value = $(r(pval_rd_score))")
-    println("G-test (Firth)   for RD:    RDhat = $(r(RDhat_firth)),  CI_RD = $(r.(ci_rd_gtest)),  null P-value = $(r(pval_rd_gtest))")
-    println("Wald             for logRR: RRhat = $(r(RRhat)),  CI_RR = $(r.(ci_rr_wald)),  null P-value = $(r(pval_rr_wald))")
-    println("Score            for RR:    RRhat = $(r(RRhat)),  CI_RR = $(r.(ci_rr_score)),  null P-value = $(r(pval_rr_score))")
-    println("G-test (Firth)   for RR:    RRhat = $(r(RRhat_firth)),  CI_RD = $(r.(ci_rr_gtest)),  null P-value = $(r(pval_rr_gtest))")
-    println("Wald             for logOR: ORhat = $(r(ORhat)),  CI_OR = $(r.(ci_or_wald)),  null P-value = $(r(pval_or_wald))")
-    println("Score            for OR:    ORhat = $(r(ORhat)),  CI_OR = $(r.(ci_or_score)),  null P-value = $(r(pval_or_score))")
-    println("G-test (Firth)   for RR:    ORhat = $(r(ORhat_firth)),  CI_RD = $(r.(ci_or_gtest)),  null P-value = $(r(pval_or_gtest))")
-    println("Fisher (minlike) for OR:    ORhat = $(r(ORhat_fisher)),  CI_OR = $(r.(ci_or_fisher_minlike)),  null P-value = $(r(pval_or_fisher_minlike))")
-    println("Fisher (central) for OR:    ORhat = $(r(ORhat_fisher)),  CI_OR = $(r.(ci_or_fisher_central)),  null P-value = $(r(pval_or_fisher_central))")
+    println("RD: Wald            : RDhat = $(r(RDhat)),  CI_RD = $(r.(ci_rd_wald)),  null P-value = $(r(pval_rd_wald))")
+    println("    Zou-Donner      : RDhat = $(r(RDhat)),  CI_RD = $(r.(ci_rd_zou_donner)),  null P-value = $(r(pval_rd_zou_donner))")
+    println("    Score           : RDhat = $(r(RDhat)),  CI_RD = $(r.(ci_rd_score)),  null P-value = $(r(pval_rd_score))")
+    println("    G-test (Firth)  : RDhat = $(r(RDhat_firth)),  CI_RD = $(r.(ci_rd_gtest)),  null P-value = $(r(pval_rd_gtest))")
+    println("RR: Wald for logRR  : RRhat = $(r(RRhat)),  CI_RR = $(r.(ci_rr_wald)),  null P-value = $(r(pval_rr_wald))")
+    println("    Score           : RRhat = $(r(RRhat)),  CI_RR = $(r.(ci_rr_score)),  null P-value = $(r(pval_rr_score))")
+    println("    G-test (Firth)  : RRhat = $(r(RRhat_firth)),  CI_RD = $(r.(ci_rr_gtest)),  null P-value = $(r(pval_rr_gtest))")
+    println("OR: Wald for logOR  : ORhat = $(r(ORhat)),  CI_OR = $(r.(ci_or_wald)),  null P-value = $(r(pval_or_wald))")
+    println("    Score           : ORhat = $(r(ORhat)),  CI_OR = $(r.(ci_or_score)),  null P-value = $(r(pval_or_score))")
+    println("    G-test (Firth)  : ORhat = $(r(ORhat_firth)),  CI_RD = $(r.(ci_or_gtest)),  null P-value = $(r(pval_or_gtest))")
+    println("    Fisher (minlike): ORhat = $(r(ORhat_fisher)),  CI_OR = $(r.(ci_or_fisher_minlike)),  null P-value = $(r(pval_or_fisher_minlike))")
+    println("    Fisher (central): ORhat = $(r(ORhat_fisher)),  CI_OR = $(r.(ci_or_fisher_central)),  null P-value = $(r(pval_or_fisher_central))")
 end
 
 function logtick(; xlim=(0.03, 500))
@@ -671,6 +671,10 @@ end
 
 # %%
 a, b, c, d = 47, 51-47, 352, 370-352
+print_and_plot_results2x2(a, b, c, d)
+
+# %%
+a, b, c, d = 51-47, 47, 370-352, 352
 print_and_plot_results2x2(a, b, c, d)
 
 # %%
