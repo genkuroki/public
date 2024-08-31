@@ -209,13 +209,13 @@ using StatsPlots
 default(fmt=:png, legend=false, 
     tickfontsize=6, plot_titlefontsize=8, legendfontsize=12)
 
-function plot_lln(; n=10^4, p=1//6, niters=100, seed=nothing, kwargs...)
+function plot_lln(; n=10^4, p=1//6, niters=100, seed=nothing,
+        σ=√(p*(1-p)), ylim=(-σ/4, σ/4), kwargs...)
     if seed isa Integer
         Random.seed!(seed)
     end
     
     ber = Bernoulli(p)
-    σ = √(p*(1-p))
     
     plot()
     for i in 1:niters
@@ -226,17 +226,27 @@ function plot_lln(; n=10^4, p=1//6, niters=100, seed=nothing, kwargs...)
     if seed isa Integer
         plot!(plot_title="seed = $seed")
     end
-    plot!(0:n, x->2σ/√x; label="±2√(p(1-p))/√n", c=:red)
+    plot!(0:n, x->2σ/√x; label="±2√(p(1-p)/n)", c=:red)
     plot!(0:n, x->-2σ/√x; label="", c=:red)
-    plot!(xguide="n", yguide="(X₁ + ⋯ + Xₙ - np) / n")
-    plot!(ylim=(-σ/3, σ/3))
+    plot!(xguide="n", yguide="(X₁ + ⋯ + Xₙ)/n - p")
     plot!(legend=true)
+    hline!([0.0]; label="", c=:black, lw=0.5)
     title!("i.i.d. Xᵢ ~ Bernoulli(p),  p = $p")
-    plot!(; kwargs...)
+    plot!(; ylim, kwargs...)
 end
 
 Random.seed!(4649373)
-plot_lln()
+plot_lln(; xtick=0:1000:10000, ytick=-0.1:0.01:0.1)
+
+# %%
+Random.seed!(4649373)
+plot_lln(n=1000, p=1/4, ylim=(-0.16, 0.16))
+
+ns = [10:10:50; 100:100:1000]
+ks = [2, 6, 12, 15, 20, 36, 62, 83, 109, 130, 153, 170, 201, 223, 249]
+ys = @. ks/ns - 0.25
+plot!(ns, ys; label="data", c=:blue)
+plot!(xtick=0:100:1000)
 
 # %%
 using Distributions
