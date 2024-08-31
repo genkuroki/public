@@ -577,18 +577,18 @@ function print_results2x2(a, b, c, d; sigdigits=3, α=0.05, firth=0.5, Δ=0.0, �
     println("Data: ", [a b; c d])
     println("Test hypotheses: RD = $Δ / RR = $ρ / OR = $ω")
     println("Confidence level: ", 100(1 - α), "%")
-    println("RD: Wald            : RDhat = $(r(RDhat)),  CI_RD = $(r.(ci_rd_wald)),  P-value = $(r(pval_rd_wald))")
-    println("    Zou-Donner      : RDhat = $(r(RDhat)),  CI_RD = $(r.(ci_rd_zou_donner)),  P-value = $(r(pval_rd_zou_donner))")
-    println("    Score           : RDhat = $(r(RDhat)),  CI_RD = $(r.(ci_rd_score)),  P-value = $(r(pval_rd_score))")
-    println("    G-test (Firth)  : RDhat = $(r(RDhat_firth)),  CI_RD = $(r.(ci_rd_gtest)),  P-value = $(r(pval_rd_gtest))")
-    println("RR: Wald for logRR  : RRhat = $(r(RRhat)),  CI_RR = $(r.(ci_rr_wald)),  P-value = $(r(pval_rr_wald))")
-    println("    Score           : RRhat = $(r(RRhat)),  CI_RR = $(r.(ci_rr_score)),  P-value = $(r(pval_rr_score))")
-    println("    G-test (Firth)  : RRhat = $(r(RRhat_firth)),  CI_RD = $(r.(ci_rr_gtest)),  P-value = $(r(pval_rr_gtest))")
     println("OR: Wald for logOR  : ORhat = $(r(ORhat)),  CI_OR = $(r.(ci_or_wald)),  P-value = $(r(pval_or_wald))")
     println("    Score           : ORhat = $(r(ORhat)),  CI_OR = $(r.(ci_or_score)),  P-value = $(r(pval_or_score))")
     println("    G-test (Firth)  : ORhat = $(r(ORhat_firth)),  CI_RD = $(r.(ci_or_gtest)),  P-value = $(r(pval_or_gtest))")
     println("    Fisher (minlike): ORhat = $(r(ORhat_fisher)),  CI_OR = $(r.(ci_or_fisher_minlike)),  P-value = $(r(pval_or_fisher_minlike))")
     println("    Fisher (central): ORhat = $(r(ORhat_fisher)),  CI_OR = $(r.(ci_or_fisher_central)),  P-value = $(r(pval_or_fisher_central))")
+    println("RR: Wald for logRR  : RRhat = $(r(RRhat)),  CI_RR = $(r.(ci_rr_wald)),  P-value = $(r(pval_rr_wald))")
+    println("    Score           : RRhat = $(r(RRhat)),  CI_RR = $(r.(ci_rr_score)),  P-value = $(r(pval_rr_score))")
+    println("    G-test (Firth)  : RRhat = $(r(RRhat_firth)),  CI_RD = $(r.(ci_rr_gtest)),  P-value = $(r(pval_rr_gtest))")
+    println("RD: Wald            : RDhat = $(r(RDhat)),  CI_RD = $(r.(ci_rd_wald)),  P-value = $(r(pval_rd_wald))")
+    println("    Score           : RDhat = $(r(RDhat)),  CI_RD = $(r.(ci_rd_score)),  P-value = $(r(pval_rd_score))")
+    println("    G-test (Firth)  : RDhat = $(r(RDhat_firth)),  CI_RD = $(r.(ci_rd_gtest)),  P-value = $(r(pval_rd_gtest))")
+    println("    Zou-Donner      : RDhat = $(r(RDhat)),  CI_RD = $(r.(ci_rd_zou_donner)),  P-value = $(r(pval_rd_zou_donner))")
 end
 
 function logtick(; xlim=(0.03, 500))
@@ -612,73 +612,75 @@ function logtick(; xlim=(0.03, 500))
 end
 
 function plot_pvaluefunctions2x2(a, b, c, d; firth=0.5, Δ=0.0, ρ=1.0, ω=1.0, 
-        size=(1000, 1000), titlefontsize=12, guidefontsize=10, tickfontsize=6, ytick=0:0.1:1, kwargs...)
+        size=(1000, 1000),
+        titlefontsize=10, guidefontsize=10, tickfontsize=6, plot_titlefontsize=16,
+        ytick=0:0.1:1, kwargs...)
     RDlim = confint_rd_wald(a, b, c, d; α=0.0005)
     RD_wald = plot(Δ -> pvalue_rd_wald(a, b, c, d; Δ), RDlim...;
         label="", title="Wald for RD", xguide="RD", c=1)
-    vline!([Δ]; label="null", c=:black, a=0.3, lw=0.3)
+    vline!([Δ]; label="RD=$Δ", c=:black, a=0.3, lw=0.3)
     RD_zou_donner = plot(Δ -> pvalue_rd_zou_donner(a, b, c, d; Δ), RDlim...;
         label="", title="Zou-Donner for RD", xguide="RD", c=1)
-    vline!([Δ]; label="null", c=:black, a=0.3, lw=0.3)
+    vline!([Δ]; label="RD=$Δ", c=:black, a=0.3, lw=0.3)
     RD_score = plot(Δ -> pvalue_rd_score(a, b, c, d; Δ), RDlim...;
         label="", title="Score for RD", xguide="RD", c=1)
-    vline!([Δ]; label="null", c=:black, a=0.3, lw=0.3)
+    vline!([Δ]; label="RD=$Δ", c=:black, a=0.3, lw=0.3)
     RD_gtest = plot(Δ -> pvalue_rd_gtest(a, b, c, d; Δ, firth), RDlim...;
         label="", title="G-test (Firth) for RD", xguide="RD", c=1)
-    vline!([Δ]; label="null", c=:black, a=0.3, lw=0.3)
+    vline!([Δ]; label="RD=$Δ", c=:black, a=0.3, lw=0.3)
 
     RRlim = confint_rr_wald(a, b, c, d; α=0.0005)
     RRtick = logtick(; xlim=RRlim)
     RR_wald = plot(ρ -> pvalue_rr_wald(a, b, c, d; ρ), RRlim...;
         label="", title="Wald for logRR", xguide="RR (log scale)", c=2, xscale=:log10, xtick=RRtick)
-    vline!([ρ]; label="null", c=:black, a=0.3, lw=0.3)
+    vline!([ρ]; label="RR=$ρ", c=:black, a=0.3, lw=0.3)
     RR_score = plot(ρ -> pvalue_rr_pearson_chisq(a, b, c, d; ρ), RRlim...;
         label="", title="Score for RR", xguide="RR (log scale)", c=2, xscale=:log10, xtick=RRtick)
-    vline!([ρ]; label="null", c=:black, a=0.3, lw=0.3)
+    vline!([ρ]; label="RR=$ρ", c=:black, a=0.3, lw=0.3)
     RR_gtest = plot(ρ -> pvalue_rr_gtest(a, b, c, d; ρ, firth), RRlim...;
         label="", title="G-test (Firth) for RR", xguide="RR (log scale)", c=2, xscale=:log10, xtick=RRtick)
-    vline!([ρ]; label="null", c=:black, a=0.3, lw=0.3)
+    vline!([ρ]; label="RR=$ρ", c=:black, a=0.3, lw=0.3)
 
     ORlim = confint_or_wald(a, b, c, d; α=0.0005)
     ORtick = logtick(; xlim=ORlim)
     OR_wald = plot(ω -> pvalue_or_wald(a, b, c, d; ω), ORlim...;
         label="", title="Wald for logOR", xguide="OR (log scale)", c=3, xscale=:log10, xtick=ORtick)
-    vline!([ω]; label="null", c=:black, a=0.3, lw=0.3)
+    vline!([ω]; label="OR=$ω", c=:black, a=0.3, lw=0.3)
     OR_score = plot(ω -> pvalue_or_pearson_chisq(a, b, c, d; ω), ORlim...;
         label="", title="Score for OR", xguide="OR (log scale)", c=3, xscale=:log10, xtick=ORtick)
-    vline!([ω]; label="null", c=:black, a=0.3, lw=0.3)
+    vline!([ω]; label="OR=$ω", c=:black, a=0.3, lw=0.3)
     OR_gtest = plot(ω -> pvalue_or_gtest(a, b, c, d; ω, firth), ORlim...;
         label="", title="G-test (Firth) for OR", xguide="OR (log scale)", c=3, xscale=:log10, xtick=ORtick)
-    vline!([ω]; label="null", c=:black, a=0.3, lw=0.3)
+    vline!([ω]; label="OR=$ω", c=:black, a=0.3, lw=0.3)
     OR_minlike = plot(ω -> pvalue_or_sterne(a, b, c, d; ω), ORlim...;
         label="", title="Fisher (minlike) for OR", xguide="OR (log scale)", c=3, xscale=:log10, xtick=ORtick)
-    vline!([ω]; label="null", c=:black, a=0.3, lw=0.3)
+    vline!([ω]; label="OR=$ω", c=:black, a=0.3, lw=0.3)
     OR_central = plot(ω -> pvalue_or_clopper_pearson(a, b, c, d; ω), ORlim...;
         label="", title="Fisher (central) for OR", xguide="OR (log scale)", c=3, xscale=:log10, xtick=ORtick)
-    vline!([ω]; label="null", c=:black, a=0.3, lw=0.3)
+    vline!([ω]; label="OR=$ω", c=:black, a=0.3, lw=0.3)
     
     plot(
-        RD_wald, RD_score, RD_gtest,
-        RD_zou_donner, RD_score, RD_gtest,
-        RR_wald, RR_score, RR_gtest,
-        OR_wald, OR_score, OR_gtest,
-        OR_minlike, OR_central; 
+        OR_wald,    RR_wald,    RD_wald, 
+        OR_score,   RR_score,   RD_score, 
+        OR_gtest,   RR_gtest,   RD_gtest, 
+        OR_minlike, OR_central, RD_zou_donner; 
         layout=@layout [
             a b c
             d e f
             g h i
-            j k l
-            m n _
+            k l m
         ])
-    plot!(; plot_title="P-value finctions")
-    plot!(; size, titlefontsize, guidefontsize, tickfontsize, ytick, kwargs...)
+    plot!(; size, titlefontsize, guidefontsize, tickfontsize, plot_titlefontsize, ytick, kwargs...)
+    plot!(; plot_title="P-value functions")
 end
 
 function print_and_plot_results2x2(a, b, c, d; sigdigits=3, α=0.05, firth=0.5, Δ=0.0, ρ=1.0, ω=1.0,
-        size=(1000, 1000), titlefontsize=12, guidefontsize=10, tickfontsize=6, ytick=0:0.1:1, kwargs...)
+        size=(1000, 900), titlefontsize=10, guidefontsize=10, tickfontsize=6, plot_titlefontsize=16,
+        ytick=0:0.1:1, kwargs...)
     print_results2x2(a, b, c, d; sigdigits, α, firth, Δ, ρ, ω)
     println()
-    plot_pvaluefunctions2x2(a, b, c, d; firth, Δ, ρ, ω, size, titlefontsize, tickfontsize, guidefontsize, ytick, kwargs...)
+    plot_pvaluefunctions2x2(a, b, c, d; firth, Δ, ρ, ω, 
+        size, titlefontsize, tickfontsize, guidefontsize, plot_titlefontsize, ytick, kwargs...)
 end
 
 # %% tags=[]
