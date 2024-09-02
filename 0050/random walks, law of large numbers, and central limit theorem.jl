@@ -106,66 +106,90 @@ for s in 1:50
 end
 
 # %%
-using Distributions
-using Random: rand!
-
-function sim_dice_relerr(; n=10^4, p=1/6, relerr=0.05, L=10^7)
-    dice = Multinomial(n, fill(p, 6))
-    nth = Threads.nthreads()
-    Xtmp = [rand(dice) for _ in 1:nth]
-    c = zeros(Int, nth)
-    Threads.@threads :static for i in 1:L
-        tid = Threads.threadid()
-        X = rand!(dice, Xtmp[tid])
-        c[tid] += any(k-> abs(X[k]/(n*p) - 1) > relerr, 1:6)
-    end
-    sum(c)/L
-end
-
-n = 10^4
-println("(X₁,…,X₆) ~ Multinomial(n=$n, [1/6, 1/6, 1/6, 1/6, 1/6, 1/6])")
-for relerr in 0.01:0.01:0.1
-    prob = sim_dice_relerr(; n, relerr)
-    prob1 = round(prob; digits=3)
-    prob2 = round(prob; sigdigits=3)
-    print("(probability that |Xₖ/(np) - 1| > $relerr for some k) = ")
-    if prob1 == prob2
-        println(prob1)
-    else
-        println(prob1, " (= ", prob2, ")")
-    end
-end
+dice = Multinomial(10^4, fill(1/6, 6))
+@code_warntype rand(dice)
 
 # %%
 using Distributions
 using Random: rand!
 
-function sim_dice_abserr(; n=10^4, p=1/6, abserr=0.01, L=10^7)
-    dice = Multinomial(n, fill(p, 6))
+function sim_dice_relerrs(; n=10^4, p=1/6, relerrs=0.01:0.01:0.1, L=10^8)
+    dice = Multinomial{Float64, Vector{Float64}}(n, fill(p, 6))
     nth = Threads.nthreads()
     Xtmp = [rand(dice) for _ in 1:nth]
-    c = zeros(Int, nth)
+    c = [zeros(Int, length(relerrs)) for _ in 1:nth]
     Threads.@threads :static for i in 1:L
         tid = Threads.threadid()
         X = rand!(dice, Xtmp[tid])
-        c[tid] += any(k-> abs(X[k]/n - p) > abserr, 1:6)
+        for (j, relerr) in enumerate(relerrs)
+            c[tid][j] += any(k-> abs(X[k]/(n*p) - 1) > relerr, 1:6)
+        end
     end
-    sum(c)/L
+    probs = sum(c)/L
+    println("(X₁,…,X₆) ~ Multinomial(n=$n, fill(p, 6)) where p=$p")
+    println("Result of simulation with number of iterations = $L:")
+    for (j, relerr) in enumerate(relerrs)
+        prob = probs[j]
+        prob1 = round(prob; digits=4)
+        prob2 = round(prob; sigdigits=4)
+        print("  (probability that |Xₖ/(np) - 1| > $relerr for some k) = ")
+        if prob1 != 0 #prob1 == prob2
+            println(prob1)
+        else
+            println(prob1, " (= ", prob2, ")")
+        end
+    end
+    [relerrs probs]
 end
 
-n = 10000
-println("(X₁,…,X₆) ~ Multinomial(n=$n, [1/6, 1/6, 1/6, 1/6, 1/6, 1/6])")
-for abserr in 0.001:0.001:0.016
-    prob = sim_dice_abserr(; n, abserr)
-    prob1 = round(prob; digits=3)
-    prob2 = round(prob; sigdigits=3)
-    print("(probability that |Xₖ/n - p| > $abserr for some k) = ")
-    if prob1 == prob2
-        println(prob1)
-    else
-        println(prob1, " (= ", prob2, ")")
+@time sim_dice_relerrs(; n=10^4, p=1/6, relerrs=0.01:0.01:0.1, L=10^8)
+
+# %%
+using Distributions
+using Random: rand!
+
+function sim_dice_abserrs(; n=10^4, p=1/6, abserrs=0.001:0.001:0.018, L=10^8)
+    dice = Multinomial{Float64, Vector{Float64}}(n, fill(p, 6))
+    nth = Threads.nthreads()
+    Xtmp = [rand(dice) for _ in 1:nth]
+    c = [zeros(Int, length(abserrs)) for _ in 1:nth]
+    Threads.@threads :static for i in 1:L
+        tid = Threads.threadid()
+        X = rand!(dice, Xtmp[tid])
+        for (j, abserr) in enumerate(abserrs)
+            c[tid][j] += any(k-> abs(X[k]/n - p) > abserr, 1:6)
+        end
     end
+    probs = sum(c)/L
+    println("(X₁,…,X₆) ~ Multinomial(n=$n, fill(p, 6)) where p=$p")
+    println("Result of simulation with number of iterations = $L:")
+    for (j, abserr) in enumerate(abserrs)
+        prob = probs[j]
+        prob1 = round(prob; digits=4)
+        prob2 = round(prob; sigdigits=4)
+        print("  (probability that |Xₖ/n - p| > $abserr for some k) = ")
+        if prob1 != 0 #prob1 == prob2
+            println(prob1)
+        else
+            println(prob1, " (= ", prob2, ")")
+        end
+    end
+    [abserrs probs]
 end
+
+@time sim_dice_abserrs(; n=10^4, p=1/6, abserrs=0.001:0.001:0.015, L=10^8);
+
+# %%
+@time sim_dice_abserrs(; n=10^3, p=1/6, abserrs=0.010:0.002:0.040, L=10^8);
+
+# %%
+@time sim_dice_abserrs(; n=10^5, p=1/6, abserrs=0.0010:0.0002:0.0050, L=10^8);
+
+# %%
+@time sim_dice_abserrs(; n=10^6, p=1/6, abserrs=0.0001:0.0001:0.0017, L=10^8);
+
+# %%
+@time sim_dice_abserrs(; n=10^7, p=1/6, abserrs=0.0001:0.0001:0.0006, L=10^8);
 
 # %%
 using Distributions
