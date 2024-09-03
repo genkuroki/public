@@ -9,7 +9,7 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.10.3
 #   kernelspec:
-#     display_name: Julia 1.10.4
+#     display_name: Julia 1.10.5
 #     language: julia
 #     name: julia-1.10
 # ---
@@ -172,7 +172,7 @@ end
 function _gstat_or(a, b, c, d, δ)
     ã, b̃, c̃, d̃ = a-δ, b+δ, c+δ, d-δ
     2(
-        safemul(a, log(safediv(a, ã))) +
+        safemul(a, log(safediv(a, ã))) +
         safemul(b, log(safediv(b, b̃))) +
         safemul(c, log(safediv(c, c̃))) +
         safemul(d, log(safediv(d, d̃)))
@@ -271,7 +271,7 @@ end
 function _gstat_rr(a, b, c, d, Δ)
     ã, b̃, c̃, d̃ = a-Δ, b, c+Δ, d
     2(
-        safemul(a, log(safediv(a, ã))) +
+        safemul(a, log(safediv(a, ã))) +
         safemul(b, log(safediv(b, b̃))) +
         safemul(c, log(safediv(c, c̃))) +
         safemul(d, log(safediv(d, d̃)))
@@ -401,9 +401,9 @@ function gstat_rd_score(a0, b0, c0, d0; Δ=0.0, firth=0.5, alg=Bisection())
     Δ = clamp(Δ, -1 + eps(), 1 - eps())
     q̃ = estimate_q_given_Δ_rd(a, b, c, d, Δ; alg)
     p̃ = q̃ + Δ
-    ã, b̃, c̃, d̃ = (a+b)*p̃, (a+b)*(1-p̃), (c+d)*q̃, (c+d)*(1-q̃)
+    ã, b̃, c̃, d̃ = (a+b)*p̃, (a+b)*(1-p̃), (c+d)*q̃, (c+d)*(1-q̃)
     2(
-        safemul(a, log(safediv(a, ã))) +
+        safemul(a, log(safediv(a, ã))) +
         safemul(b, log(safediv(b, b̃))) +
         safemul(c, log(safediv(c, c̃))) +
         safemul(d, log(safediv(d, d̃)))
@@ -579,12 +579,12 @@ function print_results2x2(a, b, c, d; sigdigits=3, α=0.05, firth=0.5, Δ=0.0, �
     println("Confidence level: ", 100(1 - α), "%")
     println("OR: Wald for logOR  : ORhat = $(r(ORhat)),  CI_OR = $(r.(ci_or_wald)),  P-value = $(r(pval_or_wald))")
     println("    Score           : ORhat = $(r(ORhat)),  CI_OR = $(r.(ci_or_score)),  P-value = $(r(pval_or_score))")
-    println("    G-test (Firth)  : ORhat = $(r(ORhat_firth)),  CI_RD = $(r.(ci_or_gtest)),  P-value = $(r(pval_or_gtest))")
+    println("    G-test (Firth)  : ORhat = $(r(ORhat_firth)),  CI_OR = $(r.(ci_or_gtest)),  P-value = $(r(pval_or_gtest))")
     println("    Fisher (minlike): ORhat = $(r(ORhat_fisher)),  CI_OR = $(r.(ci_or_fisher_minlike)),  P-value = $(r(pval_or_fisher_minlike))")
     println("    Fisher (central): ORhat = $(r(ORhat_fisher)),  CI_OR = $(r.(ci_or_fisher_central)),  P-value = $(r(pval_or_fisher_central))")
     println("RR: Wald for logRR  : RRhat = $(r(RRhat)),  CI_RR = $(r.(ci_rr_wald)),  P-value = $(r(pval_rr_wald))")
     println("    Score           : RRhat = $(r(RRhat)),  CI_RR = $(r.(ci_rr_score)),  P-value = $(r(pval_rr_score))")
-    println("    G-test (Firth)  : RRhat = $(r(RRhat_firth)),  CI_RD = $(r.(ci_rr_gtest)),  P-value = $(r(pval_rr_gtest))")
+    println("    G-test (Firth)  : RRhat = $(r(RRhat_firth)),  CI_RR = $(r.(ci_rr_gtest)),  P-value = $(r(pval_rr_gtest))")
     println("RD: Wald            : RDhat = $(r(RDhat)),  CI_RD = $(r.(ci_rd_wald)),  P-value = $(r(pval_rd_wald))")
     println("    Score           : RDhat = $(r(RDhat)),  CI_RD = $(r.(ci_rd_score)),  P-value = $(r(pval_rd_score))")
     println("    G-test (Firth)  : RDhat = $(r(RDhat_firth)),  CI_RD = $(r.(ci_rd_gtest)),  P-value = $(r(pval_rd_gtest))")
