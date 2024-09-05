@@ -504,10 +504,11 @@ function confint_or_sterne(a, b, c, d; α = 0.05)
     elseif b == 0 || c == 0
         [exp(find_zero(f, (0.0, find_pos(f, 1.0)))), Inf]
     else
-        ω_L, ω_U = confint_or_pearson_chisq(a, b, c, d; α = α/10)
+        ω_L, ω_U = confint_or_pearson_chisq(a, b, c, d; α)
+        ω_L, ω_U = ω_L/(ω_U/ω_L), ω_U*(ω_U/ω_L)
         ps = exp.(find_zeros(f, log(ω_L), log(ω_U)))
         # 次の行は稀に区間にならない場合への対策
-        [first(ps), last(ps)]
+        isempty(ps) ? [0, Inf] : [first(ps), last(ps)]
     end
 end
 
@@ -531,7 +532,8 @@ function confint_or_clopper_pearson(a, b, c, d; α = 0.05)
     elseif b == 0 || c == 0
         [find_zero(f, 1.0), Inf]
     else
-        ω_L, ω_U = confint_or_wald(a, b, c, d; α = α/10)
+        ω_L, ω_U = confint_or_wald(a, b, c, d; α)
+        ω_L, ω_U = ω_L/(ω_U/ω_L), ω_U*(ω_U/ω_L)
         find_zeros(f, ω_L, ω_U)
     end
 end
@@ -574,7 +576,8 @@ function print_results2x2(a, b, c, d; sigdigits=3, α=0.05, firth=0.5, Δ=0.0, �
     ci_or_fisher_minlike = confint_or_sterne(a, b, c, d; α)
     ci_or_fisher_central = confint_or_clopper_pearson(a, b, c, d; α)
     
-    println("Data: ", [a b; c d])
+    println("Data: [a b; c d] = ", [a b; c d], 
+        ",  a/(a+b) = $(r(a/(a+b))),  c/(c+d) = $(r(c/(c+d)))")
     println("Test hypotheses: OR = $ω / RR = $ρ / RD = $Δ")
     println("Confidence level: ", 100(1 - α), "%")
     println("OR: Wald for logOR  : ORhat = $(r(ORhat)),  CI_OR = $(r.(ci_or_wald)),  P-value = $(r(pval_or_wald))")
@@ -599,12 +602,13 @@ function logtick(; xlim=(0.03, 500))
     mask = Bool[1, 1, 0, 0, 1, 0, 0, 0, 0]
     
     logtick = foldl(vcat, ([10.0^k*x for x in nums if xmin ≤ 10.0^k*x ≤ xmax] for k in a:b))
+    nticks = length(logtick)
     logticklabel_a = foldl(vcat,
-        ([mask[i] ? string(round(10.0^k*x; digits=-k)) : ""
+        ([(nticks ≤ 10 || mask[i]) ? string(round(10.0^k*x; digits=-k)) : ""
                 for (i, x) in enumerate(nums) if xmin ≤ 10.0^k*x ≤ xmax]
             for k in a:-1))
     logticklabel_b = foldl(vcat,
-        ([mask[i] ? string(10^k*x) : ""
+        ([(nticks ≤ 10 || mask[i]) ? string(10^k*x) : ""
                 for (i, x) in enumerate(nums) if xmin ≤ 10.0^k*x ≤ xmax]
             for k in 0:b))
     logticklabel = vcat(logticklabel_a, logticklabel_b)
@@ -615,7 +619,9 @@ function plot_pvaluefunctions2x2(a, b, c, d; firth=0.5, Δ=0.0, ρ=1.0, ω=1.0,
         size=(1000, 1000),
         titlefontsize=10, guidefontsize=10, tickfontsize=6, plot_titlefontsize=16,
         ytick=0:0.1:1, kwargs...)
-    RDlim = confint_rd_wald(a, b, c, d; α=0.0005)
+    RDlim1 = confint_rd_wald(a, b, c, d; α=0.001)
+    RDlim2 = confint_rd_score(a, b, c, d; α=0.001)
+    RDlim = (min(RDlim1[1], RDlim2[1]), max(RDlim1[2], RDlim2[2]))
     RD_wald = plot(Δ -> pvalue_rd_wald(a, b, c, d; Δ), RDlim...;
         label="", title="Wald for RD", xguide="RD", c=1)
     vline!([Δ]; label="RD=$Δ", c=:black, a=0.3, lw=0.3)
@@ -629,7 +635,9 @@ function plot_pvaluefunctions2x2(a, b, c, d; firth=0.5, Δ=0.0, ρ=1.0, ω=1.0,
         label="", title="G-test (Firth) for RD", xguide="RD", c=1)
     vline!([Δ]; label="RD=$Δ", c=:black, a=0.3, lw=0.3)
 
-    RRlim = confint_rr_wald(a, b, c, d; α=0.0005)
+    RRlim1 = confint_rr_wald(a, b, c, d; α=0.001)
+    RRlim2 = confint_rr_pearson_chisq(a, b, c, d; α=0.001)
+    RRlim = (min(RRlim1[1], RRlim2[1]), max(RRlim1[2], RRlim2[2]))
     RRtick = logtick(; xlim=RRlim)
     RR_wald = plot(ρ -> pvalue_rr_wald(a, b, c, d; ρ), RRlim...;
         label="", title="Wald for logRR", xguide="RR (log scale)", c=2, xscale=:log10, xtick=RRtick)
@@ -641,7 +649,9 @@ function plot_pvaluefunctions2x2(a, b, c, d; firth=0.5, Δ=0.0, ρ=1.0, ω=1.0,
         label="", title="G-test (Firth) for RR", xguide="RR (log scale)", c=2, xscale=:log10, xtick=RRtick)
     vline!([ρ]; label="RR=$ρ", c=:black, a=0.3, lw=0.3)
 
-    ORlim = confint_or_wald(a, b, c, d; α=0.0005)
+    ORlim1 = confint_or_wald(a, b, c, d; α=0.001)
+    ORlim2 = confint_or_pearson_chisq(a, b, c, d; α=0.001)
+    ORlim = (min(ORlim1[1], ORlim2[1]), max(ORlim1[2], ORlim2[2]))
     ORtick = logtick(; xlim=ORlim)
     OR_wald = plot(ω -> pvalue_or_wald(a, b, c, d; ω), ORlim...;
         label="", title="Wald for logOR", xguide="OR (log scale)", c=3, xscale=:log10, xtick=ORtick)
@@ -708,5 +718,13 @@ print_and_plot_results2x2(a, b, c, d; Δ, ρ, ω)
 a, b, c, d = 15, 5, 13, 15
 Δ, ρ, ω = 0.1, 1.1, 1.1
 print_and_plot_results2x2(a, b, c, d; Δ, ρ, ω)
+
+# %%
+a, b, c, d = 1, 3000-1, 1, 10000-1
+print_and_plot_results2x2(a, b, c, d)
+
+# %%
+a, b, c, d = 315, 1800-315, 258, 1200-258
+print_and_plot_results2x2(a, b, c, d)
 
 # %%
