@@ -578,8 +578,8 @@ function print_results2x2(a, b, c, d; sigdigits=3, α=0.05, firth=0.5, Δ=0.0, �
     
     println("Data: [a b; c d] = ", [a b; c d], 
         ",  a/(a+b) = $(r(a/(a+b))),  c/(c+d) = $(r(c/(c+d)))")
-    println("Test hypotheses: OR = $ω / RR = $ρ / RD = $Δ")
     println("Confidence level: ", 100(1 - α), "%")
+    println("Test hypotheses: OR = $ω / RR = $ρ / RD = $Δ")
     println("OR: Wald for logOR  : ORhat = $(r(ORhat)),  CI_OR = $(r.(ci_or_wald)),  P-value = $(r(pval_or_wald))")
     println("    Score           : ORhat = $(r(ORhat)),  CI_OR = $(r.(ci_or_score)),  P-value = $(r(pval_or_score))")
     println("    G-test (Firth)  : ORhat = $(r(ORhat_firth)),  CI_OR = $(r.(ci_or_gtest)),  P-value = $(r(pval_or_gtest))")
