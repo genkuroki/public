@@ -456,7 +456,7 @@ plot(P, Q, R, S; size=(1000, 600), layout=(2, 2))
 # %%
 κ, λ, μ, ν = 1, 1, 1, 1
 @show κ, λ, μ, ν
-a, b, c, d = 2, 40-2, 2, 25-2
+a, b, c, d = 2, 25-2, 2, 40-2
 @show a, b, c, d
 @show dist = O.RiskDifferenceDist(a, b, c, d; prior1=Beta(κ,λ), prior2=Beta(μ,ν))
 @show a/(a+b) - c/(c+d)
@@ -470,6 +470,9 @@ a, b, c, d = 2, 40-2, 2, 25-2
 @show O.var_quadgk(dist)
 @show var(dist)
 @show std(dist)
+@show α = 0.06
+@show eti = equal_tailed_interval(dist, α)
+@show hdi = highest_density_interval(dist, α)
 
 L = 10^6
 RDsample = rand(dist, L)
@@ -483,20 +486,20 @@ plot!(δ -> pdf(dist, δ), -1.1, 1.1; label="pdf", ls=:dash)
 vline!([mo]; label="mode")
 
 R = plot(δ -> pvalue_eti(dist, δ), -1.1, 1.1; label="pvalue_eti")
-plot!(equal_tailed_interval(dist), fill(0.05, 2); label="95% ETI", lw=2)
+plot!(eti, fill(α, 2); label="$(100(1-α))% ETI", lw=2)
 vline!([me]; label="median")
 
 S = plot(δ -> pvalue_hdi(dist, δ), -1.1, 1.1; label="pvalue_hdi")
-plot!(highest_density_interval(dist), fill(0.05, 2); label="95% HDI", lw=2)
+plot!(hdi, fill(α, 2); label="$(100(1-α))% HDI", lw=2)
 vline!([mo]; label="mode")
 
 plot(P, Q, R, S; size=(1000, 600), layout=(2, 2))
-plot!(xlim=(-0.4, 0.4))
+plot!(xlim=(-0.3, 0.4))
 
 # %%
 κ, λ, μ, ν = 1, 1, 1, 1
 @show κ, λ, μ, ν
-a, b, c, d = 60, 1200-60, 110, 1600-110
+a, b, c, d = 110, 1600-110, 60, 1200-60
 @show a, b, c, d
 @show dist = O.RiskDifferenceDist(a, b, c, d; prior1=Beta(κ,λ), prior2=Beta(μ,ν))
 @show a/(a+b) - c/(c+d)
@@ -510,6 +513,9 @@ a, b, c, d = 60, 1200-60, 110, 1600-110
 @show O.var_quadgk(dist)
 @show var(dist)
 @show std(dist)
+@show α = 0.06
+@show eti = equal_tailed_interval(dist, α)
+@show hdi = highest_density_interval(dist, α)
 
 L = 10^6
 RDsample = rand(dist, L)
@@ -523,14 +529,14 @@ plot!(δ -> pdf(dist, δ), -1.1, 1.1; label="pdf", ls=:dash)
 vline!([mo]; label="mode")
 
 R = plot(δ -> pvalue_eti(dist, δ), -1.1, 1.1; label="pvalue_eti")
-plot!(equal_tailed_interval(dist), fill(0.05, 2); label="95% ETI", lw=2)
+plot!(eti, fill(α, 2); label="$(100(1-α))% ETI", lw=2)
 vline!([me]; label="median")
 
 S = plot(δ -> pvalue_hdi(dist, δ), -1.1, 1.1; label="pvalue_hdi")
-plot!(highest_density_interval(dist), fill(0.05, 2); label="95% HDI", lw=2)
+plot!(hdi, fill(α, 2); label="$(100(1-α))% HDI", lw=2)
 vline!([mo]; label="mode")
 
 plot(P, Q, R, S; size=(1000, 600), layout=(2, 2))
-plot!(xlim=(-0.06, 0.023))
+plot!(xlim=(-0.023, 0.06))
 
 # %%
