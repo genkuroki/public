@@ -451,6 +451,54 @@ plot!(xlim=(-0.5, 20.5))
 
 plot(P, Q, R, S; size=(1000, 600), layout=(2, 2))
 
+# %% tags=[]
+κ, λ, μ, ν = 0.5, 0.5, 0.5, 0.5
+@show κ, λ, μ, ν
+a, b, c, d = 15, 5, 13, 15
+#a, b, c, d = 13, 15, 15, 5
+@show a, b, c, d
+@show dist = O.OddsRatioDist(a, b, c, d; prior1=Beta(κ,λ), prior2=Beta(μ,ν))
+@show (a/b) / (c/d)
+@show ((κ+a)/(λ+b-1)) / ((μ+c-1)/(ν+d))
+@show me = median(dist)
+@show mo = mode(dist)
+@show ω = quantile(dist, 0.975)
+@show cdf(dist, ω)
+@show O.mean_quadgk(dist)
+@show mean(dist)
+@show O.var_quadgk(dist)
+@show var(dist)
+@show std(dist)
+
+L = 10^6
+ORsample = rand(dist, L)
+
+P = plot(ω -> count(≤(ω), ORsample)/length(ORsample), -0.5, 20.5; label="ecdf")
+plot!(ω -> cdf(dist, ω); label="cdf", ls=:dash)
+vline!([me]; label="median")
+plot!(xlim=(-0.5, 20.5))
+
+Q = stephist(ORsample; norm=true, label="epdf")
+plot!(ω -> pdf(dist, ω), -0.5, 20.5; label="pdf", ls=:dash)
+vline!([mo]; label="mode")
+plot!(xlim=(-0.5, 20.5))
+
+R = plot(ω -> pvalue_eti(dist, ω), -0.5, 20.5; label="pvalue_eti")
+plot!(equal_tailed_interval(dist), fill(0.05, 2); label="95% ETI", lw=2)
+vline!([me]; label="median")
+plot!(xlim=(-0.5, 20.5))
+
+S = plot(ω -> pvalue_hdi(dist, ω), -0.5, 20.5; label="pvalue_hdi")
+plot!(highest_density_interval(dist), fill(0.05, 2); label="95% HDI", lw=2)
+vline!([mo]; label="mode")
+plot!(xlim=(-0.5, 20.5))
+
+plot(P, Q, R, S; size=(1000, 600), layout=(2, 2))
+
+# %%
+
+# %%
+
 # %%
 
 # %%

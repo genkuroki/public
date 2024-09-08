@@ -539,8 +539,327 @@ function confint_or_clopper_pearson(a, b, c, d; α = 0.05)
 end
 
 # %%
-function print_results2x2(a, b, c, d; sigdigits=3, α=0.05, firth=0.5, Δ=0.0, ρ=1.0, ω=1.0)
+# Bayes' methods
+
+using Distributions
+using Optim
+using Roots
+using StatsPlots
+default(fmt=:png)
+
+module O
+
+using Distributions
+using Optim
+using Random
+using Roots
+using QuadGK
+
+# RiskDifferenceDist
+
+struct RiskDifferenceDist{T} <: ContinuousUnivariateDistribution
+    beta1::Beta{T}
+    beta2::Beta{T}
+end
+
+eltype(d::RiskDifferenceDist{T}) where T = T
+
+function RiskDifferenceDist(a, b, c, d; prior1=Beta(1, 1), prior2=Beta(1, 1))
+    κ, λ = params(prior1)
+    μ, ν = params(prior2)
+    RiskDifferenceDist(Beta(κ+a, λ+b), Beta(μ+c, ν+d))
+end
+
+Distributions.minimum(d::RiskDifferenceDist) = -1.0
+Distributions.maximum(d::RiskDifferenceDist) = 1.0
+Distributions.insupport(d::RiskDifferenceDist, x::Real) = minimum(d) ≤ x ≤ maximum(d)
+
+function Random.rand(rng::AbstractRNG, d::RiskDifferenceDist)
+    (; beta1, beta2) = d
+    p, q = rand(rng, beta1), rand(rng, beta2)
+    p - q
+end
+
+function Distributions.cdf(d::RiskDifferenceDist, δ::Real)
+    (; beta1, beta2) = d
+    q0, q1 = max(0, -δ), min(1, 1-δ)
+    quadgk(q -> cdf(beta1, q+δ) * pdf(beta2, q), q0, q1)[1] + ccdf(beta2, q1)
+end
+
+function Distributions.cdf(d::RiskDifferenceDist, δ::Real)
+    (; beta1, beta2) = d
+    q0 = max(0, -δ)
+    quadgk(q -> cdf(beta1, q+δ) * pdf(beta2, q), q0, 1)[1]
+end
+
+function Distributions.pdf(d::RiskDifferenceDist, δ::Real)
+    (; beta1, beta2) = d
+    q0, q1 = max(0, -δ), min(1, 1-δ)
+    quadgk(q -> pdf(beta1, q+δ) * pdf(beta2, q), q0, q1)[1]
+end
+
+Distributions.logpdf(d::RiskDifferenceDist, δ::Real) = log(pdf(d, δ))
+
+function Distributions.quantile(d::RiskDifferenceDist, p)
+    @assert 0 ≤ p ≤ 1
+    p == 0 && return minimum(d)
+    p == 1 && return maximum(d)
+    find_zero(δ -> cdf(d, δ) - p, (-1, 1))
+end
+
+Distributions.median(d::RiskDifferenceDist{T}) where T = quantile(d, 1/2)
+
+mean_quadgk(d::RiskDifferenceDist) = 
+    quadgk(δ -> δ * pdf(d, δ), -1, 1)[1]
+
+function Distributions.mean(d::RiskDifferenceDist)
+    (; beta1, beta2) = d
+    mean(beta1) - mean(beta2)
+end
+
+var_quadgk(d::RiskDifferenceDist) = 
+    quadgk(δ -> (δ - mean(d))^2 * pdf(d, δ), -1, 1)[1]
+
+function Distributions.var(d::RiskDifferenceDist)
+    (; beta1, beta2) = d
+    var(beta1) + var(beta2)
+end
+
+function Distributions.mode(d::RiskDifferenceDist)
+    o = optimize(δ -> -pdf(d, δ), -1, 1, Brent())
+    o.minimizer
+end
+
+# RiskRatioDist
+
+struct RiskRatioDist{T} <: ContinuousUnivariateDistribution
+    beta1::Beta{T}
+    beta2::Beta{T}
+end
+
+eltype(d::RiskRatioDist{T}) where T = T
+
+function RiskRatioDist(a, b, c, d; prior1=Beta(1, 1), prior2=Beta(1, 1))
+    κ, λ = params(prior1)
+    μ, ν = params(prior2)
+    RiskRatioDist(Beta(κ+a, λ+b), Beta(μ+c, ν+d))
+end
+
+Distributions.minimum(d::RiskRatioDist) = 0.0
+Distributions.maximum(d::RiskRatioDist) = Inf
+Distributions.insupport(d::RiskRatioDist, x::Real) = minimum(d) ≤ x ≤ maximum(d)
+
+function Random.rand(rng::AbstractRNG, d::RiskRatioDist)
+    (; beta1, beta2) = d
+    p, q = rand(rng, beta1), rand(rng, beta2)
+    p / q
+end
+
+function Distributions.cdf(d::RiskRatioDist, ρ::Real)
+    (; beta1, beta2) = d
+    quadgk(q -> cdf(beta1, ρ*q) * pdf(beta2, q), 0, 1)[1]
+end
+
+function Distributions.pdf(d::RiskRatioDist, ρ::Real)
+    (; beta1, beta2) = d
+    q1 = min(1, 1/ρ)
+    quadgk(q -> q * pdf(beta1, ρ*q) * pdf(beta2, q), 0, q1)[1]
+end
+
+Distributions.logpdf(d::RiskRatioDist, ρ::Real) = log(pdf(d, ρ))
+
+function Distributions.quantile(d::RiskRatioDist, p)
+    @assert 0 ≤ p ≤ 1
+    p == 0 && return minimum(d)
+    p == 1 && return maximum(d)
+    x = 1.0
+    while cdf(d, x) < p
+        x *= 2
+    end
+    find_zero(ρ -> cdf(d, ρ) - p, (0, x))
+end
+
+Distributions.median(d::RiskRatioDist{T}) where T = quantile(d, 1/2)
+
+mean_quadgk(d::RiskRatioDist) = 
+    quadgk(ρ -> ρ * pdf(d, ρ), 0, Inf)[1]
+
+function Distributions.mean(d::RiskRatioDist)
+    (; beta1, beta2) = d
+    μ, ν = params(beta2)
+    invbeta2 = 1 + BetaPrime(ν, μ)
+    mean(beta1) * mean(invbeta2)
+end
+
+var_quadgk(d::RiskRatioDist) = 
+    quadgk(ρ -> (ρ - mean(d))^2 * pdf(d, ρ), 0, Inf)[1]
+
+function Distributions.var(d::RiskRatioDist)
+    (; beta1, beta2) = d
+    μ, ν = params(beta2)
+    invbeta2 = 1 + BetaPrime(ν, μ)
+    m1, m2 = mean(beta1), mean(invbeta2)
+    (var(beta1) + m1^2)*(var(invbeta2) + m2^2) - m1^2*m2^2
+end
+
+function Distributions.mode(d::RiskRatioDist)
+    x, y = 1.0, 2.0
+    while pdf(d, x) ≤ pdf(d, y)
+        x, y = 2x, 2y
+    end
+    o = optimize(ρ -> -pdf(d, ρ), 0, y, Brent())
+    o.minimizer
+end
+
+# OddsRatioDist
+
+struct OddsRatioDist{T} <: ContinuousUnivariateDistribution
+    bp1::BetaPrime{T}
+    bp2::BetaPrime{T}
+end
+
+eltype(d::OddsRatioDist{T}) where T = T
+
+function OddsRatioDist(a, b, c, d; prior1=Beta(1, 1), prior2=Beta(1, 1))
+    κ, λ = params(prior1)
+    μ, ν = params(prior2)
+    OddsRatioDist(BetaPrime(κ+a, λ+b), BetaPrime(μ+c, ν+d))
+end
+
+Distributions.minimum(d::OddsRatioDist) = 0.0
+Distributions.maximum(d::OddsRatioDist) = Inf
+Distributions.insupport(d::OddsRatioDist, x::Real) = minimum(d) ≤ x ≤ maximum(d)
+
+function Random.rand(rng::AbstractRNG, d::OddsRatioDist)
+    (; bp1, bp2) = d
+    u, v = rand(rng, bp1), rand(rng, bp2)
+    u / v
+end
+
+function Distributions.cdf(d::OddsRatioDist, ω::Real)
+    (; bp1, bp2) = d
+    quadgk(v -> cdf(bp1, ω*v) * pdf(bp2, v), 0, Inf)[1]
+end
+
+function Distributions.pdf(d::OddsRatioDist, ω::Real)
+    (; bp1, bp2) = d
+    quadgk(v -> v * pdf(bp1, ω*v) * pdf(bp2, v), 0, Inf)[1]
+end
+
+Distributions.logpdf(d::OddsRatioDist, ω::Real) = log(pdf(d, ω))
+
+function Distributions.quantile(d::OddsRatioDist, p)
+    @assert 0 ≤ p ≤ 1
+    p == 0 && return minimum(d)
+    p == 1 && return maximum(d)
+    x = 1.0
+    while cdf(d, x) < p
+        x *= 2
+    end
+    find_zero(ω -> cdf(d, ω) - p, (0, x))
+end
+
+Distributions.median(d::OddsRatioDist{T}) where T = quantile(d, 1/2)
+
+mean_quadgk(d::OddsRatioDist) = 
+    quadgk(ω -> ω * pdf(d, ω), 0, Inf)[1]
+
+function Distributions.mean(d::OddsRatioDist)
+    (; bp1, bp2) = d
+    μ, ν = params(bp2)
+    invbp2 = BetaPrime(ν, μ)
+    mean(bp1) * mean(invbp2)
+end
+
+var_quadgk(d::OddsRatioDist) = 
+    quadgk(ω -> (ω - mean(d))^2 * pdf(d, ω), 0, Inf)[1]
+
+function Distributions.var(d::OddsRatioDist)
+    (; bp1, bp2) = d
+    μ, ν = params(bp2)
+    invbp2 = BetaPrime(ν, μ)
+    m1, m2 = mean(bp1), mean(invbp2)
+    (var(bp1) + m1^2)*(var(invbp2) + m2^2) - m1^2*m2^2
+end
+
+function Distributions.mode(d::OddsRatioDist)
+    x, y = 1.0, 2.0
+    while pdf(d, x) ≤ pdf(d, y)
+        x, y = 2x, 2y
+    end
+    o = optimize(ω -> -pdf(d, ω), 0, y, Brent())
+    o.minimizer
+end
+
+end
+
+# pvalue functions
+
+pvalue_eti(dist::ContinuousUnivariateDistribution, x) =
+    min(2cdf(dist, x), 2ccdf(dist, x))
+
+function pvalue_hdi(dist::ContinuousUnivariateDistribution, x)
+    distmin, distmax = extrema(dist)
+    (x ≤ distmin || distmax ≤ x) && return 0.0
+    m = mode(dist)
+    px = pdf(dist, x)
+    if pdf(dist, m) ≈ px
+        1.0
+    elseif x < m
+        z = if distmax < Inf
+            distmax
+        else
+            h = 1.0
+            while pdf(dist, m + h) ≥ px
+                h *= 2
+            end
+            m + h
+        end
+        y = find_zero(y -> pdf(dist, y) - px, (m, z))
+        cdf(dist, x) + ccdf(dist, y)
+    else
+        z = if distmin > -Inf
+            distmin
+        else
+            h = 1.0
+            while pdf(dist, m - h) ≥ px
+                h *= 2
+            end
+            m - h
+        end
+        y = find_zero(y -> pdf(dist, y) - px, (z, m))
+        cdf(dist, y) + ccdf(dist, x)
+    end
+end
+
+# compatibility interval functions
+
+function equal_tailed_interval(dist, α=0.05)
+    L, U = quantile(dist, α/2), cquantile(dist, α/2)
+    [L, U]
+end
+
+function highest_density_interval(dist, α=0.05)
+    α == 0 && return [minimum(dist),  maximum(dist)]
+    α == 1 && return fill(mode(dist), 2)
+    f(t) = quantile(dist, t + (1 - α)) - quantile(dist, t)
+    o = optimize(f, 0, α, Brent())
+    t_L = o.minimizer
+    L, U = quantile(dist, t_L), quantile(dist, t_L + (1 - α))
+    [L, U]
+end
+
+# %%
+function print_results2x2(a, b, c, d;
+        sigdigits=3, α=0.05, firth=0.5, Δ=0.0, ρ=1.0, ω=1.0,
+        prior1=Beta(1, 1), prior2=Beta(1, 1)
+    )
     r(x) = round(x; sigdigits)
+    
+    postOR = O.OddsRatioDist(a, b, c, d; prior1, prior2)
+    postRR = O.RiskRatioDist(a, b, c, d; prior1, prior2)
+    postRD = O.RiskDifferenceDist(a, b, c, d; prior1, prior2)
+    
     ORhat = oddsratiohat(a, b, c, d)
     RRhat = riskratiohat(a, b, c, d)
     RDhat = riskdiffhat(a, b, c, d)
@@ -562,6 +881,12 @@ function print_results2x2(a, b, c, d; sigdigits=3, α=0.05, firth=0.5, Δ=0.0, �
     pval_rd_gtest = pvalue_rd_gtest(a, b, c, d; Δ, firth)
     pval_or_fisher_minlike = pvalue_or_sterne(a, b, c, d; ω)
     pval_or_fisher_central = pvalue_or_clopper_pearson(a, b, c, d; ω)
+    pval_or_eti = pvalue_eti(postOR, ω)
+    pval_or_hdi = pvalue_hdi(postOR, ω)
+    pval_rr_eti = pvalue_eti(postRR, ρ)
+    pval_rr_hdi = pvalue_hdi(postRR, ρ)
+    pval_rd_eti = pvalue_eti(postRD, Δ)
+    pval_rd_hdi = pvalue_hdi(postRD, Δ)
 
     ci_or_wald = confint_or_wald(a, b, c, d; α)
     ci_rr_wald = confint_rr_wald(a, b, c, d; α)
@@ -575,23 +900,48 @@ function print_results2x2(a, b, c, d; sigdigits=3, α=0.05, firth=0.5, Δ=0.0, �
     ci_rd_gtest = confint_rd_gtest(a, b, c, d; α, firth)
     ci_or_fisher_minlike = confint_or_sterne(a, b, c, d; α)
     ci_or_fisher_central = confint_or_clopper_pearson(a, b, c, d; α)
+    ci_or_eti = equal_tailed_interval(postOR, α)
+    ci_or_hdi = highest_density_interval(postOR, α)
+    ci_rr_eti = equal_tailed_interval(postRR, α)
+    ci_rr_hdi = highest_density_interval(postRR, α)
+    ci_rd_eti = equal_tailed_interval(postRD, α)
+    ci_rd_hdi = highest_density_interval(postRD, α)
     
     println("Data: [a b; c d] = ", [a b; c d], 
         ",  a/(a+b) = $(r(a/(a+b))),  c/(c+d) = $(r(c/(c+d)))")
     println("Confidence level: ", 100(1 - α), "%")
     println("Test hypotheses: OR = $ω / RR = $ρ / RD = $Δ")
+    println("Prior: Beta$(params(prior1)) × Beta$(params(prior2))")
+    
+    println()
+    
     println("OR: Wald for logOR  : ORhat = $(r(ORhat)),  CI_OR = $(r.(ci_or_wald)),  P-value = $(r(pval_or_wald))")
     println("    Score           : ORhat = $(r(ORhat)),  CI_OR = $(r.(ci_or_score)),  P-value = $(r(pval_or_score))")
     println("    G-test (Firth)  : ORhat = $(r(ORhat_firth)),  CI_OR = $(r.(ci_or_gtest)),  P-value = $(r(pval_or_gtest))")
     println("    Fisher (minlike): ORhat = $(r(ORhat_fisher)),  CI_OR = $(r.(ci_or_fisher_minlike)),  P-value = $(r(pval_or_fisher_minlike))")
     println("    Fisher (central): ORhat = $(r(ORhat_fisher)),  CI_OR = $(r.(ci_or_fisher_central)),  P-value = $(r(pval_or_fisher_central))")
+    println("    Bayes  (HDI)    : ORhat = $(r(mode(postOR))),  CI_OR = $(r.(ci_or_hdi)),  P-value = $(r(pval_or_hdi))")
+    println("    Bayes  (ETI)    : ORhat = $(r(median(postOR))),  CI_OR = $(r.(ci_or_eti)),  P-value = $(r(pval_or_eti))")
+    println("    Posterior of OR : mean  = $(r(mean(postOR))),  std = $(r(std(postOR)))")
+    
+    println()
+    
     println("RR: Wald for logRR  : RRhat = $(r(RRhat)),  CI_RR = $(r.(ci_rr_wald)),  P-value = $(r(pval_rr_wald))")
     println("    Score           : RRhat = $(r(RRhat)),  CI_RR = $(r.(ci_rr_score)),  P-value = $(r(pval_rr_score))")
     println("    G-test (Firth)  : RRhat = $(r(RRhat_firth)),  CI_RR = $(r.(ci_rr_gtest)),  P-value = $(r(pval_rr_gtest))")
+    println("    Bayes  (HDI)    : ORhat = $(r(mode(postRR))),  CI_RR = $(r.(ci_rr_hdi)),  P-value = $(r(pval_rr_hdi))")
+    println("    Bayes  (ETI)    : ORhat = $(r(median(postRR))),  CI_RR = $(r.(ci_rr_eti)),  P-value = $(r(pval_rr_eti))")
+    println("    Posterior of RR : mean  = $(r(mean(postRR))),  std = $(r(std(postRR)))")
+    
+    println()
+    
     println("RD: Wald            : RDhat = $(r(RDhat)),  CI_RD = $(r.(ci_rd_wald)),  P-value = $(r(pval_rd_wald))")
     println("    Score           : RDhat = $(r(RDhat)),  CI_RD = $(r.(ci_rd_score)),  P-value = $(r(pval_rd_score))")
     println("    G-test (Firth)  : RDhat = $(r(RDhat_firth)),  CI_RD = $(r.(ci_rd_gtest)),  P-value = $(r(pval_rd_gtest))")
     println("    Zou-Donner      : RDhat = $(r(RDhat)),  CI_RD = $(r.(ci_rd_zou_donner)),  P-value = $(r(pval_rd_zou_donner))")
+    println("    Bayes  (HDI)    : ORhat = $(r(mode(postRD))),  CI_RD = $(r.(ci_rd_hdi)),  P-value = $(r(pval_rd_hdi))")
+    println("    Bayes  (ETI)    : ORhat = $(r(median(postRD))),  CI_RD = $(r.(ci_rd_eti)),  P-value = $(r(pval_rd_eti))")
+    println("    Posterior of RD : mean  = $(r(mean(postRD))),  std = $(r(std(postRD)))")
 end
 
 function logtick(; xlim=(0.03, 500))
@@ -615,10 +965,16 @@ function logtick(; xlim=(0.03, 500))
     (logtick, logticklabel)
 end
 
-function plot_pvaluefunctions2x2(a, b, c, d; firth=0.5, Δ=0.0, ρ=1.0, ω=1.0, 
-        size=(1000, 1000),
+function plot_pvaluefunctions2x2(a, b, c, d; firth=0.5, Δ=0.0, ρ=1.0, ω=1.0,
+        prior1=Beta(1, 1), prior2=Beta(1, 1),
+        size=(1000, 1200),
         titlefontsize=10, guidefontsize=10, tickfontsize=6, plot_titlefontsize=16,
-        ytick=0:0.1:1, kwargs...)
+        ytick=0:0.1:1, kwargs...
+    )
+    postOR = O.OddsRatioDist(a, b, c, d; prior1, prior2)
+    postRR = O.RiskRatioDist(a, b, c, d; prior1, prior2)
+    postRD = O.RiskDifferenceDist(a, b, c, d; prior1, prior2)
+    
     RDlim1 = confint_rd_wald(a, b, c, d; α=0.001)
     RDlim2 = confint_rd_score(a, b, c, d; α=0.001)
     RDlim = (min(RDlim1[1], RDlim2[1]), max(RDlim1[2], RDlim2[2]))
@@ -634,6 +990,12 @@ function plot_pvaluefunctions2x2(a, b, c, d; firth=0.5, Δ=0.0, ρ=1.0, ω=1.0,
     RD_gtest = plot(Δ -> pvalue_rd_gtest(a, b, c, d; Δ, firth), RDlim...;
         label="", title="G-test (Firth) for RD", xguide="RD", c=1)
     vline!([Δ]; label="RD=$Δ", c=:black, a=0.3, lw=0.3)
+    RD_hdi = plot(Δ -> pvalue_hdi(postRD, Δ), RDlim...;
+        label="", title="Bayes (HDI) for RD", xguide="RD", c=1)
+    vline!([Δ]; label="RD=$Δ", c=:black, a=0.3, lw=0.3)
+    RD_eti = plot(Δ -> pvalue_eti(postRD, Δ), RDlim...;
+        label="", title="Bayes (ETI) for RD", xguide="RD", c=1)
+    vline!([Δ]; label="RD=$Δ", c=:black, a=0.3, lw=0.3)
 
     RRlim1 = confint_rr_wald(a, b, c, d; α=0.001)
     RRlim2 = confint_rr_pearson_chisq(a, b, c, d; α=0.001)
@@ -647,6 +1009,12 @@ function plot_pvaluefunctions2x2(a, b, c, d; firth=0.5, Δ=0.0, ρ=1.0, ω=1.0,
     vline!([ρ]; label="RR=$ρ", c=:black, a=0.3, lw=0.3)
     RR_gtest = plot(ρ -> pvalue_rr_gtest(a, b, c, d; ρ, firth), RRlim...;
         label="", title="G-test (Firth) for RR", xguide="RR (log scale)", c=2, xscale=:log10, xtick=RRtick)
+    vline!([ρ]; label="RR=$ρ", c=:black, a=0.3, lw=0.3)
+    RR_hdi = plot(ρ -> pvalue_hdi(postRR, ρ), RRlim...;
+        label="", title="Bayes (HDI) for RR", xguide="RR (log scale)", c=2, xscale=:log10, xtick=RRtick)
+    vline!([ρ]; label="RR=$ρ", c=:black, a=0.3, lw=0.3)
+    RR_eti = plot(ρ -> pvalue_eti(postRR, ρ), RRlim...;
+        label="", title="Bayes (ETI) for RR", xguide="RR (log scale)", c=2, xscale=:log10, xtick=RRtick)
     vline!([ρ]; label="RR=$ρ", c=:black, a=0.3, lw=0.3)
 
     ORlim1 = confint_or_wald(a, b, c, d; α=0.001)
@@ -668,28 +1036,39 @@ function plot_pvaluefunctions2x2(a, b, c, d; firth=0.5, Δ=0.0, ρ=1.0, ω=1.0,
     OR_central = plot(ω -> pvalue_or_clopper_pearson(a, b, c, d; ω), ORlim...;
         label="", title="Fisher (central) for OR", xguide="OR (log scale)", c=3, xscale=:log10, xtick=ORtick)
     vline!([ω]; label="OR=$ω", c=:black, a=0.3, lw=0.3)
+    OR_hdi = plot(ω -> pvalue_hdi(postOR, ω), ORlim...;
+        label="", title="Bayes (HDI) for OR", xguide="OR (log scale)", c=3, xscale=:log10, xtick=ORtick)
+    vline!([ω]; label="OR=$ω", c=:black, a=0.3, lw=0.3)
+    OR_eti = plot(ω -> pvalue_eti(postOR, ω), ORlim...;
+        label="", title="Bayes (ETI) for OR", xguide="OR (log scale)", c=3, xscale=:log10, xtick=ORtick)
+    vline!([ω]; label="OR=$ω", c=:black, a=0.3, lw=0.3)
     
     plot(
-        OR_wald,    RR_wald,    RD_wald, 
-        OR_score,   RR_score,   RD_score, 
-        OR_gtest,   RR_gtest,   RD_gtest, 
+        OR_wald,    RR_wald,    RD_wald,
+        OR_score,   RR_score,   RD_score,
+        OR_gtest,   RR_gtest,   RD_gtest,
+        OR_hdi,     RR_hdi,     RD_hdi,
+        OR_eti,     RR_eti,     RD_eti,
         OR_minlike, OR_central, RD_zou_donner; 
         layout=@layout [
             a b c
             d e f
             g h i
             k l m
+            n o p
+            q r s
         ])
     plot!(; size, titlefontsize, guidefontsize, tickfontsize, plot_titlefontsize, ytick, kwargs...)
     plot!(; plot_title="P-value functions")
 end
 
 function print_and_plot_results2x2(a, b, c, d; sigdigits=3, α=0.05, firth=0.5, Δ=0.0, ρ=1.0, ω=1.0,
-        size=(1000, 900), titlefontsize=10, guidefontsize=10, tickfontsize=6, plot_titlefontsize=16,
+        prior1=Beta(1, 1), prior2=Beta(1, 1),
+        size=(1000, 1400), titlefontsize=10, guidefontsize=10, tickfontsize=6, plot_titlefontsize=16,
         ytick=0:0.1:1, kwargs...)
-    print_results2x2(a, b, c, d; sigdigits, α, firth, Δ, ρ, ω)
+    print_results2x2(a, b, c, d; sigdigits, α, firth, Δ, ρ, ω, prior1, prior2)
     println()
-    plot_pvaluefunctions2x2(a, b, c, d; firth, Δ, ρ, ω, 
+    plot_pvaluefunctions2x2(a, b, c, d; firth, Δ, ρ, ω, prior1, prior2,
         size, titlefontsize, tickfontsize, guidefontsize, plot_titlefontsize, ytick, kwargs...)
 end
 
