@@ -1106,4 +1106,39 @@ print_and_plot_results2x2(a, b, c, d)
 a, b, c, d = 315, 1800-315, 258, 1200-258
 print_and_plot_results2x2(a, b, c, d)
 
+# %% [markdown]
+# https://www.carenet.com/news/general/carenet/56498
+
+# %%
+m, p̂ = 106, 0.736
+n, q̂ = 106, 0.726
+@show m*p̂ n*q̂
+a, b, c, d = round.(Int, (m*p̂, m*(1-p̂), n*q̂, n*(1-q̂)))
+print_and_plot_results2x2(a, b, c, d)
+
+# %%
+m, p̂ = 106, 0.736
+n, q̂ = 106, 0.726
+@show m*p̂ n*q̂
+a, b, c, d = round.(Int, (m*p̂, m*(1-p̂), n*q̂, n*(1-q̂)))
+print_and_plot_results2x2(a, b, c, d; ρ=0.8, Δ=-0.15, ω=0.5)
+
+# %% [markdown]
+# https://x.com/earl_med_tw/status/1834769084657156328
+#
+# <img src="IMG_5929.jpeg" width=500>
+
+# %%
+a, b, c, d = 77, 421-77, 94, 417-94
+print_and_plot_results2x2(a, b, c, d)
+
+# %% [markdown]
+# https://x.com/earl_med_tw/status/1834769084657156328
+#
+# <img src="IMG_5929.jpeg" width=500>
+
+# %%
+a, b, c, d = 19, 413-19, 19, 408-19
+print_and_plot_results2x2(a, b, c, d)
+
 # %%
