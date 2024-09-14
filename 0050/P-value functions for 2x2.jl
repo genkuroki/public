@@ -929,8 +929,8 @@ function print_results2x2(a, b, c, d;
     println("RR: Wald for logRR  : RRhat = $(r(RRhat)),  CI_RR = $(r.(ci_rr_wald)),  P-value = $(r(pval_rr_wald))")
     println("    Score           : RRhat = $(r(RRhat)),  CI_RR = $(r.(ci_rr_score)),  P-value = $(r(pval_rr_score))")
     println("    G-test (Firth)  : RRhat = $(r(RRhat_firth)),  CI_RR = $(r.(ci_rr_gtest)),  P-value = $(r(pval_rr_gtest))")
-    println("    Bayes  (HDI)    : ORhat = $(r(mode(postRR))),  CI_RR = $(r.(ci_rr_hdi)),  P-value = $(r(pval_rr_hdi))")
-    println("    Bayes  (ETI)    : ORhat = $(r(median(postRR))),  CI_RR = $(r.(ci_rr_eti)),  P-value = $(r(pval_rr_eti))")
+    println("    Bayes  (HDI)    : RRhat = $(r(mode(postRR))),  CI_RR = $(r.(ci_rr_hdi)),  P-value = $(r(pval_rr_hdi))")
+    println("    Bayes  (ETI)    : RRhat = $(r(median(postRR))),  CI_RR = $(r.(ci_rr_eti)),  P-value = $(r(pval_rr_eti))")
     println("    Posterior of RR : mean  = $(r(mean(postRR))),  std = $(r(std(postRR)))")
     
     println()
@@ -939,8 +939,8 @@ function print_results2x2(a, b, c, d;
     println("    Score           : RDhat = $(r(RDhat)),  CI_RD = $(r.(ci_rd_score)),  P-value = $(r(pval_rd_score))")
     println("    G-test (Firth)  : RDhat = $(r(RDhat_firth)),  CI_RD = $(r.(ci_rd_gtest)),  P-value = $(r(pval_rd_gtest))")
     println("    Zou-Donner      : RDhat = $(r(RDhat)),  CI_RD = $(r.(ci_rd_zou_donner)),  P-value = $(r(pval_rd_zou_donner))")
-    println("    Bayes  (HDI)    : ORhat = $(r(mode(postRD))),  CI_RD = $(r.(ci_rd_hdi)),  P-value = $(r(pval_rd_hdi))")
-    println("    Bayes  (ETI)    : ORhat = $(r(median(postRD))),  CI_RD = $(r.(ci_rd_eti)),  P-value = $(r(pval_rd_eti))")
+    println("    Bayes  (HDI)    : RDhat = $(r(mode(postRD))),  CI_RD = $(r.(ci_rd_hdi)),  P-value = $(r(pval_rd_hdi))")
+    println("    Bayes  (ETI)    : RDhat = $(r(median(postRD))),  CI_RD = $(r.(ci_rd_eti)),  P-value = $(r(pval_rd_eti))")
     println("    Posterior of RD : mean  = $(r(mean(postRD))),  std = $(r(std(postRD)))")
 end
 
