@@ -34,6 +34,7 @@ default(fmt=:png)
 safemul(x, y) = x == 0 ? zero(x/y) : isinf(x) ? oftype(x, Inf) : x*y
 safediv(x, y) = x == 0 ? zero(x/y) : isinf(y) ? zero(y) : x/y
 x ⪅ y = x < y || x ≈ y
+_ecdf(A, x) = count(≤(x), A) / length(A)
 
 # %%
 # Wald's method for log OR
@@ -1140,5 +1141,120 @@ print_and_plot_results2x2(a, b, c, d)
 # %%
 a, b, c, d = 19, 413-19, 19, 408-19
 print_and_plot_results2x2(a, b, c, d)
+
+# %% [markdown]
+# * https://www.sciencedirect.com/science/article/pii/S0140673624012959#bib5
+# * https://scholar.google.com/scholar?cluster=11596700070951086870
+# * https://scholar.google.com/scholar?cluster=3063420997332872822
+
+# %%
+a, b, c, d = 44, 124-44, 57, 125-57
+@show 0.35/0.46
+println()
+print_and_plot_results2x2(a, b, c, d; sigdigits=4)
+
+# %%
+a, b, c, d = 44, 124-44, 57, 125-57
+prior1, prior2 = Beta(1, 1), Beta(1, 1)
+@show [a b; c d] prior1 prior2 
+postRR = O.RiskRatioDist(a, b, c, d; prior1, prior2)
+@show cdf(postRR, 1) cdf(postRR, 0.9) cdf(postRR, 0.8) cdf(postRR, 0.67)
+plot(ρ -> cdf(postRR, ρ), 0.45, 1.15; label="cdf(posterior_RR, ρ)")
+plot!(xguide="ρ", yguide="probability of RR ≤ ρ")
+plot!(xtick=0:0.1:2, ytick=0:0.05:1)
+
+# %%
+function make_cdf_RR(a, b, c, d; prior1=Beta(1, 1), prior_logRR=Normal(0, 10), L=10^6)
+    p0 = zeros(L)
+    q0 = zeros(L)
+    RR0 = zeros(L)
+    i = 1
+    while i ≤ L
+        q0[i] = rand(prior1)
+        logRR = rand(prior_logRR)
+        RR0[i] = exp(logRR)
+        p0[i] = q0[i] * RR0[i]
+        p0[i] > 1 && continue
+        i +=1
+    end
+    sp = sortperm(RR0)
+    RR = RR0[sp]
+    p = p0[sp]
+    q = q0[sp]
+    Z = sum(pdf(Binomial(a+b, p[i]), a) * pdf(Binomial(c+d, q[i]), c) for i in 1:L)
+
+    function cdf_RR(ρ)
+        k = 1
+        num = 0.0
+        while k ≤ L && RR[k] ≤ ρ
+            num += pdf(Binomial(a+b, p[k]), a) * pdf(Binomial(c+d, q[k]), c)
+            k += 1
+        end
+        num / Z
+    end
+    
+    cdf_RR
+end
+
+# %%
+a, b, c, d = 44, 124-44, 57, 125-57
+prior1 = Beta(1, 1)
+prior_logRR = Normal(0, 10)
+@show [a b; c d] prior1 prior_logRR
+cdf_RR = make_cdf_RR(a, b, c, d; prior1, prior_logRR)
+@show cdf_RR(1) cdf_RR(0.9) cdf_RR(0.8) cdf_RR(0.67)
+
+ρs = range(0.45, 1.15, 101)
+plot(ρs, cdf_RR; label="cdf(posterior_RR, ρ)")
+plot!(xguide="ρ", yguide="probability of RR ≤ ρ")
+plot!(xtick=0:0.1:2, ytick=0:0.05:1)
+
+# %%
+a, b, c, d = 44, 124-44, 57, 125-57
+prior1 = Beta(1, 1)
+prior_logRR = Normal(log(0.67), 0.25)
+@show [a b; c d] prior1 prior_logRR
+cdf_RR = make_cdf_RR(a, b, c, d; prior1, prior_logRR)
+@show cdf_RR(1) cdf_RR(0.9) cdf_RR(0.8) cdf_RR(0.67)
+ρs = range(0.45, 1.15, 101)
+plot(ρs, cdf_RR; label="cdf(posterior_RR, ρ)")
+plot!(xguide="ρ", yguide="probability of RR ≤ ρ")
+plot!(xtick=0:0.1:2, ytick=0:0.05:1)
+
+# %%
+a, b, c, d = 44, 124-44, 57, 125-57
+prior1 = Beta(1, 1)
+prior_logRR = Normal(log(0.78), 0.15)
+@show [a b; c d] prior1 prior_logRR
+cdf_RR = make_cdf_RR(a, b, c, d; prior1, prior_logRR)
+@show cdf_RR(1) cdf_RR(0.9) cdf_RR(0.8) cdf_RR(0.67)
+ρs = range(0.45, 1.15, 101)
+plot(ρs, cdf_RR; label="cdf(posterior_RR, ρ)")
+plot!(xguide="ρ", yguide="probability of RR ≤ ρ")
+plot!(xtick=0:0.1:2, ytick=0:0.05:1)
+
+# %%
+a, b, c, d = 44, 124-44, 57, 125-57
+prior1 = Beta(1, 1)
+prior_logRR = Normal(0, 0.24)
+@show [a b; c d] prior1 prior_logRR
+cdf_RR = make_cdf_RR(a, b, c, d; prior1, prior_logRR)
+@show cdf_RR(1) cdf_RR(0.9) cdf_RR(0.8) cdf_RR(0.67)
+ρs = range(0.45, 1.15, 101)
+plot(ρs, cdf_RR; label="cdf(posterior_RR, ρ)")
+plot!(xguide="ρ", yguide="probability of RR ≤ ρ")
+plot!(xtick=0:0.1:2, ytick=0:0.05:1)
+
+# %%
+a, b, c, d = 44, 124-44, 57, 125-57
+prior1 = Beta(1, 1)
+prior_logRR = Normal(0, 0.15)
+@show [a b; c d] prior1 prior_logRR
+cdf_RR = make_cdf_RR(a, b, c, d; prior1, prior_logRR)
+@show cdf_RR(1) cdf_RR(0.9) cdf_RR(0.8) cdf_RR(0.67)
+ρs = range(0.45, 1.15, 101)
+plot(ρs, cdf_RR; label="cdf(posterior_RR, ρ)")
+plot!(xguide="ρ", yguide="probability of RR ≤ ρ")
+plot!(xtick=0:0.1:2, ytick=0:0.05:1)
 
 # %%
