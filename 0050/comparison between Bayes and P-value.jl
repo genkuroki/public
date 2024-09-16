@@ -82,6 +82,7 @@ function print_and_show_results_bayes(;
         N = 10^5,
         nchains = min(Threads.nthreads(), 10),
         legend = :outertop,
+        xlim_RR = nothing, 
         kwargs...
     )
     chain = sample(model_rr(a, b, c, d; prior_logRR), NUTS(), MCMCThreads(), N, nchains)
@@ -93,21 +94,24 @@ function print_and_show_results_bayes(;
     hdi_logRR = collect(_hdi(logRR; α))
     mode_logRR = mean(_hdi(logRR; α=0.99));
 
-    @show [a b; c d] prior_logRR N nchains
+    println("prior of log(RR): ", prior_logRR)
+    println("new data: ", [a b; c d])
     println("posterior probabilities of RR ≤ 1, 0.9, 0.8, 0.67 = ", 
         round.(_ecdf.((logRR,), log.((1.0, 0.9, 0.8, 0.67))); sigdigits=4))
-    println("quantiles of (0.025, 0.25, 0.5, 0.75, 0.975) = ", 
+    println("posterior quantiles of (0.025, 0.25, 0.5, 0.75, 0.975) = ", 
         round.(exp.(Q_logRR); sigdigits=4))
-    println("$(100(1-α))% HDI of posterior = ", round.(exp.(hdi_logRR); sigdigits=4))
+    println("posterior $(100(1-α))% HDI = ", round.(exp.(hdi_logRR); sigdigits=4))
     println("mode of posterior = ", round.(exp.(mode_logRR); sigdigits=4))
-    xlim_RR = extrema(exp.(logRR)) .* (0.8, 1.4)
+    if isnothing(xlim_RR)
+        xlim_RR = extrema(exp.(logRR)) .* (0.8, 1.4)
+    end
     xlim_logRR = log.(xlim_RR)
     xtick_RR = logtick(; xlim=xlim_RR)
     xtick_logRR = (log.(xtick_RR[1]), xtick_RR[2])
     plot(f, xlim_logRR...; norm=true, label="posterior density of log(RR)")
     plot!(prior_logRR, xlim_logRR...; label="prior density of log(RR)", ls=:dash)
-    plot!(hdi_logRR, f.(hdi_logRR); label="$(100(1-α))% HDI of posterior", lw=3)
-    vline!([mode_logRR]; label="mode of posterior", ls=:dot)
+    plot!(hdi_logRR, f.(hdi_logRR); label="posterior $(100(1-α))% HDI", lw=3)
+    vline!([mode_logRR]; label="mode of posterior density", ls=:dot)
     vline!([0.0]; label="RR = 1", c=:black, alpha=0.7, lw=0.5)
     plot!(; xguide="RR", xtick=xtick_logRR)
     plot!(; legend, kwargs...)
@@ -169,26 +173,30 @@ function confint_rr_score(a, b, c, d; α=0.05)
     [exp(L), exp(U)]
 end
 
-###
-
 function print_and_show_results_pvalue(;
         a = 44,
         b = 124-44,
         c = 57,
         d = 125-57,
-        prior_data = (; RR0=1.0, n0=0),
+        prior_data_setting = (; RR0=1.0, n0=0),
+        prior_data = nothing,
         α = 0.05,
         legend = :outertop,
+        xlim_RR = nothing,
         kwargs...
     )
     
-    (; RR0, n0) = prior_data
-    q̃ = c/(c+d)
-    p̃ = min(1, q̃ * RR0)
-    ã, b̃, c̃, d̃ = round.(Int, (n0*p̃, n0*(1-p̃), n0*q̃, n0*(1-q̃)))
-    @show [a b; c d]
-    @show prior_data
-    @show [ã b̃; c̃ d̃]
+    if isnothing(prior_data)
+        (; RR0, n0) = prior_data_setting
+        q̃ = c/(c+d)
+        p̃ = min(1, q̃ * RR0)
+        ã, b̃, c̃, d̃ = round.(Int, (n0*p̃, n0*(1-p̃), n0*q̃, n0*(1-q̃)))
+        prior_data_setting
+    else
+        ã, b̃, c̃, d̃ = prior_data
+    end
+    println("prior data: ", [ã b̃; c̃ d̃])
+    println("new data:   ", [a b; c d])
     
     aa, bb, cc, dd = a+ã, b+b̃, c+c̃, d+d̃
     ci = confint_rr_score(aa, bb, cc, dd; α)
@@ -196,9 +204,11 @@ function print_and_show_results_pvalue(;
     g(ρ) = pvalue_rr_score(aa, bb, cc, dd; ρ)
     h(ρ) = pvalue_rr_score(ã, b̃, c̃, d̃; ρ)
     
-    println("posterior $(100(1-α))% confidence interval of RR= ", round.(ci; sigdigits=4))
+    println("posterior $(100(1-α))% confidence interval of RR = ", round.(ci; sigdigits=4))
     println("posterior point estimate (MLE) of RR = ", round.(pe; sigdigits=4))
-    xlim_RR = confint_rr_score(aa, bb, cc, dd; α=0.005) .* (0.5, 2.0)
+    if isnothing(xlim_RR)
+        xlim_RR = confint_rr_score(aa, bb, cc, dd; α=0.005) .* (0.6, 1.67)
+    end
     xtick_RR = logtick(; xlim=xlim_RR)
     plot(g, xlim_RR...; norm=true, label="posterior P-value function")
     n0 ≥ 10 && plot!(h, xlim_RR...; label="prior P-value function", ls=:dash, c=2)
@@ -211,45 +221,45 @@ function print_and_show_results_pvalue(;
 end
 
 # %%
-print_and_show_results_bayes(; prior_logRR=Normal(0, 10))
+print_and_show_results_bayes(; prior_logRR=Normal(log(1.0), 10), xlim_RR=(0.3, 2.1))
 
 # %%
-print_and_show_results_pvalue(; prior_data=(RR0=1.0, n0=0))
+print_and_show_results_pvalue(; prior_data_setting=(RR0=1.0, n0=0), xlim_RR=(0.3, 2.1))
 
 # %%
-print_and_show_results_bayes(; prior_logRR=Normal(log(0.67), 0.25))
+print_and_show_results_bayes(; prior_logRR=Normal(log(0.67), 0.25), xlim_RR=(0.3, 2.1))
 
 # %%
-print_and_show_results_pvalue(; prior_data=(RR0=0.67, n0=50))
+print_and_show_results_pvalue(; prior_data_setting=(RR0=0.67, n0=50), xlim_RR=(0.3, 2.1))
 
 # %%
-print_and_show_results_bayes(; prior_logRR=Normal(log(0.67), 0.15))
+print_and_show_results_bayes(; prior_logRR=Normal(log(0.78), 0.15), xlim_RR=(0.3, 2.1))
 
 # %%
-print_and_show_results_pvalue(; prior_data=(RR0=0.67, n0=150))
+print_and_show_results_pvalue(; prior_data_setting=(RR0=0.78, n0=150), xlim_RR=(0.3, 2.1))
 
 # %%
-print_and_show_results_bayes(; prior_logRR=Normal(0, 0.25))
+print_and_show_results_bayes(; prior_logRR=Normal(log(1.0), 0.24), xlim_RR=(0.3, 2.1))
 
 # %%
-print_and_show_results_pvalue(; prior_data=(RR0=1.0, n0=50))
+print_and_show_results_pvalue(; prior_data_setting=(RR0=1.0, n0=50), xlim_RR=(0.3, 2.1))
 
 # %%
-print_and_show_results_bayes(; prior_logRR=Normal(0, 0.15))
+print_and_show_results_bayes(; prior_logRR=Normal(log(1.0), 0.15), xlim_RR=(0.3, 2.1))
 
 # %%
-print_and_show_results_pvalue(; prior_data=(RR0=1.0, n0=120))
+print_and_show_results_pvalue(; prior_data_setting=(RR0=1.0, n0=100), xlim_RR=(0.3, 2.1))
 
 # %%
-print_and_show_results_bayes(; prior_logRR=Normal(log(1.5), 0.25))
+print_and_show_results_bayes(; prior_logRR=Normal(log(1.5), 0.25), xlim_RR=(0.3, 2.1))
 
 # %%
-print_and_show_results_pvalue(; prior_data=(RR0=1.5, n0=30))
+print_and_show_results_pvalue(; prior_data_setting=(RR0=1.5, n0=30), xlim_RR=(0.3, 2.1))
 
 # %%
-print_and_show_results_bayes(; prior_logRR=Normal(log(1.5), 0.15))
+print_and_show_results_bayes(; prior_logRR=Normal(log(1.2), 0.15), xlim_RR=(0.3, 2.1))
 
 # %%
-print_and_show_results_pvalue(; prior_data=(RR0=1.5, n0=120))
+print_and_show_results_pvalue(; prior_data_setting=(RR0=1.2, n0=110), xlim_RR=(0.3, 2.1))
 
 # %%
