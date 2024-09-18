@@ -128,6 +128,35 @@ function print_and_show_results_or_bayes(;
 end
 
 # %%
+module O
+
+using Random
+using Distributions
+
+struct ImproperExp{T<:Real} <: ContinuousUnivariateDistribution
+    λ::T
+end
+ImproperExp(λ::Integer) = ImproperExp(float(λ))
+ImproperExp() = ImproperExp(1.0)
+
+Base.minimum(d::ImproperExp{T}) where T = T(-Inf)
+Base.maximum(d::ImproperExp{T}) where T = T(Inf)
+Base.rand(rng::Random.AbstractRNG, d::ImproperExp) = rand(rng)
+
+function Distributions.logpdf(d::ImproperExp, x::Real)
+    T = float(eltype(x))
+    return d.λ * T(x)
+end
+Distributions.pdf(d::ImproperExp, x::Real) = exp(logpdf(d, x))
+
+function Distributions.loglikelihood(d::ImproperExp, x::AbstractVector{<:Real})
+    T = float(eltype(x))
+    return d.λ * T(sum(x))
+end
+
+end
+
+# %%
 using Distributions
 using StatsFuns
 using Roots
@@ -267,14 +296,14 @@ print_and_show_results_or_pvalue(; prior_data_setting=(OR0=1.0, n0=0), xlim_OR=(
 
 # %%
 print_and_show_results_or_bayes(; prior_logOR=Normal(log(1.0), 1/2), xlim_OR=(0.3, 2.0), ylim=(0.0, 3.05), xtick_OR=([0.33, 0.66, 1, 1.5], string.(Any[0.33, 0.66, 1, 1.5])), N=10^5)
-plot!(f_flatprior; label="normalized likelihood function", ls=:dot)
+plot!(f_flatprior; label="posterior density for flat prior", ls=:dot)
 
 # %%
 print_and_show_results_or_pvalue(; prior_data_setting=(OR0=1.0, n0=30), xlim_OR=(0.3, 2.0), xtick_OR=([0.33, 0.66, 1, 1.5], string.(Any[0.33, 0.66, 1, 1.5])))
 
 # %%
 print_and_show_results_or_bayes(; prior_logOR=Normal(log(1.0), 1/6), xlim_OR=(0.3, 2.0), ylim=(0.0, 3.05), xtick_OR=([0.33, 0.66, 1, 1.5], string.(Any[0.33, 0.66, 1, 1.5])), N=10^5)
-plot!(f_flatprior; label="normalized likelihood function", ls=:dot)
+plot!(f_flatprior; label="posterior density for flat prior", ls=:dot)
 
 # %%
 print_and_show_results_or_pvalue(; prior_data_setting=(OR0=1.0, n0=300), xlim_OR=(0.3, 2.0), xtick_OR=([0.33, 0.66, 1, 1.5], string.(Any[0.33, 0.66, 1, 1.5])))
