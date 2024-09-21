@@ -44,7 +44,7 @@
 #
 # * Alan Agresti and Brent A. Coull, Approximate is better than “exact” for interval estimation of binomial proportions, 1998. https://scholar.google.co.jp/scholar?cluster=5129299358902170657
 #
-# 以下は負の二項分布のスコア法に関するシミュレーションである.
+# 以下は負の二項分布のスコア法関係のグラフを色々書いてみる
 
 # %%
 using Distributions
@@ -68,6 +68,27 @@ function pvalue_central(negbin, n)
     min(1, 2cdf(negbin, n), 2ccdf(negbin, n-1))
 end
 
+function pvalue_bayes_eti(k, n, p; prior=Beta(1/3, 1/3))
+    κ, λ = params(prior)
+    beta = Beta(κ+k, λ+n-k)
+    min(1, 2cdf(beta, p), 2ccdf(beta, p))
+end
+
+function pvalue_bayes_eti(negbin, n; prior=Beta(1/3, 1/3))
+    k, p = params(negbin.ρ)
+    pvalue_bayes_eti(k, n, p; prior)
+end
+
+function pvalue_central_bin(k, n, p)
+    bin = Binomial(n, p)
+    min(1, 2cdf(bin, k), 2ccdf(bin, k-1))
+end
+
+function pvalue_central_bin(negbin, n)
+    k, p = params(negbin.ρ)
+    pvalue_central_bin(k, n, p)
+end
+
 function expectval(f, negbin)
     k, p = params(negbin.ρ)
     μ, σ = mean(negbin), std(negbin)
@@ -79,28 +100,69 @@ function probsig(pvalfunc, negbin0, negbin1=negbin0; α=0.05)
     expectval(n -> pvalfunc(negbin0, n) < α, negbin1)
 end
 
-function plot_alphaerror(; k=7, p=0.5, αmax=1.0)
+function plot_alphaerror(; k=7, p=0.5, prior=Beta(1/3, 1/3), αmax=1.0)
     plot(α -> probsig(pvalue_score, NegBin(k, p); α), 0, αmax; label="score")
-    plot!(α -> probsig(pvalue_central, NegBin(k, p); α); label="central", ls=:dash)
+    plot!(α -> probsig(pvalue_central, NegBin(k, p); α); label="NegBin central", ls=:dash)
+    plot!(α -> probsig((nb, n) -> pvalue_bayes_eti(nb, n; prior), NegBin(k, p); α); label="Bayes ETI", ls=:dashdot)
+    plot!(α -> probsig(pvalue_central_bin, NegBin(k, p); α); label="Bin central", ls=:dot)
     plot!(identity; label="", c=:black, lw=0.5)
     plot!(xguide="α", yguide="probability of P-value < α")
     title!("k = $k, p = $p")
     plot!(size=(400, 400))
 end
 
-function plot_coverageprob(; k=7, α=0.05, pmin=0.001, pmax=0.999)
+function plot_coverageprob(; k=7, α=0.05, prior=Beta(1/3, 1/3), 
+        pmin=0.001, pmax=0.999, f=Bool[1,1,0,0], 
+        lw=1, ylim=(0.895, 1.005), kwargs...
+    )
     ps = range(pmin, pmax, 1001)
-    plot(ps, p -> 1 - probsig(pvalue_score, NegBin(k, p); α); label="score")
-    plot!(ps, p -> 1 - probsig(pvalue_central, NegBin(k, p); α); label="central")
+    plot()
+    f[1] && plot!(ps, p -> 1 - probsig(pvalue_score, NegBin(k, p); α); label="score", c=1, lw)
+    f[2] && plot!(ps, p -> 1 - probsig(pvalue_central, NegBin(k, p); α); label="NegBin central", c=2, lw)
+    f[3] && plot!(ps, p -> 1 - probsig((nb, n)->pvalue_bayes_eti(nb, n; prior), NegBin(k, p); α); label="Bayes ETI", c=3, lw)
+    f[4] && plot!(ps, p -> 1 - probsig(pvalue_central_bin, NegBin(k, p); α); label="Bin central", c=4, lw)
     hline!([1-α]; label="", c=:red)
     plot!(xguide="p", yguide="probability of P-value ≥ α")
     title!("k = $k,  1 - α = $(100(1-α))%")
+    plot!(; ylim, kwargs...)
 end
+
+function plot_pvalue(; k=7, n=24, pmin=0.0, pmax=1.0, f=Bool[1,1,1,1], prior=Beta(1/3, 1/3))
+    plot()
+    f[1] && plot!(p -> pvalue_score(k, n, p), pmin, pmax; label="score", c=1)
+    f[2] && plot!(p -> pvalue_central(NegBin(k, p), n), pmin, pmax; label="NegBin central", ls=:dash, c=2)
+    f[3] && plot!(p -> pvalue_bayes_eti(k, n, p; prior), pmin, pmax; label="Bayes ETI", ls=:dashdot, c=3)
+    f[4] && plot!(p -> pvalue_central_bin(k, n, p), pmin, pmax; label="Bin central", ls=:dot, c=4)
+    plot!(xtick=0:0.1:1, ytick=0:0.05:1)
+    plot!(xguide="p", yguide="P-value")
+    title!("k = $k,  n = $n")
+end
+
+# %%
+plot_pvalue(; k=7, n=24)
+
+# %%
+plot_pvalue(; k=7, n=24, f=Bool[1,1,0,0])
+
+# %%
+plot_pvalue(; k=7, n=24, f=Bool[1,0,1,0])
+
+# %%
+plot_pvalue(; k=7, n=24, f=Bool[1,0,0,1])
+
+# %%
+plot_pvalue(; k=7, n=24, f=Bool[0,1,1,0])
+
+# %%
+plot_pvalue(; k=7, n=24, f=Bool[0,1,0,1])
+
+# %%
+plot_pvalue(; k=7, n=24, f=Bool[0,0,1,1])
 
 # %%
 PP = []
 for k in (7, 20, 80, 320)
-    P = plot_alphaerror(; k, p=0.5)
+    P = plot_alphaerror(; k, p=0.5, αmax=0.1)
     push!(PP, P)
 end
 plot(PP...; size=(800, 800), layout=(2, 2))
@@ -108,7 +170,7 @@ plot(PP...; size=(800, 800), layout=(2, 2))
 # %%
 PP = []
 for k in (7, 20, 80, 320)
-    P = plot_alphaerror(; k, p=0.3)
+    P = plot_alphaerror(; k, p=0.3, αmax=0.1)
     push!(PP, P)
 end
 plot(PP...; size=(800, 800), layout=(2, 2))
@@ -116,7 +178,7 @@ plot(PP...; size=(800, 800), layout=(2, 2))
 # %%
 PP = []
 for k in (7, 20, 80, 320)
-    P = plot_coverageprob(; k, α=0.05)
+    P = plot_coverageprob(; k, α=0.05, lw=0.5, f=Bool[1,1,1,1])
     push!(PP, P)
 end
 plot(PP...; size=(1000, 600), layout=(2, 2))
@@ -125,7 +187,52 @@ plot!(leftmargin=4Plots.mm, bottommargin=4Plots.mm)
 # %%
 PP = []
 for k in (7, 20, 80, 320)
-    P = plot_coverageprob(; k, α=0.05, pmin=0.2, pmax=0.8)
+    P = plot_coverageprob(; k, α=0.05, lw=0.5, f=Bool[1,1,0,0])
+    push!(PP, P)
+end
+plot(PP...; size=(1000, 600), layout=(2, 2))
+plot!(leftmargin=4Plots.mm, bottommargin=4Plots.mm)
+
+# %%
+PP = []
+for k in (7, 20, 80, 320)
+    P = plot_coverageprob(; k, α=0.05, lw=0.5, f=Bool[1,0,1,0])
+    push!(PP, P)
+end
+plot(PP...; size=(1000, 600), layout=(2, 2))
+plot!(leftmargin=4Plots.mm, bottommargin=4Plots.mm)
+
+# %%
+PP = []
+for k in (7, 20, 80, 320)
+    P = plot_coverageprob(; k, α=0.05, lw=0.5, f=Bool[1,0,0,1])
+    push!(PP, P)
+end
+plot(PP...; size=(1000, 600), layout=(2, 2))
+plot!(leftmargin=4Plots.mm, bottommargin=4Plots.mm)
+
+# %%
+PP = []
+for k in (7, 20, 80, 320)
+    P = plot_coverageprob(; k, α=0.05, lw=0.5, f=Bool[0,1,1,0])
+    push!(PP, P)
+end
+plot(PP...; size=(1000, 600), layout=(2, 2))
+plot!(leftmargin=4Plots.mm, bottommargin=4Plots.mm)
+
+# %%
+PP = []
+for k in (7, 20, 80, 320)
+    P = plot_coverageprob(; k, α=0.05, lw=0.5, f=Bool[0,1,0,1])
+    push!(PP, P)
+end
+plot(PP...; size=(1000, 600), layout=(2, 2))
+plot!(leftmargin=4Plots.mm, bottommargin=4Plots.mm)
+
+# %%
+PP = []
+for k in (7, 20, 80, 320)
+    P = plot_coverageprob(; k, α=0.05, lw=0.5, f=Bool[0,0,1,1])
     push!(PP, P)
 end
 plot(PP...; size=(1000, 600), layout=(2, 2))
