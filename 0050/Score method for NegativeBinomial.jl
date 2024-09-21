@@ -46,10 +46,11 @@
 #
 # 以下は負の二項分布のスコア法関係のグラフを色々書いてみる
 
-# %%
+# %% tags=[]
 using Distributions
+using Roots
 using StatsPlots
-default(fmt=:png)
+default(fmt=:png, size=(500, 300))
 
 NegBin(k, p) = NegativeBinomial(k, p) + k
 
@@ -87,6 +88,79 @@ end
 function pvalue_central_bin(negbin, n)
     k, p = params(negbin.ρ)
     pvalue_central_bin(k, n, p)
+end
+
+x ⪅ y = x < y || x ≈ y
+
+function pvalue_minlike(dist, x)
+    m = mode(dist)
+    x == m && return 1.0
+    px = pdf(dist, x)
+    if x < m
+        y = m
+        while !(pdf(dist, y) ⪅ px) y += 1 end
+        cdf(dist, x) + ccdf(dist, y-1)
+    else
+        y = m
+        while !(pdf(dist, y) ⪅ px) y -= 1 end
+        cdf(dist, y) + ccdf(dist, x-1)
+    end
+end
+
+function mode_negbin(negbin)
+    f(n) = pdf(negbin, n) / (1/(n-0.5) - 1/(n+0.5))
+    m = mode(negbin)
+    if f(m-1) ⪅ f(m) && f(m+1) ⪅ f(m)
+        m
+    elseif f(m) ⪅ f(m-1)
+        n = m-1
+        while f(n) ⪅ f(n-1) n -= 1 end
+        n
+    else #if f(m) ⪅ f(m+1)
+        n = m+1
+        while f(n) ⪅ f(n+1) n += 1 end
+        n
+    end
+end
+
+function pvalue_minlike_negbin(negbin, x)
+    m = mode_negbin(negbin)
+    x == m && return 1.0
+    f(n) = pdf(negbin, n) / (1/(n-0.5) - 1/(n+0.5))
+    px = f(x)
+    if x < m
+        y = m
+        while !(f(y) ⪅ px) y += 1 end
+        cdf(negbin, x) + ccdf(negbin, y-1)
+    else
+        y = m
+        while !(f(y) ⪅ px) y -= 1 end
+        cdf(negbin, y) + ccdf(negbin, x-1)
+    end
+end
+
+function pvalue_hdi(dist, x;
+        xmin = minimum(dist) == -Inf ? -1e8 : minimum(dist),
+        xmax = maximum(dist) ==  Inf ?  1e8 : maximum(dist),
+        correction = 0.0,
+    )
+    m = mode(dist)
+    px = pdf(dist, x)
+    px ≈ pdf(dist, m) && return 1.0
+    f(y) = pdf(dist, y) - px
+    if x < m
+        y = find_zero(f, (m, 1.0))
+        cdf(dist, min(m, x + correction)) + ccdf(dist, max(m, y - correction))
+    else
+        y = find_zero(f, (0.0, m))
+        cdf(dist, min(m, y + correction)) + ccdf(dist, max(m, x - correction))
+    end
+end
+
+function pvalue_bayes_hdi(k, n, p; prior=Beta(1, 1))
+    κ, λ = params(prior)
+    beta = Beta(κ+k, λ+n-k)
+    pvalue_hdi(beta, p)
 end
 
 function expectval(f, negbin)
@@ -127,37 +201,126 @@ function plot_coverageprob(; k=7, α=0.05, prior=Beta(1/3, 1/3),
     plot!(; ylim, kwargs...)
 end
 
-function plot_pvalue(; k=7, n=24, pmin=0.0, pmax=1.0, f=Bool[1,1,1,1], prior=Beta(1/3, 1/3))
+function plot_pvalue(; k=7, n=24, pmin=0.0, pmax=1.0, f=Bool[1,1,1,1,1,1,1,0],
+        prior_eti=Beta(1/3, 1/3), prior_hdi=Beta(1, 1), kwargs...)
     plot()
     f[1] && plot!(p -> pvalue_score(k, n, p), pmin, pmax; label="score", c=1)
     f[2] && plot!(p -> pvalue_central(NegBin(k, p), n), pmin, pmax; label="NegBin central", ls=:dash, c=2)
-    f[3] && plot!(p -> pvalue_bayes_eti(k, n, p; prior), pmin, pmax; label="Bayes ETI", ls=:dashdot, c=3)
+    f[3] && plot!(p -> pvalue_bayes_eti(k, n, p; prior=prior_eti), pmin, pmax; label="Bayes ETI", ls=:dashdot, c=3)
     f[4] && plot!(p -> pvalue_central_bin(k, n, p), pmin, pmax; label="Bin central", ls=:dot, c=4)
+    f[5] && plot!(p -> pvalue_minlike_negbin(NegBin(k, p), n), pmin, pmax; label="NegBin min.like.", ls=:dash, c=5)
+    f[6] && plot!(p -> pvalue_minlike(Binomial(n, p), k), pmin, pmax; label="Bin min.like.", ls=:dashdot, c=6)
+    f[7] && plot!(p -> pvalue_bayes_hdi(k, n, p; prior=prior_hdi), pmin, pmax; label="Bayes HDI", ls=:dashdotdot, c=7)
+    f[8] && plot!(p -> pvalue_minlike(NegBin(k, p), n), pmin, pmax; label="NegBin min.like. naive", ls=:dot, c=8)
     plot!(xtick=0:0.1:1, ytick=0:0.05:1)
     plot!(xguide="p", yguide="P-value")
     title!("k = $k,  n = $n")
+    plot!(; kwargs...)
 end
+
+# %%
+k, p = 7, 0.5
+negbin = NegBin(k, p)
+@show mode(negbin) mode_negbin(negbin)
+@show pvalue_minlike_negbin(negbin, 24)
+@show pvalue_minlike(negbin, 24)
+;
 
 # %%
 plot_pvalue(; k=7, n=24)
 
 # %%
-plot_pvalue(; k=7, n=24, f=Bool[1,1,0,0])
+plot_pvalue(; k=7, n=24, f=Bool[1,1,0,0,0,0,0,0])
 
 # %%
-plot_pvalue(; k=7, n=24, f=Bool[1,0,1,0])
+plot_pvalue(; k=7, n=24, f=Bool[1,0,1,0,0,0,0,0])
 
 # %%
-plot_pvalue(; k=7, n=24, f=Bool[1,0,0,1])
+plot_pvalue(; k=7, n=24, f=Bool[1,0,0,1,0,0,0,0])
 
 # %%
-plot_pvalue(; k=7, n=24, f=Bool[0,1,1,0])
+plot_pvalue(; k=7, n=24, f=Bool[0,1,1,0,0,0,0,0])
 
 # %%
-plot_pvalue(; k=7, n=24, f=Bool[0,1,0,1])
+plot_pvalue(; k=7, n=24, f=Bool[0,1,0,1,0,0,0,0])
 
 # %%
-plot_pvalue(; k=7, n=24, f=Bool[0,0,1,1])
+plot_pvalue(; k=7, n=24, f=Bool[0,0,1,1,0,0,0,0])
+
+# %%
+plot_pvalue(; k=7, n=24, f=Bool[1,1,0,0,1,0,0,0])
+
+# %%
+plot_pvalue(; k=7, n=24, f=Bool[1,0,0,0,1,0,0,0])
+
+# %%
+plot_pvalue(; k=7, n=24, f=Bool[1,0,0,0,0,1,0,0])
+
+# %%
+plot_pvalue(; k=7, n=24, f=Bool[1,0,0,0,0,0,1,0])
+
+# %%
+plot_pvalue(; k=7, n=24, f=Bool[0,1,0,0,1,0,0,0])
+
+# %%
+plot_pvalue(; k=7, n=24, f=Bool[0,1,0,0,1,1,0,0])
+
+# %%
+plot_pvalue(; k=7, n=24, f=Bool[0,1,0,0,0,1,0,0])
+
+# %%
+plot_pvalue(; k=7, n=24, f=Bool[0,1,0,0,0,0,1,0])
+
+# %%
+plot_pvalue(; k=7, n=24, f=Bool[0,0,1,0,1,0,0,0])
+
+# %%
+plot_pvalue(; k=7, n=24, f=Bool[0,0,1,0,0,1,0,0])
+
+# %%
+plot_pvalue(; k=7, n=24, f=Bool[0,0,1,0,0,0,1,0])
+
+# %%
+plot_pvalue(; k=7, n=24, f=Bool[0,1,0,1,1,0,0,0])
+
+# %%
+plot_pvalue(; k=7, n=24, f=Bool[0,0,0,1,1,0,0,0])
+
+# %%
+plot_pvalue(; k=7, n=24, f=Bool[0,0,0,1,0,1,0,0])
+
+# %%
+plot_pvalue(; k=7, n=24, f=Bool[0,0,0,1,0,0,1,0])
+
+# %%
+plot_pvalue(; k=7, n=24, f=Bool[0,0,0,0,1,1,0,0])
+
+# %%
+plot_pvalue(; k=7, n=24, f=Bool[0,0,0,0,1,0,1,0])
+
+# %%
+plot_pvalue(; k=7, n=24, f=Bool[0,0,0,0,0,1,1,0])
+
+# %%
+plot_pvalue(; k=7, n=24, f=Bool[0,1,0,0,1,0,0,0])
+
+# %%
+plot_pvalue(; k=12, n=24, f=Bool[0,1,0,0,1,0,0,0])
+
+# %%
+plot_pvalue(; k=17, n=24, f=Bool[0,1,0,0,1,0,0,0], legend=:topleft)
+
+# %%
+plot_pvalue(; k=3, n=24, f=Bool[1,1,0,0,1,0,0,1])
+
+# %%
+plot_pvalue(; k=7, n=24, f=Bool[1,1,0,0,1,0,0,1])
+
+# %%
+plot_pvalue(; k=12, n=24, f=Bool[1,1,0,0,1,0,0,1])
+
+# %%
+plot_pvalue(; k=17, n=24, f=Bool[1,1,0,0,1,0,0,1], legend=:topleft)
 
 # %%
 PP = []
