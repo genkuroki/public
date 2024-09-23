@@ -179,6 +179,7 @@ function plot_alphaerror(; k=7, p=0.5, prior=Beta(1/3, 1/3), αmax=1.0)
     plot!(α -> probsig(pvalue_central, NegBin(k, p); α); label="NegBin central", ls=:dash)
     plot!(α -> probsig((nb, n) -> pvalue_bayes_eti(nb, n; prior), NegBin(k, p); α); label="Bayes ETI", ls=:dashdot)
     plot!(α -> probsig(pvalue_central_bin, NegBin(k, p); α); label="Bin central", ls=:dot)
+    plot!(α -> probsig(pvalue_minlike_negbin, NegBin(k, p); α); label="NegBin min.like.", ls=:dashdotdot)
     plot!(identity; label="", c=:black, lw=0.5)
     plot!(xguide="α", yguide="probability of P-value < α")
     title!("k = $k, p = $p")
@@ -186,7 +187,7 @@ function plot_alphaerror(; k=7, p=0.5, prior=Beta(1/3, 1/3), αmax=1.0)
 end
 
 function plot_coverageprob(; k=7, α=0.05, prior=Beta(1/3, 1/3), 
-        pmin=0.001, pmax=0.999, f=Bool[1,1,0,0], 
+        pmin=0.001, pmax=0.999, f=Bool[1,1,0,0,0], 
         lw=1, ylim=(0.895, 1.005), kwargs...
     )
     ps = range(pmin, pmax, 1001)
@@ -195,6 +196,7 @@ function plot_coverageprob(; k=7, α=0.05, prior=Beta(1/3, 1/3),
     f[2] && plot!(ps, p -> 1 - probsig(pvalue_central, NegBin(k, p); α); label="NegBin central", c=2, lw)
     f[3] && plot!(ps, p -> 1 - probsig((nb, n)->pvalue_bayes_eti(nb, n; prior), NegBin(k, p); α); label="Bayes ETI", c=3, lw)
     f[4] && plot!(ps, p -> 1 - probsig(pvalue_central_bin, NegBin(k, p); α); label="Bin central", c=4, lw)
+    f[5] && plot!(ps, p -> 1 - probsig(pvalue_minlike_negbin, NegBin(k, p); α); label="NegBin min.like.", c=5, lw)
     hline!([1-α]; label="", c=:red)
     plot!(xguide="p", yguide="probability of P-value ≥ α")
     title!("k = $k,  1 - α = $(100(1-α))%")
@@ -341,7 +343,7 @@ plot(PP...; size=(800, 800), layout=(2, 2))
 # %%
 PP = []
 for k in (7, 20, 80, 320)
-    P = plot_coverageprob(; k, α=0.05, lw=0.5, f=Bool[1,1,1,1])
+    P = plot_coverageprob(; k, α=0.05, lw=0.5, f=Bool[1,1,1,1,0])
     push!(PP, P)
 end
 plot(PP...; size=(1000, 600), layout=(2, 2))
@@ -350,7 +352,7 @@ plot!(leftmargin=4Plots.mm, bottommargin=4Plots.mm)
 # %%
 PP = []
 for k in (7, 20, 80, 320)
-    P = plot_coverageprob(; k, α=0.05, lw=0.5, f=Bool[1,1,0,0])
+    P = plot_coverageprob(; k, α=0.05, lw=0.5, f=Bool[1,1,0,0,0])
     push!(PP, P)
 end
 plot(PP...; size=(1000, 600), layout=(2, 2))
@@ -359,7 +361,7 @@ plot!(leftmargin=4Plots.mm, bottommargin=4Plots.mm)
 # %%
 PP = []
 for k in (7, 20, 80, 320)
-    P = plot_coverageprob(; k, α=0.05, lw=0.5, f=Bool[1,0,1,0])
+    P = plot_coverageprob(; k, α=0.05, lw=0.5, f=Bool[1,0,1,0,0])
     push!(PP, P)
 end
 plot(PP...; size=(1000, 600), layout=(2, 2))
@@ -368,7 +370,7 @@ plot!(leftmargin=4Plots.mm, bottommargin=4Plots.mm)
 # %%
 PP = []
 for k in (7, 20, 80, 320)
-    P = plot_coverageprob(; k, α=0.05, lw=0.5, f=Bool[1,0,0,1])
+    P = plot_coverageprob(; k, α=0.05, lw=0.5, f=Bool[1,0,0,1,0])
     push!(PP, P)
 end
 plot(PP...; size=(1000, 600), layout=(2, 2))
@@ -377,7 +379,7 @@ plot!(leftmargin=4Plots.mm, bottommargin=4Plots.mm)
 # %%
 PP = []
 for k in (7, 20, 80, 320)
-    P = plot_coverageprob(; k, α=0.05, lw=0.5, f=Bool[0,1,1,0])
+    P = plot_coverageprob(; k, α=0.05, lw=0.5, f=Bool[0,1,1,0,0])
     push!(PP, P)
 end
 plot(PP...; size=(1000, 600), layout=(2, 2))
@@ -386,7 +388,7 @@ plot!(leftmargin=4Plots.mm, bottommargin=4Plots.mm)
 # %%
 PP = []
 for k in (7, 20, 80, 320)
-    P = plot_coverageprob(; k, α=0.05, lw=0.5, f=Bool[0,1,0,1])
+    P = plot_coverageprob(; k, α=0.05, lw=0.5, f=Bool[0,1,0,1,0])
     push!(PP, P)
 end
 plot(PP...; size=(1000, 600), layout=(2, 2))
@@ -395,10 +397,13 @@ plot!(leftmargin=4Plots.mm, bottommargin=4Plots.mm)
 # %%
 PP = []
 for k in (7, 20, 80, 320)
-    P = plot_coverageprob(; k, α=0.05, lw=0.5, f=Bool[0,0,1,1])
+    P = plot_coverageprob(; k, α=0.05, lw=0.5, f=Bool[0,0,1,1,0])
     push!(PP, P)
 end
 plot(PP...; size=(1000, 600), layout=(2, 2))
 plot!(leftmargin=4Plots.mm, bottommargin=4Plots.mm)
+
+# %%
+plot_coverageprob(; k=20, α=0.05, pmin=0.2, lw=0.5, f=Bool[0,0,0,0,1])
 
 # %%
