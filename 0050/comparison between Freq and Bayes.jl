@@ -94,7 +94,7 @@ plot_ci(; k=96, n=320)
 
 # %%
 prior = Beta(6, 4)
-plot(prior; label="prior", title="prior = Beta$(params(prior))")
+plot(prior; label="prior", title="prior = Beta$(params(prior))", c=2)
 plot!(xguide="p", yguide="probability density")
 plot!(xtick=0:0.1:1)
 
@@ -150,6 +150,8 @@ function plot_ci_mean(X; α=0.05,
         prior_μ=Flat(), prior_logσ=Flat(), N=10^5, nchains=10)
     chain = sample(model_normal(X; prior_μ, prior_logσ), NUTS(), MCMCThreads(), N, nchains)
     display(chain)
+    println()
+    #plot(chain; lw=0.2)
     println()
     
     μ = sort(vec(chain[:μ]))
@@ -230,12 +232,12 @@ plot_ci_mean(X)
 plot_ci_mean(X; prior_μ=Normal(200, 10), prior_logσ=Normal(0, 10))
 
 # %%
-plot(Normal(200, 10), 160, 240; label="", title="Normal(200, 10)", xtick=160:5:240)
+plot(Normal(200, 10), 160, 240; label="", title="Normal(200, 10)", xtick=160:5:240, c=2)
 
 # %%
 plot_ci_mean(X; prior_μ=Normal(200, 5), prior_logσ=Normal(0, 10))
 
 # %%
-plot(Normal(200, 5), 160, 240; label="", title="Normal(200, 5)", xtick=160:5:240)
+plot(Normal(200, 5), 160, 240; label="", title="Normal(200, 5)", xtick=160:5:240, c=2)
 
 # %%
