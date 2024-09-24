@@ -36,7 +36,7 @@ function brunner_munzel_test(X, Y; p=1/2, α=0.05)
     df = (sx2/m + sy2/n)^2 / ((sx2/m)^2/(m-1) + (sy2/n)^2/(n-1))
     pvalue = sehat > 0 ? 2ccdf(TDist(df), abs(tvalue)) : phat ≈ p ? 1.0 : 0.0
     c = sehat > 0 ? cquantile(TDist(df), α/2) : 0.0
-    confint_p = [phat - c*sehat, phat + c*sehat]
+    confint_p = (phat - c*sehat, phat + c*sehat)
     (; p, phat, sehat, tvalue, df, pvalue, α, confint_p)
 end
 
@@ -46,7 +46,7 @@ function brunner_munzel_pvalue(p, phat, sehat, df)
 end
 
 function confint_bm_p_roots(X, Y; α=0.05)
-    f(p) = brunner_munzel_test(X, Y, p).pvalue - α
+    f(p) = brunner_munzel_test(X, Y; p).pvalue - α
     find_zeros(f, -1, 2)
 end
 
@@ -82,7 +82,7 @@ phat = bm.phat |> r
 ahat = tieshift(X, Y) |> r
 @show phat ahat
 α = bm.α
-ci_p = bm.confint_p .|> r
+ci_p = collect(bm.confint_p) .|> r
 ci_a = confint_bm_tieshift(X, Y; α) .|> r
 @show α ci_p ci_a
 #@show confint_bm_p_roots(X, Y; α) .|> r
