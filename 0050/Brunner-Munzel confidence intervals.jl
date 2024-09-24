@@ -35,12 +35,8 @@ function brunner_munzel_test(X, Y; p=1/2, α=0.05)
     tvalue = (phat - p)/sehat
     df = (sx2/m + sy2/n)^2 / ((sx2/m)^2/(m-1) + (sy2/n)^2/(n-1))
     pvalue = sehat > 0 ? 2ccdf(TDist(df), abs(tvalue)) : phat ≈ p ? 1.0 : 0.0
-    confint_p = if sehat > 0
-        c = cquantile(TDist(df), α/2)
-        [phat - c*sehat, phat + c*sehat]
-    else
-        [-Inf, Inf]
-    end
+    c = sehat > 0 ? cquantile(TDist(df), α/2) : 0.0
+    confint_p = [phat - c*sehat, phat + c*sehat]
     (; p, phat, sehat, tvalue, df, pvalue, α, confint_p)
 end
 
