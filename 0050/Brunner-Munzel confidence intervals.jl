@@ -54,17 +54,17 @@ function aminamax(X, Y)
     xmin, xmax = extrema(X)
     ymin, ymax = extrema(Y)
     width = max(xmax, ymax) - min(xmin, ymin)
-    ymin - xmax - max(0.1, 0.05width), ymax - xmin + max(0.1, 0.05width)
+    xmin - ymax - max(0.1, 0.05width), xmax - ymin + max(0.1, 0.05width)
 end
 
 function tieshift(X, Y; p=1/2)
-    f(a) = winrate(X .+ a, Y) - p
+    f(a) = winrate(X, Y .+ a) - p
     amin, amax = aminamax(X, Y)
     find_zero(f, (amin, amax))
 end
 
 function confint_bm_tieshift(X, Y; α=0.05)
-    f(a) = brunner_munzel_test(X .+ a, Y).pvalue - α
+    f(a) = brunner_munzel_test(X, Y .+ a).pvalue - α
     amin, amax = aminamax(X, Y)
     find_zeros(f, amin, amax)
 end
@@ -94,7 +94,7 @@ plot!(xguide="winrate p", yguide="P-value")
 title!("P-value function of winrate p")
 
 amin, amax = aminamax(X, Y)
-Q = plot(a -> brunner_munzel_test(X .+ a, Y).pvalue, amin, amax; label="")
+Q = plot(a -> brunner_munzel_test(X, Y .+ a).pvalue, amin, amax; label="")
 vline!([ahat]; label="ahat")
 plot!(xguide="tieshift a", yguide="P-value")
 title!("P-value function of tieshift a")
@@ -120,49 +120,9 @@ plot!(leftmargin=4Plots.mm, bottommargin=4Plots.mm)
 # ```
 
 # %%
-brunner_munzel_test([1, 2, 3, 4, 5], [6, 7, 8, 9, 10]) |> pairs |> Dict
-
-# %% [markdown]
-# https://x.com/ppubmed/status/1838333246456918364
-#
-# ```
-# {
-#   "statistic": null,
-#   "df": null,
-#   "pValue": null,
-#   "estimate": 1,
-#   "ci": [
-#     null,
-#     null
-#   ],
-#   "confLevel": 0.95
-# }
-# ```
-
-# %%
-brunner_munzel_test([6, 7, 8, 9, 10], [1, 2, 3, 4, 5]) |> pairs |> Dict
-
-# %% [markdown]
-# https://x.com/ppubmed/status/1838333246456918364
-#
-# ```
-# {
-#   "statistic": null,
-#   "df": null,
-#   "pValue": null,
-#   "estimate": 0,
-#   "ci": [
-#     null,
-#     null
-#   ],
-#   "confLevel": 0.95
-# }
-# ```
-
-# %%
 using RCall
 @rput X Y
-R"wilcox.test(Y, X, conf.int=T)"
+R"wilcox.test(X, Y, conf.int=T)"
 
 # %%
 A = [0.9753, 0.9802, 0.2471, 0.8379, 0.5673, 0.7718, 0.5273, 0.5605, 0.4844, 0.5495]
@@ -174,7 +134,7 @@ amin, amax = aminamax(A, B)
 ahat = tieshift(A, B) |> r
 ci_a = confint_bm_tieshift(A, B) .|> r
 @show ahat ci_a
-Q = plot(a -> brunner_munzel_test(A .+ a, B).pvalue, amin, amax; label="")
+Q = plot(a -> brunner_munzel_test(A, B .+ a).pvalue, amin, amax; label="")
 vline!([ahat]; label="ahat")
 plot!(xguide="tieshift a", yguide="P-value")
 title!("P-value function of tieshift a")
@@ -182,6 +142,6 @@ title!("P-value function of tieshift a")
 # %%
 using RCall
 @rput A B
-R"wilcox.test(B, A, conf.int=T)"
+R"wilcox.test(A, B, conf.int=T)"
 
 # %%
