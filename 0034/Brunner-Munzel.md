@@ -8,7 +8,7 @@ jupyter:
       format_version: '1.3'
       jupytext_version: 1.10.3
   kernelspec:
-    display_name: Julia 1.10.4
+    display_name: Julia 1.10.5
     language: julia
     name: julia-1.10
 ---
@@ -16,7 +16,7 @@ jupyter:
 # Brunner-Munzel検定について
 
 * 黒木玄
-* 2022-08-05, 2022-09-19, 2023-09-13
+* 2022-08-05, 2022-09-19, 2023-09-13, 2024-09-24
 
 __文献__
 
@@ -144,7 +144,7 @@ end
 function pvalue_welch(m, x̄, sx², n, ȳ, sy²; Δμ=0)
     t = tvalue_welch(m, x̄, sx², n, ȳ, sy²; Δμ)
     ν = degree_of_freedom_welch(m, sx², n, sy²)
-    2ccdf(TDist(ν), abs(t))
+    isnan(ν) ?  0.0 : 2ccdf(TDist(ν), abs(t))
 end
 
 function pvalue_welch(x, y; Δμ=0)
@@ -967,6 +967,11 @@ function distname(dist)
     replace(sprint(printcompact, dist), r"\{[^\}]*\}"=>"")
 end
 
+function distname(dist::Categorical)
+    p = round.((dist.p...,); digits=3)
+    "Categorical$p"
+end
+
 function plot_ecdf(ecdf_pval, distx, disty, m, n, a;
         testname = "", kwargs...)
     plot(p -> ecdf_pval(p), 0, 0.1; label="ecdf of P-values")
@@ -1211,13 +1216,19 @@ function plot_confints(;
         push!(BM, brunner_munzel(X, Y .+ a).confint_shift)
         push!(W, confint_welch(X, Y .+ Δμ))
     end
+    ymax = max(maximum(last(BM[i]) for i in 1:L), maximum(last(W[i]) for i in 1:L))
+    ymin = min(minimum(first(BM[i]) for i in 1:L), minimum(first(W[i]) for i in 1:L))
+    width = ymax - ymin
+    ymin, ymax = ymin - 0.05width, ymax + 0.3width
     P = plot()
     for i in 1:L
-        plot!(fill(i, 2), [first(BM[i]), last(BM[i])]; label="", c=1, lw=2)
-        plot!(fill(i+0.3, 2), [first(W[i]), last(W[i])]; label="", c=2, lw=2)
+        plot!(fill(i, 2), [first(BM[i]), last(BM[i])]; label=(i==1 ? "BM" : ""), c=1, lw=2)
+        plot!(fill(i+0.3, 2), [first(W[i]), last(W[i])]; label=(i==1 ? "Welch" : ""), c=2, lw=2)
     end
+    plot!(ylim=(ymin, ymax))
     title!("X: $(distname(distx)), m=$m,   Y: $(distname(disty)), n=$n")
     plot!(size=(1000, 250))
+    plot!(; kwargs...)
 end
 ```
 
@@ -1441,28 +1452,32 @@ function plot_pvals_with_perm(;
         m = 7,
         n = 7,
         L = 10^4,
+        a = nothing,
+        Δμ = nothing,
+        calcperm = true,
         kwargs...
     )
-    a = tieshift(distx, disty)
-    @time ecdf_bm_perm = sim_brunner_mumzel_perm(; distx, disty = disty + a, m, n, L)
+    a = isnothing(a) ? tieshift(distx, disty) : a
+    calcperm && @time ecdf_bm_perm = sim_brunner_mumzel_perm(; distx, disty = disty + a, m, n, L)
     @time ecdf_bm = sim_brunner_mumzel(; distx, disty = disty + a, m, n, L)
-    Δμ = mean(distx) - mean(disty)
+    Δμ = isnothing(Δμ) ? mean(distx) - mean(disty) : Δμ
     @time ecdf_w = sim_welch(; distx, disty = disty + Δμ, m, n, L)
     @show a Δμ
 
     plot(legend=:topleft)
-    plot!(α -> ecdf_bm_perm(α), 0, 0.1; label="BM permutation")
-    plot!(α -> ecdf_bm(α), 0, 0.1; label="Brunner-Munzel", ls=:dash)
-    plot!(α -> ecdf_w(α), 0, 0.1; label="Welch", ls=:dashdot)
+    calcperm && plot!(α -> ecdf_bm_perm(α), 0, 0.1; label="BM permutation", c=1)
+    plot!(α -> ecdf_bm(α), 0, 0.1; label="Brunner-Munzel", ls=:dash, c=2)
+    plot!(α -> ecdf_w(α), 0, 0.1; label="Welch", ls=:dashdot, c=3)
     plot!(identity; label="", c=:black, ls=:dot)
     plot!(xtick=0:0.01:0.1, ytick=0:0.01:1)
     plot!(xguide="nominal significance level α", 
         yguide="probability of P-value < α")
     a_ = string(round(a; digits=4))
     Δμ_ = string(round(Δμ; digits=4))
-    title!("X: $(distname(distx)), m=$m\n\
-        Y: $(distname(disty))+(a, Δμ), n=$n\n\
-        a=$a_, Δμ=$Δμ_")
+    f_ = a+1 ≈ 1 && 1+Δμ ≈ 1
+    title!("X: $(distname(distx)), m=$m" *
+        "\nY: $(distname(disty))" * (f_ ? "" : "+(a, Δμ)") * ", n=$n" *
+        (f_ ? "" : "\na=$a_, Δμ=$Δμ_"))
     plot!(size=(400, 450), titlefontsize=9)
     plot!(; kwargs...)
 end
@@ -1571,6 +1586,70 @@ plot_pvals_with_perm(
 ```julia
 plot_pvals_with_perm(
     distx = LogNormal(0), disty = LogNormal(1), m = 10, n = 10, L = 2000)
+```
+
+以下では論文
+
+* Morten W Fagerland, Leiv Sandvik, and Petter Mowinckel,
+<br>Parametric methods outperformed non-parametric methods in comparisons of discrete numerical variables,
+<br>BMC Medical Research Methodology, Volume 11, article number 44, (2011)
+<br>https://scholar.google.co.jp/scholar?cluster=6551850279126915525
+
+でBMとWelchのαエラー率が上昇する場合を見繕って確認.
+
+上の論文の Page 4 of 8 にある以下の主張はおかしいのではないか?
+
+<img src="2024-09-24 202605.png">
+
+```julia
+S3_Uniform = Categorical(1/3, 1/3, 1/3)
+S3_Normal = Categorical(0.2, 0.6, 0.2)
+S3_Ushaped = Categorical(0.4, 0.2, 0.4)
+S3_LinearTrend = Categorical(31/60, 20/60, 9/60)
+S3_Step1 = Categorical(0.4, 0.4, 0.2)
+S3_Step2 = Categorical(0.6, 0.2, 0.2)
+S3 = [
+    S3_Uniform, S3_Normal,
+    S3_Ushaped, S3_LinearTrend,
+    S3_Step1,   S3_Step2,
+]
+@show mean.(S3) .- 1;
+```
+
+```julia
+PP = []
+for dist in S3
+    println(distname(dist))
+    P = plot_pvals_with_perm(distx = dist, disty = dist, m = 10, n = 10, L = 10^6, a = 0, calcperm=false)
+    push!(PP, P)
+end
+plot(PP..., size=(800, 1200), layout=(3, 2))
+plot!(leftmargin=8Plots.mm)
+```
+
+```julia
+PP = []
+for dist in S3
+    println(distname(dist))
+    P = plot_pvals_with_perm(distx = dist, disty = dist, m = 10, n = 10, L = 2000, a = 0, calcperm=true)
+    push!(PP, P)
+end
+plot(PP..., size=(800, 1200), layout=(3, 2))
+plot!(leftmargin=8Plots.mm)
+```
+
+```julia
+S4_Skewed = Categorical(0.6, 0.25, 0.10, 0.05)
+mean(S4_Skewed) - 1
+```
+
+```julia
+PP = []
+for m in (10, 25, 50, 100)
+    P = plot_pvals_with_perm(distx = S4_Skewed, disty = S4_Skewed, m = m, n = 10, a = 0, L = 10^6, calcperm = false)
+    push!(PP, P)
+end
+plot(PP...; size=(800, 860), layout=(2, 2))
 ```
 
 ```julia
