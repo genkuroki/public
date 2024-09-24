@@ -160,3 +160,28 @@ brunner_munzel_test([6, 7, 8, 9, 10], [1, 2, 3, 4, 5]) |> pairs |> Dict
 # ```
 
 # %%
+using RCall
+@rput X Y
+R"wilcox.test(Y, X, conf.int=T)"
+
+# %%
+A = [0.9753, 0.9802, 0.2471, 0.8379, 0.5673, 0.7718, 0.5273, 0.5605, 0.4844, 0.5495]
+B = [0.9521, 0.4455, 0.0263, 0.4749, 0.2681, 0.7526, 0.0701, 0.2725, 0.2412, 0.5751]
+brunner_munzel_test(A, B) |> pairs |> Dict |> display
+println()
+
+amin, amax = aminamax(A, B)
+ahat = tieshift(A, B) |> r
+ci_a = confint_bm_tieshift(A, B) .|> r
+@show ahat ci_a
+Q = plot(a -> brunner_munzel_test(A .+ a, B).pvalue, amin, amax; label="")
+vline!([ahat]; label="ahat")
+plot!(xguide="tieshift a", yguide="P-value")
+title!("P-value function of tieshift a")
+
+# %%
+using RCall
+@rput A B
+R"wilcox.test(B, A, conf.int=T)"
+
+# %%
