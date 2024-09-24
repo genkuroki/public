@@ -104,7 +104,7 @@ plot!(xguide="tieshift a", yguide="P-value")
 title!("P-value function of tieshift a")
 
 plot(P, Q; size=(800, 300))
-plot!(leftmargin=4Plots.mm, bottommargin=4Plots.mm)#, topmargin=10Plots.mm)
+plot!(leftmargin=4Plots.mm, bottommargin=4Plots.mm)
 
 # %% [markdown]
 # https://x.com/ppubmed/status/1838333246456918364
