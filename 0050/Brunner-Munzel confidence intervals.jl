@@ -120,3 +120,43 @@ plot!(leftmargin=4Plots.mm, bottommargin=4Plots.mm)
 # ```
 
 # %%
+brunner_munzel_test([1, 2, 3, 4, 5], [6, 7, 8, 9, 10]) |> pairs |> Dict
+
+# %% [markdown]
+# https://x.com/ppubmed/status/1838333246456918364
+#
+# ```
+# {
+#   "statistic": null,
+#   "df": null,
+#   "pValue": null,
+#   "estimate": 1,
+#   "ci": [
+#     null,
+#     null
+#   ],
+#   "confLevel": 0.95
+# }
+# ```
+
+# %%
+brunner_munzel_test([6, 7, 8, 9, 10], [1, 2, 3, 4, 5]) |> pairs |> Dict
+
+# %% [markdown]
+# https://x.com/ppubmed/status/1838333246456918364
+#
+# ```
+# {
+#   "statistic": null,
+#   "df": null,
+#   "pValue": null,
+#   "estimate": 0,
+#   "ci": [
+#     null,
+#     null
+#   ],
+#   "confLevel": 0.95
+# }
+# ```
+
+# %%
