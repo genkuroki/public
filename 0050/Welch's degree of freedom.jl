@@ -47,3 +47,12 @@ println()
 plot(PP...; size=(1000, 600), layout=(2, 2))
 
 # %%
+PP = []
+for (m, n) in ((5, 5), (10, 10), (5, 10), (5, 15), (10, 5), (15, 5))
+    P = plot_df_welch(; distx=Normal(0, 1), disty=Normal(0, 2), m, n)
+    push!(PP, P)
+end
+println()
+plot(PP...; size=(1000, 900), layout=(3, 2))
+
+# %%
