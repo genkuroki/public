@@ -27,10 +27,8 @@ winrate(X, Y) = mean((x < y) + (x == y)/2 for x in X, y in Y)
 function brunner_munzel_test(X, Y; p=1/2, α=0.05)
     phat = winrate(X, Y)
     m, n = length(X), length(Y)
-    Hbarx = n*(1 - phat)
-    Hbary = m*phat
-    sx2 = 1/n^2 * 1/(m-1) * sum(x -> (sum((y < x) + (y == x)/2 for y in Y) - Hbarx)^2, X)
-    sy2 = 1/m^2 * 1/(n-1) * sum(y -> (sum((x < y) + (x == y)/2 for x in X) - Hbary)^2, Y)
+    sx2 = 1/(m-1) * sum(x -> (mean(y -> (y < x) + (y == x)/2, Y) - (1 - phat))^2, X)
+    sy2 = 1/(n-1) * sum(y -> (mean(x -> (x < y) + (x == y)/2, X) - phat)^2, Y)
     sehat = √(sx2/m + sy2/n)
     tvalue = (phat - p)/sehat
     df = (sx2/m + sy2/n)^2 / ((sx2/m)^2/(m-1) + (sy2/n)^2/(n-1))
@@ -130,13 +128,20 @@ B = [0.9521, 0.4455, 0.0263, 0.4749, 0.2681, 0.7526, 0.0701, 0.2725, 0.2412, 0.5
 brunner_munzel_test(A, B) |> pairs |> Dict |> display
 println()
 
-amin, amax = aminamax(A, B)
+#amin, amax = aminamax(A, B)
+amin, amax = -0.3, 1.0
 ahat = tieshift(A, B) |> r
 ci_a = confint_bm_tieshift(A, B) .|> r
 @show ahat ci_a
 Q = plot(a -> brunner_munzel_test(A, B .+ a).pvalue, amin, amax; label="")
 vline!([ahat]; label="ahat")
+scatter!(sort(A) .- median(A) .+ ahat, -0.05 .+ 0.01*(-1).^(1:length(A));
+    label="A - median(A) + ahat", c=:red,  msc=:auto, ma=0.7, ms=3)
+scatter!(sort(B) .- median(A) .+ 2ahat, -0.10 .+ 0.01*(-1).^(1:length(B));
+    label="B - median(A) + 2ahat", c=:blue, msc=:auto, ma=0.7, ms=3)
 plot!(xguide="tieshift a", yguide="P-value")
+plot!(xtick=-1:0.1:1, ytick=0:0.05:1, tickfontsize=6)
+plot!(ylim=(-0.13, 1.03))
 title!("P-value function of tieshift a")
 
 # %%
