@@ -103,9 +103,12 @@ function plot_likrattest(; μ=1)
     c = find_zero(f, a-1)
     d = find_zero(g, b+1)
     
-    P1 = plot(x -> likrat(x; μ), c, d;
-        label="", ylim=(0, 1.05max_likrat(; μ)))
-    plot!(xguide="x", yguide="likelihood ratio")
+    #P1 = plot(x -> likrat(x; μ), c, d;
+    #    label="", ylim=(0, 1.05max_likrat(; μ)))
+    #plot!(xguide="x", yguide="likelihood ratio")
+    
+    P1 = plot(x -> -log(likrat(x; μ)), c, d; label="")
+    plot!(xguide="x", yguide="−log likelihood ratio")
     
     #P2 = plot(λ -> rejprob_likrat(λ; μ), min_likrat(; μ), max_likrat(; μ); label="")
     #plot!(xguide="lambda", yguide="alpha")
