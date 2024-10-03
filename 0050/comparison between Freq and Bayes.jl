@@ -65,7 +65,7 @@ function plot_ci(; k_new=7, n_new=24, α=0.05,
     κ, λ = params(prior)
     @show k_new n_new α prior
     (; k_prior, n_prior) = prior_data
-    k_prior == n_prior == 0 || @show prior_data
+    @show prior_data
     println()
     k, n = k_prior + k_new, n_prior + n_new
     posterior = Beta(κ + k_new, λ + n_new - k_new)
@@ -106,17 +106,11 @@ plot!(xguide="p", yguide="probability density")
 plot!(xtick=0:0.1:1)
 
 # %%
+plot_ci(; k_new=6, n_new=20, prior)
+
+# %%
 @show κ, λ = params(prior);
 @show prior_data = (k_prior=κ-1, n_prior=κ+λ-2);
-
-# %%
-plot_ci(; k_new=6, n_new=20, prior)
-
-# %%
-plot_ci(; k_new=6, n_new=20, prior, prior_data)
-
-# %%
-plot_ci(; k_new=6, n_new=20, prior)
 
 # %%
 plot_ci(; k_new=6, n_new=20, prior, prior_data)
