@@ -20,7 +20,7 @@ using Distributions
 using Optim: optimize, Brent
 using Turing
 using StatsPlots
-default(fmt=:png, titlefontsize=12)
+default(fmt=:png, titlefontsize=10)
 
 # %% [markdown]
 # ## 二項分布モデルの場合
@@ -29,7 +29,9 @@ default(fmt=:png, titlefontsize=12)
 # ### 無情報事前分布の場合
 
 # %%
-function confint_score(k, n, α=0.05)
+function confint_score(k_new, n_new, α=0.05; prior_data=(k_prior=0, n_prior=0))
+    (; k_prior, n_prior) = prior_data
+    k, n = k_prior + k_new, n_prior + n_new
     p̂ = k/n
     z = quantile(Normal(), 1-α/2)
     a, b, c = 1+z^2/n, p̂+z^2/(2n), p̂^2
@@ -58,36 +60,41 @@ function credint_hdi(k, n, α=0.05; prior=Beta(1, 1))
     highest_density_interval(posterior, α)
 end
 
-function plot_ci(; k=7, n=24, α=0.05, prior=Beta(1, 1))
+function plot_ci(; k_new=7, n_new=24, α=0.05,
+        prior=Beta(1, 1), prior_data=(k_prior=0, n_prior=0))
     κ, λ = params(prior)
-    posterior = Beta(κ+k, λ+n-k)
-    @show k n α prior
+    @show k_new n_new α prior
+    (; k_prior, n_prior) = prior_data
+    k_prior == n_prior == 0 || @show prior_data
     println()
+    k, n = k_prior + k_new, n_prior + n_new
+    posterior = Beta(κ + k_new, λ + n_new - k_new)
     pointest_score = k/n |> r
     pointest_bayes = mode(posterior) |> r
     @show pointest_score pointest_bayes
-    ci_score = confint_score(k, n, α) .|> r
-    ci_bayes = credint_hdi(k, n, α; prior) .|> r
+    ci_score = confint_score(k_new, n_new, α; prior_data) .|> r
+    ci_bayes = credint_hdi(k_new, n_new, α; prior) .|> r
     @show ci_score ci_bayes
     println()
     
     αs = [0.001:0.001:0.009; 0.01:0.01:1]
-    plot(title="P-value functions: k=$k, n=$n, prior=Beta$(params(prior))")
-    scatter!(vcat(confint_score.(k, n, αs)...), repeat(αs; inner=2); label="score test", ms=1.5, msc=:auto, c=1)
+    plot(title="P-value functions:  k_new=$k_new,  n_new=$n_new" *
+        "\nprior=Beta$(params(prior)),  prior_data=$prior_data")
+    scatter!(vcat(confint_score.(k_new, n_new, αs; prior_data)...), repeat(αs; inner=2); label="score test", ms=1.5, msc=:auto, c=1)
     plot!(ci_score, fill(1.1α, 2); label="$(100(1-α))% score conf.int.", c=1, lw=2)
-    scatter!(vcat(credint_hdi.(k, n, αs; prior)...), repeat(αs; inner=2); label="Bayes HDI", ms=1.5, msc=:auto, c=2)
+    scatter!(vcat(credint_hdi.(k_new, n_new, αs; prior)...), repeat(αs; inner=2); label="Bayes HDI", ms=1.5, msc=:auto, c=2)
     plot!(ci_bayes, fill(0.9α, 2); label="$(100(1-α))% cred.int. HDI", c=2, lw=2)
     plot!(xguide="p", yguide="P-value")
-    plot!(ytick=0:0.05:1)
+    plot!(ytick=0:0.05:1, ylim=(-0.03, 1.05))
 end
 
-plot_ci(; k=6, n=20)
+plot_ci(; k_new=6, n_new=20)
 
 # %%
-plot_ci(; k=24, n=80)
+plot_ci(; k_new=24, n_new=80)
 
 # %%
-plot_ci(; k=96, n=320)
+plot_ci(; k_new=96, n_new=320)
 
 # %% [markdown]
 # ## 偏りのある事前分布の場合
@@ -99,13 +106,32 @@ plot!(xguide="p", yguide="probability density")
 plot!(xtick=0:0.1:1)
 
 # %%
-plot_ci(; k=6, n=20, prior)
+@show κ, λ = params(prior);
+@show prior_data = (k_prior=κ-1, n_prior=κ+λ-2);
 
 # %%
-plot_ci(; k=24, n=80, prior)
+plot_ci(; k_new=6, n_new=20, prior)
 
 # %%
-plot_ci(; k=96, n=320, prior=Beta(3, 2))
+plot_ci(; k_new=6, n_new=20, prior, prior_data)
+
+# %%
+plot_ci(; k_new=6, n_new=20, prior)
+
+# %%
+plot_ci(; k_new=6, n_new=20, prior, prior_data)
+
+# %%
+plot_ci(; k_new=24, n_new=80, prior)
+
+# %%
+plot_ci(; k_new=24, n_new=80, prior, prior_data)
+
+# %%
+plot_ci(; k_new=96, n_new=320, prior=Beta(3, 2))
+
+# %%
+plot_ci(; k_new=96, n_new=320, prior=Beta(3, 2), prior_data=(k_prior=2, n_prior=3))
 
 # %% [markdown]
 # ## 正規分布モデルの場合
