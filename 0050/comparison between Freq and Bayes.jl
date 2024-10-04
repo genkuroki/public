@@ -82,16 +82,25 @@ function plot_ci(; k_new=7, n_new=24, α=0.05,
         if s[1] & s[2]
             title = "CIs:  k_new=$k_new,  n_new=$n_new"
         elseif s[1]
-            title = "confidence intervals:  k_new=$k_new,  n_new=$n_new"
+            title = "100(1-α)% confidence intervals:  k_new=$k_new,  n_new=$n_new"
         else
-            title = "credible intervals:  k_new=$k_new,  n_new=$n_new"
+            title = "100(1-α)% credible intervals:  k_new=$k_new,  n_new=$n_new"
         end
         yguide = "α"
     else
         title = "P-value function" * (all(f) ? "s" : "") * ":  k_new=$k_new,  n_new=$n_new"
         yguide = "P-value"
     end
-    title *= "\nprior=Beta$(params(prior)),  prior_data=$prior_data"
+    
+    if all(f)
+        title *= "\nprior=Beta$(params(prior)),  prior_data=$prior_data"
+    elseif f[1]
+        if prior_data.n_prior != 0
+            title *= "\nprior_data=$prior_data"
+        end
+    elseif f[2]
+        title *= "\nprior=Beta$(params(prior))"
+    end
 
     plot(; title)
     if f[1]
