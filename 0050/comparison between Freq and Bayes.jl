@@ -61,7 +61,8 @@ function credint_hdi(k, n, α=0.05; prior=Beta(1, 1))
 end
 
 function plot_ci(; k_new=7, n_new=24, α=0.05,
-        prior=Beta(1, 1), prior_data=(k_prior=0, n_prior=0))
+        prior=Beta(1, 1), prior_data=(k_prior=0, n_prior=0),
+        f=Bool[1,1], s=Bool[0,0], c=Bool[1,1], ls2=:solid, kwargs...)
     κ, λ = params(prior)
     @show k_new n_new α prior
     (; k_prior, n_prior) = prior_data
@@ -77,18 +78,67 @@ function plot_ci(; k_new=7, n_new=24, α=0.05,
     @show ci_score ci_bayes
     println()
     
-    αs = [0.001:0.001:0.009; 0.01:0.01:1]
-    plot(title="P-value functions:  k_new=$k_new,  n_new=$n_new" *
-        "\nprior=Beta$(params(prior)),  prior_data=$prior_data")
-    scatter!(vcat(confint_score.(k_new, n_new, αs; prior_data)...), repeat(αs; inner=2); label="score test", ms=1.5, msc=:auto, c=1)
-    plot!(ci_score, fill(1.1α, 2); label="$(100(1-α))% score conf.int.", c=1, lw=2)
-    scatter!(vcat(credint_hdi.(k_new, n_new, αs; prior)...), repeat(αs; inner=2); label="Bayes HDI", ms=1.5, msc=:auto, c=2)
-    plot!(ci_bayes, fill(0.9α, 2); label="$(100(1-α))% cred.int. HDI", c=2, lw=2)
-    plot!(xguide="p", yguide="P-value")
-    plot!(ytick=0:0.05:1, ylim=(-0.03, 1.05))
+    if s[1] | s[2]
+        if s[1] & s[2]
+            title = "CIs:  k_new=$k_new,  n_new=$n_new"
+        elseif s[1]
+            title = "confidence intervals:  k_new=$k_new,  n_new=$n_new"
+        else
+            title = "credible intervals:  k_new=$k_new,  n_new=$n_new"
+        end
+        yguide = "α"
+    else
+        title = "P-value function" * (all(f) ? "s" : "") * ":  k_new=$k_new,  n_new=$n_new"
+        yguide = "P-value"
+    end
+    title *= "\nprior=Beta$(params(prior)),  prior_data=$prior_data"
+
+    plot(; title)
+    if f[1]
+        if s[1]
+            l = true
+            for α in [0.001; 0.01:0.01:1]
+                plot!(confint_score(k_new, n_new, α; prior_data), fill(α, 2);
+                    label=l ? "score method" : "", c=1)
+                l = false
+            end
+        else
+            αs = [0.001:0.001:0.009; 0.01:0.01:1]
+            scatter!(vcat(confint_score.(k_new, n_new, αs; prior_data)...), repeat(αs; inner=2); 
+                label="score method", ms=1.5, msc=:auto, c=1)
+            c[1] && plot!(ci_score, fill(1.1α, 2); label="$(100(1-α))% score conf.int.", c=1, lw=2)
+        end
+    end
+    if f[2]
+        if s[2]
+            l = true
+            for α in [0.001; 0.01:0.01:1]
+                plot!(credint_hdi.(k_new, n_new, α; prior), fill(α, 2);
+                    label=l ? "Bayes HDI" : "", c=2, ls=ls2)
+                l = false
+            end
+        else
+            αs = [0.001:0.001:0.009; 0.01:0.01:1]
+            scatter!(vcat(credint_hdi.(k_new, n_new, αs; prior)...), repeat(αs; inner=2); 
+                label="Bayes HDI", ms=1.5, msc=:auto, c=2)
+            c[2] && plot!(ci_bayes, fill(0.9α, 2); label="$(100(1-α))% cred.int. HDI", c=2, lw=2)
+        end
+    end
+    plot!(; xguide="p", yguide)
+    plot!(; ytick=0:0.05:1, ylim=(-0.03, 1.05))
+    plot!(; kwargs...)
 end
 
 plot_ci(; k_new=6, n_new=20)
+
+# %%
+plot_ci(; k_new=6, n_new=20, f=Bool[1,0], s=Bool[1,0])
+
+# %%
+plot_ci(; k_new=6, n_new=20, f=Bool[0,1], s=Bool[0,1])
+
+# %%
+plot_ci(; k_new=6, n_new=20, f=Bool[1,1], s=Bool[1,0], c=Bool[1,0])
 
 # %%
 plot_ci(; k_new=24, n_new=80)
