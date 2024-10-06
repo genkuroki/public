@@ -62,7 +62,9 @@ end
 
 function plot_ci(; k_new=7, n_new=24, α=0.05,
         prior=Beta(1, 1), prior_data=(k_prior=0, n_prior=0),
-        f=Bool[1,1], s=Bool[0,0], c=Bool[1,1], ls2=:solid, kwargs...)
+        f=Bool[1,1], s=Bool[0,0], c=Bool[1,1], ls2=:solid,
+        αs = [0.001; 0.01:0.01:1], αs1=αs, αs2=αs,
+        kwargs...)
     κ, λ = params(prior)
     @show k_new n_new α prior
     (; k_prior, n_prior) = prior_data
@@ -105,9 +107,11 @@ function plot_ci(; k_new=7, n_new=24, α=0.05,
     plot(; title)
     if f[1]
         if s[1]
+            αs = αs1
+            δ = all(s) ? 0.005 : 0.0
             l = true
-            for α in [0.001; 0.01:0.01:1]
-                plot!(confint_score(k_new, n_new, α; prior_data), fill(α, 2);
+            for α in αs
+                plot!(confint_score(k_new, n_new, α; prior_data), fill(α+δ, 2);
                     label=l ? "score method" : "", c=1)
                 l = false
             end
@@ -120,9 +124,11 @@ function plot_ci(; k_new=7, n_new=24, α=0.05,
     end
     if f[2]
         if s[2]
+            αs = αs2
+            δ = all(s) ? -0.005 : 0.0
             l = true
-            for α in [0.001; 0.01:0.01:1]
-                plot!(credint_hdi.(k_new, n_new, α; prior), fill(α, 2);
+            for α in αs
+                plot!(credint_hdi.(k_new, n_new, α; prior), fill(α+δ, 2);
                     label=l ? "Bayes HDI" : "", c=2, ls=ls2)
                 l = false
             end
@@ -147,7 +153,10 @@ plot_ci(; k_new=6, n_new=20, f=Bool[1,0], s=Bool[1,0])
 plot_ci(; k_new=6, n_new=20, f=Bool[0,1], s=Bool[0,1])
 
 # %%
-plot_ci(; k_new=6, n_new=20, f=Bool[1,1], s=Bool[1,0], c=Bool[1,0])
+plot_ci(; k_new=6, n_new=20, f=Bool[1,1], s=Bool[1,0], c=Bool[0,0])
+
+# %%
+plot_ci(; k_new=6, n_new=20, f=Bool[1,1], s=Bool[1,1], c=Bool[0,0], αs=[0.001; 0.05:0.05:1])
 
 # %%
 plot_ci(; k_new=24, n_new=80)
