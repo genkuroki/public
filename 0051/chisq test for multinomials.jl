@@ -26,6 +26,7 @@
 
 # %%
 using Distributions
+using Random
 using StatsPlots
 default(fmt=:png, titlefontsize=10)
 
@@ -189,6 +190,9 @@ plot_poi(; λ=100)
 #
 # は自由度 $r-1$ のχ²分布に近似的に従う.
 
+# %% [markdown]
+# ### 多項分布とそれを近似する多変量正規分布の同時可視化
+
 # %%
 function plot_mult(; n=20, p=[0.2, 0.3, 0.5])
     mult = Multinomial(n, p)
@@ -215,7 +219,49 @@ plot_mult(; n=20, p=[0.2, 0.3, 0.5])
 plot_mult(; n=100, p=[0.2, 0.3, 0.5])
 
 # %% [markdown]
-# ## 「カイ二乗検定は何をやっているのか」の再現
+# ### 多項分布のPearsonのχ²統計量の補累積分布関数のグラフ
+
+# %%
+ecdf_(A, x) = count(≤(x), A) / length(A)
+eccdf_(A, x) = count(>(x), A) / length(A)
+
+function chisq_pearson(x, p)
+    n = sum(x)
+    sum((x - n*p)^2/(n*p) for (x, p) in zip(x, p))
+end
+
+function plot_chisq_mult(; n=20, p=[0.2, 0.3, 0.5], L=10^5)
+    mult = Multinomial(n, p)
+    CP = zeros(L)
+    Xtmp = [zeros(Int, length(p)) for _ in 1:Threads.nthreads()]
+    Threads.@threads for i in 1:L
+        tid = Threads.threadid()
+        X = rand!(mult, Xtmp[tid])
+        CP[i] = chisq_pearson(X, p)
+    end
+    r = length(p)
+    chisq = Chisq(r-1)
+    plot(x -> eccdf_(CP, x), -0.001, quantile(chisq, 0.999); norm=true, label="Pearson's χ²")
+    plot!(x -> ccdf(chisq, x); label="Chisq($r-1)", ls=:dash)
+    plot!(xguide="x", yguide="probability that χ² > x")
+    plot!(ytick=0:0.05:1)
+    title!("ccdf of Pearson's χ² for\nMultinomial($n, $(round.(p; sigdigits=3)))")
+end
+
+# %%
+plot_chisq_mult(; n=20, p=[0.2, 0.3, 0.5])
+
+# %%
+plot_chisq_mult(; n=100, p=[0.2, 0.3, 0.5])
+
+# %%
+plot_chisq_mult(; n=4*6, p=fill(1/6, 6))
+
+# %%
+plot_chisq_mult(; n=24*6, p=fill(1/6, 6))
+
+# %% [markdown]
+# ## 「カイ二乗検定は何をやっているのか」のP値による再現
 #
 # 以下は https://note.com/cograph_data/n/n7e330ded4147 より。
 #
