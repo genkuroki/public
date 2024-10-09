@@ -79,6 +79,7 @@ function pval2pdfhdi(pvalfunc, xcenter, xmin, xmax)
     Db = backward_fdm(5, 1)
     Df = forward_fdm(5, 1)
     function pdfhdi(x)
+        xmin < x < xmax || return 0.0
         pval_x = pvalfunc(x)
         f(x) = pvalfunc(x) - pval_x
         if x == xcenter

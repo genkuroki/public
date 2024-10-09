@@ -368,7 +368,7 @@ function plot_pp2(; data=[34, 19, 30, 18, 14, 29], kwargs...)
         plot!(pdfhdi, 0, 1; alpha=1, label="$i")
     end
     plot!(xtick=0:0.1:1)
-    title!("binomial P-value pdf")
+    title!("binomial P-value pdfs")
 
     plot(P, Q; size=(500, 700), layout=(2, 1), kwargs...)
 end
