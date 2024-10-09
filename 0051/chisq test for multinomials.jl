@@ -26,9 +26,15 @@
 #
 # See also https://x.com/genkuroki/status/1843653103960371268
 
+# %% [markdown] toc=true
+# <h1>目次<span class="tocSkip"></span></h1>
+# <div class="toc"><ul class="toc-item"><li><span><a href="#方針" data-toc-modified-id="方針-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>方針</a></span></li><li><span><a href="#Poisson分布の正規分布近似" data-toc-modified-id="Poisson分布の正規分布近似-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Poisson分布の正規分布近似</a></span></li><li><span><a href="#$d$-変量正規分布と自由度-$d$-のχ²分布の関係" data-toc-modified-id="$d$-変量正規分布と自由度-$d$-のχ²分布の関係-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>$d$ 変量正規分布と自由度 $d$ のχ²分布の関係</a></span></li><li><span><a href="#Poisson分布達の直積の多変量正規分布近似" data-toc-modified-id="Poisson分布達の直積の多変量正規分布近似-4"><span class="toc-item-num">4&nbsp;&nbsp;</span>Poisson分布達の直積の多変量正規分布近似</a></span></li><li><span><a href="#Poisson分布達の直積と多項分布の関係" data-toc-modified-id="Poisson分布達の直積と多項分布の関係-5"><span class="toc-item-num">5&nbsp;&nbsp;</span>Poisson分布達の直積と多項分布の関係</a></span></li><li><span><a href="#多項分布の多変量正規分布近似" data-toc-modified-id="多項分布の多変量正規分布近似-6"><span class="toc-item-num">6&nbsp;&nbsp;</span>多項分布の多変量正規分布近似</a></span><ul class="toc-item"><li><span><a href="#多項分布とそれを近似する多変量正規分布の同時可視化" data-toc-modified-id="多項分布とそれを近似する多変量正規分布の同時可視化-6.1"><span class="toc-item-num">6.1&nbsp;&nbsp;</span>多項分布とそれを近似する多変量正規分布の同時可視化</a></span></li><li><span><a href="#多項分布のPearsonのχ²統計量の補累積分布関数のグラフ" data-toc-modified-id="多項分布のPearsonのχ²統計量の補累積分布関数のグラフ-6.2"><span class="toc-item-num">6.2&nbsp;&nbsp;</span>多項分布のPearsonのχ²統計量の補累積分布関数のグラフ</a></span></li></ul></li><li><span><a href="#「カイ二乗検定は何をやっているのか」のP値による再現" data-toc-modified-id="「カイ二乗検定は何をやっているのか」のP値による再現-7"><span class="toc-item-num">7&nbsp;&nbsp;</span>「カイ二乗検定は何をやっているのか」のP値による再現</a></span><ul class="toc-item"><li><span><a href="#事後分布とP値関数を並べてプロット" data-toc-modified-id="事後分布とP値関数を並べてプロット-7.1"><span class="toc-item-num">7.1&nbsp;&nbsp;</span>事後分布とP値関数を並べてプロット</a></span></li><li><span><a href="#P値関数をそれに対応する密度関数に変換してからプロット" data-toc-modified-id="P値関数をそれに対応する密度関数に変換してからプロット-7.2"><span class="toc-item-num">7.2&nbsp;&nbsp;</span>P値関数をそれに対応する密度関数に変換してからプロット</a></span></li></ul></li></ul></div>
+
 # %%
 using Distributions
+using FiniteDifferences
 using Random
+using Roots
 using StatsPlots
 default(fmt=:png, titlefontsize=10)
 
@@ -45,7 +51,7 @@ default(fmt=:png, titlefontsize=10)
 # $1$ 個のPoisson分布の正規分布近似の直積として得られる.
 
 # %% [markdown]
-# ## Poisson分布
+# ## Poisson分布の正規分布近似
 #
 # 期待値 $\lambda > 0$ のPoisson分布 $\op{Poisson}(\lambda)$ の確率質量関数は
 #
@@ -59,6 +65,13 @@ default(fmt=:png, titlefontsize=10)
 # $$
 # p(k|\lambda) \approx \frac{1}{\sqrt{2\pi\lambda}}\exp\left( -\frac{1}{2}\frac{(k - \lambda)^2}{\lambda} \right).
 # $$
+
+# %% [markdown]
+# 以下, $\lambda$ は十分に大きいと仮定する.
+#
+# 上で述べたことより, $k \sim \op{Poisson}(\lambda)$ ならば $\dfrac{k-\lambda}{\sqrt{\lambda}}$ は標準正規分布に近似的に従う.
+#
+# ゆえに, $\dfrac{(k-\lambda)^2}{\lambda}$ は近似的に自由度 $1$ のχ²分布に従う.
 
 # %%
 function plot_poi(; λ=20, kwargs...)
@@ -74,13 +87,6 @@ plot_poi(; λ=20)
 
 # %%
 plot_poi(; λ=100)
-
-# %% [markdown]
-# 以下, $\lambda$ は十分に大きいと仮定する.
-#
-# 上で述べたことより, $k \sim \op{Poisson}(\lambda)$ ならば $\dfrac{k-\lambda}{\sqrt{\lambda}}$ は標準正規分布に近似的に従う.
-#
-# ゆえに, $\dfrac{(k-\lambda)^2}{\lambda}$ は近似的に自由度 $1$ のχ²分布に従う.
 
 # %% [markdown]
 # ## $d$ 変量正規分布と自由度 $d$ のχ²分布の関係
@@ -267,16 +273,19 @@ plot_chisq_mult(; n=24*6, p=fill(1/6, 6))
 #
 # 以下は https://note.com/cograph_data/n/n7e330ded4147 より。
 #
-# <img src="IMG_6532.png" width=80%>
+# <img src="https://raw.githubusercontent.com/genkuroki/public/refs/heads/main/0051/IMG_6532.png" width=80%>
 #
 # というデータから事後分布
 #
-# <img src="IMG_6533.png" width=60%>
+# <img src="https://github.com/genkuroki/public/blob/main/0051/IMG_6533.png?raw=true" width=60%>
 #
 # を作っている(縦軸のスケールがおかしい). これとほぼ同じものをP値関数としても作れることを示そう.
 
 # %%
 @show chisq_pearson([34, 19, 30, 18, 14, 29], fill(1/6, 6));
+
+# %% [markdown]
+# ### 事後分布とP値関数を並べてプロット
 
 # %%
 function posteriors_bin(data; prior=Beta(1, 1))
@@ -297,7 +306,7 @@ function plot_pp(; data=[34, 19, 30, 18, 14, 29], kwargs...)
     for (i, dist) in enumerate(posteriors_bin(data))
         plot!(dist, 0, 1; alpha=1, label="$i")
     end
-    plot!(xtick=0:0.1:1, ytick=0:20)
+    plot!(xtick=0:0.1:1)
     title!("binomial posteriors")
 
     Q = plot()
@@ -315,5 +324,74 @@ plot_pp(; data=[34, 19, 30, 18, 14, 29], xlim=(-0.01, 0.41), xtick=0:0.05:1)
 
 # %% [markdown]
 # 上の結果の下段がP値関数のグラフである. このように, P値関数は事後分布と同じように使える.
+
+# %% [markdown]
+# ### P値関数をそれに対応する密度関数に変換してからプロット
+
+# %%
+function pval2pdfhdi(pvalfunc, xcenter, xmin, xmax)
+    Db = backward_fdm(5, 1)
+    Df = forward_fdm(5, 1)
+    function pdfhdi(x)
+        xmin < x < xmax || return 0.0
+        pval_x = pvalfunc(x)
+        f(x) = pvalfunc(x) - pval_x
+        if x == xcenter
+            a = Db(pvalfunc, x)
+            b = Df(pvalfunc, x)
+        elseif x < xcenter
+            y = find_zero(f, (xcenter, xmax))
+            a = Db(pvalfunc, x)
+            b = Df(pvalfunc, y)
+        else
+            y = find_zero(f, (xmin, xcenter))
+            a = Db(pvalfunc, y)
+            b = Df(pvalfunc, x)
+        end
+        safediv(a*b, b - a)
+    end
+    pdfhdi
+end
+
+function plot_pp2(; data=[34, 19, 30, 18, 14, 29], kwargs...)
+    P = plot()
+    for (i, dist) in enumerate(posteriors_bin(data))
+        plot!(dist, 0, 1; alpha=1, label="$i")
+    end
+    plot!(xtick=0:0.1:1)
+    title!("binomial posteriors")
+
+    n = sum(data)
+    Q = plot()
+    for (i, x) in enumerate(data)
+        pdfhdi = pval2pdfhdi(p -> pvalue_bin(x, n, p), x/n, 0.0, 1.0)
+        plot!(pdfhdi, 0, 1; alpha=1, label="$i")
+    end
+    plot!(xtick=0:0.1:1)
+    title!("binomial P-value pdf")
+
+    plot(P, Q; size=(500, 700), layout=(2, 1), kwargs...)
+end
+
+function plot_pp3(; data=[34, 19, 30, 18, 14, 29], kwargs...)
+    n = sum(data)
+    PP = []
+    for (i, (x, dist)) in enumerate(zip(data, posteriors_bin(data)))
+        pdfhdi = pval2pdfhdi(p -> pvalue_bin(x, n, p), x/n, 0.0, 1.0)
+        P = plot()
+        plot!(dist, 0, 1; alpha=1, label="posterior $i")
+        plot!(pdfhdi, 0, 1; alpha=1, label="P-value pdf $i", ls=:dash)
+        plot!(xtick=0:0.1:1)
+        push!(PP, P)
+    end
+
+    plot(PP...; size=(800, 750), layout=(3, 2), kwargs...)
+end
+
+# %%
+plot_pp2(; data=[34, 19, 30, 18, 14, 29], xlim=(-0.01, 0.41), xtick=0:0.05:1)
+
+# %%
+plot_pp3(; data=[34, 19, 30, 18, 14, 29], xlim=(-0.01, 0.46), xtick=0:0.05:1)
 
 # %%
