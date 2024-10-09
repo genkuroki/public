@@ -31,8 +31,10 @@
 # <div class="toc"><ul class="toc-item"><li><span><a href="#方針" data-toc-modified-id="方針-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>方針</a></span></li><li><span><a href="#Poisson分布の正規分布近似" data-toc-modified-id="Poisson分布の正規分布近似-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Poisson分布の正規分布近似</a></span></li><li><span><a href="#$d$-変量正規分布と自由度-$d$-のχ²分布の関係" data-toc-modified-id="$d$-変量正規分布と自由度-$d$-のχ²分布の関係-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>$d$ 変量正規分布と自由度 $d$ のχ²分布の関係</a></span></li><li><span><a href="#Poisson分布達の直積の多変量正規分布近似" data-toc-modified-id="Poisson分布達の直積の多変量正規分布近似-4"><span class="toc-item-num">4&nbsp;&nbsp;</span>Poisson分布達の直積の多変量正規分布近似</a></span></li><li><span><a href="#Poisson分布達の直積と多項分布の関係" data-toc-modified-id="Poisson分布達の直積と多項分布の関係-5"><span class="toc-item-num">5&nbsp;&nbsp;</span>Poisson分布達の直積と多項分布の関係</a></span></li><li><span><a href="#多項分布の多変量正規分布近似" data-toc-modified-id="多項分布の多変量正規分布近似-6"><span class="toc-item-num">6&nbsp;&nbsp;</span>多項分布の多変量正規分布近似</a></span><ul class="toc-item"><li><span><a href="#多項分布とそれを近似する多変量正規分布の同時可視化" data-toc-modified-id="多項分布とそれを近似する多変量正規分布の同時可視化-6.1"><span class="toc-item-num">6.1&nbsp;&nbsp;</span>多項分布とそれを近似する多変量正規分布の同時可視化</a></span></li><li><span><a href="#多項分布のPearsonのχ²統計量の補累積分布関数のグラフ" data-toc-modified-id="多項分布のPearsonのχ²統計量の補累積分布関数のグラフ-6.2"><span class="toc-item-num">6.2&nbsp;&nbsp;</span>多項分布のPearsonのχ²統計量の補累積分布関数のグラフ</a></span></li></ul></li><li><span><a href="#「カイ二乗検定は何をやっているのか」のP値による再現" data-toc-modified-id="「カイ二乗検定は何をやっているのか」のP値による再現-7"><span class="toc-item-num">7&nbsp;&nbsp;</span>「カイ二乗検定は何をやっているのか」のP値による再現</a></span><ul class="toc-item"><li><span><a href="#事後分布とP値関数を並べてプロット" data-toc-modified-id="事後分布とP値関数を並べてプロット-7.1"><span class="toc-item-num">7.1&nbsp;&nbsp;</span>事後分布とP値関数を並べてプロット</a></span></li><li><span><a href="#P値関数をそれに対応する密度関数に変換してからプロット" data-toc-modified-id="P値関数をそれに対応する密度関数に変換してからプロット-7.2"><span class="toc-item-num">7.2&nbsp;&nbsp;</span>P値関数をそれに対応する密度関数に変換してからプロット</a></span></li></ul></li></ul></div>
 
 # %%
+ENV["COLUMNS"] = 200
 using Distributions
 using FiniteDifferences
+using LinearAlgebra: I, eigen
 using Random
 using Roots
 using StatsPlots
@@ -106,6 +108,41 @@ plot_poi(; λ=100)
 # $$
 #
 # は自由度 $d$ のχ²分布に従うことを, 実対称行列の直交行列による対角化を使って示せる.
+
+# %%
+function plot_sqmahal(mvn::MvNormal; L=10^6)
+    d = length(mvn)
+    MSq = zeros(L)
+    Xtmp = [zeros(d) for _ in 1:Threads.nthreads()]
+    Threads.@threads for i in 1:L
+        tid = Threads.threadid()
+        X = rand!(mvn, Xtmp[tid])
+        MSq[i] = sqmahal(mvn, X)
+    end
+    stephist(MSq; norm=true, label="squared Mahalanobis")
+    plot!(Chisq(d), extrema(MSq)...; label="Chisq($d)", ls=:dash)
+end
+
+function plot_rand_sqmahal(;
+        d = rand(5:15),
+        μ = round.(10randn(d); sigdigits=3),
+        Σ = round.(rand(Wishart(30.0, 0.1Matrix{Float64}(I, d, d))); sigdigits=3),
+        L = 10^6)
+    @show d
+    @show μ
+    print("Σ = "); display(Σ)
+    mvn = MvNormal(μ, Σ)
+    plot_sqmahal(mvn; L)
+end
+
+# %%
+plot_rand_sqmahal()
+
+# %%
+plot_rand_sqmahal()
+
+# %%
+plot_rand_sqmahal()
 
 # %% [markdown]
 # ## Poisson分布達の直積の多変量正規分布近似

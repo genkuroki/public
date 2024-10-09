@@ -9,9 +9,9 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.10.3
 #   kernelspec:
-#     display_name: Julia 1.10.5
+#     display_name: Julia 1.11.0
 #     language: julia
-#     name: julia-1.10
+#     name: julia-1.11
 # ---
 
 # %%
@@ -77,5 +77,32 @@ for (k, n) in ((3, 10), (6, 20), (30, 100), (300, 1000))
 end
 plot!(PP...; size=(1200, 800), layout=(2, 2))
 plot!(leftmargin=4Plots.mm)
+
+# %%
+function cifunc2pdfval(cifunc; Δα=1e-6)
+    function pdfval(α)
+        @assert 0 ≤ α ≤ 1
+        if α > Δα
+            L, U = cifunc(α)
+            LL, UU = cifunc(α - Δα)
+            ΔL, ΔU = L - LL, UU - U
+            Δα / (ΔL + ΔU)
+        else
+            0.0
+        end
+    end
+    pdfval
+end
+
+k, n = 6, 20
+cifunc(α) = confint_score(k, n, α)
+pdfval = cifunc2pdfval(cifunc)
+αs = 0.001:0.001:1
+plot()
+for α in αs
+    plot!(cifunc(α), fill(pdfval(α), 2); label="", c=1, alpha=0.3)
+end
+plot!(xguide="parameter p", yguide="probability density")
+plot!()
 
 # %%
