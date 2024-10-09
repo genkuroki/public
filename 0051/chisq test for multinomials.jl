@@ -28,7 +28,7 @@
 
 # %% [markdown] toc=true
 # <h1>目次<span class="tocSkip"></span></h1>
-# <div class="toc"><ul class="toc-item"><li><span><a href="#方針" data-toc-modified-id="方針-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>方針</a></span></li><li><span><a href="#Poisson分布の正規分布近似" data-toc-modified-id="Poisson分布の正規分布近似-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Poisson分布の正規分布近似</a></span></li><li><span><a href="#$d$-変量正規分布と自由度-$d$-のχ²分布の関係" data-toc-modified-id="$d$-変量正規分布と自由度-$d$-のχ²分布の関係-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>$d$ 変量正規分布と自由度 $d$ のχ²分布の関係</a></span></li><li><span><a href="#Poisson分布達の直積の多変量正規分布近似" data-toc-modified-id="Poisson分布達の直積の多変量正規分布近似-4"><span class="toc-item-num">4&nbsp;&nbsp;</span>Poisson分布達の直積の多変量正規分布近似</a></span></li><li><span><a href="#Poisson分布達の直積と多項分布の関係" data-toc-modified-id="Poisson分布達の直積と多項分布の関係-5"><span class="toc-item-num">5&nbsp;&nbsp;</span>Poisson分布達の直積と多項分布の関係</a></span></li><li><span><a href="#多項分布の多変量正規分布近似" data-toc-modified-id="多項分布の多変量正規分布近似-6"><span class="toc-item-num">6&nbsp;&nbsp;</span>多項分布の多変量正規分布近似</a></span><ul class="toc-item"><li><span><a href="#多項分布とそれを近似する多変量正規分布の同時可視化" data-toc-modified-id="多項分布とそれを近似する多変量正規分布の同時可視化-6.1"><span class="toc-item-num">6.1&nbsp;&nbsp;</span>多項分布とそれを近似する多変量正規分布の同時可視化</a></span></li><li><span><a href="#多項分布のPearsonのχ²統計量の補累積分布関数のグラフ" data-toc-modified-id="多項分布のPearsonのχ²統計量の補累積分布関数のグラフ-6.2"><span class="toc-item-num">6.2&nbsp;&nbsp;</span>多項分布のPearsonのχ²統計量の補累積分布関数のグラフ</a></span></li></ul></li><li><span><a href="#「カイ二乗検定は何をやっているのか」のP値による再現" data-toc-modified-id="「カイ二乗検定は何をやっているのか」のP値による再現-7"><span class="toc-item-num">7&nbsp;&nbsp;</span>「カイ二乗検定は何をやっているのか」のP値による再現</a></span><ul class="toc-item"><li><span><a href="#事後分布とP値関数を並べてプロット" data-toc-modified-id="事後分布とP値関数を並べてプロット-7.1"><span class="toc-item-num">7.1&nbsp;&nbsp;</span>事後分布とP値関数を並べてプロット</a></span></li><li><span><a href="#P値関数の側を確率密度関数に変換してからプロット" data-toc-modified-id="P値関数の側を確率密度関数に変換してからプロット-7.2"><span class="toc-item-num">7.2&nbsp;&nbsp;</span>P値関数の側を確率密度関数に変換してからプロット</a></span></li><li><span><a href="#事後分布の側をP値関数に変換してプロット" data-toc-modified-id="事後分布の側をP値関数に変換してプロット-7.3"><span class="toc-item-num">7.3&nbsp;&nbsp;</span>事後分布の側をP値関数に変換してプロット</a></span></li></ul></li></ul></div>
+# <div class="toc"><ul class="toc-item"><li><span><a href="#方針" data-toc-modified-id="方針-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>方針</a></span></li><li><span><a href="#Poisson分布の正規分布近似" data-toc-modified-id="Poisson分布の正規分布近似-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Poisson分布の正規分布近似</a></span></li><li><span><a href="#$d$-変量正規分布と自由度-$d$-のχ²分布の関係" data-toc-modified-id="$d$-変量正規分布と自由度-$d$-のχ²分布の関係-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>$d$ 変量正規分布と自由度 $d$ のχ²分布の関係</a></span></li><li><span><a href="#Poisson分布達の直積の多変量正規分布近似" data-toc-modified-id="Poisson分布達の直積の多変量正規分布近似-4"><span class="toc-item-num">4&nbsp;&nbsp;</span>Poisson分布達の直積の多変量正規分布近似</a></span></li><li><span><a href="#Poisson分布達の直積と多項分布の関係" data-toc-modified-id="Poisson分布達の直積と多項分布の関係-5"><span class="toc-item-num">5&nbsp;&nbsp;</span>Poisson分布達の直積と多項分布の関係</a></span></li><li><span><a href="#多項分布の多変量正規分布近似" data-toc-modified-id="多項分布の多変量正規分布近似-6"><span class="toc-item-num">6&nbsp;&nbsp;</span>多項分布の多変量正規分布近似</a></span><ul class="toc-item"><li><span><a href="#多項分布とそれを近似する多変量正規分布の同時可視化" data-toc-modified-id="多項分布とそれを近似する多変量正規分布の同時可視化-6.1"><span class="toc-item-num">6.1&nbsp;&nbsp;</span>多項分布とそれを近似する多変量正規分布の同時可視化</a></span></li><li><span><a href="#多項分布のPearsonのχ²統計量の補累積分布関数のグラフ" data-toc-modified-id="多項分布のPearsonのχ²統計量の補累積分布関数のグラフ-6.2"><span class="toc-item-num">6.2&nbsp;&nbsp;</span>多項分布のPearsonのχ²統計量の補累積分布関数のグラフ</a></span></li></ul></li><li><span><a href="#「カイ二乗検定は何をやっているのか」のP値による再現" data-toc-modified-id="「カイ二乗検定は何をやっているのか」のP値による再現-7"><span class="toc-item-num">7&nbsp;&nbsp;</span>「カイ二乗検定は何をやっているのか」のP値による再現</a></span><ul class="toc-item"><li><span><a href="#事後分布とP値関数を並べてプロット" data-toc-modified-id="事後分布とP値関数を並べてプロット-7.1"><span class="toc-item-num">7.1&nbsp;&nbsp;</span>事後分布とP値関数を並べてプロット</a></span></li><li><span><a href="#P値関数の側を確率密度関数に変換してからプロット" data-toc-modified-id="P値関数の側を確率密度関数に変換してからプロット-7.2"><span class="toc-item-num">7.2&nbsp;&nbsp;</span>P値関数の側を確率密度関数に変換してからプロット</a></span></li><li><span><a href="#事後分布の側をP値関数に変換してプロット" data-toc-modified-id="事後分布の側をP値関数に変換してプロット-7.3"><span class="toc-item-num">7.3&nbsp;&nbsp;</span>事後分布の側をP値関数に変換してプロット</a></span></li></ul></li><li><span><a href="#Pearsonのχ²検定のP値関数を近似するベイズ的なP値関数" data-toc-modified-id="Pearsonのχ²検定のP値関数を近似するベイズ的なP値関数-8"><span class="toc-item-num">8&nbsp;&nbsp;</span>Pearsonのχ²検定のP値関数を近似するベイズ的なP値関数</a></span></li></ul></div>
 
 # %%
 ENV["COLUMNS"] = 200
@@ -38,7 +38,7 @@ using LinearAlgebra: I, eigen
 using Random
 using Roots
 using StatsPlots
-default(fmt=:png, titlefontsize=10)
+default(fmt=:png, titlefontsize=10, plot_titlefontsize=12)
 
 # %% [markdown]
 # ## 方針
@@ -504,5 +504,74 @@ plot_pp4(; data=[34, 19, 30, 18, 14, 29], xlim=(-0.01, 0.41), xtick=0:0.05:1)
 
 # %%
 plot_pp5(; data=[34, 19, 30, 18, 14, 29], xlim=(-0.01, 0.51), xtick=0:0.05:1)
+
+# %% [markdown]
+# ## Pearsonのχ²検定のP値関数を近似するベイズ的なP値関数
+
+# %%
+function chisq_pearson(k, p)
+    n = sum(k)
+    sum((k - n*p)^2/(n*p) for (k, p) in zip(k, p))
+end
+
+function pvalue_mult_chisq_pearson(k, p)
+    df = length(p) - 1
+    χ² = chisq_pearson(k, p)
+    ccdf(Chisq(df), χ²)
+end
+
+function pvalue_mvn_sqmahal(mvn::MvNormal, x)
+    df = length(mvn)
+    χ² = sqmahal(mvn, x)
+    ccdf(Chisq(df), χ²)
+end
+
+function dir2mvn(dir::Dirichlet)
+    μ, Σ = mean(dir)[1:end-1], cov(dir)[1:end-1, 1:end-1]
+    MvNormal(μ, Σ)
+end
+
+function pvalue_dir_sqmagal(dir::Dirichlet, p)
+    mvn = dir2mvn(dir)
+    pvalue_mvn_sqmahal(mvn, p)
+end
+
+function posterior_dir(k; κ=fill(0, length(k)))
+    Dirichlet(κ + k)
+end
+
+# %%
+k = [40, 60, 100]
+
+xlim = (0.1, 0.3)
+ylim = (0.2, 0.4)
+xs = range(xlim..., 101)
+ys = range(ylim..., 101)
+xtick = ytick = 0:0.02:1
+
+f(x, y) = x+y ≤ 1 ? pvalue_mult_chisq_pearson(k, [x, y, 1-x-y]) : NaN
+P = heatmap(xs, ys, f; label="", colorbar=false)
+plot!(; xtick, ytick, xrotation=90)
+plot!(xguide="p₁", yguide="p₂")
+title!("P-value function of Pearson's χ²-test")
+
+dir = posterior_dir(k)
+mvn = dir2mvn(dir)
+g(x, y) = x+y ≤ 1 ? pvalue_mvn_sqmahal(mvn, [x, y]) : NaN
+Q = heatmap(xs, ys, g; label="", colorbar=false)
+plot!(; xtick, ytick, xrotation=90)
+plot!(xguide="p₁", yguide="p₂")
+title!("Bayesian m.v.normal approx. P-value function")
+
+plot(Q, P; size=(800, 420))
+plot!(bottommargin=4Plots.mm)
+plot!(plot_title="data: k = $k")
+
+# %%
+heatmap(xs, ys, (x, y) -> g(x, y) - f(x, y); label="", c=:bwr)
+plot!(; xtick, ytick, xrotation=90)
+plot!(xguide="p₁", yguide="p₂")
+title!("diff")
+plot!(size=(430, 400), rightmargin=6Plots.mm)
 
 # %%
