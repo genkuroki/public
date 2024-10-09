@@ -28,7 +28,7 @@
 
 # %% [markdown] toc=true
 # <h1>目次<span class="tocSkip"></span></h1>
-# <div class="toc"><ul class="toc-item"><li><span><a href="#方針" data-toc-modified-id="方針-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>方針</a></span></li><li><span><a href="#Poisson分布の正規分布近似" data-toc-modified-id="Poisson分布の正規分布近似-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Poisson分布の正規分布近似</a></span></li><li><span><a href="#$d$-変量正規分布と自由度-$d$-のχ²分布の関係" data-toc-modified-id="$d$-変量正規分布と自由度-$d$-のχ²分布の関係-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>$d$ 変量正規分布と自由度 $d$ のχ²分布の関係</a></span></li><li><span><a href="#Poisson分布達の直積の多変量正規分布近似" data-toc-modified-id="Poisson分布達の直積の多変量正規分布近似-4"><span class="toc-item-num">4&nbsp;&nbsp;</span>Poisson分布達の直積の多変量正規分布近似</a></span></li><li><span><a href="#Poisson分布達の直積と多項分布の関係" data-toc-modified-id="Poisson分布達の直積と多項分布の関係-5"><span class="toc-item-num">5&nbsp;&nbsp;</span>Poisson分布達の直積と多項分布の関係</a></span></li><li><span><a href="#多項分布の多変量正規分布近似" data-toc-modified-id="多項分布の多変量正規分布近似-6"><span class="toc-item-num">6&nbsp;&nbsp;</span>多項分布の多変量正規分布近似</a></span><ul class="toc-item"><li><span><a href="#多項分布とそれを近似する多変量正規分布の同時可視化" data-toc-modified-id="多項分布とそれを近似する多変量正規分布の同時可視化-6.1"><span class="toc-item-num">6.1&nbsp;&nbsp;</span>多項分布とそれを近似する多変量正規分布の同時可視化</a></span></li><li><span><a href="#多項分布のPearsonのχ²統計量の補累積分布関数のグラフ" data-toc-modified-id="多項分布のPearsonのχ²統計量の補累積分布関数のグラフ-6.2"><span class="toc-item-num">6.2&nbsp;&nbsp;</span>多項分布のPearsonのχ²統計量の補累積分布関数のグラフ</a></span></li></ul></li><li><span><a href="#「カイ二乗検定は何をやっているのか」のP値による再現" data-toc-modified-id="「カイ二乗検定は何をやっているのか」のP値による再現-7"><span class="toc-item-num">7&nbsp;&nbsp;</span>「カイ二乗検定は何をやっているのか」のP値による再現</a></span><ul class="toc-item"><li><span><a href="#事後分布とP値関数を並べてプロット" data-toc-modified-id="事後分布とP値関数を並べてプロット-7.1"><span class="toc-item-num">7.1&nbsp;&nbsp;</span>事後分布とP値関数を並べてプロット</a></span></li><li><span><a href="#P値関数をそれに対応する密度関数に変換してからプロット" data-toc-modified-id="P値関数をそれに対応する密度関数に変換してからプロット-7.2"><span class="toc-item-num">7.2&nbsp;&nbsp;</span>P値関数をそれに対応する密度関数に変換してからプロット</a></span></li></ul></li></ul></div>
+# <div class="toc"><ul class="toc-item"><li><span><a href="#方針" data-toc-modified-id="方針-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>方針</a></span></li><li><span><a href="#Poisson分布の正規分布近似" data-toc-modified-id="Poisson分布の正規分布近似-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Poisson分布の正規分布近似</a></span></li><li><span><a href="#$d$-変量正規分布と自由度-$d$-のχ²分布の関係" data-toc-modified-id="$d$-変量正規分布と自由度-$d$-のχ²分布の関係-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>$d$ 変量正規分布と自由度 $d$ のχ²分布の関係</a></span></li><li><span><a href="#Poisson分布達の直積の多変量正規分布近似" data-toc-modified-id="Poisson分布達の直積の多変量正規分布近似-4"><span class="toc-item-num">4&nbsp;&nbsp;</span>Poisson分布達の直積の多変量正規分布近似</a></span></li><li><span><a href="#Poisson分布達の直積と多項分布の関係" data-toc-modified-id="Poisson分布達の直積と多項分布の関係-5"><span class="toc-item-num">5&nbsp;&nbsp;</span>Poisson分布達の直積と多項分布の関係</a></span></li><li><span><a href="#多項分布の多変量正規分布近似" data-toc-modified-id="多項分布の多変量正規分布近似-6"><span class="toc-item-num">6&nbsp;&nbsp;</span>多項分布の多変量正規分布近似</a></span><ul class="toc-item"><li><span><a href="#多項分布とそれを近似する多変量正規分布の同時可視化" data-toc-modified-id="多項分布とそれを近似する多変量正規分布の同時可視化-6.1"><span class="toc-item-num">6.1&nbsp;&nbsp;</span>多項分布とそれを近似する多変量正規分布の同時可視化</a></span></li><li><span><a href="#多項分布のPearsonのχ²統計量の補累積分布関数のグラフ" data-toc-modified-id="多項分布のPearsonのχ²統計量の補累積分布関数のグラフ-6.2"><span class="toc-item-num">6.2&nbsp;&nbsp;</span>多項分布のPearsonのχ²統計量の補累積分布関数のグラフ</a></span></li></ul></li><li><span><a href="#「カイ二乗検定は何をやっているのか」のP値による再現" data-toc-modified-id="「カイ二乗検定は何をやっているのか」のP値による再現-7"><span class="toc-item-num">7&nbsp;&nbsp;</span>「カイ二乗検定は何をやっているのか」のP値による再現</a></span><ul class="toc-item"><li><span><a href="#事後分布とP値関数を並べてプロット" data-toc-modified-id="事後分布とP値関数を並べてプロット-7.1"><span class="toc-item-num">7.1&nbsp;&nbsp;</span>事後分布とP値関数を並べてプロット</a></span></li><li><span><a href="#P値関数の側を確率密度関数に変換してからプロット" data-toc-modified-id="P値関数の側を確率密度関数に変換してからプロット-7.2"><span class="toc-item-num">7.2&nbsp;&nbsp;</span>P値関数の側を確率密度関数に変換してからプロット</a></span></li><li><span><a href="#事後分布の側をP値関数に変換してプロット" data-toc-modified-id="事後分布の側をP値関数に変換してプロット-7.3"><span class="toc-item-num">7.3&nbsp;&nbsp;</span>事後分布の側をP値関数に変換してプロット</a></span></li></ul></li></ul></div>
 
 # %%
 ENV["COLUMNS"] = 200
@@ -341,17 +341,17 @@ end
 function plot_pp(; data=[34, 19, 30, 18, 14, 29], kwargs...)
     P = plot()
     for (i, dist) in enumerate(posteriors_bin(data))
-        plot!(dist, 0, 1; alpha=1, label="$i")
+        plot!(dist, 0, 1; label="$i")
     end
     plot!(xtick=0:0.1:1)
-    title!("binomial posteriors")
+    title!("binomial Bayesian posteriors")
 
     Q = plot()
     for (i, x) in enumerate(data)
-        plot!(p -> pvalue_bin(x, sum(data), p), 0, 1; alpha=1, label="$i")
+        plot!(p -> pvalue_bin(x, sum(data), p), 0, 1; label="$i")
     end
     plot!(xtick=0:0.1:1, ytick=0:0.05:1)
-    title!("binomial P-value functions")
+    title!("binomial score P-value functions")
 
     plot(P, Q; size=(500, 700), layout=(2, 1), kwargs...)
 end
@@ -363,7 +363,7 @@ plot_pp(; data=[34, 19, 30, 18, 14, 29], xlim=(-0.01, 0.41), xtick=0:0.05:1)
 # 上の結果の下段がP値関数のグラフである. このように, P値関数は事後分布と同じように使える.
 
 # %% [markdown]
-# ### P値関数をそれに対応する密度関数に変換してからプロット
+# ### P値関数の側を確率密度関数に変換してからプロット
 
 # %%
 function pval2pdfhdi(pvalfunc, xcenter, xmin, xmax)
@@ -393,10 +393,10 @@ end
 function plot_pp2(; data=[34, 19, 30, 18, 14, 29], kwargs...)
     P = plot()
     for (i, dist) in enumerate(posteriors_bin(data))
-        plot!(dist, 0, 1; alpha=1, label="$i")
+        plot!(dist, 0, 1; label="$i")
     end
     plot!(xtick=0:0.1:1)
-    title!("binomial posteriors")
+    title!("binomial Bayesian posteriors")
 
     n = sum(data)
     Q = plot()
@@ -405,7 +405,7 @@ function plot_pp2(; data=[34, 19, 30, 18, 14, 29], kwargs...)
         plot!(pdfhdi, 0, 1; alpha=1, label="$i")
     end
     plot!(xtick=0:0.1:1)
-    title!("binomial P-value pdfs")
+    title!("binomial score P-value pdfs")
 
     plot(P, Q; size=(500, 700), layout=(2, 1), kwargs...)
 end
@@ -416,8 +416,8 @@ function plot_pp3(; data=[34, 19, 30, 18, 14, 29], kwargs...)
     for (i, (x, dist)) in enumerate(zip(data, posteriors_bin(data)))
         pdfhdi = pval2pdfhdi(p -> pvalue_bin(x, n, p), x/n, 0.0, 1.0)
         P = plot()
-        plot!(dist, 0, 1; alpha=1, label="posterior $i")
-        plot!(pdfhdi, 0, 1; alpha=1, label="P-value pdf $i", ls=:dash)
+        plot!(dist, 0, 1; label="posterior $i")
+        plot!(pdfhdi, 0, 1; label="P-value pdf $i", ls=:dash)
         plot!(xtick=0:0.1:1)
         push!(PP, P)
     end
@@ -430,5 +430,79 @@ plot_pp2(; data=[34, 19, 30, 18, 14, 29], xlim=(-0.01, 0.41), xtick=0:0.05:1)
 
 # %%
 plot_pp3(; data=[34, 19, 30, 18, 14, 29], xlim=(-0.01, 0.46), xtick=0:0.05:1)
+
+# %% [markdown]
+# ### 事後分布の側をP値関数に変換してプロット
+
+# %%
+function pvalue_hdi(dist::ContinuousUnivariateDistribution, x₀; xlim = extrema(dist))
+    p₀ = pdf(dist, x₀)
+    xmode = mode(dist)
+    f(x) = pdf(dist, x) - p₀
+    if x₀ == xmode
+        1.0
+    elseif x₀ > xmode
+        x₁ = find_zero(f, (xlim[begin], xmode))
+        cdf(dist, x₁) + ccdf(dist, x₀)
+    else
+        x₁ = find_zero(f, (xmode, xlim[end]))
+        cdf(dist, x₀) + ccdf(dist, x₁)
+    end
+end
+
+function pvalue_bayes_hdi(x, n, p; prior=Beta(1, 1))
+    posterior = posterior_bin(x, n; prior)
+    a, b = params(posterior)
+    if a == 1 && b == 1
+        1.0
+    elseif a ≤ 1
+        ccdf(posterior, p)
+    elseif b ≤ 1
+        cdf(posterior, p)
+    else
+        pvalue_hdi(posterior, p)
+    end
+end
+
+function plot_pp4(; data=[34, 19, 30, 18, 14, 29], kwargs...)
+    P = plot()
+    for (i, dist) in enumerate(posteriors_bin(data))
+        plot!(p -> pvalue_hdi(dist, p), 0, 1; label="$i")
+    end
+    plot!(xtick=0:0.1:1, ytick=0:0.05:1)
+    title!("binomial Bayesian posterior P-value functions")
+
+    n = sum(data)
+    Q = plot()
+    for (i, x) in enumerate(data)
+        plot!(p -> pvalue_bin(x, n, p), 0, 1; label="$i")
+    end
+    plot!(xtick=0:0.1:1, ytick=0:0.05:1)
+    title!("binomial score P-value functions")
+
+    plot(P, Q; size=(500, 700), layout=(2, 1), kwargs...)
+end
+
+function plot_pp5(; data=[34, 19, 30, 18, 14, 29], kwargs...)
+    n = sum(data)
+    PP = []
+    for (i, (x, dist)) in enumerate(zip(data, posteriors_bin(data)))
+        pdfhdi = pval2pdfhdi(p -> pvalue_bin(x, n, p), x/n, 0.0, 1.0)
+        P = plot()
+        plot!(p -> pvalue_hdi(dist, p), 0, 1; label="Bayesian P-value $i")
+        plot!(p -> pvalue_bin(x, n, p), 0, 1; label="score P-value $i", ls=:dash)
+        plot!(xtick=0:0.1:1, ytick=0:0.05:1)
+        push!(PP, P)
+    end
+
+    plot(PP...; size=(800, 750), layout=(3, 2), 
+        tickfontsize=6, kwargs...)
+end
+
+# %%
+plot_pp4(; data=[34, 19, 30, 18, 14, 29], xlim=(-0.01, 0.41), xtick=0:0.05:1)
+
+# %%
+plot_pp5(; data=[34, 19, 30, 18, 14, 29], xlim=(-0.01, 0.51), xtick=0:0.05:1)
 
 # %%
