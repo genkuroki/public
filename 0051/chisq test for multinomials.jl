@@ -276,6 +276,9 @@ plot_chisq_mult(; n=24*6, p=fill(1/6, 6))
 # を作っている(縦軸のスケールがおかしい). これとほぼ同じものをP値関数としても作れることを示そう.
 
 # %%
+@show chisq_pearson([34, 19, 30, 18, 14, 29], fill(1/6, 6));
+
+# %%
 function posteriors_bin(data; prior=Beta(1, 1))
     κ, λ = params(prior)
     n = sum(data)
@@ -311,6 +314,6 @@ end
 plot_pp(; data=[34, 19, 30, 18, 14, 29], xlim=(-0.01, 0.41), xtick=0:0.05:1)
 
 # %% [markdown]
-# このように, P値関数は事後分布と同じように使える.
+# 上の結果の下段がP値関数のグラフである. このように, P値関数は事後分布と同じように使える.
 
 # %%
