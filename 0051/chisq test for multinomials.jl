@@ -9,9 +9,9 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.10.3
 #   kernelspec:
-#     display_name: Julia 1.10.5
+#     display_name: Julia 1.11.0
 #     language: julia
-#     name: julia-1.10
+#     name: julia-1.11
 # ---
 
 # %% [markdown]
@@ -23,6 +23,8 @@
 # \newcommand\op{\operatorname}
 # \newcommand\ds{\displaystyle}
 # $
+#
+# See also https://x.com/genkuroki/status/1843653103960371268
 
 # %%
 using Distributions
