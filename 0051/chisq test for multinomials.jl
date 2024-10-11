@@ -550,14 +550,17 @@ ys = range(ylim..., 101)
 xtick = ytick = 0:0.02:1
 
 f(x, y) = x+y ≤ 1 ? pvalue_mult_chisq_pearson(k, [x, y, 1-x-y]) : NaN
+
+dir = posterior_dir(k)
+mvn = dir2mvn(dir)
+g(x, y) = x+y ≤ 1 ? pvalue_mvn_sqmahal(mvn, [x, y]) : NaN
+
+# %%
 P = heatmap(xs, ys, f; label="", colorbar=false)
 plot!(; xtick, ytick, xrotation=90)
 plot!(xguide="p₁", yguide="p₂")
 title!("P-value function of Pearson's χ²-test")
 
-dir = posterior_dir(k)
-mvn = dir2mvn(dir)
-g(x, y) = x+y ≤ 1 ? pvalue_mvn_sqmahal(mvn, [x, y]) : NaN
 Q = heatmap(xs, ys, g; label="", colorbar=false)
 plot!(; xtick, ytick, xrotation=90)
 plot!(xguide="p₁", yguide="p₂")
@@ -568,10 +571,20 @@ plot!(bottommargin=4Plots.mm)
 plot!(plot_title="data: k = $k")
 
 # %%
-heatmap(xs, ys, (x, y) -> g(x, y) - f(x, y); label="", c=:bwr)
+levels = 0.05:0.05:0.95
+
+P = contour(xs, ys, f; label="", levels)#, colorbar=false)
 plot!(; xtick, ytick, xrotation=90)
 plot!(xguide="p₁", yguide="p₂")
-title!("diff")
-plot!(size=(430, 400), rightmargin=6Plots.mm)
+title!("P-value function of Pearson's χ²-test")
+
+Q = contour(xs, ys, g; label="", levels)#, colorbar=false)
+plot!(; xtick, ytick, xrotation=90)
+plot!(xguide="p₁", yguide="p₂")
+title!("Bayesian m.v.normal approx. P-value function")
+
+plot(Q, P; size=(900, 400))
+plot!(bottommargin=6Plots.mm, leftmargin=4Plots.mm)
+plot!(plot_title="data: k = $k")
 
 # %%
