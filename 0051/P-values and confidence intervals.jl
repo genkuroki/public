@@ -252,7 +252,7 @@ title!("P-value function of data k=$k, n=$n")
 plot(P, Q; size=(600, 800), layout=(2, 1))
 plot!(leftmargin=4Plots.mm)
 
-# %%
+# %% tags=[]
 posterior = Beta(1+k, 1+n-k)
 P = plot(posterior, 0, 1; label="posterior", c=7)
 plot!(credint_hdi(k, n, 1-0.95), pdf.(posterior, credint_hdi(k, n, 1-0.95)); 
