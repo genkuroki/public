@@ -30,14 +30,14 @@ end
 
 x20 = randn(20)
 @show soft_threashold_bc(x20, 1.0) == soft_threashold_naive(x20, 1.0)
-print("soft_threashold_bc(x20, 1.0):    "); @btime soft_threashold_bc(x20, 1.0)
-print("soft_threashold_naive(x20, 1.0) "); @btime soft_threashold_naive(x20, 1.0)
+print("soft_threashold_bc(x20, 1.0):    "); @btime soft_threashold_bc($x20, 1.0)
+print("soft_threashold_naive(x20, 1.0) "); @btime soft_threashold_naive($x20, 1.0)
 println()
 
 x1000 = randn(1000)
 @show soft_threashold_bc(x1000, 1.0) == soft_threashold_naive(x1000, 1.0)
-print("soft_threashold_bc(x1000, 1.0):     "); @btime soft_threashold_bc(x1000, 1.0)
-print("soft_threashold_naive(x1000, 1.0) "); @btime soft_threashold_naive(x1000, 1.0)
+print("soft_threashold_bc(x1000, 1.0):     "); @btime soft_threashold_bc($x1000, 1.0)
+print("soft_threashold_naive(x1000, 1.0) "); @btime soft_threashold_naive($x1000, 1.0)
 ;
 
 # %%
