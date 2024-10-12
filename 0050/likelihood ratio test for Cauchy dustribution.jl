@@ -139,8 +139,10 @@ function pvalue_onesided_normal(x; μ=1)
     ccdf(Normal(), x)
 end
 
-function plot_likrattest(; μ=1)
+function plot_likrattest(; μ=1, α=0.05)
     @assert μ > 0
+    
+    λ = lambda_likrat(α; μ)
     
     a = argmin_likrat(; μ)
     b = argmax_likrat(; μ)
@@ -154,6 +156,7 @@ function plot_likrattest(; μ=1)
     #plot!(xguide="x", yguide="likelihood ratio")
     
     P1 = plot(x -> -loglikrat(x; μ), c, d; label="")
+    hline!([-log(λ)]; label="α-line", ls=:dot, c=4)
     #plot!(x -> -loglikrat_normal(x; μ), c, d; label="normal case", ls=:dash, c=4)
     plot!(xguide="x", yguide="−log likelihood ratio")
     
@@ -174,18 +177,21 @@ function plot_likrattest(; μ=1)
     
     P2 = plot(x -> pvalue_likrat(x; μ), c, d; label="likrat")
     plot!(x -> pvalue_onesided(x; μ), c, d; label="onesided", ls=:dash)
+    hline!([0.05]; label="α=$α", ls=:dot, c=4)
     plot!(xguide="x", yguide="P-value")
     
     plot(P1, P2, P3, P4; size=(600, 620), layout=(2, 2))
     plot!(plot_title="Cauchy distribution case: μ = $μ", plot_titlefontsize=12)
 end
 
-function plot_likrattest_normal(; μ=1)
+function plot_likrattest_normal(; μ=1, α=0.05)
     @assert μ > 0
     
+    λ = lambda_likrat_normal(α; μ)
     c, d = -4, μ+4
     
     P1 = plot(x -> -loglikrat_normal(x; μ), c, d; label="")
+    hline!([-log(λ)]; label="α-line", ls=:dot, c=4)
     plot!(xguide="x", yguide="−log likelihood ratio")
     
     P4 = plot(α -> power_likrat_normal(α; μ), 0, 1; label="likrat")
@@ -199,6 +205,7 @@ function plot_likrattest_normal(; μ=1)
     
     P2 = plot(x -> pvalue_likrat_normal(x; μ), c, d; label="likrat")
     plot!(x -> pvalue_onesided_normal(x; μ), c, d; label="onesided", ls=:dash)
+    hline!([0.05]; label="α=$α", ls=:dot, c=4)
     plot!(xguide="x", yguide="P-value")
     
     plot(P1, P2, P3, P4; size=(600, 620), layout=(2, 2))
