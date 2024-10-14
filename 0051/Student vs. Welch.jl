@@ -169,6 +169,7 @@ function plot_powers(;
     plot!(; xguide="s₂/s₁", yguide)
     Δμstr = Δμ == 0 ? "0" : Δμ != 1 ? "$(Δμ)s₁" : "s₁"
     title!("Δμ=$Δμstr,  n₁=$m,  n₂=$n   (sim_iters=$L)")
+    plot!(; size=(500, 300))
     plot!(; kwargs...)
 end
 
