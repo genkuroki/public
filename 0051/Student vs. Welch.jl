@@ -183,7 +183,7 @@ plot_powers(; Δμ=2)
 plot_powers(; Δμ=2, xlim=(5.8, 10.2), ylim=(0.25, 0.70))
 
 # %%
-plot_powers(; Δμ=0, ylim=(0.045, 0.055), L=10^6, ytick=0:0.001:1)
+plot_powers(; Δμ=0, ylim=(0.045, 0.055), L=10^7, ytick=0:0.001:1)
 
 # %%
 PP = []
@@ -213,6 +213,17 @@ plot(PP...; size=(1000, 1000), layout=(3, 2))
 PP = []
 for n in (50, 55, 60, 70, 80, 100)
     P = plot_powers(; Δμ=1, m=50, n)
+    push!(PP, P)
+end
+plot(PP...; size=(1000, 1000), layout=(3, 2))
+
+# %%
+plot_powers(; Δμ=0, m=10, n=10, ylim=(0.045, 0.065), L=10^6, ytick=0:0.005:1)
+
+# %%
+PP = []
+for m in (10, 11, 12, 14, 16, 20)
+    P = plot_powers(; Δμ=0, m, n=10, ylim=(0.04, 0.20), L=10^6, ytick=0:0.01:1)
     push!(PP, P)
 end
 plot(PP...; size=(1000, 1000), layout=(3, 2))
