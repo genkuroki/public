@@ -9,9 +9,9 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.10.3
 #   kernelspec:
-#     display_name: Julia 1.9.4
+#     display_name: Julia 1.11.0
 #     language: julia
-#     name: julia-1.9
+#     name: julia-1.11
 # ---
 
 # %%
@@ -177,7 +177,8 @@ Y = randn(100)
 pvalue_mann_whitney_u_test(X, Y), pvalue(ApproximateMannWhitneyUTest(X, Y))
 
 # %%
-X = Y = randn(10)
+X = randn(10)
+Y = randn(10)
 pvalue_mann_whitney_u_test(X, Y), pvalue(ApproximateMannWhitneyUTest(X, Y))
 
 # %%
