@@ -243,6 +243,8 @@ function plot_powers(;
         L = 10^5,
         α = 0.05,
         np = false,
+        μ₁ = 0.0,
+        σ₁ = 1.0,
         kwargs...
     )
     powers_s = zeros(length(σratios))
@@ -276,6 +278,29 @@ function plot_powers(;
     Δμstr = Δμ == 0 ? "0" : Δμ != 1 ? "$(Δμ)s₁" : "s₁"
     title!("Δμ=$Δμstr,  n₁=$m,  n₂=$n   (sim_iters=$L)")
     plot!(; size=(500, 300))
+    plot!(; kwargs...)
+end
+
+function plot_α_error_rates(;
+        distx = Normal(0, 1),
+        disty = Normal(0, 1),
+        m = 50,
+        n = 50,
+        L = 10^6,
+        np = true,
+        kwargs...
+    )
+    @show distx disty
+    (; pval_s, pval_w, pval_mw, pval_bm) = sim_pvalues(; distx, disty, m, n, L, np)
+    plot(identity, 0, 0.1; label="", lw=0.5, c=:black, ls=:dot)
+    plot!(α -> ecdf_(pval_s, α), 0, 0.1; label="Student", c=1)
+    plot!(α -> ecdf_(pval_w, α), 0, 0.1; label="Welch", c=2, ls=:dash)
+    np && plot!(α -> ecdf_(pval_mw, α), 0, 0.1; label="MW", c=3, ls=:dashdot)
+    np && plot!(α -> ecdf_(pval_bm, α), 0, 0.1; label="BM", c=4, ls=:dashdotdot)
+    plot!(xtick=0:0.01:1, ytick=0:0.01:1)
+    plot!(xguide="α", yguide="probability of P-value ≤ α")
+    title!("n₁=$m,  n₂=$n   (sim_iters=$L)")
+    plot!(; size=(400, 400), titlefontsize=10)
     plot!(; kwargs...)
 end
 
@@ -319,7 +344,7 @@ for m in (50, 55, 60, 70, 80, 100)
 end
 plot(PP...; size=(1000, 1000), layout=(3, 2))
 
-# %%
+# %% tags=[]
 PP = []
 for m in (50, 55, 60, 70, 80, 100)
     P = plot_powers(; Δμ=1, m, n=50)
@@ -364,5 +389,80 @@ for m in (10, 11, 12, 14, 16, 20)
     push!(PP, P)
 end
 plot(PP...; size=(1000, 1000), layout=(3, 2))
+
+# %%
+plot_α_error_rates(; distx=Normal(0, 1), disty=Normal(0, 1), m=50, n=50)
+
+# %%
+plot_α_error_rates(; distx=Normal(0, 1), disty=Normal(0, 4), m=50, n=50)
+
+# %%
+plot_α_error_rates(; distx=Normal(0, 1), disty=Normal(0, 4), m=70, n=50)
+
+# %%
+plot_α_error_rates(; distx=Normal(0, 1), disty=Normal(0, 4), m=100, n=50)
+
+# %%
+distx = Exponential()
+disty = Exponential()
+@show mean(disty) - mean(distx)
+@show std(disty) / std(disty)
+plot_α_error_rates(; distx, disty, m=50, n=50, L=10^6, np=false)
+
+# %%
+distx = Exponential()
+disty = Exponential()
+@show mean(disty) - mean(distx)
+@show std(disty) / std(disty)
+plot_α_error_rates(; distx, disty, m=50, n=100, L=10^6, np=false)
+
+# %%
+distx = Exponential()
+disty = Exponential()
+@show mean(disty) - mean(distx)
+@show std(disty) / std(disty)
+plot_α_error_rates(; distx, disty, m=50, n=250, L=10^6, np=false)
+
+# %%
+distx = Normal(1)
+disty = Exponential()
+@show mean(disty) - mean(distx)
+@show std(disty) / std(disty)
+plot_α_error_rates(; distx, disty, m=50, n=50, L=10^6, np=false)
+
+# %%
+distx = Normal(1)
+disty = Exponential()
+@show mean(disty) - mean(distx)
+@show std(disty) / std(disty)
+plot_α_error_rates(; distx, disty, m=50, n=100, L=10^6, np=false)
+
+# %%
+distx = Normal(1)
+disty = Exponential()
+@show mean(disty) - mean(distx)
+@show std(disty) / std(disty)
+plot_α_error_rates(; distx, disty, m=100, n=50, L=10^6, np=false)
+
+# %%
+distx = Normal(1)
+disty = Exponential()
+@show mean(disty) - mean(distx)
+@show std(disty) / std(disty)
+plot_α_error_rates(; distx, disty, m=50, n=250, L=10^6, np=false)
+
+# %%
+distx = Normal(1)
+disty = Exponential()
+@show mean(disty) - mean(distx)
+@show std(disty) / std(disty)
+plot_α_error_rates(; distx, disty, m=10, n=50, L=10^6, np=false)
+
+# %%
+distx = Normal(1)
+disty = Exponential()
+@show mean(disty) - mean(distx)
+@show std(disty) / std(disty)
+plot_α_error_rates(; distx, disty, m=250, n=50, L=10^6, np=false)
 
 # %%
