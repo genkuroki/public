@@ -113,19 +113,46 @@ function tieshift(X, Y; p=1/2)
     find_zero(f, (amin, amax))
 end
 
-function confint_bm_tieshift(X, Y; α=0.05)
-    f(a) = brunner_munzel_test(X, Y .+ a).pvalue - α
+function confint_bm_tieshift(X, Y; p=1/2, α=0.05)
+    f(a) = brunner_munzel_test(X, Y .+ a; p).pvalue - α
     amin, amax = aminamax(X, Y)
     find_zeros(f, amin, amax)
 end
 
 # %%
+function mann_whitney_u_test(X, Y; correct=true)
+    m, n = length(X), length(Y)
+    phat = mean((x < y) + (x == y)/2 for x in X, y in Y)
+    sehat = √((m+n+1)/(12m*n))
+    zvalue = (phat - 1/2)/sehat
+    correction = correct/(2m*n*sehat)
+    pvalue = 2ccdf(Normal(), max(0, abs(zvalue) - correction))
+    (; phat, sehat, zvalue, pvalue)
+end
+
+pvalue_mann_whitney_u_test(X, Y; correct=true) = mann_whitney_u_test(X, Y; correct).pvalue
+
+function confint_mw_tieshift(X, Y; α=0.05, correct=true)
+    f(a) = pvalue_mann_whitney_u_test(X, Y .+ a; correct) - α
+    amin, amax = aminamax(X, Y)
+    find_zeros(f, amin, amax)
+end
+
+using HypothesisTests
+X = randn(100)
+Y = randn(100)
+@show pvalue_mann_whitney_u_test(X, Y) pvalue(ApproximateMannWhitneyUTest(X, Y))
+X = randn(10)
+Y = randn(10)
+@show pvalue_mann_whitney_u_test(X, Y) pvalue(ApproximateMannWhitneyUTest(X, Y));
+
+# %%
 X = [24, 24, 36, 36, 37, 38, 40, 44, 45, 48, 50, 53, 55, 57, 58, 67, 72, 75, 105, 127]
 Y = [7, 7, 9, 10, 13, 13, 14, 17, 23, 24, 25, 27, 32, 35, 38, 40, 40, 41, 41, 42, 44, 45, 50, 53, 63, 74, 76, 84, 156, 727]
 
-P = dotplot([X, Y]; label="", xtick=(1:2, ["X", "Y"]), msc=:auto, title="data")
-Q = dotplot([X, Y]; label="", xtick=(1:2, ["X", "Y"]), msc=:auto, title="data < 200", ylim=(-5, 180))
-R = dotplot(vec(X .- Y'); xtick=(1:1, ["X − Y"]), label="", c=3, msc=:auto, ms=2, ma=0.7)
+P = dotplot([X, Y]; label="", xtick=(1:2, ["X", "Y"]), msc=:auto, ms=3, ma=0.7, title="all data")
+Q = dotplot([X, Y]; label="", xtick=(1:2, ["X", "Y"]), msc=:auto, ms=3, ma=0.7, title="data < 200", ylim=(-5, 180))
+R = dotplot(vec(X .- Y'); xtick=(1:1, ["X − Y"]), label="", c=3, msc=:auto, ms=1.5, ma=0.7)
 title!("differences of pairs")
 plot(P, Q, R; layout=(1, 3), size=(600, 300))
 
@@ -135,31 +162,92 @@ r(x) = round.(x; sigdigits=3)
 P_BM = pvalue_brunner_munzel(X, Y)
 HL = hodges_lehmann(X, Y)
 CI_BM = confint_bm_tieshift(X, Y)
+
 P_W = pvalue_welch(X, Y)
 DM = mean(X) - mean(Y)
 CI_W = confint_welch(X, Y)
+
+P_MW = pvalue_mann_whitney_u_test(X, Y)
+CI_MW = confint_mw_tieshift(X, Y)
+
 println("Brunner-Munzel: ", "null P-value = ", r(P_BM), ",  point estimate = ", r(HL), ",  95% confidence interval = ", r.(CI_BM))
 println("Welch t-test: ", "null P-value = ", r(P_W), ",  point estimate = ", r(DM), ",  95% confidence interval = ", r.(CI_W))
+println("Mann-Whitney: ", "null P-value = ", r(P_MW), ",  point estimate = ", r(HL), ",  95% confidence interval = ", r.(CI_MW))
 
 plot(a -> pvalue_brunner_munzel(X, Y .+ a), -100, 100; label="Brunner-Munzel", c=1)
-vline!([HL]; label="Hodges-Lehmann", ls=:dash, c=1)
-plot!(a -> pvalue_welch(X, Y .+ a); label="Welch", c=2)
-vline!([DM]; label="difference of means", ls=:dash, c=2)
+vline!([HL]; label="Hodges-Lehmann", ls=:dot, c=1)
+plot!(a -> pvalue_welch(X, Y .+ a); label="Welch", c=2, ls=:dash)
+vline!([DM]; label="difference of means", ls=:dot, c=2)
+plot!(a -> pvalue_mann_whitney_u_test(X, Y .+ a); label="Mann-Whitney", c=3, ls=:dashdot)
 plot!(xtick=-100:20:100, ytick=0:0.05:1)
 plot!(xguide="a", yguide="P-value")
 title!("comparison between X and Y+a with p=1/2")
+plot!(size=(600, 320))
 
 # %%
 f(a, p) = pvalue_brunner_munzel(X, Y .+ a; p)
-as = range(-20, 40, 301)
+as = range(-50, 50, 301)
 ps = range(0, 1, 201)
-contour(as, ps, f; levels=0.05:0.005:1, c=:turbo)
+contour(as, ps, f; levels=0.05:0.0025:1, c=:turbo)
 hline!([0.5]; label="", c=:black, lw=0.5)
-plot!(xtick=-50:5:50, ytick=0:0.05:1)
+plot!(xtick=-50:10:50, ytick=0:0.05:1)
 plot!(xguide="a", yguide="p")
 title!("Brunner-Munzel 95% confidence region")
+plot!(size=(500, 400))
 
 # %%
-@show confint_bm_p_roots(X, Y .+ 30);
+@show confint_bm_p_roots(X, Y .+ 30) .|> r;
+
+# %%
+@show confint_bm_tieshift(X, Y; p=0.6) .|> r;
+
+# %%
+X = [46, 51, 54, 54, 55, 61, 62, 63, 65, 65, 68, 70, 71, 71, 73, 74, 74, 74, 76, 76, 83, 84, 86, 86, 86, 87, 88, 88, 90, 91]
+Y = [25, 26, 28, 28, 28, 35, 42, 47, 52, 60, 70, 91, 122, 145, 446]
+
+P = dotplot([X, Y]; label="", xtick=(1:2, ["X", "Y"]), msc=:auto, ms=3, ma=0.7, title="all data")
+Q = dotplot([X, Y]; label="", xtick=(1:2, ["X", "Y"]), msc=:auto, ms=3, ma=0.7, title="data < 200", ylim=(-5, 180))
+R = dotplot(vec(X .- Y'); xtick=(1:1, ["X − Y"]), label="", c=3, msc=:auto, ms=1.5, ma=0.7)
+title!("differences of pairs")
+plot(P, Q, R; layout=(1, 3), size=(600, 300))
+
+# %%
+r(x) = round.(x; sigdigits=3)
+
+P_BM = pvalue_brunner_munzel(X, Y)
+HL = hodges_lehmann(X, Y)
+CI_BM = confint_bm_tieshift(X, Y)
+
+P_W = pvalue_welch(X, Y)
+DM = mean(X) - mean(Y)
+CI_W = confint_welch(X, Y)
+
+P_MW = pvalue_mann_whitney_u_test(X, Y)
+CI_MW = confint_mw_tieshift(X, Y)
+
+println("Brunner-Munzel: ", "null P-value = ", r(P_BM), ",  point estimate = ", r(HL), ",  95% confidence interval = ", r.(CI_BM))
+println("Welch t-test: ", "null P-value = ", r(P_W), ",  point estimate = ", r(DM), ",  95% confidence interval = ", r.(CI_W))
+println("Mann-Whitney: ", "null P-value = ", r(P_MW), ",  point estimate = ", r(HL), ",  95% confidence interval = ", r.(CI_MW))
+
+plot(a -> pvalue_brunner_munzel(X, Y .+ a), -100, 100; label="Brunner-Munzel", c=1)
+vline!([HL]; label="Hodges-Lehmann", ls=:dot, c=1)
+plot!(a -> pvalue_welch(X, Y .+ a); label="Welch", c=2, ls=:dash)
+vline!([DM]; label="difference of means", ls=:dot, c=2)
+plot!(a -> pvalue_mann_whitney_u_test(X, Y .+ a); label="Mann-Whitney", c=3, ls=:dashdot)
+plot!(xtick=-100:20:100, ytick=0:0.05:1)
+plot!(xguide="a", yguide="P-value")
+title!("comparison between X and Y+a with p=1/2")
+plot!(size=(600, 320))
+
+# %%
+f(a, p) = pvalue_brunner_munzel(X, Y .+ a; p)
+as = range(-50, 50, 301)
+ps = range(0, 1, 201)
+contour(as, ps, f; levels=0.05:0.0025:1, c=:turbo)
+hline!([0.5]; label="", c=:black, lw=0.5)
+plot!(xtick=-50:10:50, ytick=0:0.05:1)
+plot!(xguide="a", yguide="p")
+title!("Brunner-Munzel 95% confidence region")
+plot!(size=(500, 400))
 
 # %%
