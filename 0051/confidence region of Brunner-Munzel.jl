@@ -160,3 +160,6 @@ plot!(xguide="a", yguide="p")
 title!("Brunner-Munzel 95% confidence region")
 
 # %%
+@show confint_bm_p_roots(X, Y .+ 30);
+
+# %%
