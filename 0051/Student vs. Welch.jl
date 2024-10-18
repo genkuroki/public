@@ -9,7 +9,7 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.10.3
 #   kernelspec:
-#     display_name: Julia 1.11.0
+#     display_name: Julia 1.11.1
 #     language: julia
 #     name: julia-1.11
 # ---
@@ -109,6 +109,8 @@ end
 # %%
 using Distributions
 using Roots
+
+hodges_lehmann(X, Y) = median(x - y for x in X, y in Y)
 
 winrate(X, Y) = mean((x < y) + (x == y)/2 for x in X, y in Y)
 
