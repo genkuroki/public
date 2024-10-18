@@ -229,9 +229,9 @@ plot!(size=(600, 400))
 
 # %%
 f(a, p) = (y = pvalue_brunner_munzel(X, Y .+ a; p); y < 0.05 ? NaN : y)
-as = range(-60, 60, 401)
-ps = range(0, 1, 401)
-heatmap(as, ps, f; c=:turbo, cbar_title="α")
+as = range(-60, 60, 500)
+ps = range(0, 1, 400)
+heatmap(as, ps, f; c=:turbo, cbar_title="α", clim=(0, 1))
 hline!([0.5]; label="", c=:black, lw=0.5)
 plot!(xtick=-100:10:100, ytick=0:0.05:1)
 plot!(xguide="a", yguide="p")
@@ -240,13 +240,24 @@ plot!(size=(500, 400))
 
 # %%
 f(a, p) = (y = pvalue_brunner_munzel(X, Y .+ a; p); y < 0.01 ? NaN : y)
-as = range(-60, 60, 401)
-ps = range(0, 1, 401)
-heatmap(as, ps, f; c=:turbo, cbar_title="α")
+as = range(-60, 60, 500)
+ps = range(0, 1, 400)
+heatmap(as, ps, f; c=:turbo, cbar_title="α", clim=(0, 1))
 hline!([0.5]; label="", c=:black, lw=0.5)
 plot!(xtick=-100:10:100, ytick=0:0.05:1)
 plot!(xguide="a", yguide="p")
 title!("Brunner-Munzel 99% confidence region")
+plot!(size=(500, 400))
+
+# %%
+f(a, p) = (y = pvalue_brunner_munzel(X, Y .+ a; p); y < 0 ? NaN : y)
+as = range(-60, 60, 500)
+ps = range(0, 1, 400)
+heatmap(as, ps, f; c=:turbo, cbar_title="α", clim=(0, 1))
+hline!([0.5]; label="", c=:white, lw=0.5)
+plot!(xtick=-100:10:100, ytick=0:0.05:1)
+plot!(xguide="a", yguide="p")
+title!("Brunner-Munzel P-value function")
 plot!(size=(500, 400))
 
 # %%
@@ -304,9 +315,9 @@ plot!(size=(600, 400))
 
 # %%
 f(a, p) = (y = pvalue_brunner_munzel(X, Y .+ a; p); y < 0.05 ? NaN : y)
-as = range(-60, 60, 401)
-ps = range(0, 1, 401)
-heatmap(as, ps, f; c=:turbo, cbar_title="α")
+as = range(-60, 60, 500)
+ps = range(0, 1, 400)
+heatmap(as, ps, f; c=:turbo, cbar_title="α", clim=(0, 1))
 hline!([0.5]; label="", c=:black, lw=0.5)
 plot!(xtick=-100:10:100, ytick=0:0.05:1)
 plot!(xguide="a", yguide="p")
@@ -315,13 +326,24 @@ plot!(size=(500, 400))
 
 # %%
 f(a, p) = (y = pvalue_brunner_munzel(X, Y .+ a; p); y < 0.01 ? NaN : y)
-as = range(-60, 60, 401)
-ps = range(0, 1, 401)
-heatmap(as, ps, f; c=:turbo, cbar_title="α")
+as = range(-60, 60, 500)
+ps = range(0, 1, 400)
+heatmap(as, ps, f; c=:turbo, cbar_title="α", clim=(0, 1))
 hline!([0.5]; label="", c=:black, lw=0.5)
 plot!(xtick=-100:10:100, ytick=0:0.05:1)
 plot!(xguide="a", yguide="p")
 title!("Brunner-Munzel 99% confidence region")
+plot!(size=(500, 400))
+
+# %%
+f(a, p) = (y = pvalue_brunner_munzel(X, Y .+ a; p); y < 0 ? NaN : y)
+as = range(-60, 60, 500)
+ps = range(0, 1, 400)
+heatmap(as, ps, f; c=:turbo, cbar_title="α", clim=(0, 1))
+hline!([0.5]; label="", c=:white, lw=0.5)
+plot!(xtick=-100:10:100, ytick=0:0.05:1)
+plot!(xguide="a", yguide="p")
+title!("Brunner-Munzel P-value function")
 plot!(size=(500, 400))
 
 # %%
