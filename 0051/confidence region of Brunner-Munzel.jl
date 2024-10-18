@@ -18,7 +18,7 @@
 using Distributions
 using Random
 using StatsPlots
-default(fmt=:png, titlefontsize=12, size=(500, 300))
+default(fmt=:png, titlefontsize=10, size=(500, 300))
 
 # %%
 function tvalue_welch(m, x̄, sx², n, ȳ, sy²; Δμ=0)
