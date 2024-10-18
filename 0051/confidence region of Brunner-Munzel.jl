@@ -67,6 +67,44 @@ function confint_welch(x, y; α=0.05)
 end
 
 # %%
+s²_student(m, sx², n, sy²) = ((m-1)*sx² + (n-1)*sy²)/(m+n-2)
+
+function tvalue_student(m, x̄, sx², n, ȳ, sy²; Δμ=0)
+    s² = s²_student(m, sx², n, sy²)
+    (x̄ - ȳ - Δμ) / √(s²*(1/m + 1/n))
+end
+
+function tvalue_student(x, y; Δμ=0)
+    m, x̄, sx² = length(x), mean(x), var(x)
+    n, ȳ, sy² = length(y), mean(y), var(y)
+    tvalue_student(m, x̄, sx², n, ȳ, sy²; Δμ)
+end
+
+function pvalue_student(m, x̄, sx², n, ȳ, sy²; Δμ=0)
+    t = tvalue_student(m, x̄, sx², n, ȳ, sy²; Δμ)
+    2ccdf(TDist(m+n-2), abs(t))
+end
+
+function pvalue_student(x, y; Δμ=0)
+    m, x̄, sx² = length(x), mean(x), var(x)
+    n, ȳ, sy² = length(y), mean(y), var(y)
+    pvalue_student(m, x̄, sx², n, ȳ, sy²; Δμ)
+end
+
+function confint_student(m, x̄, sx², n, ȳ, sy²; α=0.05)
+    c = quantile(TDist(m+n-2), 1-α/2)
+    s² = s²_student(m, sx², n, sy²)
+    SEhat = √(s²*(1/m + 1/n))
+    [x̄-ȳ-c*SEhat, x̄-ȳ+c*SEhat]
+end
+
+function confint_student(x, y; α=0.05)
+    m, x̄, sx² = length(x), mean(x), var(x)
+    n, ȳ, sy² = length(y), mean(y), var(y)
+    confint_student(m, x̄, sx², n, ȳ, sy²; α)
+end
+
+# %%
 using Distributions
 using Roots
 
@@ -170,29 +208,45 @@ CI_W = confint_welch(X, Y)
 P_MW = pvalue_mann_whitney_u_test(X, Y)
 CI_MW = confint_mw_tieshift(X, Y)
 
+P_S = pvalue_student(X, Y)
+CI_S = confint_student(X, Y)
+
 println("Brunner-Munzel: ", "null P-value = ", r(P_BM), ",  point estimate = ", r(HL), ",  95% confidence interval = ", r.(CI_BM))
 println("Welch t-test: ", "null P-value = ", r(P_W), ",  point estimate = ", r(DM), ",  95% confidence interval = ", r.(CI_W))
 println("Mann-Whitney: ", "null P-value = ", r(P_MW), ",  point estimate = ", r(HL), ",  95% confidence interval = ", r.(CI_MW))
+println("Student: ", "null P-value = ", r(P_S), ",  point estimate = ", r(DM), ",  95% confidence interval = ", r.(CI_S))
 
 plot(a -> pvalue_brunner_munzel(X, Y .+ a), -100, 100; label="Brunner-Munzel", c=1)
 vline!([HL]; label="Hodges-Lehmann", ls=:dot, c=1)
 plot!(a -> pvalue_welch(X, Y .+ a); label="Welch", c=2, ls=:dash)
 vline!([DM]; label="difference of means", ls=:dot, c=2)
 plot!(a -> pvalue_mann_whitney_u_test(X, Y .+ a); label="Mann-Whitney", c=3, ls=:dashdot)
+plot!(a -> pvalue_student(X, Y .+ a); label="Student", c=4, ls=:dashdotdot)
 plot!(xtick=-100:20:100, ytick=0:0.05:1)
 plot!(xguide="a", yguide="P-value")
 title!("comparison between X and Y+a with p=1/2")
-plot!(size=(600, 320))
+plot!(size=(600, 400))
 
 # %%
-f(a, p) = pvalue_brunner_munzel(X, Y .+ a; p)
-as = range(-50, 50, 301)
-ps = range(0, 1, 201)
-contour(as, ps, f; levels=0.05:0.0025:1, c=:turbo)
+f(a, p) = (y = pvalue_brunner_munzel(X, Y .+ a; p); y < 0.05 ? NaN : y)
+as = range(-60, 60, 401)
+ps = range(0, 1, 401)
+heatmap(as, ps, f; c=:turbo, cbar_title="α")
 hline!([0.5]; label="", c=:black, lw=0.5)
-plot!(xtick=-50:10:50, ytick=0:0.05:1)
+plot!(xtick=-100:10:100, ytick=0:0.05:1)
 plot!(xguide="a", yguide="p")
 title!("Brunner-Munzel 95% confidence region")
+plot!(size=(500, 400))
+
+# %%
+f(a, p) = (y = pvalue_brunner_munzel(X, Y .+ a; p); y < 0.01 ? NaN : y)
+as = range(-60, 60, 401)
+ps = range(0, 1, 401)
+heatmap(as, ps, f; c=:turbo, cbar_title="α")
+hline!([0.5]; label="", c=:black, lw=0.5)
+plot!(xtick=-100:10:100, ytick=0:0.05:1)
+plot!(xguide="a", yguide="p")
+title!("Brunner-Munzel 99% confidence region")
 plot!(size=(500, 400))
 
 # %%
@@ -225,29 +279,49 @@ CI_W = confint_welch(X, Y)
 P_MW = pvalue_mann_whitney_u_test(X, Y)
 CI_MW = confint_mw_tieshift(X, Y)
 
+P_S = pvalue_student(X, Y)
+CI_S = confint_student(X, Y)
+
 println("Brunner-Munzel: ", "null P-value = ", r(P_BM), ",  point estimate = ", r(HL), ",  95% confidence interval = ", r.(CI_BM))
 println("Welch t-test: ", "null P-value = ", r(P_W), ",  point estimate = ", r(DM), ",  95% confidence interval = ", r.(CI_W))
 println("Mann-Whitney: ", "null P-value = ", r(P_MW), ",  point estimate = ", r(HL), ",  95% confidence interval = ", r.(CI_MW))
+println("Student: ", "null P-value = ", r(P_S), ",  point estimate = ", r(DM), ",  95% confidence interval = ", r.(CI_S))
 
 plot(a -> pvalue_brunner_munzel(X, Y .+ a), -100, 100; label="Brunner-Munzel", c=1)
 vline!([HL]; label="Hodges-Lehmann", ls=:dot, c=1)
 plot!(a -> pvalue_welch(X, Y .+ a); label="Welch", c=2, ls=:dash)
 vline!([DM]; label="difference of means", ls=:dot, c=2)
 plot!(a -> pvalue_mann_whitney_u_test(X, Y .+ a); label="Mann-Whitney", c=3, ls=:dashdot)
+plot!(a -> pvalue_student(X, Y .+ a); label="Student", c=4, ls=:dashdotdot)
 plot!(xtick=-100:20:100, ytick=0:0.05:1)
 plot!(xguide="a", yguide="P-value")
 title!("comparison between X and Y+a with p=1/2")
-plot!(size=(600, 320))
+plot!(size=(600, 400))
 
 # %%
-f(a, p) = pvalue_brunner_munzel(X, Y .+ a; p)
-as = range(-50, 50, 301)
-ps = range(0, 1, 201)
-contour(as, ps, f; levels=0.05:0.0025:1, c=:turbo)
+@show pvalue_welch(X, Y .+ 30) .|> r
+@show pvalue_student(X, Y .+ 30) .|> r;
+
+# %%
+f(a, p) = (y = pvalue_brunner_munzel(X, Y .+ a; p); y < 0.05 ? NaN : y)
+as = range(-60, 60, 401)
+ps = range(0, 1, 401)
+heatmap(as, ps, f; c=:turbo, cbar_title="α")
 hline!([0.5]; label="", c=:black, lw=0.5)
-plot!(xtick=-50:10:50, ytick=0:0.05:1)
+plot!(xtick=-100:10:100, ytick=0:0.05:1)
 plot!(xguide="a", yguide="p")
 title!("Brunner-Munzel 95% confidence region")
+plot!(size=(500, 400))
+
+# %%
+f(a, p) = (y = pvalue_brunner_munzel(X, Y .+ a; p); y < 0.01 ? NaN : y)
+as = range(-60, 60, 401)
+ps = range(0, 1, 401)
+heatmap(as, ps, f; c=:turbo, cbar_title="α")
+hline!([0.5]; label="", c=:black, lw=0.5)
+plot!(xtick=-100:10:100, ytick=0:0.05:1)
+plot!(xguide="a", yguide="p")
+title!("Brunner-Munzel 99% confidence region")
 plot!(size=(500, 400))
 
 # %%
