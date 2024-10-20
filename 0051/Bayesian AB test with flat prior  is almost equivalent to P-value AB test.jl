@@ -251,8 +251,6 @@ plot_AB_test(10, 90, 20, 80; xlim=(-0.7, 0.82))
 # https://qiita.com/perico_v1/items/6f46773063458637e7ca
 #
 # <img src="IMG_6701.jpeg" width=640>
-#
-# <img src="IMG_6707.jpeg" width=640>
 
 # %% [markdown]
 # 以上の設定でも, 以下の左下隅を見れば, 事後確率とP値がよく一致している.
@@ -271,6 +269,8 @@ plot_AB_test(10, 990, 33, 1467;
 # https://gri.jp/media/entry/398
 #
 # <img src="IMG_6702.jpeg" width=640>
+#
+# <img src="IMG_6707.jpeg" width=640>
 
 # %% [markdown]
 # 以上の設定でも, 以下の左下隅を見れば, 事後確率とP値がよく一致している.
