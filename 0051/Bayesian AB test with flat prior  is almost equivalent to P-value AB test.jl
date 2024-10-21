@@ -117,6 +117,99 @@ function pvalue_rd_score_onesided(a, b, c, d; Δ=0.0, alg=Bisection())
 end
 
 # %% [markdown]
+# ## リスク差に関するWald法とZou-Donner法の実装
+
+# %%
+riskdiffhat(a, b, c, d) = safediv(a, a+b) - safediv(c, c+d)
+
+function stderr_riskdiffhat(a, b, c, d)
+    m, n = a+b, c+d
+    p̂, q̂ = safediv(a, m), safediv(c, n)
+    √(safediv(p̂*(1-p̂), m) + safediv(q̂*(1-q̂), n))
+end
+
+function pvalue_rd_wald(a, b, c, d; Δ=0)
+    RDhat = riskdiffhat(a, b, c, d)
+    SEhat_riskdiffhat = stderr_riskdiffhat(a, b, c, d)
+    2ccdf(Normal(), safediv(abs(RDhat - Δ), SEhat_riskdiffhat))
+end
+
+function confint_rd_wald(a, b, c, d; α=0.05)
+    z = quantile(Normal(), 1-α/2)
+    RDhat = riskdiffhat(a, b, c, d)
+    SEhat_riskdiffhat = stderr_riskdiffhat(a, b, c, d)
+    [RDhat - z*SEhat_riskdiffhat, RDhat + z*SEhat_riskdiffhat]
+end
+
+function pvalue_rd_wald_onesided(a, b, c, d; Δ=0)
+    RDhat = riskdiffhat(a, b, c, d)
+    SEhat_riskdiffhat = stderr_riskdiffhat(a, b, c, d)
+    ccdf(Normal(), safediv(RDhat - Δ, SEhat_riskdiffhat))
+end
+
+riskdiffhat_zou_donner(a, b, c, d) = safediv(a, a+b) - safediv(c, c+d)
+
+function stderr_riskdiffhat_zou_donner(a, b, c, d; u=1)
+    m, n = a+b, c+d
+    p̂, q̂ = safediv(a, m), safediv(c, n)
+    √(safediv(p̂*(1-p̂), m-u) + safediv(q̂*(1-q̂), n-u))
+end
+
+function pvalue_rd_zou_donner(a, b, c, d; Δ=0, u=1)
+    ((a==0 && d==0) || (b==0 && c==0)) && return 1.0
+    RDhat = riskdiffhat_zou_donner(a, b, c, d)
+    SEhat_riskdiffhat = stderr_riskdiffhat_zou_donner(a, b, c, d; u)
+    Z = safediv((1 - RDhat^2)*abs(atanh(RDhat) - atanh(Δ)), SEhat_riskdiffhat)
+    2ccdf(Normal(), abs(Z))
+end
+
+function confint_rd_zou_donner(a, b, c, d; α=0.05, u=1)
+    z = quantile(Normal(), 1-α/2)
+    RDhat = riskdiffhat_zou_donner(a, b, c, d)
+    SEhat_riskdiffhat = stderr_riskdiffhat_zou_donner(a, b, c, d; u)
+    m = atanh(RDhat)
+    d = safediv(z*SEhat_riskdiffhat, 1 - RDhat^2)
+    [tanh(m-d), tanh(m+d)]
+end
+
+function pvalue_rd_zou_donner_onesided(a, b, c, d; Δ=0, u=1)
+    ((a==0 && d==0) || (b==0 && c==0)) && return 1.0
+    RDhat = riskdiffhat_zou_donner(a, b, c, d)
+    SEhat_riskdiffhat = stderr_riskdiffhat_zou_donner(a, b, c, d; u)
+    Z = safediv((1 - RDhat^2)*(atanh(RDhat) - atanh(Δ)), SEhat_riskdiffhat)
+    ccdf(Normal(), Z)
+end
+
+a, b, c, d  = 58, 22, 62, 38
+
+@show riskdiffhat(a, b, c, d)
+@show stderr_riskdiffhat(a, b, c, d)
+@show pvalue_rd_wald(a, b, c, d)
+@show pvalue_rd_zou_donner(a, b, c, d)
+@show pvalue_rd_score(a, b, c, d)
+@show pvalue_rd_wald(a, b, c, d; Δ=0.2)
+@show pvalue_rd_zou_donner(a, b, c, d; Δ=0.2)
+@show pvalue_rd_score(a, b, c, d; Δ=0.2)
+@show confint_rd_wald(a, b, c, d; α=0.05)
+@show confint_rd_zou_donner(a, b, c, d; α=0.05)
+@show confint_rd_score(a, b, c, d; α=0.05)
+
+plot(Δ -> pvalue_rd_wald(a, b, c, d; Δ), -0.2, 0.4; label="Wald")
+plot!(Δ -> pvalue_rd_zou_donner(a, b, c, d; Δ), -0.2, 0.4; label="ZD", ls=:dash)
+plot!(Δ -> pvalue_rd_score(a, b, c, d; Δ), -0.2, 0.4; label="score", ls=:dashdot)
+plot!(confint_rd_wald(a, b, c, d; α=0.05), fill(0.05, 2); label="95% CI")
+plot!(confint_rd_wald(a, b, c, d; α=0.20), fill(0.20, 2); label="80% CI")
+plot!(xguide="ratio difference", yguide="P-value")
+plot!(xtick=-2:0.05:2, ytick=0:0.05:1)
+
+# %%
+plot(Δ -> pvalue_rd_wald_onesided(a, b, c, d; Δ), -0.2, 0.4; label="Wald")
+plot!(Δ -> pvalue_rd_zou_donner_onesided(a, b, c, d; Δ), -0.2, 0.4; label="ZD", ls=:dash)
+plot!(Δ -> pvalue_rd_score_onesided(a, b, c, d; Δ), -0.2, 0.4; label="score", ls=:dashdot)
+plot!(xguide="ratio difference", yguide="P-value")
+plot!(xtick=-2:0.05:2, ytick=0:0.05:1)
+
+# %% [markdown]
 # ## 事後確率とP値の同時プロットの関数
 
 # %%
@@ -144,13 +237,17 @@ function plot_AB_test(a, b, c, d; prior_params=(1, 1),
     R = plot(Δ -> ecdf_(pAmpB, Δ), -1, 1;
         label="posterior probability", c=3)
     plot!(Δ -> pvalue_rd_score_onesided(a, b, c, d; Δ);
-        label="one-sided P-value", c=4, ls=:dash)
+        label="score P-value", c=4, ls=:dash)
+    plot!(Δ -> pvalue_rd_zou_donner_onesided(a, b, c, d; Δ);
+        label="Zou-Donner P-value", c=5, ls=:dashdot)
+    plot!(Δ -> pvalue_rd_wald_onesided(a, b, c, d; Δ);
+        label="Wald P-value", c=6, ls=:dashdotdot)
     vline!([0]; label="", c=:black, lw=0.5)
     plot!(; xlim, xtick)
     plot!(ytick=0:0.05:1)
     plot!(xguide="Δ")
     plot!(legend=:bottomright)
-    title!("posterior probability and one-sided P-value of p_A - p_B ≤ Δ")
+    title!("posterior probability and one-sided P-values of p_A - p_B ≤ Δ")
 
     S = plot(Δ -> pvalue_rd_score(a, b, c, d; Δ), -1, 1;
         label="", c=4, ls=:dash)
@@ -198,7 +295,7 @@ end
 # のグラフである.  それらを比較すると, それらはほぼ同じ使い方をできる道具であることがわかる.
 
 # %%
-plot_AB_test(1, 9, 2, 8; xlim=(-0.7, 0.82))
+plot_AB_test(1, 9, 2, 8; plim=(-0.02, 0.82), xlim=(-0.72, 0.72))
 
 # %% [markdown]
 # https://speakerdeck.com/ak_iyama/b-testing-truly-effective
@@ -222,7 +319,8 @@ plot_AB_test(1, 9, 2, 8; xlim=(-0.7, 0.82))
 # ゆえに, 事後確率が高いという理由で「Bの方がAよりも優れている」と判断することは, P値が高いという理由で「Bの方がAよりも優れている」と判断することと実践的には同じことになる.
 
 # %%
-plot_AB_test(10, 90, 20, 80; xlim=(-0.7, 0.82))
+plot_AB_test(10, 90, 20, 80;
+    plim=(-0.01, 0.41), ptick=0:0.05:1, xlim=(-0.32, 0.22), xtick=-1:0.05:1)
 
 # %% [markdown]
 # https://speakerdeck.com/ak_iyama/b-testing-truly-effective
@@ -294,9 +392,7 @@ plot_AB_test(50, 100, 45, 105;
 #
 # 以下のグラフはそれぞれ事前分布が Beta(1, 1), Beta(2, 3), Beta(20, 30) の場合.
 #
-# しかし, おそらく, すぐ下の Beta(1, 1) の場合のグラフ例3-1のグラフと同じなので間違っている.
-#
-# <img src="IMG_6704.jpeg" width=640>
+# <img src="IMG_6731.jpeg" width=640>
 #
 # <img src="IMG_6706.jpeg" width=640>
 
