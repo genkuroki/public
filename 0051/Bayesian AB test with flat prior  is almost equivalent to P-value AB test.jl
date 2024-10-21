@@ -33,6 +33,8 @@ r(x) = round(x; sigdigits=3)
 
 # %% [markdown]
 # ## リスク差に関するスコア法のP値の実装
+#
+# https://github.com/genkuroki/public/blob/main/0047/score%20method%20for%20risk%20difference.ipynb
 
 # %%
 ### score method for risk difference
@@ -118,6 +120,8 @@ end
 
 # %% [markdown]
 # ## リスク差に関するWald法とZou-Donner法の実装
+#
+# https://nbviewer.org/github/genkuroki/public/blob/main/0033/probability%20of%20alpha%20error%20of%20Zou-Donner.ipynb
 
 # %%
 riskdiffhat(a, b, c, d) = safediv(a, a+b) - safediv(c, c+d)
