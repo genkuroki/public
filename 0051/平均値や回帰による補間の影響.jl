@@ -30,14 +30,14 @@ function plot_ols(x, y; α=0.05, m=length(x),
     r = 2
     X = float(x) .^ (0:1)'
     β̂ = X \ y
-    ŷ = X * β̂
+    ŷ = X * β̂
     
     f̂(x) = evalpoly(x, β̂)
-    ŝ = norm(y - ŷ)/√(n - r)
+    ŝ = norm(y - ŷ)/√(n - r)
     xx(x) = [1, x]
     XX = X'X
-    g(x) = ŝ * √dot(xx(x), XX \ xx(x))
-    h(x) = ŝ * √(1 + dot(xx(x), XX \ xx(x)))
+    g(x) = ŝ * √dot(xx(x), XX \ xx(x))
+    h(x) = ŝ * √(1 + dot(xx(x), XX \ xx(x)))
     t = quantile(TDist(n - r), 1 - α/2)
     
     plot(; legend=:topleft)
@@ -50,7 +50,7 @@ function plot_ols(x, y; α=0.05, m=length(x),
     plot!(x -> f̂(x) + t*g(x), a, b; label="", c=3, ls=:dash)
     plot!(x -> f̂(x) - t*h(x), a, b; label="$(100(1-α))% PI", c=4, ls=:dashdot)
     plot!(x -> f̂(x) + t*h(x), a, b; label="", c=4, ls=:dashdot)
-    title!("n=$n,  betahat=$(rd.(β̂)),  shat=$(rd(ŝ))")
+    title!("n=$n,  betahat=$(rd.(β̂)),  shat=$(rd(ŝ))")
     plot!(; kwargs...)
 end
 
@@ -67,7 +67,7 @@ function plot_interpolations(;
         size = (800, 800),
         ms = 3,
     )
-    @show β σ n
+    @show β σ n m
     
     # オリジナルデータ
     P1 = plot_ols(x, y; xlim=extrema(x), ylim, ms)
