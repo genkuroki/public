@@ -27,18 +27,17 @@ rd(x) = round(x; sigdigits=2)
 function plot_ols(x, y; α=0.05, m=length(x),
         xlim=extrema(x), ms=3, ma=0.7, kwargs...)
     n = length(x)
-    r = 2
     X = float(x) .^ (0:1)'
+    r = size(X, 2)
     β̂ = X \ y
-    ŷ = X * β̂
+    ŝ = norm(y - X * β̂) / √(n - r)
     
     f̂(x) = evalpoly(x, β̂)
-    ŝ = norm(y - ŷ)/√(n - r)
     xx(x) = [1, x]
     XX = X'X
     g(x) = ŝ * √dot(xx(x), XX \ xx(x))
     h(x) = ŝ * √(1 + dot(xx(x), XX \ xx(x)))
-    t = quantile(TDist(n - r), 1 - α/2)
+    t = cquantile(TDist(n - r), α/2)
     
     plot(; legend=:topleft)
     scatter!(x[1:m], y[1:m]; label="data", c=1, ms, ma, msc=:auto)
@@ -151,5 +150,8 @@ plot_interpolations(; n=1000, ms=2)
 
 # %%
 plot_interpolations(; seed=4649, n=300, m=240, x=rand(Normal(4, 0.5), 300), σ=1.0)
+
+# %%
+plot_interpolations(; n=1000, m=400, ms=2)
 
 # %%

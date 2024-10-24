@@ -9,7 +9,7 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.10.3
 #   kernelspec:
-#     display_name: Julia 1.11.0
+#     display_name: Julia 1.11.1
 #     language: julia
 #     name: julia-1.11
 # ---
@@ -22,14 +22,14 @@
 
 # %% [markdown] toc=true
 # <h1>目次<span class="tocSkip"></span></h1>
-# <div class="toc"><ul class="toc-item"><li><span><a href="#P値関数に至る道を具体例で説明" data-toc-modified-id="P値関数に至る道を具体例で説明-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>P値関数に至る道を具体例で説明</a></span><ul class="toc-item"><li><span><a href="#データの数値「n-=-20-回中-k-=-5-回成功」が得られたときの成功確率-p-について扱いたい." data-toc-modified-id="データの数値「n-=-20-回中-k-=-5-回成功」が得られたときの成功確率-p-について扱いたい.-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>データの数値「n = 20 回中 k = 5 回成功」が得られたときの成功確率 p について扱いたい.</a></span></li><li><span><a href="#①固定された有意水準-α-=-0.05-で帰無仮説-p-=-0.5-が棄却されたか否かのみを報告" data-toc-modified-id="①固定された有意水準-α-=-0.05-で帰無仮説-p-=-0.5-が棄却されたか否かのみを報告-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>①固定された有意水準 α = 0.05 で帰無仮説 p = 0.5 が棄却されたか否かのみを報告</a></span></li><li><span><a href="#②帰無仮説-p-=-0.5-のP値を報告" data-toc-modified-id="②帰無仮説-p-=-0.5-のP値を報告-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>②帰無仮説 p = 0.5 のP値を報告</a></span></li><li><span><a href="#③すべての検定仮説-p-=-a-のP値を報告" data-toc-modified-id="③すべての検定仮説-p-=-a-のP値を報告-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>③すべての検定仮説 p = a のP値を報告</a></span></li><li><span><a href="#❷固定された信頼水準-$1-\alpha=95\%$-の信頼区間を報告" data-toc-modified-id="❷固定された信頼水準-$1-\alpha=95\%$-の信頼区間を報告-1.5"><span class="toc-item-num">1.5&nbsp;&nbsp;</span>❷固定された信頼水準 $1-\alpha=95\%$ の信頼区間を報告</a></span></li><li><span><a href="#❸すべての信頼水準-$1-\alpha=100(1-\alpha)\%$-の信頼区間全体を報告" data-toc-modified-id="❸すべての信頼水準-$1-\alpha=100(1-\alpha)\%$-の信頼区間全体を報告-1.6"><span class="toc-item-num">1.6&nbsp;&nbsp;</span>❸すべての信頼水準 $1-\alpha=100(1-\alpha)\%$ の信頼区間全体を報告</a></span></li><li><span><a href="#③と❸が同等であること" data-toc-modified-id="③と❸が同等であること-1.7"><span class="toc-item-num">1.7&nbsp;&nbsp;</span>③と❸が同等であること</a></span></li><li><span><a href="#検定仮説-p=0.5-のP値はP値関数の-p=0.5-での値である." data-toc-modified-id="検定仮説-p=0.5-のP値はP値関数の-p=0.5-での値である.-1.8"><span class="toc-item-num">1.8&nbsp;&nbsp;</span>検定仮説 p=0.5 のP値はP値関数の p=0.5 での値である.</a></span></li><li><span><a href="#$95\%$-信頼区間はP値関数のグラフを高さ-$5\%$-で切断する線分になっている." data-toc-modified-id="$95\%$-信頼区間はP値関数のグラフを高さ-$5\%$-で切断する線分になっている.-1.9"><span class="toc-item-num">1.9&nbsp;&nbsp;</span>$95\%$ 信頼区間はP値関数のグラフを高さ $5\%$ で切断する線分になっている.</a></span></li><li><span><a href="#$0\%$-信頼区間は点推定値の1点だけで構成された区間になっている" data-toc-modified-id="$0\%$-信頼区間は点推定値の1点だけで構成された区間になっている-1.10"><span class="toc-item-num">1.10&nbsp;&nbsp;</span>$0\%$ 信頼区間は点推定値の1点だけで構成された区間になっている</a></span></li><li><span><a href="#データの数値-k=5,-n=20-から得られる検定仮説-p=0.5-のP値と95%信頼区間と点推定値" data-toc-modified-id="データの数値-k=5,-n=20-から得られる検定仮説-p=0.5-のP値と95%信頼区間と点推定値-1.11"><span class="toc-item-num">1.11&nbsp;&nbsp;</span>データの数値 k=5, n=20 から得られる検定仮説 p=0.5 のP値と95%信頼区間と点推定値</a></span></li></ul></li><li><span><a href="#平坦事前分布のベイズ統計との比較" data-toc-modified-id="平坦事前分布のベイズ統計との比較-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>平坦事前分布のベイズ統計との比較</a></span><ul class="toc-item"><li><span><a href="#事後分布とP値関数はほぼ同じ使い方をできる." data-toc-modified-id="事後分布とP値関数はほぼ同じ使い方をできる.-2.1"><span class="toc-item-num">2.1&nbsp;&nbsp;</span>事後分布とP値関数はほぼ同じ使い方をできる.</a></span></li><li><span><a href="#❸すべての信用水準-$1-\alpha$-のベイズ信用区間全体を報告" data-toc-modified-id="❸すべての信用水準-$1-\alpha$-のベイズ信用区間全体を報告-2.2"><span class="toc-item-num">2.2&nbsp;&nbsp;</span>❸すべての信用水準 $1-\alpha$ のベイズ信用区間全体を報告</a></span></li><li><span><a href="#③と❸の同等性よりベイズ的なP値関数が得られる." data-toc-modified-id="③と❸の同等性よりベイズ的なP値関数が得られる.-2.3"><span class="toc-item-num">2.3&nbsp;&nbsp;</span>③と❸の同等性よりベイズ的なP値関数が得られる.</a></span></li><li><span><a href="#スコアP値関数とベイズP値関数の比較" data-toc-modified-id="スコアP値関数とベイズP値関数の比較-2.4"><span class="toc-item-num">2.4&nbsp;&nbsp;</span>スコアP値関数とベイズP値関数の比較</a></span></li></ul></li></ul></div>
+# <div class="toc"><ul class="toc-item"><li><span><a href="#P値関数に至る道を具体例で説明" data-toc-modified-id="P値関数に至る道を具体例で説明-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>P値関数に至る道を具体例で説明</a></span><ul class="toc-item"><li><span><a href="#データの数値「n-=-20-回中-k-=-5-回成功」が得られたときの成功確率-p-について扱いたい." data-toc-modified-id="データの数値「n-=-20-回中-k-=-5-回成功」が得られたときの成功確率-p-について扱いたい.-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>データの数値「n = 20 回中 k = 5 回成功」が得られたときの成功確率 p について扱いたい.</a></span></li><li><span><a href="#①固定された有意水準-α-=-0.05-で帰無仮説-p-=-0.5-が棄却されたか否かのみを報告" data-toc-modified-id="①固定された有意水準-α-=-0.05-で帰無仮説-p-=-0.5-が棄却されたか否かのみを報告-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>①固定された有意水準 α = 0.05 で帰無仮説 p = 0.5 が棄却されたか否かのみを報告</a></span></li><li><span><a href="#②帰無仮説-p-=-0.5-のP値を報告" data-toc-modified-id="②帰無仮説-p-=-0.5-のP値を報告-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>②帰無仮説 p = 0.5 のP値を報告</a></span></li><li><span><a href="#③すべての検定仮説-p-=-a-のP値を報告" data-toc-modified-id="③すべての検定仮説-p-=-a-のP値を報告-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>③すべての検定仮説 p = a のP値を報告</a></span></li><li><span><a href="#❷固定された信頼水準-$1-\alpha=95\%$-の信頼区間を報告" data-toc-modified-id="❷固定された信頼水準-$1-\alpha=95\%$-の信頼区間を報告-1.5"><span class="toc-item-num">1.5&nbsp;&nbsp;</span>❷固定された信頼水準 $1-\alpha=95\%$ の信頼区間を報告</a></span></li><li><span><a href="#❸すべての信頼水準-$1-\alpha=100(1-\alpha)\%$-の信頼区間全体を報告" data-toc-modified-id="❸すべての信頼水準-$1-\alpha=100(1-\alpha)\%$-の信頼区間全体を報告-1.6"><span class="toc-item-num">1.6&nbsp;&nbsp;</span>❸すべての信頼水準 $1-\alpha=100(1-\alpha)\%$ の信頼区間全体を報告</a></span></li><li><span><a href="#③と❸が同等であること" data-toc-modified-id="③と❸が同等であること-1.7"><span class="toc-item-num">1.7&nbsp;&nbsp;</span>③と❸が同等であること</a></span></li><li><span><a href="#検定仮説-p=0.5-のP値はP値関数の-p=0.5-での値である." data-toc-modified-id="検定仮説-p=0.5-のP値はP値関数の-p=0.5-での値である.-1.8"><span class="toc-item-num">1.8&nbsp;&nbsp;</span>検定仮説 p=0.5 のP値はP値関数の p=0.5 での値である.</a></span></li><li><span><a href="#$95\%$-信頼区間はP値関数のグラフを高さ-$5\%$-で切断する線分になっている." data-toc-modified-id="$95\%$-信頼区間はP値関数のグラフを高さ-$5\%$-で切断する線分になっている.-1.9"><span class="toc-item-num">1.9&nbsp;&nbsp;</span>$95\%$ 信頼区間はP値関数のグラフを高さ $5\%$ で切断する線分になっている.</a></span></li><li><span><a href="#$0\%$-信頼区間は点推定値の1点だけで構成された区間になっている" data-toc-modified-id="$0\%$-信頼区間は点推定値の1点だけで構成された区間になっている-1.10"><span class="toc-item-num">1.10&nbsp;&nbsp;</span>$0\%$ 信頼区間は点推定値の1点だけで構成された区間になっている</a></span></li><li><span><a href="#データの数値-k=5,-n=20-から得られる検定仮説-p=0.5-のP値と95%信頼区間と点推定値" data-toc-modified-id="データの数値-k=5,-n=20-から得られる検定仮説-p=0.5-のP値と95%信頼区間と点推定値-1.11"><span class="toc-item-num">1.11&nbsp;&nbsp;</span>データの数値 k=5, n=20 から得られる検定仮説 p=0.5 のP値と95%信頼区間と点推定値</a></span></li></ul></li><li><span><a href="#平坦事前分布のベイズ統計との比較" data-toc-modified-id="平坦事前分布のベイズ統計との比較-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>平坦事前分布のベイズ統計との比較</a></span><ul class="toc-item"><li><span><a href="#事後分布とP値関数はほぼ同じ使い方をできる." data-toc-modified-id="事後分布とP値関数はほぼ同じ使い方をできる.-2.1"><span class="toc-item-num">2.1&nbsp;&nbsp;</span>事後分布とP値関数はほぼ同じ使い方をできる.</a></span></li><li><span><a href="#❸すべての信用水準-$1-\alpha$-のベイズ信用区間全体を報告" data-toc-modified-id="❸すべての信用水準-$1-\alpha$-のベイズ信用区間全体を報告-2.2"><span class="toc-item-num">2.2&nbsp;&nbsp;</span>❸すべての信用水準 $1-\alpha$ のベイズ信用区間全体を報告</a></span></li><li><span><a href="#③と❸の同等性よりベイズ的なP値関数が得られる." data-toc-modified-id="③と❸の同等性よりベイズ的なP値関数が得られる.-2.3"><span class="toc-item-num">2.3&nbsp;&nbsp;</span>③と❸の同等性よりベイズ的なP値関数が得られる.</a></span></li><li><span><a href="#スコアP値関数とベイズP値関数の比較" data-toc-modified-id="スコアP値関数とベイズP値関数の比較-2.4"><span class="toc-item-num">2.4&nbsp;&nbsp;</span>スコアP値関数とベイズP値関数の比較</a></span></li></ul></li><li><span><a href="#事前分布が偏っている場合での比較" data-toc-modified-id="事前分布が偏っている場合での比較-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>事前分布が偏っている場合での比較</a></span><ul class="toc-item"><li><span><a href="#偏っている事前分布" data-toc-modified-id="偏っている事前分布-3.1"><span class="toc-item-num">3.1&nbsp;&nbsp;</span>偏っている事前分布</a></span></li><li><span><a href="#標本サイズが小さい場合" data-toc-modified-id="標本サイズが小さい場合-3.2"><span class="toc-item-num">3.2&nbsp;&nbsp;</span>標本サイズが小さい場合</a></span></li><li><span><a href="#標本サイズを大きくした場合" data-toc-modified-id="標本サイズを大きくした場合-3.3"><span class="toc-item-num">3.3&nbsp;&nbsp;</span>標本サイズを大きくした場合</a></span></li></ul></li></ul></div>
 
 # %%
 using Distributions
 using Optim
 using Roots
 using StatsPlots
-default(fmt=:png)
+default(fmt=:png, titlefontsize=12)
 
 safediv(x, y) = x==0 ? zero(x/y) : x/y
 
@@ -127,10 +127,10 @@ p = 0.5
 # ### ③すべての検定仮説 p = a のP値を報告
 
 # %%
-plot(p -> pvalue_score(k, n, p), 0, 1; label="")
+plot(p -> pvalue_score(k, n, p), 0, 1; label="P-value function of p")
 plot!(xguide="value of parameter p", yguide="P-value")
 plot!(xtick=0:0.1:1, ytick=0:0.05:1)
-title!("P-value function of data k=$k, n=$n")
+title!("P-value function for data k=$k, n=$n")
 
 # %% [markdown]
 # ### ❷固定された信頼水準 $1-\alpha=95\%$ の信頼区間を報告
@@ -150,13 +150,13 @@ for α in αs
 end
 plot!(xguide="value of parameter p", yguide="α")
 plot!(xtick=0:0.1:1, ytick=0:0.05:1)
-title!("100(1−α)% confidence intervals of data k=$k, n=$n")
+title!("100(1−α)% confidence intervals for data k=$k, n=$n")
 
 # %% [markdown]
 # ### ③と❸が同等であること
 
 # %%
-plot(p -> pvalue_score(k, n, p), 0, 1; label="P-value function", lw=2)
+plot(p -> pvalue_score(k, n, p), 0, 1; label="P-value function of p", lw=2)
 αs = 0.00:0.01:1
 l = true
 for α in αs
@@ -177,7 +177,7 @@ title!("data k=$k, n=$n")
 # %%
 @show pvalue_score(k, n, 0.5);
 
-plot(p -> pvalue_score(k, n, p), 0, 1; label="P-value function")
+plot(p -> pvalue_score(k, n, p), 0, 1; label="P-value function of p")
 scatter!([0.5], [pvalue_score(k, n, 0.5)]; ms=4, msc=:auto, 
     label="(P-value of p=0.5) = $(round(100pvalue_score(k, n, 0.5); sigdigits=3))%", c=:red)
 plot!(xguide="value of parameter p")
@@ -190,9 +190,9 @@ title!("data k=$k, n=$n")
 # %%
 @show confint_score(k, n, 1-0.95);
 
-plot(p -> pvalue_score(k, n, p), 0, 1; label="P-value function")
+plot(p -> pvalue_score(k, n, p), 0, 1; label="P-value function of p")
 plot!(confint_score(k, n, 1-0.95), fill(0.05, 2); 
-    label="95% confidence interval = $(round.(confint_score(k, n, 1-0.95); sigdigits=3))", c=2, lw=2)
+    label="(95% confidence interval) = $(round.(confint_score(k, n, 1-0.95); sigdigits=3))", c=2, lw=2)
 plot!(xguide="value of parameter p")
 plot!(xtick=0:0.1:1, ytick=0:0.05:1)
 title!("data k=$k, n=$n")
@@ -205,7 +205,7 @@ title!("data k=$k, n=$n")
 
 plot(p -> pvalue_score(k, n, p), 0, 1; label="P-value function")
 scatter!(confint_score(k, n, 1-0), fill(1, 2); ms=4, msc=:auto, 
-    label="point estimate = $(confint_score(k, n, 1)[1])", c=:blue)
+    label="(point estimate of p) = $(confint_score(k, n, 1)[1])", c=:blue)
 plot!(xguide="value of parameter p")
 plot!(xtick=0:0.1:1, ytick=0:0.05:1)
 title!("data k=$k, n=$n")
@@ -218,16 +218,47 @@ title!("data k=$k, n=$n")
 @show confint_score(k, n, 1-0.05);
 @show confint_score(k, n, 1-0.0);
 
-plot(p -> pvalue_score(k, n, p), 0, 1; label="P-value function")
+plot(p -> pvalue_score(k, n, p), 0, 1; label="P-value function of p")
 scatter!([0.5], [pvalue_score(k, n, 0.5)]; ms=4, msc=:auto, 
     label="(P-value of p=0.5) = $(round(100pvalue_score(k, n, 0.5); sigdigits=3))%", c=:red)
 plot!(confint_score(k, n, 1-0.95), fill(0.05, 2); 
-    label="95% confidence interval = $(round.(confint_score(k, n, 1-0.95); sigdigits=3))", c=2, lw=2)
+    label="(95% confidence interval) = $(round.(confint_score(k, n, 1-0.95); sigdigits=3))", c=2, lw=2)
 scatter!(confint_score(k, n, 1-0), fill(1, 2); ms=4, msc=:auto, 
-    label="point estimate = $(confint_score(k, n, 1)[1])", c=:blue)
+    label="(point estimate of p) = $(confint_score(k, n, 1)[1])", c=:blue)
 plot!(xguide="value of parameter p")
 plot!(xtick=0:0.1:1, ytick=0:0.05:1)
 title!("data k=$k, n=$n")
+
+# %% tags=[]
+posterior = Beta(1+k, 1+n-k)
+pval_bayes = pvalue_bayes_hdi(k, n, 0.5)
+ci_pval_bayes = credint_hdi(k, n, pval_bayes)
+
+P = plot(posterior, 0, 1; label="posterior", c=7)
+plot!(posterior, 0, first(ci_pval_bayes);
+    label="(Bayesian P-value of p=0.5) = $(round(100pval_bayes; sigdigits=3))%",
+    fillrange=0.0, alpha=0.3, c=:red)
+plot!(posterior, last(ci_pval_bayes), 1; label="",
+    fillrange=0.0, alpha=0.3, c=:red)
+plot!(credint_hdi(k, n, 1-0.95), pdf.(posterior, credint_hdi(k, n, 1-0.95)); 
+    label="(95% credible interval) = $(round.(credint_hdi(k, n, 1-0.95); sigdigits=3))", c=6, lw=2)
+scatter!(credint_hdi(k, n, 1-0), pdf.(posterior, credint_hdi(k, n, 1-0)); ms=4, msc=:auto, 
+    label="(point estimate of p) = $(confint_score(k, n, 1)[1])", c=:blue)
+plot!(xguide="value of parameter p")
+plot!(xtick=0:0.1:1)
+title!("data k=$k, n=$n and flat prior")
+
+Q = plot(p -> pvalue_score(k, n, p), 0, 1; label="P-value function")
+scatter!([0.5], [pvalue_score(k, n, 0.5)]; ms=4, msc=:auto, 
+    label="(P-value of p=0.5) = $(round(100pvalue_score(k, n, 0.5); sigdigits=3))%", c=:red)
+plot!(confint_score(k, n, 1-0.95), fill(0.05, 2); 
+    label="(95% confidence interval) = $(round.(confint_score(k, n, 1-0.95); sigdigits=3))", c=2, lw=2)
+scatter!(confint_score(k, n, 1-0), fill(1, 2); ms=4, msc=:auto, 
+    label="(point estimate of p) = $(confint_score(k, n, 1)[1])", c=:blue)
+plot!(xguide="value of parameter p")
+plot!(xtick=0:0.1:1, ytick=0:0.05:1)
+title!("data k=$k, n=$n")
+;
 
 # %% [markdown]
 # ## 平坦事前分布のベイズ統計との比較
@@ -237,43 +268,7 @@ title!("data k=$k, n=$n")
 # %% [markdown]
 # ### 事後分布とP値関数はほぼ同じ使い方をできる.
 
-# %%
-posterior = Beta(1+k, 1+n-k)
-P = plot(posterior, 0, 1; label="", c=7)
-plot!(xguide="value of parameter p", yguide="probability density")
-plot!(xtick=0:0.1:1)
-title!("posterior of data k=$k, n=$n and flat prior")
-
-Q = plot(p -> pvalue_score(k, n, p), 0, 1; label="")
-plot!(xguide="value of parameter p", yguide="P-value")
-plot!(xtick=0:0.1:1, ytick=0:0.05:1)
-title!("P-value function of data k=$k, n=$n")
-
-plot(P, Q; size=(600, 800), layout=(2, 1))
-plot!(leftmargin=4Plots.mm)
-
 # %% tags=[]
-posterior = Beta(1+k, 1+n-k)
-P = plot(posterior, 0, 1; label="posterior", c=7)
-plot!(credint_hdi(k, n, 1-0.95), pdf.(posterior, credint_hdi(k, n, 1-0.95)); 
-    label="95% credible interval = $(round.(credint_hdi(k, n, 1-0.95); sigdigits=3))", c=6, lw=2)
-scatter!(credint_hdi(k, n, 1-0), pdf.(posterior, credint_hdi(k, n, 1-0)); ms=4, msc=:auto, 
-    label="point estimate = $(confint_score(k, n, 1)[1])", c=:red)
-plot!(xguide="value of parameter p")
-plot!(xtick=0:0.1:1)
-title!("data k=$k, n=$n and flat prior")
-
-Q = plot(p -> pvalue_score(k, n, p), 0, 1; label="P-value function")
-scatter!([0.5], [pvalue_score(k, n, 0.5)]; ms=4, msc=:auto, 
-    label="(P-value of p=0.5) = $(round(100pvalue_score(k, n, 0.5); sigdigits=3))%", c=:red)
-plot!(confint_score(k, n, 1-0.95), fill(0.05, 2); 
-    label="95% confidence interval = $(round.(confint_score(k, n, 1-0.95); sigdigits=3))", c=2, lw=2)
-scatter!(confint_score(k, n, 1-0), fill(1, 2); ms=4, msc=:auto, 
-    label="point estimate = $(confint_score(k, n, 1)[1])", c=:blue)
-plot!(xguide="value of parameter p")
-plot!(xtick=0:0.1:1, ytick=0:0.05:1)
-title!("data k=$k, n=$n")
-
 plot(P, Q; size=(600, 800), layout=(2, 1))
 plot!(leftmargin=4Plots.mm)
 
@@ -282,13 +277,13 @@ plot!(leftmargin=4Plots.mm)
 
 # %%
 plot()
-αs = 0.00:0.01:1
+αs = 0:0.01:1
 for α in αs
     plot!(credint_hdi(k, n, α), fill(α, 2); label="", c=6)
 end
 plot!(xguide="value of parameter p", yguide="α")
 plot!(xtick=0:0.1:1, ytick=0:0.05:1)
-title!("100(1−α)% credible intervals of data k=$k, n=$n")
+title!("100(1−α)% credible intervals for data k=$k, n=$n")
 
 # %% [markdown]
 # ### ③と❸の同等性よりベイズ的なP値関数が得られる.
@@ -296,7 +291,7 @@ title!("100(1−α)% credible intervals of data k=$k, n=$n")
 # %%
 plot(p -> pvalue_bayes_hdi(k, n, p), 0, 1;
     label="Bayesian P-value function", lw=2, c=7)
-αs = 0.00:0.01:1
+αs = 0:0.01:1
 l = true
 for α in αs
     plot!(credint_hdi(k, n, α), fill(α, 2); 
@@ -314,12 +309,70 @@ title!("data k=$k, n=$n and flat prior")
 plot(p -> pvalue_score(k, n, p), 0, 1;
     label="score P-value function", c=1, ls=:dash)
 plot!(p -> pvalue_bayes_hdi(k, n, p), 0, 1;
-    label="Bayesian P-value function of flat prior", c=7, ls=:solid)
+    label="Bayesian P-value function for flat prior", c=7, ls=:solid)
 plot!(xguide="value of parameter p", yguide="P-value")
 plot!(xtick=0:0.1:1, ytick=0:0.05:1)
-title!("P-value functions of data k=$k, n=$n")
+title!("P-value functions for data k=$k, n=$n")
 
 # %% [markdown]
-# かなりよく一致しているように見える.
+# 標本サイズは小さめなのに, よく一致しているように見える.
+
+# %% [markdown]
+# ## 事前分布が偏っている場合での比較
+
+# %% [markdown]
+# ### 偏っている事前分布
+
+# %%
+κ, λ = 3, 2
+prior = Beta(κ, λ)
+plot(prior; label="", c=7, size=(400, 250))
+title!("prior = Beta($κ, $λ)")
+
+# %% [markdown]
+# ### 標本サイズが小さい場合
+
+# %%
+plot(p -> pvalue_score(k, n, p), 0, 1;
+    label="score P-value function", c=1, ls=:dash)
+plot!(p -> pvalue_bayes_hdi(k, n, p; prior), 0, 1;
+    label="Bayesian P-value function of prior Beta($κ, $λ)",
+    c=7, ls=:solid)
+plot!(xguide="value of parameter p", yguide="P-value")
+plot!(xtick=0:0.1:1, ytick=0:0.05:1)
+title!("P-value functions for data k=$k, n=$n")
+
+# %% [markdown]
+# 事前分布が偏っていてかつ, 標本サイズが小さい場合にはこのようにずれる.
+
+# %% [markdown]
+# ### 標本サイズを大きくした場合
+
+# %%
+k, n = 50, 200
+plot(p -> pvalue_score(k, n, p), 0, 1;
+    label="score P-value function", c=1, ls=:dash)
+plot!(p -> pvalue_bayes_hdi(k, n, p; prior), 0, 1;
+    label="Bayesian P-value function for prior Beta($κ, $λ)",
+    c=7, ls=:solid)
+plot!(xguide="value of parameter p", yguide="P-value")
+plot!(xtick=0:0.05:1, ytick=0:0.05:1)
+plot!(xlim=(0.16, 0.46))
+title!("P-value functions for data k=$k, n=$n")
+
+# %%
+k, n = 500, 2000
+plot(p -> pvalue_score(k, n, p), 0, 1;
+    label="score P-value function", c=1, ls=:dash)
+plot!(p -> pvalue_bayes_hdi(k, n, p; prior), 0, 1;
+    label="Bayesian P-value function for prior Beta($κ, $λ)",
+    c=7, ls=:solid)
+plot!(xguide="value of parameter p", yguide="P-value")
+plot!(xtick=0:0.01:1, ytick=0:0.05:1)
+plot!(xlim=(0.22, 0.315))
+title!("P-value functions for data k=$k, n=$n")
+
+# %% [markdown]
+# 事前分布が偏っていても, 標本サイズを大きくして行くとその影響が消えて, 一致するようになる.
 
 # %%
