@@ -175,9 +175,9 @@ function plot_sims(;
         pval3 = sim(; distx, disty, m, n, transformations=transformations3, L)
         alphaerr3[i] = ecdf_(pval3, α)
     end
-    plot(1:N, alphaerr1; label=string(transformations1))
-    plot!(1:N, alphaerr2; label=string(transformations2), ls=:dash)
-    plot!(1:N, alphaerr3; label=string(transformations3), ls=:dashdot)
+    plot(1:N, alphaerr1; label=string(transformations1), marker=:o)
+    plot!(1:N, alphaerr2; label=string(transformations2), marker=:square, ls=:dash)
+    plot!(1:N, alphaerr3; label=string(transformations3), marker=:star, ls=:dashdot)
     plot!(tickfontsize=8, legendfontsize=12, titlefontsize=12)
     plot!(; xtick=(1:N, string.((m, n) for (m, n) in zip(ms, ns))), ytick)
     plot!(xguide="sample sizes (m, n)")
@@ -205,7 +205,7 @@ plot_sim2x2(; distx=InverseGamma(10), transformations=(inv,))
 # %%
 plot_sim2x2(; distx=InverseGamma(10), transformations=(identity, inv,))
 
-# %%
+# %% tags=[]
 plot_sims(distx=InverseGamma(10), transformations2=(inv,), transformations3=(identity, inv))
 
 # %%
