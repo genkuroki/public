@@ -208,4 +208,13 @@ plot_sim2x2(; distx=InverseGamma(10), transformations=(identity, inv,))
 # %% tags=[]
 plot_sims(distx=InverseGamma(10), transformations2=(inv,), transformations3=(identity, inv))
 
+# %% tags=[]
+plot_sims(distx=LogNormal(), transformations2=(log,),5 transformations3=(identity, log), distlim=(-0.2, 10.2))
+
+# %% tags=[]
+plot_sims(distx=Exponential(), transformations2=(log,), transformations3=(identity, log))
+
+# %% tags=[]
+plot_sims(distx=Gamma(30), transformations2=(log,), transformations3=(identity, log))
+
 # %%
