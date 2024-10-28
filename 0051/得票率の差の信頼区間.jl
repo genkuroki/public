@@ -1,0 +1,99 @@
+# -*- coding: utf-8 -*-
+# ---
+# jupyter:
+#   jupytext:
+#     formats: ipynb,jl:hydrogen
+#     text_representation:
+#       extension: .jl
+#       format_name: hydrogen
+#       format_version: '1.3'
+#       jupytext_version: 1.10.3
+#   kernelspec:
+#     display_name: Julia 1.11.1
+#     language: julia
+#     name: julia-1.11
+# ---
+
+# %% [markdown] tags=[]
+# # 得票率の差の信頼区間
+#
+# * 黒木玄
+# * 2024-10-28
+# $
+# \newcommand\op{\operatorname}
+# \newcommand\hatp{\hat{p}}
+# $
+
+# %% [markdown]
+# $K=(K_1,\ldots,K_r)$ は多項分布 $\op{Multinomial}(n, p)$, $p=(p_1,\ldots,p_r)$ に従う確率変数であるとする.
+#
+# このとき, $K$ の期待値は $np=(np_1,\ldots,np_r)$ になり, 分散共分散行列は $[n(p_i\delta_{ij} - p_ip_j)]_{i,j=1}^r$ になる.
+#
+# $\hatp = K/n$ すなわち $(\hatp_1,\ldots,\hatp_r) = (K_1/n,\ldots,K_r/n)$ とおく.
+#
+# $\hatp$ の期待値は $p$ になり, 分散共分散行列は $[(p_i\delta_{ij} - p_ip_j)/n]_{i,j=1}^r$ になる.
+#
+# $i\ne j$ と仮定する.
+#
+# $\hatp_i - \hatp_j$ の期待値は $p_i - p_j$ になり, 分散は $(p_i + p_j -(p_i - p_j)^2)/n$ になる.
+#
+# $0<\alpha\le 1$ だと仮定し, 信頼水準を $1-\alpha$ に設定し, $c = z_{\alpha/2} = \op{cquantile}(\op{Normal}(0, 1), \alpha/2)$ とおく.
+#
+# 例えば, $\alpha = 5\%$ のとき $c\approx 1.96$ になり, $c = 2$ のとき $\alpha\approx 4.55\%$ になる.
+
+# %% [markdown]
+# 以上の設定の下で, $p_i - p_j$ のWaldの信頼区間が次によって定義される:
+#
+# $$
+# \left[
+# \hatp_i - \hatp_j - c\sqrt{\frac{\hatp_i + \hatp_j -(\hatp_i - \hatp_j)^2}{n}},\;
+# \hatp_i - \hatp_j + c\sqrt{\frac{\hatp_i + \hatp_j -(\hatp_i - \hatp_j)^2}{n}}
+# \right].
+# $$
+#
+# $\hatp_i$ と $\hatp_j$ の差の絶対値が $\hatp_i + \hatp_j$ よりもずっと小さいならば(つまり接戦ならば), この信頼区間は次で近似される:
+#
+# $$
+# \left[
+# \hatp_i - \hatp_j - c\sqrt{\frac{\hatp_i + \hatp_j}{n}},\;
+# \hatp_i - \hatp_j + c\sqrt{\frac{\hatp_i + \hatp_j}{n}}
+# \right].
+# $$
+#
+# 例えば, $c=2$, $\hatp_i + \hatp_j = 0.64 = 0.8^2$ のとき, これは次になる:
+#
+# $$
+# \left[
+# \hatp_i - \hatp_j - \frac{1.6}{\sqrt{n}},\;
+# \hatp_i - \hatp_j + \frac{1.6}{\sqrt{n}}
+# \right].
+# $$
+#
+# これは, $\hatp_i + \hatp_j = 1$ のときの
+#
+# $$
+# \left[
+# \hatp_i - \hatp_j - \frac{2}{\sqrt{n}},\;
+# \hatp_i - \hatp_j + \frac{2}{\sqrt{n}}
+# \right]
+# $$
+#
+# とそう変わらないとも言える(どんぶり勘定). さらにこれは $n=10000$ のとき次になる:
+#
+# $$
+# \left[
+# \hatp_i - \hatp_j - 2\%,\;
+# \hatp_i - \hatp_j + 2\%
+# \right].
+# $$
+#
+# 開票数 $n = 10000$ のときには, その時点での得票率に $2\%$ を超える差がつけば概ね安全圏内だと考えられる.
+
+# %% [markdown]
+# __警告:__ 現実には, 開票の速さは地域によって異なり, 地域によって投票先の傾向は異なる. だから, ある時点での開票結果は多項分布モデルの重要な仮定である無作為抽出の仮定を近似的にも満たしていない可能性がある. 
+#
+# 例えば, 候補X,Yが接戦になっており, 人口の多い地域Aでは候補Xに投票する傾向が強かったとする. A以外の地域での開票が進み, その結果だけから判断すると候補Yの当選がほぼ確実になったかのように見えたとしても, 開票が遅れている地域Aの開票結果がどうなりそうかまで含めて判断すると, 人口の多い地域Aでは候補Xの側が強いせいで, 逆に候補Xの当選がほぼ確実であるという予測が可能になる場合が出て来る.
+#
+# __例:__ [2019年参議院選挙宮城選挙区での接戦](https://www.google.com/search?q=2019%E5%B9%B4%E5%8F%82%E8%AD%B0%E9%99%A2%E9%81%B8%E6%8C%99%E5%AE%AE%E5%9F%8E%E9%81%B8%E6%8C%99%E5%8C%BA)では実際にそういうことが起こった.
+
+# %%
