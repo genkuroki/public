@@ -74,6 +74,7 @@ function sim(;
         m = 20,
         n = 40,
         transformations = (identity, log),
+        pvalselect = min, 
         L = 10^6,
     )
     pval = zeros(L)
@@ -87,12 +88,12 @@ function sim(;
         X = rand!(distx, Xtmp[tid])
         Y = rand!(disty, Ytmp[tid])
         fX, fY = XX[tid], YY[tid]
-        pval[i] = 1.0
+        pval[i] = pvalselect == min ? 1.0 : 0.0
         for f in transformations
             @. fX = f(X)
             @. fY = f(Y)
             pval_new = pvalue_welch(fX, fY)
-            pval[i] = min(pval[i], pval_new)
+            pval[i] = pvalselect(pval[i], pval_new)
         end
     end
     pval
@@ -107,12 +108,13 @@ function plot_sim2x2(;
         disty = distx,
         mns = ((50, 50), (40, 60), (30, 70), (20, 80)),
         transformations = (identity, log),
+        pvalselect = min, 
         distlim = :auto,
         L = 10^6,
     )    
     PP = []
     for (m, n) in mns
-        pval = sim(; distx, disty, m, n, transformations, L)
+        pval = sim(; distx, disty, m, n, transformations, pvalselect, L)
         P = plot(α -> ecdf_(pval, α), 0, 0.1; label="")
         plot!(identity; label="", c=:gray, ls=:dot)
         plot!(xtick=0:0.01:1, ytick=0:0.01:1, xrotation=90)
@@ -146,6 +148,7 @@ function plot_sims(;
         transformations1 = (identity,),
         transformations2 = (log,),
         transformations3 = (identity, log),
+        pvalselect = min, 
         distlim = :auto,
         ytick=0:0.005:1,
         L = 10^6,
@@ -168,11 +171,11 @@ function plot_sims(;
     alphaerr2 = zeros(N)
     alphaerr3 = zeros(N)
     for (i, (m, n)) in enumerate(zip(ms, ns))
-        pval1 = sim(; distx, disty, m, n, transformations=transformations1, L)
+        pval1 = sim(; distx, disty, m, n, transformations=transformations1, pvalselect, L)
         alphaerr1[i] = ecdf_(pval1, α)
-        pval2 = sim(; distx, disty, m, n, transformations=transformations2, L)
+        pval2 = sim(; distx, disty, m, n, transformations=transformations2, pvalselect, L)
         alphaerr2[i] = ecdf_(pval2, α)
-        pval3 = sim(; distx, disty, m, n, transformations=transformations3, L)
+        pval3 = sim(; distx, disty, m, n, transformations=transformations3, pvalselect, L)
         alphaerr3[i] = ecdf_(pval3, α)
     end
     plot(1:N, alphaerr1; label=string(transformations1), marker=:o)
@@ -209,7 +212,7 @@ plot_sim2x2(; distx=InverseGamma(10), transformations=(identity, inv,))
 plot_sims(distx=InverseGamma(10), transformations2=(inv,), transformations3=(identity, inv))
 
 # %% tags=[]
-plot_sims(distx=LogNormal(), transformations2=(log,),5 transformations3=(identity, log), distlim=(-0.2, 10.2))
+plot_sims(distx=LogNormal(), transformations2=(log,), transformations3=(identity, log), distlim=(-0.2, 10.2))
 
 # %% tags=[]
 plot_sims(distx=Exponential(), transformations2=(log,), transformations3=(identity, log))
