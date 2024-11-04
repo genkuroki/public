@@ -185,6 +185,32 @@ Y = randn(10)
 @show pvalue_mann_whitney_u_test(X, Y) pvalue(ApproximateMannWhitneyUTest(X, Y));
 
 # %%
+function plot_brunner_munzel_pvalue_function(X, Y; α=0.05,
+        as=range(-60, 60, 500), ps=range(0, 1, 400), size=(500, 400), kwargs...)
+    f(a, p) = (y = pvalue_brunner_munzel(X, Y .+ a; p); y < α ? NaN : y)
+    heatmap(as, ps, f; c=:turbo, cbar_title="P-value", clim=(0, 1))
+    hline!([0.5]; label="", c=(α == 0 ? :white : :black), lw=0.5)
+    vline!([0.0]; label="", c=(α == 0 ? :white : :black), lw=0.5)
+    plot!(xtick=-100:10:100, ytick=0:0.05:1)
+    plot!(xguide="a", yguide="p")
+    title!("Brunner-Munzel " * (α == 0 ? "P-value function" : "$(100(1-α))% confidence region"))
+    plot!(; size, kwargs...)
+end
+
+function plot_brunner_munzel_svalue_function(X, Y; α=0.05,
+        as=range(-60, 60, 500), ps=range(0, 1, 400), size=(500, 400), kwargs...)
+    f(a, p) = (y = pvalue_brunner_munzel(X, Y .+ a; p); y < α ? NaN : y)
+    heatmap(as, ps, (a, p) -> -log2(f(a, p)); c=reverse(cgrad(:turbo)), 
+        cbar_title="S-value = −log₂(P-value) [bit]", clim=(0, min(10, -log2(α))))
+    hline!([0.5]; label="", c=(α == 0 ? :white : :black), lw=0.5)
+    vline!([0.0]; label="", c=(α == 0 ? :white : :black), lw=0.5)
+    plot!(xtick=-100:10:100, ytick=0:0.05:1)
+    plot!(xguide="a", yguide="p")
+    title!("Brunner-Munzel " * (α == 0 ? "S-value function" : "$(100(1-α))% confidence region"))
+    plot!(; size, kwargs...)
+end
+
+# %%
 X = [24, 24, 36, 36, 37, 38, 40, 44, 45, 48, 50, 53, 55, 57, 58, 67, 72, 75, 105, 127]
 Y = [7, 7, 9, 10, 13, 13, 14, 17, 23, 24, 25, 27, 32, 35, 38, 40, 40, 41, 41, 42, 44, 45, 50, 53, 63, 74, 76, 84, 156, 727]
 
@@ -228,37 +254,14 @@ title!("comparison between X and Y+a with p=1/2")
 plot!(size=(600, 400))
 
 # %%
-f(a, p) = (y = pvalue_brunner_munzel(X, Y .+ a; p); y < 0.05 ? NaN : y)
-as = range(-60, 60, 500)
-ps = range(0, 1, 400)
-heatmap(as, ps, f; c=:turbo, cbar_title="P-value", clim=(0, 1))
-hline!([0.5]; label="", c=:black, lw=0.5)
-plot!(xtick=-100:10:100, ytick=0:0.05:1)
-plot!(xguide="a", yguide="p")
-title!("Brunner-Munzel 95% confidence region")
-plot!(size=(500, 400))
+for α in (0.05, 0.01, 0.0)
+    plot_brunner_munzel_pvalue_function(X, Y; α) |> display
+end
 
 # %%
-f(a, p) = (y = pvalue_brunner_munzel(X, Y .+ a; p); y < 0.01 ? NaN : y)
-as = range(-60, 60, 500)
-ps = range(0, 1, 400)
-heatmap(as, ps, f; c=:turbo, cbar_title="P-value", clim=(0, 1))
-hline!([0.5]; label="", c=:black, lw=0.5)
-plot!(xtick=-100:10:100, ytick=0:0.05:1)
-plot!(xguide="a", yguide="p")
-title!("Brunner-Munzel 99% confidence region")
-plot!(size=(500, 400))
-
-# %%
-f(a, p) = (y = pvalue_brunner_munzel(X, Y .+ a; p); y < 0 ? NaN : y)
-as = range(-60, 60, 500)
-ps = range(0, 1, 400)
-heatmap(as, ps, f; c=:turbo, cbar_title="P-value", clim=(0, 1))
-hline!([0.5]; label="", c=:white, lw=0.5)
-plot!(xtick=-100:10:100, ytick=0:0.05:1)
-plot!(xguide="a", yguide="p")
-title!("Brunner-Munzel P-value function")
-plot!(size=(500, 400))
+for α in (0.05, 0.01, 0.0)
+    plot_brunner_munzel_svalue_function(X, Y; α) |> display
+end
 
 # %%
 @show confint_bm_p_roots(X, Y .+ 30) .|> r;
@@ -314,78 +317,13 @@ plot!(size=(600, 400))
 @show pvalue_student(X, Y .+ 30) .|> r;
 
 # %%
-α = 0.05
-f(a, p) = (y = pvalue_brunner_munzel(X, Y .+ a; p); y < α ? NaN : y)
-as = range(-60, 60, 500)
-ps = range(0, 1, 400)
-heatmap(as, ps, f; c=:turbo, cbar_title="P-value", clim=(0, 1))
-hline!([0.5]; label="", c=:black, lw=0.5)
-plot!(xtick=-100:10:100, ytick=0:0.05:1)
-plot!(xguide="a", yguide="p")
-title!("Brunner-Munzel 95% confidence region")
-plot!(size=(500, 400))
+for α in (0.05, 0.01, 0.0)
+    plot_brunner_munzel_pvalue_function(X, Y; α) |> display
+end
 
 # %%
-α = 0.01
-f(a, p) = (y = pvalue_brunner_munzel(X, Y .+ a; p); y < α ? NaN : y)
-as = range(-60, 60, 500)
-ps = range(0, 1, 400)
-heatmap(as, ps, f; c=:turbo, cbar_title="P-value", clim=(0, 1))
-hline!([0.5]; label="", c=:black, lw=0.5)
-plot!(xtick=-100:10:100, ytick=0:0.05:1)
-plot!(xguide="a", yguide="p")
-title!("Brunner-Munzel 99% confidence region")
-plot!(size=(500, 400))
-
-# %%
-α = 0.0
-f(a, p) = (y = pvalue_brunner_munzel(X, Y .+ a; p); y < α ? NaN : y)
-as = range(-60, 60, 500)
-ps = range(0, 1, 400)
-heatmap(as, ps, f; c=:turbo, cbar_title="P-value", clim=(0, 1))
-hline!([0.5]; label="", c=:white, lw=0.5)
-plot!(xtick=-100:10:100, ytick=0:0.05:1)
-plot!(xguide="a", yguide="p")
-title!("Brunner-Munzel P-value function")
-plot!(size=(500, 400))
-
-# %%
-α = 0.05
-f(a, p) = (y = pvalue_brunner_munzel(X, Y .+ a; p); y < α ? NaN : y)
-as = range(-60, 60, 500)
-ps = range(0, 1, 400)
-heatmap(as, ps, (a, p) -> -log2(f(a, p)); c=reverse(cgrad(:turbo)), 
-    cbar_title="S-value = −log₂(P-value) [bit]", clim=(0, min(10, -log2(α))))
-hline!([0.5]; label="", c=:black, lw=0.5)
-plot!(xtick=-100:10:100, ytick=0:0.05:1)
-plot!(xguide="a", yguide="p")
-title!("Brunner-Munzel 95% confidence region")
-plot!(size=(500, 400))
-
-# %%
-α = 0.01
-f(a, p) = (y = pvalue_brunner_munzel(X, Y .+ a; p); y < α ? NaN : y)
-as = range(-60, 60, 500)
-ps = range(0, 1, 400)
-heatmap(as, ps, (a, p) -> -log2(f(a, p)); c=reverse(cgrad(:turbo)), 
-    cbar_title="S-value = −log₂(P-value) [bit]", clim=(0, min(10, -log2(α))))
-hline!([0.5]; label="", c=:black, lw=0.5)
-plot!(xtick=-100:10:100, ytick=0:0.05:1)
-plot!(xguide="a", yguide="p")
-title!("Brunner-Munzel 99% confidence region")
-plot!(size=(500, 400))
-
-# %%
-α = 0.0
-f(a, p) = (y = pvalue_brunner_munzel(X, Y .+ a; p); y < α ? NaN : y)
-as = range(-60, 60, 500)
-ps = range(0, 1, 400)
-heatmap(as, ps, (a, p) -> -log2(f(a, p)); c=reverse(cgrad(:turbo)), 
-    cbar_title="S-value = −log₂(P-value) [bit]", clim=(0, min(10, -log2(α))))
-hline!([0.5]; label="", c=:black, lw=0.5)
-plot!(xtick=-100:10:100, ytick=0:0.05:1)
-plot!(xguide="a", yguide="p")
-title!("Brunner-Munzel S-value function")
-plot!(size=(500, 400))
+for α in (0.05, 0.01, 0.0)
+    plot_brunner_munzel_svalue_function(X, Y; α) |> display
+end
 
 # %%
