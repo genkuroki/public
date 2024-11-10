@@ -19,9 +19,9 @@
 # %%
 using BenchmarkTools
 
-f() = maximum(n for n in 11:99 if powermod(3, n, 5) == 1)
-g() = first(n for n in 99:-1:11 if powermod(3, n, 5) == 1)
-h() = last(n for n in 11:99 if powermod(3, n, 5) == 1)
+f() = maximum(n for n in 10:99 if powermod(3, n, 5) == 1)
+g() = first(n for n in 99:-1:10 if powermod(3, n, 5) == 1)
+h() = last(n for n in 10:99 if powermod(3, n, 5) == 1)
 
 @btime f()
 @btime g()
@@ -29,7 +29,7 @@ h() = last(n for n in 11:99 if powermod(3, n, 5) == 1)
 @show(f()) == @show(g()) == @show(h())
 
 # %%
-gen = (n for n in 11:99 if powermod(3, n, 5) == 1)
+gen = (n for n in 10:99 if powermod(3, n, 5) == 1)
 
 # %%
 last(gen)
