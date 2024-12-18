@@ -134,7 +134,7 @@ F(ρ) = pvalue_rr_wald_onesided(a, b, c, d; ρ)
 G = posterior_onesided_pvalue_function_rr(a, b, c, d)
 
 R = plot(F, 0.5, 1.8; label="Wald method")
-plot!(G, 0.5, 1.8; label="Bayesian (flat prior)\nP(SRE>ρ|posterior)", c=2, ls=:dash)
+plot!(G, 0.5, 1.8; label="Bayesian (flat prior)\nP(SRE≥ρ|posterior)", c=2, ls=:dash)
 plot!(xtick=0.1:0.1:3, ytick=0:0.05:1)
 plot!(xguide="hypothetical success rate ratio ρ",
     yguide="one-sided P-value", guidefontsize=10)
