@@ -9,7 +9,7 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.10.3
 #   kernelspec:
-#     display_name: Julia 1.11.1
+#     display_name: Julia 1.11.2
 #     language: julia
 #     name: julia-1.11
 # ---
@@ -325,5 +325,72 @@ end
 for α in (0.05, 0.01, 0.0)
     plot_brunner_munzel_svalue_function(X, Y; α) |> display
 end
+
+# %% [markdown]
+# https://x.com/genkuroki/status/1868839785118548371
+
+# %% [markdown]
+# <img src="IMG_7529.jpeg">
+
+# %%
+Y = [fill(0, 94); fill(1, 4); fill(2, 4); 3]
+X = [fill(0, 65); fill(1, 14); fill(2, 10); fill(3, 6); fill(4, 4); 5; 5; 6; 6; 7; 7; 8; 9; 10; 11; 11; 19]
+@show X Y
+@show length(Y) length(X)
+
+P = dotplot([X, Y]; label="", xtick=(1:2, ["X", "Y"]), msc=:auto, ms=1.5, ma=0.7, title="all data")
+#Q = dotplot([X, Y]; label="", xtick=(1:2, ["X", "Y"]), msc=:auto, ms=1.5, ma=0.7, title="data < 200", ylim=(-5, 180))
+R = dotplot(vec(X .- Y'); xtick=(1:1, ["X − Y"]), label="", c=3, msc=:auto, ms=0.75, ma=0.1)
+title!("differences of pairs")
+#plot(P, Q, R; layout=(1, 3), size=(600, 300))
+plot(P, R; layout=@layout[a{0.33w} b], size=(1000, 300))
+
+# %%
+@show confint_bm_p_roots(X, Y) .|> r;
+
+# %%
+@show confint_bm_tieshift(X, Y) .|> r;
+
+# %%
+r(x) = round.(x; sigdigits=3)
+
+P_BM = pvalue_brunner_munzel(X, Y)
+HL = hodges_lehmann(X, Y)
+CI_BM = confint_bm_tieshift(X, Y)
+
+P_W = pvalue_welch(X, Y)
+DM = mean(X) - mean(Y)
+CI_W = confint_welch(X, Y)
+
+P_MW = pvalue_mann_whitney_u_test(X, Y)
+CI_MW = confint_mw_tieshift(X, Y)
+
+P_S = pvalue_student(X, Y)
+CI_S = confint_student(X, Y)
+
+println("Brunner-Munzel: ", "null P-value = ", r(P_BM), ",  point estimate = ", r(HL), ",  95% confidence interval = ", r.(CI_BM))
+println("Welch t-test: ", "null P-value = ", r(P_W), ",  point estimate = ", r(DM), ",  95% confidence interval = ", r.(CI_W))
+println("Mann-Whitney: ", "null P-value = ", r(P_MW), ",  point estimate = ", r(HL), ",  95% confidence interval = ", r.(CI_MW))
+println("Student: ", "null P-value = ", r(P_S), ",  point estimate = ", r(DM), ",  95% confidence interval = ", r.(CI_S))
+
+as = range(-1, 3, 401)
+plot(as, a -> pvalue_brunner_munzel(X, Y .+ a); label="Brunner-Munzel", c=1)
+vline!([HL]; label="Hodges-Lehmann", ls=:dot, c=1)
+#plot!(a -> pvalue_welch(X, Y .+ a); label="Welch", c=2, ls=:dash)
+vline!([DM]; label="difference of means", ls=:dot, c=2)
+plot!(a -> pvalue_mann_whitney_u_test(X, Y .+ a); label="Mann-Whitney", c=3, ls=:dashdot)
+#plot!(a -> pvalue_student(X, Y .+ a); label="Student", c=4, ls=:dashdotdot)
+#plot!(xtick=-100:20:100, ytick=0:0.05:1)
+plot!(xguide="a", yguide="P-value")
+title!("comparison between X and Y+a with p=1/2")
+plot!(size=(600, 400))
+
+# %%
+for α in (0.05, 0.01, 0.0)
+    plot_brunner_munzel_svalue_function(X, Y; α, as=range(-1, 3, 401), xtick=:auto) |> display
+end
+
+# %%
+log(100)
 
 # %%
