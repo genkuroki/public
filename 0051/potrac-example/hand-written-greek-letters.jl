@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # ---
 # jupyter:
 #   jupytext:
@@ -12,6 +13,10 @@
 #     language: julia
 #     name: julia-1.11
 # ---
+
+# %% [markdown]
+# 1. [ImageMagick](https://imagemagick.org/)のmagickでjpgをppmに変換
+# 2. [Potrace](https://potrace.sourceforge.net/)でそれをsvgやpdfに変換
 
 # %%
 ; ls -l hand-written-greek-letters.jpg
