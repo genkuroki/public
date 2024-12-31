@@ -1,0 +1,116 @@
+% !TEX program = LuaLaTeX
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\nosolutionfiles{} % 定義すると \usepackage[nosolutionfiles]{answers} になる.
+\def\TITLE{answers.styの使用例}
+\def\AUTHOR{黒木 玄}
+\def\DATE{2024年12月31日}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[%
+  lualatex,
+  ja=standard,
+  textwidth-limit=60,
+  %a4paper,
+  b5paper,
+  %12pt,
+  oneside,
+  everyparhook=compat]{bxjsbook}
+
+%%% amsthm
+\usepackage{amsthm}
+\theoremstyle{definition}
+\newtheorem{problem}{問題}[chapter]
+
+%%% answers
+\ifdefined\nosolutionfiles
+  \usepackage[nosolutionfiles]{answers}
+\else
+  \usepackage{answers}
+\fi
+\newcommand\answersfile{bookanswers}
+\Newassociation{answer}{showanswer}{\answersfile}
+\renewcommand{\showanswerlabel}[1]{\hspace{4.6pt}\textbf{問題#1解答例.}}
+
+\newcommand\showanswerpart{%
+  \part{問題の解答例}
+  \newcounter{answerchapter}
+  \setcounter{answerchapter}{0}
+}
+
+\newcommand\showanswerchapter{%
+  \stepcounter{answerchapter}
+  \chapter{第\theanswerchapter 章の問題の解答例}
+}
+
+%%% maketitle
+\title{\Huge{\textbf{\TITLE}}}
+\author{\LARGE{\textbf{\AUTHOR}}}
+\date{\Large{\textbf{\DATE}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+%%% タイトルと著者など
+\maketitle
+
+%%% 序文と目次
+\frontmatter
+
+\chapter*{序文}
+\addcontentsline{toc}{chapter}{序文}
+
+これはanswers.styの使用例です.
+
+\setcounter{tocdepth}{2}
+\tableofcontents
+\addcontentsline{toc}{chapter}{目次}
+
+%%% 本文
+\mainmatter
+
+\Opensolutionfile{\answersfile}
+\begin{Filesave}{\answersfile}\showanswerpart\end{Filesave}
+
+\part{満月に注意せよ}
+
+\chapter{深夜でも明るい}
+\begin{Filesave}{\answersfile}\showanswerchapter\end{Filesave}
+
+\section{散歩するとどうなるか}
+
+\begin{problem}
+満月の深夜に近所の神社に散歩に行くとどうなりますか?
+\begin{answer}
+満月の深夜に近所の神社に散歩に行くと, 警官に見付かって職務質問されます(実話).
+\end{answer}
+\end{problem}
+
+\begin{problem}
+満月の夜に近所の神社で何をすると良いですか?
+\begin{answer}
+おみくじなどを引くと良いでしょう.
+\end{answer}
+\end{problem}
+
+\part{大晦日には}
+
+\chapter{蕎麦を食べたい}
+\begin{Filesave}{\answersfile}\showanswerchapter\end{Filesave}
+
+\section{一体どうするのか}
+
+どうにもならない.
+
+\section{どうしても蕎麦を食べたい}
+
+\begin{problem}
+結局どうするのですか?
+\begin{answer}
+蕎麦を買いに行きます.
+\end{answer}
+\end{problem}
+
+\Closesolutionfile{\answersfile}
+\Readsolutionfile{\answersfile}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}
