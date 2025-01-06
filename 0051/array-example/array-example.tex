@@ -1,0 +1,77 @@
+% !TEX program = LuaLaTeX
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\def\nosolutionfiles{} % 定義すると \usepackage[nosolutionfiles]{answers} になる.
+\def\TITLE{arrayの使用例}
+\def\AUTHOR{黒木 玄}
+\def\DATE{2054年1月6日}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[%
+  lualatex,
+  ja=standard,
+  textwidth-limit=60,
+  a4paper,
+  %b5paper,
+  12pt,
+  oneside,
+  everyparhook=compat]{bxjsarticle}
+
+\usepackage{caption}
+\usepackage{multirow}
+
+\title{\Huge{\textbf{\TITLE}}}
+\author{\LARGE{\textbf{\AUTHOR}}}
+\date{\Large{\textbf{\DATE}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\maketitle
+
+\begin{table}[htbp]
+\centering
+\begin{minipage}{0.95\columnwidth}
+\centering
+\(
+\begin{array}{cc|cccccc}
+\multicolumn{2}{c|}{\multirow{2}{*}{$p_0=0.5$}}
+ & \multicolumn{6}{c}{n} \\
+\cline{3-8}
+ & & 10 & 30 & 100 & 300 & 1000 & 3000 \\
+\hline
+\multirow{4}{*}{$C$}
+ & \multicolumn{1}{|c|}{1} & 15.3\% & 8.25\% & 4.11\% & 2.18\% & 1.1\% & 0.6\% \\
+ & \multicolumn{1}{|c|}{1/3} & 3.95\% & 2.24\% & 1.16\% & 0.63\% & 0.33\% & 0.18\% \\
+ & \multicolumn{1}{|c|}{1/10} & 0.99\% & 0.58\% & 0.3\% & 0.17\% & 0.09\% & 0.05\% \\
+ & \multicolumn{1}{|c|}{1/30} & 0.29\% & 0.17\% & 0.09\% & 0.05\% & 0.03\% & 0.02\% \\
+\end{array}
+\)
+\captionof{table}{$p_0=0.5$の場合のベイズファクターの閾値$C$に近似対応するP値の閾値$\alpha_n$}
+\label{table:ベイズファクターの閾値に対応する有意水準-0.5}
+\end{minipage}
+\\
+\begin{minipage}{0.95\columnwidth}
+\centering
+\(
+\begin{array}{cc|cccccc}
+\multicolumn{2}{c|}{\multirow{2}{*}{$p_0=0.1$}}
+ & \multicolumn{6}{c}{n} \\
+\cline{3-8}
+ & & 10 & 30 & 100 & 300 & 1000 & 3000 \\
+\hline
+\multirow{4}{*}{$C$}
+ & \multicolumn{1}{|c|}{1} & 8.01\% & 4.45\% & 2.27\% & 1.22\% & 0.62\% & 0.34\% \\
+ & \multicolumn{1}{|c|}{1/3} & 2.18\% & 1.25\% & 0.66\% & 0.36\% & 0.19\% & 0.1\% \\
+ & \multicolumn{1}{|c|}{1/10} & 0.56\% & 0.33\% & 0.17\% & 0.1\% & 0.05\% & 0.03\% \\
+ & \multicolumn{1}{|c|}{1/30} & 0.17\% & 0.1\% & 0.05\% & 0.03\% & 0.02\% & 0.01\% \\
+\end{array}
+\)
+\captionof{table}{$p_0=0.1$の場合のベイズファクターの閾値$C$に近似対応するP値の閾値$\alpha_n$}
+\label{table:ベイズファクターの閾値に対応する有意水準-0.1}
+\end{minipage}
+\begin{minipage}{0.95\columnwidth}\small
+標本サイズ$n$を大きくすると, ベイズファクターに関する同一の閾値$C$に近似的に対応するP値に関する閾値$\alpha_n$は小さくなり, 「P値は$\alpha_n$より小さい」という基準の厳しさが増す.
+\end{minipage}
+\end{table}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}
