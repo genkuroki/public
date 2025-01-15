@@ -195,11 +195,16 @@ __data2 == __data
 data = [_data[:,2] (25 .- _data[:,2]) _data[:,1] (73 .- _data[:,1])]
 
 # %%
+@printf("%11s     %-4s         %-15s    %-15s    %-12s\n", "Problem No.", "data", "P-value of RR=1", "S-value of RR=1", "95% CI of RR")
+println("-"^83)
 for (i, A) in enumerate(eachrow(data))
-    print("Problem $i:  data = ", A)
-    @printf(",  P-value of RR=1 = %.2f%%", 100pvalue_rr_pearson_chisq(A...))
-    @printf(",  S-value of RD=0 = %.2f", -log2(pvalue_rr_pearson_chisq(A...)))
-    @printf(",  95%% CI of RR = [%.3f, %.3f]\n", confint_rr_pearson_chisq(A...)...)
+    @printf("     %-6s [%2s %2s; %2s %2s]       %6.2f%%         %6.2f bit        [%4.2f, %4.2f]\n",
+        i,
+        A..., 
+        100pvalue_rr_pearson_chisq(A...), 
+        -log2(pvalue_rr_pearson_chisq(A...)), 
+        confint_rr_pearson_chisq(A...)...
+    )
 end
 
 # %%
@@ -249,11 +254,28 @@ plot!(leftmargin=12Plots.mm)
 plot!(guidefontsize=14)
 
 # %%
+@printf("%11s     %-4s         %-15s    %-15s    %-12s\n", "Problem No.", "data", "P-value of RD=0", "S-value of RD=0", "95% CI of RD")
+println("-"^82)
 for (i, A) in enumerate(eachrow(data))
-    print("Problem $i:  data = ", A)
-    @printf(",  P-value of RD=0 = %.2f%%", 100pvalue_rd_score(A...))
-    @printf(",  S-value of RD=0 = %.2f", -log2(pvalue_rd_score(A...)))
-    @printf(",  95%% CI of RD = [%.3f, %.3f]\n", confint_rd_score(A...)...)
+    @printf("     %-6s [%2s %2s; %2s %2s]       %6.2f%%         %6.2f bit        [%5.2f, %5.2f]\n",
+        i,
+        A..., 
+        100pvalue_rd_score(A...), 
+        -log2(pvalue_rd_score(A...)), 
+        confint_rd_score(A...)...
+    )
+end
+
+# %%
+for (i, A) in enumerate(eachrow(data))
+    a, b, c, d = A
+    bin0 = Binomial(a+b, (a+c)/(a+b+c+d))
+    pval0 = min(2cdf(bin0, a), 2ccdf(bin0, a))
+    bin1 = Binomial(a+b, c/(c+d))
+    pval1 = min(2cdf(bin1, a), 2ccdf(bin1, a))
+    bin2 = Binomial(c+d, a/(a+b))
+    pval2 = min(2cdf(bin2, c), 2ccdf(bin2, c))
+    @printf "%4d  %6.2f%%  %6.2f%%  %6.2f%%  %6.2f%%\n" i 100pvalue_rd_score(A...) 100pval0 100pval1 100pval2
 end
 
 # %%
