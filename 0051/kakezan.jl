@@ -165,7 +165,7 @@ function confint_rd_score(a, b, c, d; α=0.05, alg=Bisection())
 end
 
 # %%
-_data = [
+__data = [
     75 64
     40 72
     75 72
@@ -175,13 +175,21 @@ _data = [
     66 72
     38 44
 ]
-mean(_data; dims=1)
 
 # %%
-_data = 0.01 * _data .* [73 25]
+mean(__data; dims=1)
+
+# %%
+_data = 0.01 * __data .* [73 25]
 
 # %%
 _data = round.(Int, _data)
+
+# %%
+__data2 = round.(Int, 100 * _data ./ [73 25])
+
+# %%
+__data2 == __data
 
 # %%
 data = [_data[:,2] (25 .- _data[:,2]) _data[:,1] (73 .- _data[:,1])]
@@ -190,6 +198,7 @@ data = [_data[:,2] (25 .- _data[:,2]) _data[:,1] (73 .- _data[:,1])]
 for (i, A) in enumerate(eachrow(data))
     print("Problem $i:  data = ", A)
     @printf(",  P-value of RR=1 = %.2f%%", 100pvalue_rr_pearson_chisq(A...))
+    @printf(",  S-value of RD=0 = %.2f", -log2(pvalue_rr_pearson_chisq(A...)))
     @printf(",  95%% CI of RR = [%.3f, %.3f]\n", confint_rr_pearson_chisq(A...)...)
 end
 
@@ -243,6 +252,7 @@ plot!(guidefontsize=14)
 for (i, A) in enumerate(eachrow(data))
     print("Problem $i:  data = ", A)
     @printf(",  P-value of RD=0 = %.2f%%", 100pvalue_rd_score(A...))
+    @printf(",  S-value of RD=0 = %.2f", -log2(pvalue_rd_score(A...)))
     @printf(",  95%% CI of RD = [%.3f, %.3f]\n", confint_rd_score(A...)...)
 end
 
