@@ -468,10 +468,15 @@ function plot_tests(; α=0.05, β=0.20, p0=0.3, p1=0.5, p_true=0.3, cc=0.0, nmax
     @show a, b, cc
     @show C0 = α/(1-β) * exp(-cc*b)
     @show C1 = (1-α)/β * exp(cc*a)
-
     println()
     LLR, lastLLR, lenLLR = sim_likrat_tests(p0, p1, p_true, C0, C1; nmax, niters)
-    @show mean(lenLLR) std(lenLLR)
+    @show mean_lenLLR = mean(lenLLR)
+    @show std_lenLLR = std(lenLLR)
+    @show median_lenLLR = median(lenLLR)
+    println()
+    @show samplesize(β; p0, p1, α)
+    @show power(ceil(Int, mean_lenLLR); p0, p1, α)
+    println()
     @show prob_reject_H0 = mean(lastLLR .< log(C0))
     @show prob_reject_H1 = mean(lastLLR .> log(C1))
     @show prob_reject_H0 + prob_reject_H1
@@ -488,28 +493,66 @@ function plot_tests(; α=0.05, β=0.20, p0=0.3, p1=0.5, p_true=0.3, cc=0.0, nmax
     plot!(leftmargin=4Plots.mm, bottommargin=4Plots.mm)
 end
 
-# %%
-plot_tests(; α=0.05, β=0.20, p0=0.3, p1=0.5, p_true=0.3)
+function pvalue(k, n, p0, p1)
+    if p0 == p1
+        NaN
+    elseif p0 < p1
+        ccdf(Binomial(n, p0), k-1)
+    else
+        cdf(Binomial(n, p0), k)
+    end
+end
+
+function hypothesis_test(k, n, p0, p1, α)
+    pvalue(k, n, p0, p1) < α
+end
+
+function power(n; p0=0.3, p1=0.5, α=0.05)
+    bin1 = Binomial(n, p1)
+    sum(hypothesis_test(k, n, p0, p1, α) * pdf(bin1, k) for k in support(bin1))
+end
+
+function power_mc(n; p0=0.3, p1=0.5, α=0.05, niters=10^5)
+    bin1 = Binomial(n, p1)
+    c = 0
+    for i in 1:niters
+        k = rand(bin1)
+        c += hypothesis_test(k, n, p0, p1, α)
+    end
+    c/niters
+end
+
+function samplesize(β; p0=0.3, p1=0.5, α=0.05, powerfunc=power)
+    n = 1
+    while !(1-β ≤ powerfunc(n; p0, p1, α) && 1-β ≤ powerfunc(n+1; p0, p1, α))
+        n += 1
+    end
+    n
+end
 
 # %%
-plot_tests(; α=0.05, β=0.20, p0=0.3, p1=0.5, p_true=0.5)
+plot_tests(; α=0.05, β=0.20, p0=0.3, p1=0.5, p_true=0.3) |> display
+println()
+plot_tests(; α=0.05, β=0.20, p0=0.3, p1=0.5, p_true=0.5) |> display
 
 # %%
-plot_tests(; α=0.025, β=0.20, p0=0.3, p1=0.5, p_true=0.3)
+plot_tests(; α=0.025, β=0.20, p0=0.3, p1=0.5, p_true=0.3) |> display
+println()
+plot_tests(; α=0.025, β=0.20, p0=0.3, p1=0.5, p_true=0.5) |> display
 
 # %%
-plot_tests(; α=0.025, β=0.20, p0=0.3, p1=0.5, p_true=0.5)
+plot_tests(; α=0.05, β=0.20, p0=0.3, p1=0.2, p_true=0.3) |> display
+println()
+plot_tests(; α=0.05, β=0.20, p0=0.3, p1=0.2, p_true=0.2) |> display
 
 # %%
-plot_tests(; α=0.05, β=0.20, p0=0.3, p1=0.2, p_true=0.3)
-
-# %% tags=[]
-plot_tests(; α=0.05, β=0.20, p0=0.3, p1=0.2, p_true=0.2)
-
-# %%
-plot_tests(; α=0.025, β=0.20, p0=0.3, p1=0.2, p_true=0.3)
+plot_tests(; α=0.025, β=0.20, p0=0.3, p1=0.2, p_true=0.3) |> display
+println()
+plot_tests(; α=0.025, β=0.20, p0=0.3, p1=0.2, p_true=0.2) |> display
 
 # %%
-plot_tests(; α=0.025, β=0.20, p0=0.3, p1=0.2, p_true=0.2)
+plot_tests(; α=0.025, β=0.20, p0=0.5, p1=0.6, p_true=0.5) |> display
+println()
+plot_tests(; α=0.025, β=0.20, p0=0.5, p1=0.6, p_true=0.6) |> display
 
 # %%
