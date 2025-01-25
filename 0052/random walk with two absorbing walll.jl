@@ -199,9 +199,8 @@ function sim_random_walks(a, b, p, M, N, x=0.0; nmax=10^3, niters=10^4)
     X, last.(X)
 end
 
-function _abpMN(p0, p1, p_true, C0, C1)
+function _abp(p0, p1, p_true)
     logOR, logA = logoddsrat(p0, p1), logcprat(p0, p1)
-    M, N = log(C1), -log(C0)
     if p0 == p1
         a, b, p = 0.0, 0.0, p_true
     elseif p0 < p1 # logOR < logA < 0
@@ -209,6 +208,14 @@ function _abpMN(p0, p1, p_true, C0, C1)
     else  # 0 < logA < logOR
         a, b, p = logOR-logA, logA, p_true
     end
+    a, b, p
+end
+
+_MN(C0, C1) = log(C1), -log(C0)
+
+function _abpMN(p0, p1, p_true, C0, C1)
+    a, b, p = _abp(p0, p1, p_true)
+    M, N = _MN(C0, C1)
     a, b, p, M, N
 end
 
@@ -416,33 +423,93 @@ end
 hline!([logC0, logC1]; c=2, label="")
 plot!()
 
+# %% [markdown]
+# ## 尤度比が閾値を超えるまでデータの数値を取得し続ける検定法
+#
+# $
+# \newcommand\op{\operatorname}
+# $__データの数値:__ $x_1, x_2, x_3, \ldots$ (各$x_i$は$1$または$0$)
+#
+# $k=x_1+x_2+\cdots+x_n$とおく.
+#
+# __モデル:__ 成功率$p$のBernoulli試行
+#
+# $0<p_0<1$, $0<p_1<1$, $p_0\ne p_1$と仮定する.
+#
+# __帰無仮説:__ $p=p_0$
+#
+# __対立仮説:__ $p=p_1$
+#
+# __尤度比__: $n$番目の尤度比を次のように定める:
+# $$
+# \op{LR}_n = \frac{p_0^k(1-p_0)^{n-k}}{p_1^k(1-p_1)^{n-k}}.
+# $$
+#
+# __閾値の設定:__ $0<\alpha<1$, $0<\beta<1$, $\alpha+\beta<1$と仮定し, 次のようにおく:
+# $$
+# C_0 = \frac{\alpha}{1-\beta}, \quad
+# C_1 = \frac{1-\alpha}{\beta}.
+# $$
+#
+# __判定法:__ $i=1,2,\ldots,n-1$について$C_0\le\op{LR}_i\le C_1$となり, $i=n$で(初めて)そうならなかったとき,
+#
+# * $\op{LR}_n < C_0$ならば帰無仮説$p=p_0$を棄却する.
+# * $\op{LR}_n > C_1$ならば対立仮説$p=p_1$を棄却する.
+#
+# __αエラー率とβエラー率__
+#
+# * データの数値が帰無仮説$p=p_0$の下でのモデルの確率分布で生成されているとき, 帰無仮説が棄却される確率は$\alpha$で近似される.
+# * データの数値が帰無仮説$p=p_1$の下でのモデルの確率分布で生成されているとき, 対立仮説が棄却される確率は$\beta$で近似される.
+
 # %%
-@show α, β = 0.025, 0.20
-@show M, N = log((1-α)/(1-β)), log(β/α)
-@show (exp(-N)-1)/(exp(-M-N)-1), (exp(N)-1)/(exp(M+N)-1)
+function plot_tests(; α=0.05, β=0.20, p0=0.3, p1=0.5, p_true=0.3, cc=0.0, nmax=10^5, niters=10^5)
+    @show α, β, p0, p1, p_true
+    a, b, p = _abp(p0, p1, p_true)
+    @show a, b, cc
+    @show C0 = α/(1-β) * exp(-cc*b)
+    @show C1 = (1-α)/β * exp(cc*a)
 
-println()
+    println()
+    LLR, lastLLR, lenLLR = sim_likrat_tests(p0, p1, p_true, C0, C1; nmax, niters)
+    @show mean(lenLLR) std(lenLLR)
+    @show prob_reject_H0 = mean(lastLLR .< log(C0))
+    @show prob_reject_H1 = mean(lastLLR .> log(C1))
+    @show prob_reject_H0 + prob_reject_H1
 
-p0, p1, p_true, C0, C1 = 0.30, 0.35, 0.30, α/β, (1-α)/(1-β)
-logC0, logC1 = log(C0), log(C1)
-@show p0, p1, p_true, C0, C1
-@show logC0, logC1
-@show _abpMN(p0, p1, p_true, M, N)
-@show prob_accept(p0, p1, p_true, C0, C1)
-
-println()
-
-@time LLR, lastLLR, lenLLR = sim_likrat_tests(p0, p1, p_true, C0, C1; nmax=10^4, niters=10^4)
-@show mean(lenLLR) std(lenLLR)
-@show alpha1 = mean(lastLLR .≥ logC1)
-@show alpha0 = mean(lastLLR .≤ logC0)
-@show alpha1 + alpha0
-
-plot()
-for i in 1:200
-    plot!(LLR[i]; label="", c=1, lw=1, alpha=0.2)
+    plot()
+    for i in 1:200
+        plot!(0:length(LLR[i]), [0.0; LLR[i]]; label="", c=:black, lw=1, alpha=0.3)
+    end
+    hline!([log(C0)]; c=:red, label="log(C0)")
+    hline!([log(C1)]; c=:blue, label="log(C1)")
+    plot!(legendfontsize=12)
+    plot!(xguide="n", yguide="log(LRₙ)", guidefontsize=14)
+    plot!(size=(800, 300))
+    plot!(leftmargin=4Plots.mm, bottommargin=4Plots.mm)
 end
-hline!([logC0, logC1]; c=2, label="")
-plot!()
+
+# %%
+plot_tests(; α=0.05, β=0.20, p0=0.3, p1=0.5, p_true=0.3)
+
+# %%
+plot_tests(; α=0.05, β=0.20, p0=0.3, p1=0.5, p_true=0.5)
+
+# %%
+plot_tests(; α=0.025, β=0.20, p0=0.3, p1=0.5, p_true=0.3)
+
+# %%
+plot_tests(; α=0.025, β=0.20, p0=0.3, p1=0.5, p_true=0.5)
+
+# %%
+plot_tests(; α=0.05, β=0.20, p0=0.3, p1=0.2, p_true=0.3)
+
+# %% tags=[]
+plot_tests(; α=0.05, β=0.20, p0=0.3, p1=0.2, p_true=0.2)
+
+# %%
+plot_tests(; α=0.025, β=0.20, p0=0.3, p1=0.2, p_true=0.3)
+
+# %%
+plot_tests(; α=0.025, β=0.20, p0=0.3, p1=0.2, p_true=0.2)
 
 # %%
