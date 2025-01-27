@@ -483,7 +483,7 @@ function plot_tests(; α=0.05, β=0.20, p0=0.3, p1=0.5, p_true=0.3, cc=0.0, nmax
 
     plot()
     for i in 1:200
-        plot!(0:length(LLR[i]), [0.0; LLR[i]]; label="", c=:black, lw=1, alpha=0.3)
+        plot!(0:length(LLR[i]), [0.0; LLR[i]]; label="", lw=1, alpha=0.3)
     end
     hline!([log(C0)]; c=:red, label="log(C0)")
     hline!([log(C1)]; c=:blue, label="log(C1)")
@@ -554,5 +554,10 @@ plot_tests(; α=0.025, β=0.20, p0=0.3, p1=0.2, p_true=0.2) |> display
 plot_tests(; α=0.025, β=0.20, p0=0.5, p1=0.6, p_true=0.5) |> display
 println()
 plot_tests(; α=0.025, β=0.20, p0=0.5, p1=0.6, p_true=0.6) |> display
+
+# %%
+plot_tests(; α=0.025, β=0.20, p0=0.4, p1=0.6, p_true=0.5) |> display
+println()
+plot_tests(; α=0.025, β=0.20, p0=0.4, p1=0.6, p_true=0.6) |> display
 
 # %%
