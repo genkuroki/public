@@ -25,7 +25,17 @@ default(fmt=:png)
 # %%
 logoddsrat(p0, p1) = (log(p0) - log(1-p0)) - (log(p1) - log(1-p1))
 logcprat(p0, p1) = -(log(1-p0) - log(1-p1))
-loglikrat(k, n, p0, p1) = loglikelihood(Binomial(n, p0), k) - loglikelihood(Binomial(n, p1), k)
+
+function loglikrat(k, n, p0::Real, p1::Real)
+    loglikelihood(Binomial(n, p0), k) - loglikelihood(Binomial(n, p1), k)
+end
+
+loglikrat(k, n, prior0::Dirac, prior1::Dirac) =
+    loglikrat(k, n, mean(prior0), mean(prior1))
+
+loglikrat(k, n, prior0::Beta, prior1::Beta) =
+    loglikelihood(BetaBinomial(n, params(prior0)...), k) - loglikelihood(BetaBinomial(n, params(prior1)...), k)
+
 lim_k_C(C, n, p0, p1) = (log(C) + n*logcprat(p0, p1)) / logoddsrat(p0, p1)
 
 function alpha_k_C(k_C, n, p0, p1)
@@ -199,7 +209,8 @@ function sim_random_walks(a, b, p, M, N, x=0.0; nmax=10^3, niters=10^4)
     X, last.(X)
 end
 
-function _abp(p0, p1, p_true)
+function _abp(prior0, prior1, prior_true)
+    p0, p1, p_true = mean(prior0), mean(prior1), mean(prior_true)
     logOR, logA = logoddsrat(p0, p1), logcprat(p0, p1)
     if p0 == p1
         a, b, p = 0.0, 0.0, p_true
@@ -225,11 +236,15 @@ function prob_accept(p0, p1, p_true, C0, C1)
     prob_ge_M(a, b, p, M, N)
 end
 
-function random_likrat_test(p0, p1, p_true, C0, C1; nmax=10^3)
+_rand_p_true(p::Real) = p
+_rand_p_true(prior::UnivariateDistribution) = rand(prior)
+
+function random_likrat_test(p0, p1, prior_true, C0, C1; nmax=10^3)
     logC0, logC1 = log(C0), log(C1)
     LLR = Float64[]
     k =0
     for n in 1:nmax
+        p_true = _rand_p_true(prior_true)
         k += rand(Bernoulli(p_true))
         llr = loglikrat(k, n, p0, p1)
         push!(LLR, llr)
@@ -249,9 +264,6 @@ end
 # %%
 a, b, p = 3, 2, 0.6
 plot(t -> chareq(a, b, p, t), 0.6, 1)
-
-# %%
-#??find_zero
 
 # %%
 a, b, p, M, N = 0.4, 0.5, 0.55, 5, 5
@@ -462,7 +474,8 @@ plot!()
 # * データの数値が帰無仮説$p=p_1$の下でのモデルの確率分布で生成されているとき, 対立仮説が棄却される確率は$\beta$で近似される.
 
 # %%
-function plot_tests(; α=0.05, β=0.20, p0=0.3, p1=0.5, p_true=0.3, cc=0.0, nmax=10^5, niters=10^5)
+function plot_tests(; α=0.05, β=0.20, p0=0.3, p1=0.5, p_true=0.3, cc=0.0, nmax=1000, niters=10^5)
+    println()
     @show α, β, p0, p1, p_true
     a, b, p = _abp(p0, p1, p_true)
     @show a, b, cc
@@ -474,8 +487,8 @@ function plot_tests(; α=0.05, β=0.20, p0=0.3, p1=0.5, p_true=0.3, cc=0.0, nmax
     @show std_lenLLR = std(lenLLR)
     @show median_lenLLR = median(lenLLR)
     println()
-    @show samplesize(β; p0, p1, α)
-    @show power(ceil(Int, mean_lenLLR); p0, p1, α)
+    @show samplesize(β; p0=mean(p0), p1=mean(p1), α)
+    @show power(ceil(Int, mean_lenLLR); p0=mean(p0), p1=mean(p1), α)
     println()
     @show prob_reject_H0 = mean(lastLLR .< log(C0))
     @show prob_reject_H1 = mean(lastLLR .> log(C1))
@@ -530,34 +543,166 @@ function samplesize(β; p0=0.3, p1=0.5, α=0.05, powerfunc=power)
     n
 end
 
+loglikrat(p, prior0::Distribution, prior1::Distribution) =
+    loglikelihood(prior0, p) - loglikelihood(prior1, p)
+
 # %%
 plot_tests(; α=0.05, β=0.20, p0=0.3, p1=0.5, p_true=0.3) |> display
-println()
 plot_tests(; α=0.05, β=0.20, p0=0.3, p1=0.5, p_true=0.5) |> display
 
 # %%
 plot_tests(; α=0.025, β=0.20, p0=0.3, p1=0.5, p_true=0.3) |> display
-println()
 plot_tests(; α=0.025, β=0.20, p0=0.3, p1=0.5, p_true=0.5) |> display
 
 # %%
 plot_tests(; α=0.05, β=0.20, p0=0.3, p1=0.2, p_true=0.3) |> display
-println()
 plot_tests(; α=0.05, β=0.20, p0=0.3, p1=0.2, p_true=0.2) |> display
 
 # %%
 plot_tests(; α=0.025, β=0.20, p0=0.3, p1=0.2, p_true=0.3) |> display
-println()
 plot_tests(; α=0.025, β=0.20, p0=0.3, p1=0.2, p_true=0.2) |> display
 
 # %%
 plot_tests(; α=0.025, β=0.20, p0=0.5, p1=0.6, p_true=0.5) |> display
-println()
 plot_tests(; α=0.025, β=0.20, p0=0.5, p1=0.6, p_true=0.6) |> display
 
 # %%
+plot_tests(; α=0.025, β=0.20, p0=0.4, p1=0.6, p_true=0.35) |> display
+plot_tests(; α=0.025, β=0.20, p0=0.4, p1=0.6, p_true=0.4) |> display
 plot_tests(; α=0.025, β=0.20, p0=0.4, p1=0.6, p_true=0.5) |> display
-println()
 plot_tests(; α=0.025, β=0.20, p0=0.4, p1=0.6, p_true=0.6) |> display
+plot_tests(; α=0.025, β=0.20, p0=0.4, p1=0.6, p_true=0.7) |> display
+
+# %%
+m = 1
+prior0 = Beta(4m, 6m)
+prior1 = Beta(6m, 4m)
+plot(prior0; label="prior0")
+plot!(prior1; label="prior1")
+plot!(size=(400, 250)) |> display
+
+@show loglikrat(mean(prior0), prior0, prior1)
+@show loglikrat(mean(prior1), prior0, prior1)
+
+nmax = 300
+@time plot_tests(; α=0.025, β=0.20, p0=prior0, p1=prior1, p_true=mean(prior0), nmax) |> display
+@time plot_tests(; α=0.025, β=0.20, p0=prior0, p1=prior1, p_true=mean(prior1), nmax) |> display
+
+# %%
+m = 10
+prior0 = Beta(4m, 6m)
+prior1 = Beta(6m, 4m)
+plot(prior0; label="prior0")
+plot!(prior1; label="prior1")
+plot!(size=(400, 250)) |> display
+
+@show loglikrat(mean(prior0), prior0, prior1)
+@show loglikrat(mean(prior1), prior0, prior1)
+
+nmax = 2000
+@time plot_tests(; α=0.025, β=0.20, p0=prior0, p1=prior1, p_true=mean(prior0), nmax) |> display
+@time plot_tests(; α=0.025, β=0.20, p0=prior0, p1=prior1, p_true=mean(prior1), nmax) |> display
+
+# %%
+m = 100
+prior0 = Beta(4m, 6m)
+prior1 = Beta(6m, 4m)
+plot(prior0; label="prior0")
+plot!(prior1; label="prior1")
+plot!(size=(400, 250)) |> display
+
+@show loglikrat(mean(prior0), prior0, prior1)
+@show loglikrat(mean(prior1), prior0, prior1)
+
+nmax = 2000
+@time plot_tests(; α=0.025, β=0.20, p0=prior0, p1=prior1, p_true=mean(prior0), nmax) |> display
+@time plot_tests(; α=0.025, β=0.20, p0=prior0, p1=prior1, p_true=mean(prior1), nmax) |> display
+
+# %%
+m = 1000
+prior0 = Beta(4m, 6m)
+prior1 = Beta(6m, 4m)
+plot(prior0; label="prior0")
+plot!(prior1; label="prior1")
+plot!(size=(400, 250)) |> display
+
+@show loglikrat(mean(prior0), prior0, prior1)
+@show loglikrat(mean(prior1), prior0, prior1)
+
+nmax = 2000
+@time plot_tests(; α=0.025, β=0.20, p0=prior0, p1=prior1, p_true=mean(prior0), nmax) |> display
+@time plot_tests(; α=0.025, β=0.20, p0=prior0, p1=prior1, p_true=mean(prior1), nmax) |> display
+
+# %%
+m = 100
+prior0 = Beta(4m, 6m)
+prior1 = Beta(6m, 4m)
+@show loglikrat((mean(prior0)+mean(prior1))/2, prior0, prior1)
+println()
+plot_tests(; α=0.025, β=0.20, p0=prior0, p1=prior1, p_true=mean(prior0)-0.05) |> display
+plot_tests(; α=0.025, β=0.20, p0=prior0, p1=prior1, p_true=mean(prior0)) |> display
+@time plot_tests(; α=0.025, β=0.20, p0=prior0, p1=prior1, p_true=(mean(prior0)+mean(prior1))/2) |> display
+plot_tests(; α=0.025, β=0.20, p0=prior0, p1=prior1, p_true=mean(prior1)) |> display
+plot_tests(; α=0.025, β=0.20, p0=prior0, p1=prior1, p_true=mean(prior1)+0.10) |> display
+
+# %%
+m = 1
+prior0 = Beta(4m, 6m)
+prior1 = Beta(6m, 4m)
+plot(prior0; label="prior0")
+plot!(prior1; label="prior1")
+plot!(size=(400, 250)) |> display
+
+@show loglikrat(mean(prior0), prior0, prior1)
+@show loglikrat(mean(prior1), prior0, prior1)
+
+nmax = 300
+@time plot_tests(; α=0.025, β=0.20, p0=prior0, p1=prior1, p_true=prior0, nmax) |> display
+@time plot_tests(; α=0.025, β=0.20, p0=prior0, p1=prior1, p_true=prior1, nmax) |> display
+
+# %%
+m = 10
+prior0 = Beta(4m, 6m)
+prior1 = Beta(6m, 4m)
+plot(prior0; label="prior0")
+plot!(prior1; label="prior1")
+plot!(size=(400, 250)) |> display
+
+@show loglikrat(mean(prior0), prior0, prior1)
+@show loglikrat(mean(prior1), prior0, prior1)
+
+nmax = 1000
+@time plot_tests(; α=0.025, β=0.20, p0=prior0, p1=prior1, p_true=prior0, nmax) |> display
+@time plot_tests(; α=0.025, β=0.20, p0=prior0, p1=prior1, p_true=prior1, nmax) |> display
+
+# %%
+m = 100
+prior0 = Beta(4m, 6m)
+prior1 = Beta(6m, 4m)
+plot(prior0; label="prior0")
+plot!(prior1; label="prior1")
+plot!(size=(400, 250)) |> display
+
+@show loglikrat(mean(prior0), prior0, prior1)
+@show loglikrat(mean(prior1), prior0, prior1)
+
+nmax = 2000
+@time plot_tests(; α=0.025, β=0.20, p0=prior0, p1=prior1, p_true=prior0, nmax) |> display
+@time plot_tests(; α=0.025, β=0.20, p0=prior0, p1=prior1, p_true=prior1, nmax) |> display
+
+# %%
+m = 1000
+prior0 = Beta(4m, 6m)
+prior1 = Beta(6m, 4m)
+plot(prior0; label="prior0")
+plot!(prior1; label="prior1")
+plot!(size=(400, 250)) |> display
+
+@show loglikrat(mean(prior0), prior0, prior1)
+@show loglikrat(mean(prior1), prior0, prior1)
+
+nmax = 2000
+@time plot_tests(; α=0.025, β=0.20, p0=prior0, p1=prior1, p_true=prior0, nmax) |> display
+@time plot_tests(; α=0.025, β=0.20, p0=prior0, p1=prior1, p_true=prior1, nmax) |> display
 
 # %%
