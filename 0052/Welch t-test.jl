@@ -197,20 +197,25 @@ end
 # \end{align*}
 # になる. ゆえに, $S^2$と$a\chi^2(\nu)$の期待値と分散が一致することと,
 # \begin{align*}
-# &
+# %&
 # a = \frac{\frac12\var(S^2)}{E[S^2]}
 # = \frac
 # {\dfrac{\sigma^4_X}{m^2(m-1)}+\dfrac{\sigma^4_Y}{n^2(n-1)}}
 # {\dfrac{\sigma^2_X}{m}+\dfrac{\sigma^2_Y}{n}},
-# \\ &
+# \quad
+# %\\ &
 # \nu = \frac{E[S^2]^2}{\frac12\var(S^2)}
 # = \frac
 # {\left(\dfrac{\sigma^2_X}{m}+\dfrac{\sigma^2_Y}{n}\right)^2}
 # {\dfrac{\sigma^4_X}{m^2(m-1)}+\dfrac{\sigma^4_Y}{n^2(n-1)}}
 # \end{align*}
-# は同値である. 以下, この条件を仮定する.
+# は同値である. 以下, この条件を仮定する. そのとき, $\bar X-\bar Y$と$S^2$は独立なので, もしも$S^2$が従う分布が分布$a\chi^2(\nu)$で近似されているならば, 
+# \begin{align*}
+# T = \frac{\bar X-\bar Y-\Delta\mu}{\sqrt{\dfrac{S^2_X}{m}+\dfrac{S^2_Y}{n}}}
+# \end{align*}
+# が従う分布は自由度$\nu$のt分布で近似される.
 #
-# 次の$\hat\nu$は$\nu$の一致推定量になる:
+# 次の$\hat\nu$を未知の値$\nu$の推定量として使う:
 # \begin{align*}
 # \hat\nu =
 # \frac
@@ -218,12 +223,6 @@ end
 # {\dfrac{S^4_X}{m^2(m-1)}+\dfrac{S^4_Y}{n^2(n-1)}}.
 # \end{align*}
 # この$\hat\nu$がWelchのt検定で使う自由度になる. 
-#
-# $\bar X-\bar Y$と$S^2$は独立なので, もしも$S^2$が従う分布が上の$a\chi^2(\nu)$で近似されているならば, 
-# \begin{align*}
-# T = \frac{\bar X-\bar Y-\Delta\mu}{\sqrt{\dfrac{S^2_X}{m}+\dfrac{S^2_Y}{n}}}
-# \end{align*}
-# が従う分布は自由度$\nu$のt分布で近似される.
 #
 # 以上が正規母集団の仮定の下でのWelchのt検定導出の仕組みである.
 #
