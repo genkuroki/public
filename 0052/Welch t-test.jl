@@ -119,6 +119,34 @@ function plot_pvals(;
     plot!(leftmargin=8Plots.mm)
 end
 
+# %%
+function winning_rate(distx::UnivariateDistribution, disty::ContinuousUnivariateDistribution)
+    f(y) = cdf(distx, y) * pdf(disty, y)
+    quadgk(f, extrema(disty)...)[1]
+end
+
+function fair_handicap_shift(distx::UnivariateDistribution, disty::ContinuousUnivariateDistribution; p=1/2)
+    f(s) = winning_rate(distx + s, disty) - p
+    find_zero(f, 0.0)
+end
+
+function fair_handicap_multiple(distx::UnivariateDistribution, disty::ContinuousUnivariateDistribution; p=1/2)
+    f(m) = winning_rate(m * distx, disty) - p
+    find_zero(f, 1.0)
+end
+
+distx, disty = Gamma(1, 3), Normal(10, 1)
+@show fhs = fair_handicap_shift(distx, disty)
+@show winning_rate(distx + fhs, disty)
+plot(distx + fhs, 5, 25; label="distx + fhs")
+plot!(disty; label="disty") |> display
+
+distx, disty = Gamma(1, 3), Normal(5, 2)
+@show fhm = fair_handicap_multiple(distx, disty)
+@show winning_rate(fhm * distx, disty)
+plot(fhm * distx, -2, 40; label="fhm * distx")
+plot!(disty; label="disty") |> display
+
 # %% [markdown]
 # ## 2標本に関する一般的な設定
 #
@@ -139,7 +167,7 @@ end
 # $$
 # これは次と同値である:
 # $$
-# \log E\left[\exp t\left(\frac{X_i-\mu_C}{\sigma_X}\right)\right]
+# \log E\left[\exp\left(t\left(\frac{X_i-\mu_X}{\sigma_X}\right)\right)\right]
 # = \frac{t^2}{2} + \bar\kappa_{3,X} \frac{t^3}{3!} + \bar\kappa_{4,X} \frac{t^4}{4!} + O(t^5).
 # $$
 # もしも$X_i$が正規分布に従っているならば, その歪度と尖度はゼロになる: $\bar\kappa_{3,X}=\bar\kappa_{4,X}=0$.
