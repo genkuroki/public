@@ -21,7 +21,7 @@ using QuadGK
 using Random
 using Roots
 using StatsPlots
-default(fmt=:png, legendfontsize=11)
+default(fmt=:png, legendfontsize=10)
 
 distname(dist) = replace(string(dist),
     r"{[^}]*}"=>"",
@@ -96,27 +96,77 @@ function plot_pvals(; bin1=Binomial(12, 0.25), bin2=Binomial(16, 0.25), niters=1
     plot!(; xtick=0:0.01:1, ytick, xrotation=90)
     plot!(; xguide="α", yguide)
     title!("model: $(distname(bin1))×$(distname(bin2))", titlefontsize=12)
-    plot!(size=(500, 500))
-end
-
-function plot_powers(; )
-    
+    plot!(size=(400, 400))
 end
 
 # %% tags=[]
 plot_pvals(; bin1=Binomial(6, 0.25), bin2=Binomial(8, 0.25))
 
 # %% tags=[]
+plot_pvals(; bin1=Binomial(6, 0.25), bin2=Binomial(8, 0.8))
+
+# %% tags=[]
 plot_pvals(; bin1=Binomial(6, 0.25), bin2=Binomial(8, 0.89))
 
 # %% tags=[]
+plot_pvals(; bin1=Binomial(6, 0.1), bin2=Binomial(8, 0.1))
+
+# %% tags=[]
+plot_pvals(; bin1=Binomial(6, 0.2), bin2=Binomial(8, 0.2))
+
+# %% tags=[]
+plot_pvals(; bin1=Binomial(6, 0.3), bin2=Binomial(8, 0.3))
+
+# %% tags=[]
+plot_pvals(; bin1=Binomial(6, 0.4), bin2=Binomial(8, 0.4))
+
+# %% tags=[]
+plot_pvals(; bin1=Binomial(6, 0.5), bin2=Binomial(8, 0.5))
+
+# %% tags=[]
+plot_pvals(; bin1=Binomial(10, 0.1), bin2=Binomial(10, 0.1))
+
+# %% tags=[]
+plot_pvals(; bin1=Binomial(10, 0.2), bin2=Binomial(10, 0.2))
+
+# %% tags=[]
+plot_pvals(; bin1=Binomial(10, 0.3), bin2=Binomial(10, 0.3))
+
+# %% tags=[]
+plot_pvals(; bin1=Binomial(10, 0.4), bin2=Binomial(10, 0.4))
+
+# %% tags=[]
+plot_pvals(; bin1=Binomial(10, 0.5), bin2=Binomial(10, 0.5))
+
+# %% tags=[]
 plot_pvals(; bin1=Binomial(12, 0.25), bin2=Binomial(16, 0.25))
+
+# %% tags=[]
+plot_pvals(; bin1=Binomial(12, 0.25), bin2=Binomial(16, 0.65))
 
 # %%
 plot_pvals(; bin1=Binomial(12, 0.25), bin2=Binomial(16, 0.755))
 
 # %% tags=[]
+plot_pvals(; bin1=Binomial(12, 0.1), bin2=Binomial(16, 0.1))
+
+# %% tags=[]
+plot_pvals(; bin1=Binomial(12, 0.2), bin2=Binomial(16, 0.2))
+
+# %% tags=[]
+plot_pvals(; bin1=Binomial(12, 0.3), bin2=Binomial(16, 0.3))
+
+# %% tags=[]
+plot_pvals(; bin1=Binomial(12, 0.4), bin2=Binomial(16, 0.4))
+
+# %% tags=[]
+plot_pvals(; bin1=Binomial(12, 0.5), bin2=Binomial(16, 0.5))
+
+# %% tags=[]
 plot_pvals(; bin1=Binomial(24, 0.25), bin2=Binomial(32, 0.25))
+
+# %% tags=[]
+plot_pvals(; bin1=Binomial(24, 0.25), bin2=Binomial(32, 0.55))
 
 # %% tags=[]
 plot_pvals(; bin1=Binomial(24, 0.25), bin2=Binomial(32, 0.615))
@@ -125,12 +175,36 @@ plot_pvals(; bin1=Binomial(24, 0.25), bin2=Binomial(32, 0.615))
 plot_pvals(; bin1=Binomial(120, 0.25), bin2=Binomial(160, 0.25))
 
 # %% tags=[]
+plot_pvals(; bin1=Binomial(120, 0.25), bin2=Binomial(160, 0.38))
+
+# %% tags=[]
 plot_pvals(; bin1=Binomial(120, 0.25), bin2=Binomial(160, 0.41))
 
 # %% tags=[]
 plot_pvals(; bin1=Binomial(120, 0.025), bin2=Binomial(160, 0.025))
 
 # %% tags=[]
+plot_pvals(; bin1=Binomial(120, 0.025), bin2=Binomial(160, 0.09))
+
+# %% tags=[]
 plot_pvals(; bin1=Binomial(120, 0.025), bin2=Binomial(160, 0.105))
+
+# %% tags=[]
+plot_pvals(; bin1=Binomial(1200, 0.0025), bin2=Binomial(1600, 0.0025))
+
+# %% tags=[]
+plot_pvals(; bin1=Binomial(1200, 0.0025), bin2=Binomial(1600, 0.0095))
+
+# %% tags=[]
+plot_pvals(; bin1=Binomial(1200, 0.0025), bin2=Binomial(1600, 0.0112))
+
+# %% tags=[]
+plot_pvals(; bin1=Binomial(2400, 0.001), bin2=Binomial(3200, 0.001))
+
+# %% tags=[]
+plot_pvals(; bin1=Binomial(2400, 0.001), bin2=Binomial(3200, 0.004))
+
+# %% tags=[]
+plot_pvals(; bin1=Binomial(2400, 0.001), bin2=Binomial(3200, 0.0051))
 
 # %%
