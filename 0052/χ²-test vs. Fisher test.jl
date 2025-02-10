@@ -246,9 +246,13 @@ function confint_or_score(a, b, c, d; α=0.05, correction=0.0)
     elseif b == 0 || c == 0
         [exp(find_zero(f, 0.0)), Inf]
     else
-        ORhat = oddsratiohat(a, b, c, d)
-        ω_L, ω_U = ORhat/10, 10ORhat
-        [exp(find_zero(f, log(ω_L))), exp(find_zero(f, log(ω_U)))]
+        #ORhat = oddsratiohat(a, b, c, d)
+        #ω_L, ω_U = ORhat/2, 2ORhat
+        #[exp(find_zero(f, log(ω_L))), exp(find_zero(f, log(ω_U)))]
+        logORhat = log(oddsratiohat(a, b, c, d))
+        logL = find_zero(f, (logORhat-100, logORhat))
+        logU = find_zero(f, (logORhat, logORhat+100))
+        [exp(logL), exp(logU)]
     end
 end
 
@@ -583,5 +587,137 @@ p, q = 1/25, 5/20
 @show (p/(1-p))/(q/(1-q)) |> r
 println()
 plot_pvals(; bin1=Binomial(m, p), bin2=Binomial(n, q))
+
+# %% [markdown]
+# https://bellcurve.jp/statistics/course/23950.html?srsltid=AfmBOoo-NeBnBJI8RJURioPM_TxKXxCv7V4V6SRApxyv9oVJDI8EjSwe より
+#
+# <img src="IMG_8013.jpeg" width=700>
+
+# %%
+m, n = 10, 30
+q = 12/40
+plot_pvals(; bin1=Binomial(m, q), bin2=Binomial(n, q))
+
+# %%
+m, n = 10, 30
+p, q = 2/10, 18/30
+@show p-q |> r
+@show p/q |> r
+@show (p/(1-p))/(q/(1-q)) |> r
+println()
+plot_pvals(; bin1=Binomial(m, p), bin2=Binomial(n, q))
+
+# %% [markdown]
+# http://phskillup.world.coocan.jp/toukei/kentei/kentei006.html より
+#
+# <img src="IMG_8014.jpeg" width=700>
+
+# %%
+m, n = 9, 9
+q = 8/18
+plot_pvals(; bin1=Binomial(m, q), bin2=Binomial(n, q))
+
+# %%
+m, n = 9, 9
+p, q = 2/9, 6/9
+@show p-q |> r
+@show p/q |> r
+@show (p/(1-p))/(q/(1-q)) |> r
+println()
+plot_pvals(; bin1=Binomial(m, p), bin2=Binomial(n, q))
+
+# %% [markdown]
+# https://x.com/tanuk_ichi/status/1851920466371580188
+
+# %%
+a, b, c, d = 0, 3107, 10, 10883-10
+@show a, b, c, d
+println()
+
+@show pvalue_or_score(a, b, c, d; correction=0.0) |> r
+@show pvalue_or_score(a, b, c, d; correction=0.5) |> r
+@show pvalue_or_fisher_minlike(a, b, c, d) |> r
+@show pvalue_or_fisher_central(a, b, c, d) |> r
+println()
+
+@show oddsratiohat(a, b, c, d)
+#@show oddsratiohat_fisher(a, b, c, d)
+println()
+
+@show confint_or_score(a, b, c, d; correction=0.0) .|> r
+@show confint_or_score(a, b, c, d; correction=0.5) .|> r
+#@show confint_or_fisher_minlike(a, b, c, d) .|> r
+#@show confint_or_fisher_central(a, b, c, d) .|> r
+println()
+
+@show _riskratiohat(a, b, c, d)
+@show confint_rr_score(a, b, c, d) .|> r
+println()
+
+@show riskdiffhat_score(a, b, c, d)
+@show confint_rd_score(a, b, c, d) .|> r
+;
+
+# %%
+a, b, c, d = 4, 3107-4, 67, 10883-67
+@show a, b, c, d
+println()
+
+@show pvalue_or_score(a, b, c, d; correction=0.0) |> r
+@show pvalue_or_score(a, b, c, d; correction=0.5) |> r
+@show pvalue_or_fisher_minlike(a, b, c, d) |> r
+@show pvalue_or_fisher_central(a, b, c, d) |> r
+println()
+
+@show oddsratiohat(a, b, c, d)
+@show oddsratiohat_fisher(a, b, c, d)
+println()
+
+@show confint_or_score(a, b, c, d; correction=0.0) .|> r
+@show confint_or_score(a, b, c, d; correction=0.5) .|> r
+#@show confint_or_fisher_minlike(a, b, c, d) .|> r
+#@show confint_or_fisher_central(a, b, c, d) .|> r
+println()
+
+@show _riskratiohat(a, b, c, d)
+@show confint_rr_score(a, b, c, d) .|> r
+println()
+
+@show riskdiffhat_score(a, b, c, d)
+@show confint_rd_score(a, b, c, d) .|> r
+;
+
+# %%
+@show a, b, c, d
+@show oddsratiohat(a, b, c, d)
+@show oddsratiohat_fisher(a, b, c, d)
+
+ωmin, ωmax = 0.02, 2
+plot()
+plot!(ω -> pvalue_or_score(a, b, c, d; ω, correction=0.0), ωmin, ωmax; label="score")
+plot!(ω -> pvalue_or_fisher_minlike(a, b, c, d; ω), ωmin, ωmax; label="Fisher (minlike)", ls=:dash)
+plot!(ω -> pvalue_or_score(a, b, c, d; ω, correction=0.5), ωmin, ωmax; label="score (Yates)", ls=:dot)
+plot!(ω -> pvalue_or_fisher_central(a, b, c, d; ω), ωmin, ωmax; label="Fisher (central)", ls=:dashdot)
+plot!(legend=:topleft, legendfontsize=12)
+xtick = Any[0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10]
+xtick = (xtick, string.(xtick))
+plot!(; xscale=:log, xtick, ytick=0:0.05:1)
+plot!(xguide="hypothetical odds ratio", yguide="P-value", guidefontsize=14)
+title!("data: $([a b; c d])")
+
+# %%
+@show a, b, c, d
+@show _riskratiohat(a, b, c, d)
+
+ρmin, ρmax = 0.02, 2
+plot(ρ -> pvalue_rr_score(a, b, c, d; ρ), ρmin, ρmax; label="score")
+plot!(legend=:topleft, legendfontsize=12)
+xtick = Any[0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10]
+xtick = (xtick, string.(xtick))
+plot!(; xscale=:log, xtick, ytick=0:0.05:1)
+plot!(xguide="hypothetical risk ratio", yguide="P-value", guidefontsize=14)
+title!("data: $([a b; c d])")
+
+# %%
 
 # %%
