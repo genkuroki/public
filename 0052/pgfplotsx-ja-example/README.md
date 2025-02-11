@@ -5,6 +5,29 @@
 
 ## ファイルの説明
 
-* `pgfplotsx-ja-example.ipynb` はグラフが含まれる `pgfplotsx-ja-bxjsarticle.pdf`, `pgfplotsx-ja-bxjsarticle.tex`, `pgfplotsx-ja-standalone.tex` を作成するためのJuliaカーネルのJupyter notebookである.
-* `pgfplotsx-ja-bxjsarticle.tex` を LuaLaTeX でコンパイルすると, `pgfplotsx-ja-bxjsarticle.pdf`, `pgfplotsx-ja-bxjsarticle.tex` が読み込まれ, 2つの図を含む `pgfplotsx-ja-bxjsarticle.pdf` が出力される.
-* `pgfplotsx-ja-standalone.tex` を LuaLaTeX でコンパイルすると, 図のPDFファイル `pgfplotsx-ja-standalone.pdf` が出力される.
+`pgfplotsx-ja-example.ipynb` はグラフが含まれる `pgfplotsx-ja-bxjsarticle.pdf`, `pgfplotsx-ja-bxjsarticle.tex`, `pgfplotsx-ja-standalone.tex` を作成するためのJuliaカーネルのJupyter notebookである.
+
+`pgfplotsx-ja-bxjsarticle.tex` を LuaLaTeX でコンパイルすると, `pgfplotsx-ja-bxjsarticle.pdf`, `pgfplotsx-ja-bxjsarticle.tex` が読み込まれ, 2つの図を含む `pgfplotsx-ja-bxjsarticle.pdf` が出力される.
+
+`pgfplotsx-ja-standalone.tex` を LuaLaTeX でコンパイルすると, 図のPDFファイル `pgfplotsx-ja-standalone.pdf` が出力される.
+
+## Plots.jl pgfplotsx()で日本語を使うためのポイント
+
+```julia
+using Plots
+pgfplotsx()
+PGFPlotsX.CUSTOM_PREAMBLE=[raw"\usepackage{luatexja}"]
+@eval Plots pgfx_sanitize_string(s::AbstractString) = s
+```
+
+のようにすればよい. 
+
+日本語を使うために `PGFPlotsX.CUSTOM_PREAMBLE=[raw"\usepackage{luatexja}"]` が必要なことはすぐにわかる.
+
+非自明なのは, `Plots.pgfx_sanitize_string(s::AbstractString)` を無効にすることである. 
+
+`Plots.pgfx_sanitize_string(s::AbstractString)`を無効にしておかないと, その副作用が大き過ぎて title, legend, guide などでうまいこと日本語を使えなくなってしまう.
+
+`Plots.pgfx_sanitize_string(s::AbstractString)`を無効にすることによって, title, legend, guide などでLaTeXのコードを使えるようになる.
+
+実際に動くコードについては `pgfplotsx-ja-example.ipynb` を参照せよ.
