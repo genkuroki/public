@@ -1,0 +1,55 @@
+% !TEX program = LuaLaTeX
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\RequirePackage{luatex85}
+\documentclass[%
+  lualatex,
+  ja=standard,
+  textwidth-limit=60,
+  a4paper, 12pt,
+  %b5paper,
+  oneside,
+  everyparhook=compat]{bxjsarticle}
+
+\usepackage{graphicx}
+
+% Default preamble
+\usepackage{pgfplots}
+\pgfplotsset{compat=newest}
+\usepgfplotslibrary{groupplots}
+\usepgfplotslibrary{polar}
+\usepgfplotslibrary{smithchart}
+\usepgfplotslibrary{statistics}
+\usepgfplotslibrary{dateplot}
+\usepgfplotslibrary{ternary}
+
+% Custom preamble
+\usetikzlibrary{arrows.meta}
+\usetikzlibrary{backgrounds}
+\usepgfplotslibrary{patchplots}
+\usepgfplotslibrary{fillbetween}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\begin{figure}[htbp]
+\centering
+\scalebox{0.7}{\input{pgfplotsx-ja-fig.tex}}
+\caption{pgfplotsx-ja-fig.tex}
+\label{fig:pgfplotsx-ja-fig.tex}
+\end{figure}
+
+\noindent
+図\ref{fig:pgfplotsx-ja-fig.tex}はPlots.jl pgfplotsx()で作ったtexファイルを読み込んで作った図である.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.7\columnwidth]{pgfplotsx-ja-fig.pdf}
+\caption{pgfplotsx-ja-fig.pdf}
+\label{fig:pgfplotsx-ja-fig.pdf}
+\end{figure}
+
+\noindent
+図\ref{fig:pgfplotsx-ja-fig.pdf}はPlots.jl pgfplotsx()で作ったpdfファイルを読み込んだ結果である.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}

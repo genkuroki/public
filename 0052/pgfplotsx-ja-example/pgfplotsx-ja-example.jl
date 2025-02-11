@@ -14,9 +14,6 @@
 #     name: julia-1.11
 # ---
 
-# %% [markdown]
-# 古いバージョン。新しいバージョンがサブディレクトリの pgfplotsx-ja-example/ 以下にある。
-
 # %%
 using LaTeXStrings
 using Plots
@@ -46,12 +43,12 @@ plot!(xtick=(-2π:π/2:2π, [L"-2\pi", L"-3\pi/2", L"-\pi", L"-\pi/2", L"0", L"\
 plot!(ylim=(-1.2, 1.4), legend=:topleft)
 annotate!(0, -0.3, text(raw"正弦関数 $y=\sin\theta$", :left, 14, :red, rotation=45))
 title!(raw"\textbf{こんな感じに日本語をpgfplotsx()でも使えます!}", titlefontsize=17)
-savefig(joinpath("pgfplotsx-ja-example", "pgfplotsx-ja-fig.tex"))
-savefig(joinpath("pgfplotsx-ja-example", "pgfplotsx-ja-fig.pdf"))
+savefig("pgfplotsx-ja-fig.tex")
+savefig("pgfplotsx-ja-fig.pdf")
 plot!()
 
 # %%
-; cat pgfplotsx-ja-example/pgfplotsx-ja-fig.tex
+; cat pgfplotsx-ja-fig.tex
 
 # %%
 using LaTeXStrings
@@ -83,10 +80,10 @@ plot!(ylim=(-1.2, 1.4), legend=:topleft)
 annotate!(0, -0.3, text(raw"正弦関数 $y=\sin\theta$", :left, 14, :red, rotation=45))
 title!(raw"\textbf{こんな感じに日本語をpgfplotsx()でも使えます!}", titlefontsize=17)
 plot!(tex_output_standalone=true)
-savefig(joinpath("pgfplotsx-ja-example", "pgfplotsx-ja-standalone.tex"))
+savefig("pgfplotsx-ja-standalone.tex")
 plot!()
 
 # %%
-; cat pgfplotsx-ja-example/pgfplotsx-ja-standalone.tex
+; cat pgfplotsx-ja-standalone.tex
 
 # %%

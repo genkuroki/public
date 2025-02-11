@@ -1,0 +1,6 @@
+pgfplotsx-ja-standalone.texはPlots.jl pgfplotsx()で
+
+plot!(tex_output_standalone=true)
+savefig(joinpath("pgfplotsx-ja-example", "pgfplotsx-ja-standalone.tex"))
+
+のようにして作成したtexファイルである。
