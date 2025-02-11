@@ -20,7 +20,7 @@ PGFPlotsX.CUSTOM_PREAMBLE=[raw"\usepackage{luatexja}"]
 @eval Plots pgfx_sanitize_string(s::AbstractString) = s
 ```
 
-のようにすればよい. 
+のように設定すればよい. 
 
 日本語を使うために `PGFPlotsX.CUSTOM_PREAMBLE=[raw"\usepackage{luatexja}"]` が必要なことはすぐにわかる.
 
