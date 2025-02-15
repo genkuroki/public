@@ -35,6 +35,7 @@ plot!(xtick=0:10, ytick=0:13)
 plot!(xguide=L"x", yguide=L"y")
 title!(L"Stirling近似: $\log\Gamma(x)\approx x\log x - x - \frac{1}{2}\log x + \frac{1}{2}\log 2\pi$")
 annotate!(3, 3, text(raw"こんな感じによく近似されます。", :left, :red, 16, rotation=37, gothic))
+annotate!(0, 8, text(raw"$x=1$での誤差は$-8.1\%$", :left, :blue, 16, mincho))
 plot!(fontfamily=mincho, size=(720, 480))
 
 
@@ -59,6 +60,7 @@ plot!(xtick=0:10, ytick=0:13)
 plot!(xguide=L"x", yguide=L"y")
 title!(L"Stirling近似: $\log\Gamma(x)\approx x\log x - x - \frac{1}{2}\log x + \frac{1}{2}\log 2\pi$")
 annotate!(3, 3, text(LaTeXString(raw"こんな感じによく近似されます。"), :left, :red, 16, rotation=37, gothic))
+annotate!(0, 8, text(LaTeXString(raw"$x=1$での誤差は$-8.1\%$"), :left, :blue, 16, mincho))
 plot!(fontfamily=mincho, size=(720, 480))
 
 
@@ -79,9 +81,10 @@ ymin, ymax = -1, logabsgamma(xmax)[1]
 plot(x -> nanclamp(logabsgamma(x)[1], ymin, ymax), xmin, xmax; label=L"y = \log\Gamma(x)")
 plot!(x -> nanclamp(stirling_approx(x), ymin, ymax), xmin, xmax; label="Stirling近似", ls=:dash)
 plot!(xtick=0:10, ytick=0:13)
-plot!(xguide=L"x", yguide=raw"y")
+plot!(xguide=L"x", yguide=L"y")
 title!(L"Stirling近似: $\log\Gamma(x)\approx x\log x - x - \frac{1}{2}\log x + \frac{1}{2}\log 2\pi$")
 annotate!(3, 3, text(raw"\textbf{こんな感じによく近似されます。}", :left, :red, 16, rotation=37))
+annotate!(0, 8, text(raw"$x=1$での誤差は$-8.1\%$", :left, :blue, 16))
 
 
 # %%
@@ -101,9 +104,10 @@ ymin, ymax = -1, logabsgamma(xmax)[1]
 plot(x -> nanclamp(logabsgamma(x)[1], ymin, ymax), xmin, xmax; label=L"y = \log\Gamma(x)")
 plot!(x -> nanclamp(stirling_approx(x), ymin, ymax), xmin, xmax; label=LaTeXString("Stirling近似"), ls=:dash)
 plot!(xtick=0:10, ytick=0:13)
-plot!(xguide=L"x", yguide=raw"y")
+plot!(xguide=L"x", yguide=L"y")
 title!(L"Stirling近似: $\log\Gamma(x)\approx x\log x - x - \frac{1}{2}\log x + \frac{1}{2}\log 2\pi$")
 annotate!(3, 3, text(LaTeXString(raw"\textbf{こんな感じによく近似されます。}"), :left, :red, 16, rotation=37))
+annotate!(0, 8, text(LaTeXString(raw"$x=1$での誤差は$-8.1\%$"), :left, :blue, 16))
 
 
 # %%
@@ -124,9 +128,10 @@ ymin, ymax = -1, logabsgamma(xmax)[1]
 plot(x -> nanclamp(logabsgamma(x)[1], ymin, ymax), xmin, xmax; label=L"y = \log\Gamma(x)")
 plot!(x -> nanclamp(stirling_approx(x), ymin, ymax), xmin, xmax; label="Stirling近似", ls=:dash)
 plot!(xtick=0:10, ytick=0:13)
-plot!(xguide=L"x", yguide=raw"y")
+plot!(xguide=L"x", yguide=L"y")
 title!(L"Stirling近似: $\log\Gamma(x)\approx x\log x - x - \frac{1}{2}\log x + \frac{1}{2}\log 2\pi$")
 annotate!(3, 3, text(raw"\textbf{こんな感じによく近似されます。}", :left, :red, 16, rotation=37))
+annotate!(0, 8, text(raw"$x=1$での誤差は$-8.1\%$", :left, :blue, 16))
 
 
 # %%

@@ -1,4 +1,4 @@
-This is LuaHBTeX, Version 1.18.0 (TeX Live 2024)  (format=lualatex 2024.12.2)  15 FEB 2025 13:49
+This is LuaHBTeX, Version 1.18.0 (TeX Live 2024)  (format=lualatex 2024.12.2)  15 FEB 2025 14:01
  system commands enabled.
 **pgfplotsx-ja-standalone.tex
 (./pgfplotsx-ja-standalone.tex
@@ -891,32 +891,32 @@ en.code.tex)))
 ations.softclip.code.tex)) (./pgfplotsx-ja-standalone.aux)
 \openout1 = pgfplotsx-ja-standalone.aux
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 37.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 35.
+LaTeX Font Info:    ... okay on input line 35.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 35.
+LaTeX Font Info:    ... okay on input line 35.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 35.
+LaTeX Font Info:    ... okay on input line 35.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 35.
+LaTeX Font Info:    ... okay on input line 35.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 35.
 LaTeX Font Info:    Trying to load font information for TS1+cmr on input line 3
-7.
+5.
 
 (d:/texlive/2024/texmf-dist/tex/latex/base/ts1cmr.fd
 File: ts1cmr.fd 2023/04/13 v2.5m Standard LaTeX font definitions
 )
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for JY3/mc/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for JT3/mc/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
+LaTeX Font Info:    ... okay on input line 35.
+LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 35.
+LaTeX Font Info:    ... okay on input line 35.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 35.
+LaTeX Font Info:    ... okay on input line 35.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 35.
+LaTeX Font Info:    ... okay on input line 35.
+LaTeX Font Info:    Checking defaults for JY3/mc/m/n on input line 35.
+LaTeX Font Info:    ... okay on input line 35.
+LaTeX Font Info:    Checking defaults for JT3/mc/m/n on input line 35.
+LaTeX Font Info:    ... okay on input line 35.
 
 (d:/texlive/2024/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
@@ -945,86 +945,86 @@ s been generated with the most recent feature set (\pgfplotsset{compat=1.18}).
 
 (load cache: extra_lmroman12-regular.luc)
 LaTeX Font Info:    Font shape `JT3/mc/m/n' will be
-(Font)              scaled to size 13.47107pt on input line 217.
+(Font)              scaled to size 13.47107pt on input line 215.
 LaTeX Font Info:    Font shape `JY3/mc/m/n' will be
-(Font)              scaled to size 13.47107pt on input line 217.
-LaTeX Font Info:    Calculating math sizes for size <14> on input line 217.
+(Font)              scaled to size 13.47107pt on input line 215.
+LaTeX Font Info:    Calculating math sizes for size <14> on input line 215.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <14> on input line 217.
+(Font)              <14> on input line 215.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <9.79996> on input line 217.
+(Font)              <9.79996> on input line 215.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <7> on input line 217.
+(Font)              <7> on input line 215.
 LaTeX Font Info:    Font shape `JY3/mc/m/n' will be
-(Font)              scaled to size 9.4297pt on input line 217.
+(Font)              scaled to size 9.4297pt on input line 215.
 LaTeX Font Info:    Font shape `JY3/mc/m/n' will be
-(Font)              scaled to size 6.73553pt on input line 217.
+(Font)              scaled to size 6.73553pt on input line 215.
 (load cache: extra_lmroman17-regular.luc)
 LaTeX Font Info:    Font shape `JT3/mc/m/n' will be
-(Font)              scaled to size 16.35773pt on input line 217.
+(Font)              scaled to size 16.35773pt on input line 215.
 LaTeX Font Info:    Font shape `JY3/mc/m/n' will be
-(Font)              scaled to size 16.35773pt on input line 217.
+(Font)              scaled to size 16.35773pt on input line 215.
 (load cache: extra_lmroman12-bold.luc)
 LaTeX Font Info:    Font shape `JT3/mc/b/n' in size <17> not available
-(Font)              Font shape `JT3/gt/m/n' tried instead on input line 217.
+(Font)              Font shape `JT3/gt/m/n' tried instead on input line 215.
 LaTeX Font Info:    Font shape `JT3/gt/m/n' will be
-(Font)              scaled to size 16.35773pt on input line 217.
+(Font)              scaled to size 16.35773pt on input line 215.
 LaTeX Font Info:    Font shape `JY3/mc/b/n' in size <17> not available
-(Font)              Font shape `JY3/gt/m/n' tried instead on input line 217.
+(Font)              Font shape `JY3/gt/m/n' tried instead on input line 215.
 LaTeX Font Info:    Font shape `JY3/gt/m/n' will be
-(Font)              scaled to size 16.35773pt on input line 217.
+(Font)              scaled to size 16.35773pt on input line 215.
 (load cache: extra_haranoajigothic-medium.luc)
 LaTeX Font Info:    Font shape `JT3/mc/m/n' will be
-(Font)              scaled to size 14.43329pt on input line 217.
+(Font)              scaled to size 14.43329pt on input line 215.
 LaTeX Font Info:    Font shape `JY3/mc/m/n' will be
-(Font)              scaled to size 14.43329pt on input line 217.
-LaTeX Font Info:    Calculating math sizes for size <15> on input line 217.
+(Font)              scaled to size 14.43329pt on input line 215.
+LaTeX Font Info:    Calculating math sizes for size <15> on input line 215.
 
 LaTeX Font Warning: Font shape `OT1/cmr/m/n' in size <15> not available
-(Font)              size <14.4> substituted on input line 217.
+(Font)              size <14.4> substituted on input line 215.
 
 
 LaTeX Font Warning: Font shape `OT1/cmr/m/n' in size <10.49995> not available
-(Font)              size <10.95> substituted on input line 217.
+(Font)              size <10.95> substituted on input line 215.
 
 
 LaTeX Font Warning: Font shape `OT1/cmr/m/n' in size <7.5> not available
-(Font)              size <7> substituted on input line 217.
+(Font)              size <7> substituted on input line 215.
 
 
 LaTeX Font Warning: Font shape `OML/cmm/m/it' in size <15> not available
-(Font)              size <14.4> substituted on input line 217.
+(Font)              size <14.4> substituted on input line 215.
 
 
 LaTeX Font Warning: Font shape `OML/cmm/m/it' in size <10.49995> not available
-(Font)              size <10.95> substituted on input line 217.
+(Font)              size <10.95> substituted on input line 215.
 
 
 LaTeX Font Warning: Font shape `OML/cmm/m/it' in size <7.5> not available
-(Font)              size <7> substituted on input line 217.
+(Font)              size <7> substituted on input line 215.
 
 
 LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <15> not available
-(Font)              size <14.4> substituted on input line 217.
+(Font)              size <14.4> substituted on input line 215.
 
 
 LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <10.49995> not available
-(Font)              size <10.95> substituted on input line 217.
+(Font)              size <10.95> substituted on input line 215.
 
 
 LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <7.5> not available
-(Font)              size <7> substituted on input line 217.
+(Font)              size <7> substituted on input line 215.
 
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <15> on input line 217.
+(Font)              <15> on input line 215.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <10.49995> on input line 217.
+(Font)              <10.49995> on input line 215.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <7.5> on input line 217.
+(Font)              <7.5> on input line 215.
 LaTeX Font Info:    Font shape `JY3/mc/m/n' will be
-(Font)              scaled to size 10.10326pt on input line 217.
+(Font)              scaled to size 10.10326pt on input line 215.
 LaTeX Font Info:    Font shape `JY3/mc/m/n' will be
-(Font)              scaled to size 7.21664pt on input line 217.
+(Font)              scaled to size 7.21664pt on input line 215.
 [1
 
 {d:/texlive/2024/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
