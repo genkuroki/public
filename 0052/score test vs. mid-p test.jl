@@ -60,24 +60,24 @@ function delta(a, b, c, d; ω=1)
 end
 
 # correction = 0.5 は連続性補正を与える.
-function _chisqstat_or(a, b, c, d, δ; correction=0.0)
+function _chisqstat_or(a, b, c, d, δ; correction=0.0, h=0)
     ã, b̃, c̃, d̃ = a-δ, b+δ, c+δ, d-δ
-    safemul(max(0, abs(δ)-correction)^2, 1/ã + 1/b̃ + 1/c̃ + 1/d̃)
+    (a+b+c+d-h)/(a+b+c+d) * safemul(max(0, abs(δ)-correction)^2, 1/ã + 1/b̃ + 1/c̃ + 1/d̃)
 end
 
-function chisqstat_or(a, b, c, d; ω=1, correction=0.0)
+function chisqstat_or(a, b, c, d; ω=1, correction=0.0, h=0)
     δ = delta(a, b, c, d; ω)
-    _chisqstat_or(a, b, c, d, δ; correction)
+    _chisqstat_or(a, b, c, d, δ; correction, h)
 end
 
-function pvalue_or_score(a, b, c, d; ω=1, correction=0.0)
-    χ² = chisqstat_or(a, b, c, d; ω, correction)
+function pvalue_or_score(a, b, c, d; ω=1, correction=0.0, h=0)
+    χ² = chisqstat_or(a, b, c, d; ω, correction, h)
     ccdf(Chisq(1), χ²)
 end
 
-function confint_or_score(a, b, c, d; α=0.05, correction=0.0)
+function confint_or_score(a, b, c, d; α=0.05, correction=0.0, h=0)
     (a+b==0 || c+d==0 || a+c==0 || b+d==0) && return [0, Inf]
-    f(logω) = pvalue_or_score(a, b, c, d; ω=exp(logω), correction) - α
+    f(logω) = pvalue_or_score(a, b, c, d; ω=exp(logω), correction, h) - α
     ps = if a == 0 || d == 0
         [0, exp(find_zero(f, 0.0))]
     elseif b == 0 || c == 0
@@ -142,19 +142,19 @@ function _search_boundary(f, x0, Δx, param)
     x
 end
 
-function pvalue_fisher_minlike(dist::DiscreteUnivariateDistribution, x; correction=0.0)
+function pvalue_minlike(dist::DiscreteUnivariateDistribution, x; correction=0.0)
     Px = pdf(dist, x)
     Px == 0 && return Px
     Px == 1 && return Px
     m = mode(dist)
-    if Px ≈ pdf(dist, m)
-        (x ≠ m-1 && x ≠ m+1) ? one(Px) : 1 - pdf(dist, x)
+    if pdf(dist, m) ≈ Px
+        one(Px) - 2correction * (pdf(dist, m-1) ≈ Px || pdf(dist, m+1) ≈ Px) * Px
     elseif x < m
         y = _search_boundary(_pdf_le, 2m - x, 1, (dist, Px))
-            (cdf(dist, x) - correction*pdf(dist, x)) + (ccdf(dist, y-1) - correction*pdf(dist, y))
+        cdf(dist, x) + ccdf(dist, y-1) - correction * (1 + (pdf(dist, y) ≈ Px)) * Px
     else # x > m
         y = _search_boundary(_pdf_le, 2m - x, -1, (dist, Px))
-        (cdf(dist, y) - correction*pdf(dist, y)) + (ccdf(dist, x-1) - correction*pdf(dist, x))
+        cdf(dist, y) + ccdf(dist, x-1) - correction * (1 + (pdf(dist, y) ≈ Px)) * Px
     end
 end
 
@@ -164,7 +164,7 @@ function pvalue_or_fisher_minlike(a, b, c, d; ω=1, correction=0.0)
     else
         FisherNoncentralHypergeometric(a+b, c+d, a+c, ω)
     end
-    pvalue_fisher_minlike(fnch, a; correction)
+    pvalue_minlike(fnch, a; correction)
 end
 
 function find_pos(f, x)
@@ -191,17 +191,19 @@ function confint_or_fisher_minlike(a, b, c, d; α = 0.05)
 end
 
 # %%
-function pvals(randabcd; niters=10^5)
+function pvals(randabcd; niters=10^5, yates=0.0)
     pval_score = zeros(niters)
+    pval_score_adj = zeros(niters)
     pval_central_midp = zeros(niters)
     pval_minlike_midp = zeros(niters)
     Threads.@threads :static for i in 1:niters
         a, b, c, d = randabcd()
         pval_score[i] = pvalue_or_score(a, b, c, d)
+        pval_score_adj[i] = pvalue_or_score(a, b, c, d; h=1)
         pval_central_midp[i] = pvalue_or_fisher_central(a, b, c, d; correction=0.5)
         pval_minlike_midp[i] = pvalue_or_fisher_minlike(a, b, c, d; correction=0.5)
     end
-    (; pval_score, pval_central_midp, pval_minlike_midp)
+    (; pval_score, pval_score_adj, pval_central_midp, pval_minlike_midp)
 end
 
 function make_randabcd(bin1::Binomial, bin2::Binomial)
@@ -213,7 +215,7 @@ function make_randabcd(bin1::Binomial, bin2::Binomial)
     randabcd_2binomials
 end
 
-function plot_pvals(; bin1=Binomial(12, 0.25), bin2=Binomial(16, 0.25), niters=10^6)
+function plot_pvals(; bin1=Binomial(12, 0.25), bin2=Binomial(16, 0.25), niters=10^6, yates=1/12)
     m, p = params(bin1)
     n, q = params(bin2)
     ytick = p == q ? (0:0.01:1) : (0:0.05:1)
@@ -226,16 +228,19 @@ function plot_pvals(; bin1=Binomial(12, 0.25), bin2=Binomial(16, 0.25), niters=1
     println("\n")
     
     randabcd_2binomials = make_randabcd(bin1, bin2)
-    (; pval_score, pval_central_midp, pval_minlike_midp) = pvals(randabcd_2binomials; niters)
+    (; pval_score, pval_score_adj, pval_central_midp, pval_minlike_midp) =
+        pvals(randabcd_2binomials; niters, yates)
     
     print("probability of P-value ≤ 5%")
     println(p == q ? "  (α-error rate)" : "  (power)")
-    println("  score:         ", round(100_ecdf(pval_score, 0.05); digits=1), "%")
-    println("  minlike mid-p: ", round(100_ecdf(pval_minlike_midp, 0.05); digits=1), "%")
-    println("  central mid-p: ", round(100_ecdf(pval_central_midp, 0.05); digits=1), "%")
+    println("  score:          ", round(100_ecdf(pval_score, 0.05); digits=1), "%")
+    #println("  score adjusted: ", round(100_ecdf(pval_score_adj, 0.05); digits=1), "%")
+    println("  minlike mid-p:  ", round(100_ecdf(pval_minlike_midp, 0.05); digits=1), "%")
+    println("  central mid-p:  ", round(100_ecdf(pval_central_midp, 0.05); digits=1), "%")
     println()
     
-    plot(α -> _ecdf(pval_score, α), 0, 0.1; label="score test")
+    plot(α -> _ecdf(pval_score, α), 0, 0.1; label="score")
+    #plot!(α -> _ecdf(pval_score_adj, α), 0, 0.1; label="score adjusted", ls=:dashdot)
     plot!(α -> _ecdf(pval_minlike_midp, α), 0, 0.1; label="minlike mid-p", ls=:dash)
     plot!(α -> _ecdf(pval_central_midp, α), 0, 0.1; label="central mid-p", ls=:dot)
     p == q && plot!(identity; label="", ls=:dot, c=:black, alpha=0.5)
@@ -259,25 +264,45 @@ for q in 0.1:0.1:0.5
 end
 
 # %%
-m, n = 5, 10
+m, n = 8, 16
 for q in 0.1:0.1:0.5
     plot_pvals(; bin1=Binomial(m, q), bin2=Binomial(n, q), niters=10^6) |> display
 end
 
 # %%
-m, n = 16, 20
+m, n = 8, 16
+for q in 0.1:0.1:0.5
+    plot_pvals(; bin1=Binomial(m, q), bin2=Binomial(n, q), niters=10^6, yates=0.1) |> display
+end
+
+# %%
+m, n = 12, 20
 for q in 0.05:0.05:0.5
     plot_pvals(; bin1=Binomial(m, q), bin2=Binomial(n, q), niters=10^6) |> display
 end
+
+# %%
+m, n = 12, 20
+p, q = 0.4, 0.4
+plot_pvals(; bin1=Binomial(m, p), bin2=Binomial(n, q), niters=10^6)
+
+# %%
+m, n = 12, 20
+p, q = 0.2, 0.6
+plot_pvals(; bin1=Binomial(m, p), bin2=Binomial(n, q), niters=10^6)
+
+# %%
+m, n = 12, 20
+p, q = 0.4, 0.4
+plot_pvals(; bin1=Binomial(m, p), bin2=Binomial(n, q), niters=10^6)
 
 # %%
 a, b, c, d = 1, 10, 5, 5
 
 ωmin, ωmax = 0.001, 5
 ωs = exp.(range(log(ωmin), log(ωmax), 500))
-plot(ωs, ω -> pvalue_or_score(a, b, c, d; ω, correction=0.0); label="score")
-#plot!(ωs, ω -> pvalue_or_score(a, b, c, d; ω, correction=0.2); label="score (0.2-corrected)", ls=:dot)
-#plot!(ωs, ω -> pvalue_or_score(a, b, c, d; ω, correction=0.5); label="score (0.5-orrected)", ls=:dot)
+plot(ωs, ω -> pvalue_or_score(a, b, c, d; ω); label="score")
+#plot!(ωs, ω -> pvalue_or_score(a, b, c, d; ω, h=1); label="score adjusted", ls=:dashdotdot)
 #plot!(ωs, ω -> pvalue_or_fisher_minlike(a, b, c, d; ω, correction=0.0); label="Fisher (minlik)")
 plot!(ωs, ω -> pvalue_or_fisher_minlike(a, b, c, d; ω, correction=0.5); label="Fisher (minlike, mid-p)", ls=:dash)
 #plot!(ωs, ω -> pvalue_or_fisher_central(a, b, c, d; ω, correction=0.0); label="Fisher (central)")
@@ -295,9 +320,8 @@ a, b, c, d = 1, 100, 4, 50
 
 ωmin, ωmax = 0.001, 5
 ωs = exp.(range(log(ωmin), log(ωmax), 500))
-plot(ωs, ω -> pvalue_or_score(a, b, c, d; ω, correction=0.0); label="score")
-#plot!(ωs, ω -> pvalue_or_score(a, b, c, d; ω, correction=0.2); label="score (0.2-corrected)")
-#plot!(ωs, ω -> pvalue_or_score(a, b, c, d; ω, correction=0.5); label="score (0.5-orrected)", ls=:dash)
+plot(ωs, ω -> pvalue_or_score(a, b, c, d; ω); label="score")
+#plot!(ωs, ω -> pvalue_or_score(a, b, c, d; ω, h=1); label="score adjusted", ls=:dashdotdot)
 #plot!(ωs, ω -> pvalue_or_fisher_minlike(a, b, c, d; ω, correction=0.0); label="Fisher (minlik)")
 plot!(ωs, ω -> pvalue_or_fisher_minlike(a, b, c, d; ω, correction=0.5); label="Fisher (minlike, mid-p)", ls=:dash)
 #plot!(ωs, ω -> pvalue_or_fisher_central(a, b, c, d; ω, correction=0.0); label="Fisher (central)")
@@ -315,9 +339,8 @@ a, b, c, d = 1, 24, 5, 15
 
 ωmin, ωmax = 0.001, 5
 ωs = exp.(range(log(ωmin), log(ωmax), 500))
-plot(ωs, ω -> pvalue_or_score(a, b, c, d; ω, correction=0.0); label="score")
-#plot!(ωs, ω -> pvalue_or_score(a, b, c, d; ω, correction=0.2); label="score (0.2-corrected)")
-#plot!(ωs, ω -> pvalue_or_score(a, b, c, d; ω, correction=0.5); label="score (0.5-orrected)", ls=:dash)
+plot(ωs, ω -> pvalue_or_score(a, b, c, d; ω); label="score")
+#plot!(ωs, ω -> pvalue_or_score(a, b, c, d; ω, h=1); label="score adjusted", ls=:dashdot)
 #plot!(ωs, ω -> pvalue_or_fisher_minlike(a, b, c, d; ω, correction=0.0); label="Fisher (minlik)")
 plot!(ωs, ω -> pvalue_or_fisher_minlike(a, b, c, d; ω, correction=0.5); label="Fisher (minlike, mid-p)", ls=:dash)
 #plot!(ωs, ω -> pvalue_or_fisher_central(a, b, c, d; ω, correction=0.0); label="Fisher (central)")
@@ -335,9 +358,8 @@ a, b, c, d = 4, 3107-4, 67, 10883-67
 
 ωmin, ωmax = 0.02, 2
 ωs = exp.(range(log(ωmin), log(ωmax), 500))
-plot(ωs, ω -> pvalue_or_score(a, b, c, d; ω, correction=0.0); label="score")
-#plot!(ωs, ω -> pvalue_or_score(a, b, c, d; ω, correction=0.2); label="score (0.2-corrected)")
-#plot!(ωs, ω -> pvalue_or_score(a, b, c, d; ω, correction=0.5); label="score (0.5-orrected)", ls=:dash)
+plot(ωs, ω -> pvalue_or_score(a, b, c, d; ω); label="score")
+#plot!(ωs, ω -> pvalue_or_score(a, b, c, d; ω, h=1); label="score adjusted", ls=:dashdotdot)
 #plot!(ωs, ω -> pvalue_or_fisher_minlike(a, b, c, d; ω, correction=0.0); label="Fisher (minlik)")
 plot!(ωs, ω -> pvalue_or_fisher_minlike(a, b, c, d; ω, correction=0.5); label="Fisher (minlike, mid-p)", ls=:dash)
 #plot!(ωs, ω -> pvalue_or_fisher_central(a, b, c, d; ω, correction=0.0); label="Fisher (central)")
@@ -346,7 +368,6 @@ xtick = Any[0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 
 xtick = xtick[ωmin .≤ xtick .≤ ωmax]
 xtick = (xtick, string.(xtick))
 plot!(; xscale=:log, xtick, ytick=0:0.05:1, xrotation=90)
-plot!(legend=:topleft)
 plot!(xguide="OR", yguide="P-value")
 plot!(legend=:topleft)
 title!("data: $([a b; c d])")
@@ -356,9 +377,8 @@ a, b, c, d = 4, 3107-4, 67, 10883-67
 
 ωmin, ωmax = 0.2, 1
 ωs = exp.(range(log(ωmin), log(ωmax), 500))
-plot(ωs, ω -> pvalue_or_score(a, b, c, d; ω, correction=0.0); label="score")
-#plot!(ωs, ω -> pvalue_or_score(a, b, c, d; ω, correction=0.2); label="score (0.2-corrected)")
-#plot!(ωs, ω -> pvalue_or_score(a, b, c, d; ω, correction=0.5); label="score (0.5-orrected)", ls=:dash)
+plot(ωs, ω -> pvalue_or_score(a, b, c, d; ω); label="score")
+#plot!(ωs, ω -> pvalue_or_score(a, b, c, d; ω, h=1); label="score adjusted", ls=:dashdotdot)
 #plot!(ωs, ω -> pvalue_or_fisher_minlike(a, b, c, d; ω, correction=0.0); label="Fisher (minlik)")
 plot!(ωs, ω -> pvalue_or_fisher_minlike(a, b, c, d; ω, correction=0.5); label="Fisher (minlike, mid-p)", ls=:dash)
 #plot!(ωs, ω -> pvalue_or_fisher_central(a, b, c, d; ω, correction=0.0); label="Fisher (central)")
@@ -367,9 +387,8 @@ xtick = Any[0.0005, 0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 
 xtick = xtick[ωmin .≤ xtick .≤ ωmax]
 xtick = (xtick, string.(xtick))
 plot!(; xscale=:log, xtick, ytick=0:0.05:1, xrotation=90)
-plot!(legend=:topleft)
 plot!(xguide="OR", yguide="P-value")
-plot!(legend=:topleft)
+plot!(legend=:topright)
 title!("data: $([a b; c d])")
 
 # %%

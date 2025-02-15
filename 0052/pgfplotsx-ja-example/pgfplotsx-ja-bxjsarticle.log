@@ -1,4 +1,4 @@
-This is LuaHBTeX, Version 1.18.0 (TeX Live 2024)  (format=lualatex 2024.12.2)  11 FEB 2025 20:04
+This is LuaHBTeX, Version 1.18.0 (TeX Live 2024)  (format=lualatex 2024.12.2)  15 FEB 2025 13:48
  restricted system commands enabled.
 **pgfplotsx-ja-bxjsarticle.tex
 (./pgfplotsx-ja-bxjsarticle.tex
@@ -1272,11 +1272,11 @@ LaTeX Font Info:    Font shape `JT3/HaranoAjiMincho-Regular.otf(0)/m/n' will be
 LaTeX Font Info:    Font shape `JY3/HaranoAjiMincho-Regular.otf(0)/m/n' will be
 
 (Font)              scaled to size 9.98686pt on input line 37.
-<pgfplotsx-ja-fig.pdf, id=4, 449.64989pt x 320.13702pt>
+<pgfplotsx-ja-fig.pdf, id=4, 443.99576pt x 316.66606pt>
 File: pgfplotsx-ja-fig.pdf Graphic file (type pdf)
 <use pgfplotsx-ja-fig.pdf>
 Package luatex.def Info: pgfplotsx-ja-fig.pdf  used on input line 46.
-(luatex.def)             Requested size: 310.7014pt x 221.21718pt.
+(luatex.def)             Requested size: 310.7014pt x 221.60674pt.
  [1
 
 {d:/texlive/2024/texmf-var/fonts/map/pdftex/updmap/pdftex.map}<./pgfplotsx-ja-fi
@@ -1293,10 +1293,10 @@ Here is how much of LuaTeX's memory you used:
  829 words of node memory still in use:
    7 hlist, 1 vlist, 4 rule, 2 glue, 3 kern, 1 glyph, 140 attribute, 51 glue_spe
 c, 21 attribute_list, 2 write, 9 user_defined nodes
-   avail lists: 1:23,2:27550,3:1997,4:568,5:68,6:12,7:1804,8:7,9:604,10:3,11:14
+   avail lists: 1:23,2:27406,3:1997,4:568,5:68,6:12,7:1788,8:7,9:596,10:3,11:14
  52819 multiletter control sequences out of 65536+600000
  70 fonts using 75675247 bytes
- 130i,21n,131p,3216b,2640s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 130i,21n,131p,3202b,2640s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <d:/texlive/2024/texmf-dist/fonts/opentype/public/lm/lmroman10-regular.otf><d:/t
 exlive/2024/texmf-dist/fonts/opentype/public/lm/lmroman9-regular.otf><d:/texlive
 /2024/texmf-dist/fonts/opentype/public/lm/lmroman12-bold.otf><d:/texlive/2024/te
@@ -1308,7 +1308,7 @@ xmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb><d:/texlive/2024/texmf-dist/f
 onts/type1/public/amsfonts/cm/cmr10.pfb><d:/texlive/2024/texmf-dist/fonts/type1/
 public/amsfonts/cm/cmr12.pfb><d:/texlive/2024/texmf-dist/fonts/type1/public/amsf
 onts/cm/cmsy10.pfb>
-Output written on pgfplotsx-ja-bxjsarticle.pdf (1 page, 110500 bytes).
+Output written on pgfplotsx-ja-bxjsarticle.pdf (1 page, 108102 bytes).
 
 PDF statistics: 110 PDF objects out of 1000 (max. 8388607)
  70 compressed objects within 1 object stream
