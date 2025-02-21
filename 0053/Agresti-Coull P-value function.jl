@@ -1,0 +1,152 @@
+# -*- coding: utf-8 -*-
+# ---
+# jupyter:
+#   jupytext:
+#     formats: ipynb,jl:hydrogen
+#     text_representation:
+#       extension: .jl
+#       format_name: hydrogen
+#       format_version: '1.3'
+#       jupytext_version: 1.10.3
+#   kernelspec:
+#     display_name: Julia 1.11.3
+#     language: julia
+#     name: julia-1.11
+# ---
+
+# %%
+using Distributions
+using LaTeXStrings
+using Roots
+using StatsPlots
+default(fmt=:png, legendfontsize=12, guidefontsize=12)
+using SymPy
+
+# %%
+safediv(x, y) = x == 0 ? zero(x/y) : x/y
+
+function pvalue_score(k, n, p)
+    bin = Binomial(n, p)
+    z = safediv(k - mean(bin), std(bin))
+    2ccdf(Normal(), abs(z))
+end
+
+function pvalue_wald(k, n, p)
+    bin = Binomial(n, p)
+    p̂ = k/n
+    z = safediv(k - mean(bin), √(n*p̂*(1-p̂)))
+    2ccdf(Normal(), abs(z))
+end
+
+# z²に関する3次方程式
+function _eq_agresti_coull(z², k, n, p)
+    k̃, ñ = k + z²/2, n + z²
+    ñ * (k̃ - ñ*p)^2 - z² * k̃ * (ñ - k̃)
+end
+
+# z²に関する3次方程式を解く
+function z²_agresti_coull(k, n, p)
+    f(t) = _eq_agresti_coull(exp(t), k, n, p)
+    (1 - p ≈ 1 || p ≈ 1) && return oftype(p, Inf)
+    k ≈ n*p && return zero(p)
+    z² = exp(find_zero(f, (-1e2, 1e2)))
+end
+
+pvalue_agresti_coull(k, n, p) = 2ccdf(Normal(), √z²_agresti_coull(k, n, p))
+
+@syms x, k, n, p
+print("cubic equation for x = z²: ")
+Eq(_eq_agresti_coull(x, k, n, p), 0) |> display
+println()
+
+@show k, n, p = 3, 10, 0.6
+@show pvalue_score(k, n, p) pvalue_agresti_coull(k, n, p) pvalue_wald(k, n, p)
+println()
+stack(([p, pvalue_score(k, n, p), pvalue_agresti_coull(k, n, p), pvalue_wald(k, n, p)] for p in 0:0.1:1); dims=1) |> display
+println()
+
+pgfplotsx()
+#gr()
+plot(z² -> _eq_agresti_coull(z², k, n, p), -17, 5; label="")
+hline!([0]; label="", c=:red)
+vline!([0]; label="", c=:red)
+plot!(xguide=L"x = z^2")
+title!(L"cubic equation for $x = z^2$: $n=%$n$, $k=%$k$, $p=%$p$")
+plot!(size=(500, 350)) |> display
+
+# %%
+pgfplotsx()
+#gr()
+k, n = 3, 10
+plot()
+plot!(p -> pvalue_score(k, n, p), 0, 1; label="Wilson score")
+plot!(p -> pvalue_agresti_coull(k, n, p), 0, 1; label="Agresti-Coull", ls=:dash)
+plot!(p -> pvalue_wald(k, n, p), 0, 1; label="Wald", ls=:dot)
+plot!(legend=:topright)
+title!(L"P-value function for $n=%$n$, $k=%$k$")
+plot!(xtick=-0.2:0.1:1, ytick=0:0.1:1)
+plot!(xguide=L"p", yguide="P-value")
+plot!(size=(500, 350))
+
+# %%
+function confint_score(k, n, α = 0.05)
+    z = cquantile(Normal(), α/2)
+    p̂ = k/n
+    sehat² = p̂ * (1 - p̂) / n
+    a, b = 1 + z^2/n, p̂ + z^2/(2n)
+    sqrtD = z * √(sehat² + z^2/(4n^2))
+    p_L = (b - sqrtD) / a
+    p_U = (b + sqrtD) / a
+    [p_L, p_U]
+end
+
+function confint_wald(k, n, α = 0.05)
+    z = cquantile(Normal(), α/2)
+    p̂ = k/n
+    sehat = √(p̂ * (1 - p̂) / n)
+    p_L = p̂ - z*sehat
+    p_U = p̂ + z*sehat
+    [p_L, p_U]
+end
+
+function confint_agresti_coull(k, n, α = 0.05)
+    z = cquantile(Normal(), α/2)
+    k̃, ñ = k + z^2/2, n + z^2
+    confint_wald(k̃, ñ, α)
+end
+
+# %%
+pgfplotsx()
+#gr()
+
+P = plot()
+plot!(p -> pvalue_score(k, n, p), 0, 1; label="", c=1)
+for α in [0.001; 0.01:0.01:1]
+    ci = confint_score(k, n, α)
+    plot!(ci, fill(α, 2); label=(α==1 ? "CIs" : ""), c=4)
+end
+title!(L"Wilson score: $n=%$n$, $k=%$k$")
+
+Q = plot()
+plot!(p -> pvalue_agresti_coull(k, n, p), 0, 1; label="", c=2)
+for α in [0.001; 0.01:0.01:1]
+    ci = confint_agresti_coull(k, n, α)
+    plot!(ci, fill(α, 2); label=(α==1 ? "CIs" : ""), c=5)
+end
+title!(L"Agresti-Coull: $n=%$n$, $k=%$k$")
+
+R = plot()
+plot!(p -> pvalue_wald(k, n, p), -0.2, 1; label="", c=3)
+for α in [0.001; 0.01:0.01:1]
+    ci = confint_wald(k, n, α)
+    plot!(ci, fill(α, 2);  label=(α==1 ? "CIs" : ""), c=6)
+end
+title!(L"Wald: $n=%$n$, $k=%$k$")
+
+plot(P, Q, R; size=(1000, 700), layout=(2, 2))
+plot!(xtick=-0.2:0.1:1, ytick=0:0.1:1)
+plot!(xguide=L"p", yguide="P-value")
+plot!(legend=:topright)
+#plot!(leftmargin=4Plots.mm, bottommargin=4Plots.mm)
+
+# %%

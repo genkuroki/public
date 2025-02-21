@@ -1,0 +1,125 @@
+% !TEX program = LuaLaTeX
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\def\nosolutionfiles{} % 定義すると \usepackage[nosolutionfiles]{answers} になる.
+\def\TITLE{answers.styの使用例}
+\def\AUTHOR{黒木 玄}
+\def\DATE{2024年12月31日}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[%
+  lualatex,
+  ja=standard,
+  textwidth-limit=60,
+  a4paper,
+  %b5paper,
+  12pt,
+  oneside,
+  everyparhook=compat]{bxjsarticle}
+
+%%% amsthm
+\usepackage{amsthm}
+%\theoremstyle{definition}
+\newtheoremstyle{problemwithanswer}
+  {10pt}{10pt}  % 上下の空白
+  {\normalfont} % 本文のフォント
+  {0pt}         % インデント
+  {\bfseries}   % タイトルのフォント
+  {}           % タイトルの後の記号
+  {5pt plus 1pt minus 1pt} % タイトルと本文の間のスペース
+  {\thmname{#1}\thmnumber{ #2}\thmnote{ (#3)} \hyperref[answer:\theproblem]{[解答例p.\pageref{answer:#2}]}\label{problem:#2}} % タイトルのフォーマット
+\theoremstyle{problemwithanswer}
+\newtheorem{problem}{問題}[section]
+
+
+%%% hyperref
+\usepackage[unicode,hidelinks,pdfusetitle]{hyperref}
+
+%%% answers
+\ifdefined\nosolutionfiles
+  \usepackage[nosolutionfiles]{answers}
+\else
+  \usepackage{answers}
+\fi
+\newcommand\answersfile{articleanswers}
+\Newassociation{answer}{showanswer}{\answersfile}
+\renewcommand{\showanswerlabel}[1]{\hspace{5.4pt}%
+  \textbf{\hyperref[problem:#1]{[p.\pageref{problem:#1}] 問題#1}\label{answer:#1}解答例.}}
+
+\newcommand\showanswersection{%
+  \section{問題の解答例}
+  \addcontentsline{toc}{section}{問題の解答例}
+  \newcounter{answersection}
+  \setcounter{answersection}{0}
+}
+
+\newcommand\showanswersubsection{%
+  \stepcounter{answersection}
+  \subsection{第\theanswersection 節の問題の解答例}
+}
+
+%%% maketitle
+\title{\Huge{\textbf{\TITLE}}}
+\author{\LARGE{\textbf{\AUTHOR}}}
+\date{\Large{\textbf{\DATE}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+%%% タイトルと著者など
+\maketitle
+
+%%% 目次
+\setcounter{tocdepth}{3}
+\tableofcontents
+
+%%% 本文
+\Opensolutionfile{\answersfile}
+\begin{Filesave}{\answersfile}\showanswersection\end{Filesave}
+
+\section{満月に注意せよ}
+\begin{Filesave}{\answersfile}\showanswersubsection\end{Filesave}
+
+\subsection{深夜でも明るい}
+
+\subsubsection{散歩するとどうなるか}
+
+\begin{problem}%\problabel
+満月の深夜に近所の神社に散歩に行くとどうなりますか?
+\begin{answer}
+満月の深夜に近所の神社に散歩に行くと, 警官に見付かって職務質問されます(実話).
+\end{answer}
+\end{problem}
+
+\begin{problem}
+満月の夜に近所の神社で何をすると良いですか?
+\begin{answer}
+おみくじなどを引くと良いでしょう.
+\end{answer}
+\end{problem}
+
+\section{大晦日には}
+\begin{Filesave}{\answersfile}\showanswersubsection\end{Filesave}
+
+\subsection{蕎麦を食べたい}
+
+\subsubsection{一体どうするのか}
+
+どうにもならない.
+
+\subsubsection{どうしても蕎麦を食べたい}
+
+\begin{problem}
+結局どうするのですか?
+\begin{answer}
+蕎麦を買いに行きます.
+\end{answer}
+\end{problem}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\Closesolutionfile{\answersfile}
+\newpage
+\appendix
+\Readsolutionfile{\answersfile}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}
