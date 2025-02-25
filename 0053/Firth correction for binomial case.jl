@@ -69,14 +69,14 @@ function plot_alpha_error_rates_n(p; ns=1:100, α=0.05, f=Bool[1,1,1], kwargs...
         pval_firth[i] = prob_rej_bin(pvalue_bin_llr_firth, n, p; α)
     end
     plot()
-    f[1] && plot!(ns, pval_score; label="スコア検定 (二項分布の正規分布近似)", marker=:o, ms=3, msc=:auto, ma=0.5, c=1)
+    f[1] && plot!(ns, pval_score; label="スコア検定 (二項分布の正規分布近似)", marker=:circle, ms=3, msc=:auto, ma=0.5, c=1)
     f[2] && plot!(ns, pval_firth; label="対数最大尤度比検定 (Firth補正)", ls=:dash, marker=:diamond, ms=3.5, msc=:auto, ma=0.5, c=2)
     f[3] && plot!(ns, pval_llr; label="対数最大尤度比検定", ls=:dashdot, marker=:utriangle, ms=3.5, msc=:auto, ma=0.5, c=3)
     hline!([α]; label="", c=:black, ls=:dot)
     plot!(xguide=L"標本サイズ $n$")
     plot!(ytick=0:0.01:1)
     plot!(legend=:topright)
-    title!(L"$p = %$p$, $α = %$(100α)\% $ の場合のαエラー率")
+    title!(L"$p = %$p$, $\alpha = %$(100α)\% $ の場合の$\alpha$エラー率")
     plot!(; kwargs...)
 end
 
