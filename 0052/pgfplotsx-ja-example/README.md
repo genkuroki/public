@@ -31,3 +31,16 @@ PGFPlotsX.CUSTOM_PREAMBLE=[raw"\usepackage{luatexja}"]
 `Plots.pgfx_sanitize_string(s::AbstractString)`を無効にすることによって, title, legend, guide などでLaTeXのコードを使えるようになる.
 
 実際に動くコードについては `pgfplotsx-ja-example.ipynb` を参照せよ.
+
+## 非破壊的な方法
+
+```julia
+using LaTeXStrings
+using Plots
+pgfplotsx()
+PGFPlotsX.CUSTOM_PREAMBLE=[raw"\usepackage{luatexja}"]
+```
+
+として, 文字列を`LaTeXString`でラップするようにすれば, `pgfx_sanitize_string(s::AbstractString)`を無効にする破壊的な変更なしで, pgfplotsx()で日本語を使える.
+
+この方法も `pgfplotsx-ja-example.ipynb` で紹介してある.
