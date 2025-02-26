@@ -72,10 +72,10 @@ end
 # %% [markdown]
 # モデル
 # $$
-# \mathrm{Normal}(\mu_1, 1)\times\cdots\times\mathrm{Normal}(\mu_n, 1)
+# X_i \sim \mathrm{Normal}(\mu_i, 1) \quad \text{($i=1,2,\ldots,n$) かつ $X_i$達は独立}
 # $$
 #
-# 帰無仮説N:
+# 帰無仮説N:\
 # $$
 # \frac{\mu_1+\cdots+\mu_n}{n} = 0
 # $$
