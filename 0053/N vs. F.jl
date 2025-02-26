@@ -47,20 +47,20 @@ function Base.show(io::IO, ::MIME"text/plain", sp::SimPval)
     Nacc = .!Nrej
     Frej = pval_F .< α
     Facc = .!Frej
-    if iszero(μ)
-        print(io, @sprintf("alpha error rate for test of \"norm(μ)=0\": %5.1f%%\n", 100mean(Frej)))
-    else
-        print(io, @sprintf("power for test of \"norm(μ)=0\": %5.1f%%    (norm(μ) = %.3f)\n", 100mean(Frej), norm(μ)))
-    end
     if iszero(mean(μ))
         print(io, @sprintf("alpha error rate for test of \"mean(μ)=0\": %5.1f%%\n", 100mean(Nrej)))
     else
         print(io, @sprintf("power for test of \"mean(μ)=0\": %5.1f%%    (mean(μ) = %.3f)\n", 100mean(Nrej), mean(μ)))
     end
+    if iszero(μ)
+        print(io, @sprintf("alpha error rate for test of \"norm(μ)=0\": %5.1f%%\n", 100mean(Frej)))
+    else
+        print(io, @sprintf("power for test of \"norm(μ)=0\": %5.1f%%    (norm(μ) = %.3f)\n", 100mean(Frej), norm(μ)))
+    end
     print(io, "\n")
-    print(io, @sprintf("                       %18s  %22s\n", "reject \"mean(μ)=0\"", "not reject \"mean(μ)=0\""))
-    print(io, @sprintf("reject     \"norm(μ)=0\" %11.1f%%  %18.1f%%\n", 100mean(Frej .& Nrej), 100mean(Frej .& Nacc)))
-    print(io, @sprintf("not reject \"norm(μ)=0\" %11.1f%%  %18.1f%%\n", 100mean(Facc .& Nrej), 100mean(Facc .& Nacc)))
+    print(io, @sprintf("                       %18s  %22s\n", "reject \"norm(μ)=0\"", "not reject \"norm(μ)=0\""))
+    print(io, @sprintf("reject     \"mean(μ)=0\" %11.1f%%  %18.1f%%\n", 100mean(Nrej .& Frej), 100mean(Nrej .& Facc)))
+    print(io, @sprintf("not reject \"mean(μ)=0\" %11.1f%%  %18.1f%%\n", 100mean(Nacc .& Frej), 100mean(Nacc .& Facc)))
 end
 
 function sim_pval(; n=20, μ=zeros(n), niters=10^6, α=0.05)
@@ -80,17 +80,17 @@ end
 end
 
 # %% [markdown]
-# モデル:
+# モデル: 
 # $
 # X_i \sim \mathrm{Normal}(\mu_i, 1) \quad \text{($i=1,2,\ldots,n$) かつ $X_i$達は独立}
 # $
 #
-# 帰無仮説N:
+# 帰無仮説N: 
 # $
 # \dfrac{\mu_1+\cdots+\mu_n}{n} = 0
 # $
 #
-# 帰無仮説F:
+# 帰無仮説F: 
 # $
 # (\mu_1,\ldots,\mu_n)=(0,\ldots,0)
 # $
