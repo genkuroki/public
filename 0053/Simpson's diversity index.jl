@@ -16,287 +16,189 @@
 
 # %%
 using Distributions
-using KernelDensity
+using ForwardDiff
 using LinearAlgebra
-using Optim
-using QuadGK
 using Random
-using Roots
+using StatsFuns
 using StatsPlots
 default(fmt=:png)
-using BenchmarkTools: @btime, @benchmark
 
-simpson_diversity_index(p) = 1 - dot(p, p)
+parameter_C(P) = dot(P, P)
+parameter_T(P) = sum(p -> p^3, P)
+simpson_diversity_index(P) = 1 - parameter_C(P)
 
-function sdihat_naive(K)
-    n = sum(K)
-    1 - sum(k*(k-1)/(n*(n-1)) for k in K)
+estimator_of_C(n, K) = sum(k -> k*(k-1), K) / (n*(n-1))
+estimator_of_T(n, K) = sum(k -> k*(k-1)*(k-2), K) / (n*(n-1)*(n-2))
+estimator_of_simpson_diversity_index(n, K) = 1 - estimator_of_C(n, K)
+
+function minimum_of_estimator_of_C(n, r)
+    k = n/r
+    r*k*(k-1)/(n*(n-1))
 end
 
-function sdihat(K)
-    n = sum(K)
-    1 - (dot(K, K) - n)/(n*(n-1))
+function _coefficients_abc(n)
+    a = 4(n-2)/(n*(n-1))
+    b = (4n-6)/(n*(n-1))
+    c = 2/(n*(n-1))
+    (; a, b, c)
 end
 
-sdi_bayes_naive(P, n) = 1 - sum(p^2 - 2p*(1-p)/(n-1) for p in P)
-sdi_bayes(P, n) = 1  - ((1 + 2/(n-1))*dot(P, P) - 2/(n-1))
-
-function sehat_sdi(x)
-    n = sum(x)
-    √max(0, (4/n) * (sum(x->(x/n)^3, x) - sum(x -> (x/n)^2, x)^2))
+function variance_of_estimator_of_C(n, P)
+    (; a, b, c) = _coefficients_abc(n)
+    C = parameter_C(P)
+    T = parameter_T(P)
+    a*T - b*C^2 + c*C
 end
 
-function confint_sdi(x; α=0.05)
-    D̂ = sdihat(x)
-    sehat = sehat_sdi(x)
-    w = cquantile(Normal(), α/2)
-    [D̂ - w*sehat, D̂ + w*sehat]
+std_of_estimator_of_C(n, P) = √variance_of_estimator_of_C(n, P)
+
+function estimator_of_variance_of_estimator_of_C(n, K)
+    (; a, b, c) = _coefficients_abc(n)
+    Ĉ = estimator_of_C(n, K)
+    T̂ = estimator_of_T(n, K)
+    max(0, (a*T̂ - b*Ĉ^2 + c*Ĉ) / (1-b))
 end
 
-r(x) = round(x; sigdigits=3)
+estimator_of_std_of_esitimator_C(n, K) = √estimator_of_variance_of_estimator_of_C(n, K)
 
-function plot_posterior(; data=[5, 5, 5, 5], κ=0, α=0.05, L=10^6, kwargs...)
-    m = length(data)
-    D̂ = sdihat(data)
-    confint_D = confint_sdi(data)
-    prior_param = fill(κ, m)
-    posterior = Dirichlet(data .+ prior_param)
-    n = sum(params(posterior)[1])
-    Ptmp = zeros(m)
-    D = [sdi_bayes(rand!(posterior, Ptmp), n) for _ in 1:L]
-    credint_D = quantile.((D,), [α/2, 1-α/2])
-    mean_D = mean(D)
-    median_D = median(D)
-    ik_D = InterpKDE(kde(D))
-    mode_D = optimize(d -> -pdf(ik_D, d), minimum(D), maximum(D)).minimizer
-    
-    @show data
-    @show prior_param
-
-    density(D; label="posterior")
-    plot!(credint_D, zeros(2); label="95% cred. int. = $(r.(credint_D))", lw=3)
-    scatter!([mean_D], [0.0]; label="mean = $(r(mean_D))")
-    #scatter!([median_D], [0.0]; label="median = $(r(median_D))")
-    #scatter!([mode_D], [pdf(ik_D, mode_D)]; label="mode = $(r(mode_D))")
-    plot!(confint_D, fill(-0.05pdf(ik_D, mode_D), 2); ls=:dash, 
-        label="95% conf.int = $(r.(confint_D))", lw=3)
-    #scatter!([D̂], [-0.05pdf(ik_D, mode_D)]; label="sample SDI = $(r(D̂))")
-    vline!([D̂]; label="sample SDI = $(r(D̂))")
-    plot!(xguide="Simpson's diversity index", yguide="posterior density")
-    plot!(; kwargs...)
-    #title!("data=$data, prior=$prior_param")
-end
-
-# %%
-K = 10rand(100)
-@btime sdihat($K)
-@btime sdihat_naive($K)
-@show sdihat(K) ≈ sdihat_naive(K)
-
-n = sum(K)
-P = K / n
-@btime sdi_bayes($P, n)
-@btime sdi_bayes_naive($P, n)
-@show sdi_bayes(P, n) ≈ sdi_bayes_naive(P, n)
-;
-
-# %%
-n = 10
-p = rand(Exponential(), n)
-p ./= sum(p)
-mult = Multinomial(n, p)
-Ktmp = rand(mult)
-@time D̂ = [sdihat(rand!(mult, Ktmp)) for _ in 1:10^5]
-@show simpson_diversity_index(p)
-@show mean(D̂)
-@time SEhat = [sehat_sdi(rand!(mult, Ktmp)) for _ in 1:10^5]
-@show std(D̂)
-@show mean(SEhat)
-@show mean(SEhat) * n/(n-1)
-;
-
-# %%
-plot_posterior(data = [5, 5, 5, 5])
-
-# %%
-plot_posterior(data = [1, 6])
-
-# %% [markdown]
-# https://journals.asm.org/doi/10.1128/jcm.39.11.4190-4192.2001
-
-# %%
-table1 = [9; 8; 7; 6; 5; 5; fill(4, 3); fill(3, 4); fill(2, 9); fill(1, 35)]
-plot_posterior(data=table1, legend=:topleft)
-
-# %%
-table2 = [37; 5; fill(4, 2); fill(3, 4); fill(2, 8); fill(1, 39)]
-plot_posterior(data=table2)
-
-# %%
-table3 = [30; 13; 9; 8; fill(7, 3); fill(6, 2); 5; fill(2, 3); fill(1, 13)]
-plot_posterior(data=table3)
-
-# %%
-function pvalues_bayes(data, sdi₀; κ=eps(), L=10^4)
-    m = length(data)
-    n = sum(data)
-    prior_param = fill(κ, m)
-    posterior = Dirichlet(data .+ prior_param)
-    Ptmp = rand(posterior)
-    c = zeros(Int, length(sdi₀))
-    d = zeros(Int, length(sdi₀))
-    for i in 1:L
-        P = rand!(posterior, Ptmp)
-        sdi = sdi_bayes(P, n)
-        @. c += sdi ≤ sdi₀
-        @. d += sdi ≥ sdi₀
-    end
-    @. min(1, 2c/L, 2d/L)
-end
-
-function pvalue_bayes(data, sdi₀; κ=eps(), L=10^4)
-    m = length(data)
-    n = sum(data)
-    prior_param = fill(κ, m)
-    posterior = Dirichlet(data .+ prior_param)
-    Ptmp = rand(posterior)
-    c = 0
-    d = 0
-    for i in 1:L
-        P = rand!(posterior, Ptmp)
-        sdi = sdi_bayes(P, n)
-        c += sdi ≤ sdi₀
-        d += sdi ≥ sdi₀
-    end
-    min(1, 2c/L, 2d/L)
-end
-
-function pvalues_bootstrap(data, sdi₀; L=10^4)
-    r = length(data)
-    n, P = sum(data), data/sum(data)
-    dist_bootstrap = Multinomial(n, P)
-    Ktmp = rand(dist_bootstrap)
-    c = zeros(Int, length(sdi₀))
-    d = zeros(Int, length(sdi₀))
-    for i in 1:L
-        K = rand!(dist_bootstrap, Ktmp)
-        D̂ = sdihat(K) + 2(r-1)/(n*(n-1))
-        @. c += D̂ ≤ sdi₀
-        @. d += D̂ ≥ sdi₀
-    end
-    @. min(1, 2c/L, 2d/L)
-end
-
-function pvalue_bootstrap(data, sdi₀; L=10^4)
-    r = length(data)
-    n, P = sum(data), data/sum(data)
-    dist_bootstrap = Multinomial(n, P)
-    Ktmp = rand(dist_bootstrap)
-    c = 0
-    d = 0
-    for i in 1:L
-        K = rand!(dist_bootstrap, Ktmp)
-        D̂ = sdihat(K) + 2(r-1)/(n*(n-1))
-        c += D̂ ≤ sdi₀
-        d += D̂ ≥ sdi₀
-    end
-    min(1, 2c/L, 2d/L)
-end
-
-function sim_pval(dist::Multinomial; niters=10^4, κ=eps(), L=10^4)
-    μ = mean(dist)
-    sdi₀ = sdihat(μ)
-    pval_bayes = zeros(niters)
-    #pval_bootstrap = zeros(niters)
-    Ktmp = [rand(dist) for _ in 1:Threads.nthreads()]
+function sim_sdi(mult::Multinomial; niters=10^5)
+    n = ntrials(mult)
+    sdihat = zeros(niters)
+    varhat = zeros(niters)
+    Ktmp = [rand(mult) for _ in 1:Threads.nthreads()]
     Threads.@threads :static for i in 1:niters
         tid = Threads.threadid()
-        K = rand!(dist, Ktmp[tid])
-        pval_bayes[i] = pvalue_bayes(K, sdi₀; κ, L)
-        #pval_bootstrap[i] = pvalue_bootstrap(K, sdi₀; L)
+        K = rand!(mult, Ktmp[tid])
+        sdihat[i] = estimator_of_simpson_diversity_index(n, K)
+        varhat[i] = estimator_of_variance_of_estimator_of_C(n, K)
     end
-    #(; pval_bayes, pval_bootstrap)
-    (; pval_bayes,)
+    (; sdihat, varhat)
+end
+
+multinomial(K) = Multinomial(sum(K), K/sum(K)) 
+
+function pvalue_sdi(n, K, sdi; linkfunc=identity)
+    dlinkfunc(x) = ForwardDiff.derivative(linkfunc, x)
+    sdihat = estimator_of_simpson_diversity_index(n, K)
+    sehat = estimator_of_std_of_esitimator_C(n, K)
+    z = (linkfunc(sdihat) - linkfunc(sdi)) / (abs(dlinkfunc(sdihat)) * sehat)
+    2ccdf(Normal(), abs(z))
+end
+
+pvalue_sdi(K, sdi) = pvalue(sum(K), K, sdi)
+
+function make_link_logit(n, r)
+    function link_logit(x)
+        m = minimum_of_estimator_of_C(n, r)
+        t = (1 - m - x)/(1 - m)
+        logit(t)
+    end
+    link_logit
+end
+
+function make_link_log(n, r)
+    function link_log(x)
+        m = minimum_of_estimator_of_C(n, r)
+        t = 1 - m - x
+        log(t)
+    end
+    link_log
+end
+
+function sim_pval(mult::Multinomial;
+        niters=10^5,
+        n = ntrials(mult),
+        P = probs(mult),
+        r = length(P),
+        sdi = simpson_diversity_index(P),
+        linkfunc0 = identity,
+        linkfunc1 = make_link_logit(n, r),
+        linkfunc2 = make_link_log(n, r),
+    )
+    n = ntrials(mult)
+    pval0 = zeros(niters)
+    pval1 = zeros(niters)
+    pval2 = zeros(niters)
+    Ktmp = [rand(mult) for _ in 1:Threads.nthreads()]
+    Threads.@threads :static for i in 1:niters
+        tid = Threads.threadid()
+        K = rand!(mult, Ktmp[tid])
+        pval0[i] = pvalue_sdi(n, K, sdi; linkfunc=linkfunc0)
+        pval1[i] = pvalue_sdi(n, K, sdi; linkfunc=linkfunc1)
+        pval2[i] = pvalue_sdi(n, K, sdi; linkfunc=linkfunc2)
+    end
+    (; pval0, pval1, pval2)
 end
 
 _ecdf(A, x) = count(≤(x), A) / length(A)
 
+function plot_pval(mult::Multinomial;
+        niters=10^5,
+        n = ntrials(mult),
+        P = probs(mult),
+        r = length(P),
+        sdi = simpson_diversity_index(P),
+        linkfunc0 = identity,
+        linkfunc1 = make_link_logit(n, r),
+        linkfunc2 = make_link_log(n, r),
+    )
+    (; pval0, pval1, pval2) = sim_pval(mult; niters, n, P, r, sdi, linkfunc0, linkfunc1, linkfunc2)
+    plot()
+    plot!(α -> _ecdf(pval0, α), 0, 0.1; label="$linkfunc0")
+    plot!(α -> _ecdf(pval1, α), 0, 0.1; label="$linkfunc1", ls=:dash)
+    plot!(α -> _ecdf(pval2, α), 0, 0.1; label="$linkfunc2", ls=:dashdot)
+    plot!(identity; label="", c=:gray, ls=:dot)
+    plot!(xtick=0:0.01:1)
+    plot!(size=(400, 400))
+end
+
 # %%
-data = table1
-@show D̂ = sdihat(data)
-sdi₀ = range(D̂-0.03, D̂+0.02, 100)
-@show length(sdi₀)
-@time pval_bayes = pvalues_bayes(data, sdi₀; κ=eps(), L=10^6)
-@time pval_bootstrap = pvalues_bootstrap(data, sdi₀; L=10^6)
-plot(sdi₀, pval_bayes)
-plot!(sdi₀, pval_bootstrap)
-vline!([D̂])
+data1 = [5, 5, 5, 5]
+data2 = [6, 2]
+data3 = [10, 6, 2, 1, 1]
+table1 = [9; 8; 7; 6; 5; 5; fill(4, 3); fill(3, 4); fill(2, 9); fill(1, 35)]
+table2 = [37; 5; fill(4, 2); fill(3, 4); fill(2, 8); fill(1, 39)]
+table3 = [30; 13; 9; 8; fill(7, 3); fill(6, 2); 5; fill(2, 3); fill(1, 13)]
+;
 
 # %%
 data = table2
-@show D̂ = sdihat(data)
-sdi₀ = range(D̂-0.03, D̂+0.02, 100)
-@show length(sdi₀)
-@time pval_bayes = pvalues_bayes(data, sdi₀; κ=eps(), L=10^6)
-@time pval_bootstrap = pvalues_bootstrap(data, sdi₀; L=10^6)
-plot(sdi₀, pval_bayes)
-plot!(sdi₀, pval_bootstrap)
-vline!([D̂])
+mult = multinomial(data)
+@show n = ntrials(mult)
+@show P = probs(mult)
+@show r = length(P)
+@show linkfunc = make_link_logit(n, r)
+dlinkfunc(x) = ForwardDiff.derivative(linkfunc, x)
+@time (; sdihat, varhat) = sim_sdi(mult::Multinomial; niters=10^6)
+println()
+@show simpson_diversity_index(P)
+@show mean(sdihat)
+println()
+@show variance_of_estimator_of_C(n, P)
+@show var(sdihat)
+@show mean(varhat)
+println()
+@show α = 0.05
+@show w = cquantile(Normal(), α/2)
+println()
+@show m = minimum_of_estimator_of_C(n, r)
+@show sdi_true = simpson_diversity_index(P)
+@show se_true = std_of_estimator_of_C(n, P)
+@show se_true_linked = abs(dlinkfunc(sdi_true)) * se_true
+bin = :auto
+stephist(linkfunc.((1 - m) .- sdihat); norm=true, bin, label="")
+plot!(xguide="linkfunc(1-minimum(Ĉ)-sdihat)")
+plot!(legend=:outertop)
+vline!([linkfunc(1-m-sdi_true)]; label="sdihat = linkfunc(1-minimum(Ĉ) - sdi_true)")
+vline!([linkfunc(1-m-sdi_true) - w*se_true_linked, linkfunc(1-m-sdi_true) + w*se_true_linked]; label="", ls=:dash)
 
 # %%
-data = table1
-dist = Multinomial(sum(data), data/sum(data))
-#@time (; pval_bayes, pval_bootstrap) = sim_pval(dist; κ=0.23, niters=1000)#10^4)
-@time (; pval_bayes,) = sim_pval(dist; κ=0.23, niters=10^4)
-plot(α -> _ecdf(pval_bayes, α), 0, 0.1; label="")
-#plot!(α -> _ecdf(pval_bootstrap, α), 0, 0.1; label="")
-plot!(identity; label="", ls=:dot)
-plot!(xtick=0:0.01:1, ytick=0:0.01:1)
-plot!(size=(400, 400))
-
-# %%
-data = table2
-dist = Multinomial(sum(data), data/sum(data))
-@time pval = sim_pval(dist; κ=0.05, niters=10^4)
-plot(α -> _ecdf(pval, α), 0, 0.1; label="")
-plot!(identity; label="", ls=:dot)
-plot!(xtick=0:0.01:1, ytick=0:0.01:1)
-plot!(size=(400, 400))
-
-# %%
-data = table3
-dist = Multinomial(sum(data), data/sum(data))
-@time pval = sim_pval(dist; κ=0.1, niters=10^4)
-plot(α -> _ecdf(pval, α), 0, 0.1; label="")
-plot!(identity; label="", ls=:dot)
-plot!(xtick=0:0.01:1, ytick=0:0.01:1)
-plot!(size=(400, 400))
-
-# %%
-data = [10, 10, 10, 10]
-dist = Multinomial(sum(data), data/sum(data))
-@time pval = sim_pval(dist; κ=0.1, niters=10^5)
-plot(α -> _ecdf(pval, α), 0, 0.1; label="")
-plot!(identity; label="", ls=:dot)
-plot!(xtick=0:0.01:1, ytick=0:0.01:1)
-plot!(size=(400, 400))
-
-# %%
-data = [5, 5, 5, 5]
-dist = Multinomial(sum(data), data/sum(data))
-@time pval = sim_pval(dist; κ=0.1, niters=10^5)
-plot(α -> _ecdf(pval, α), 0, 0.1; label="")
-plot!(identity; label="", ls=:dot)
-plot!(xtick=0:0.01:1, ytick=0:0.01:1)
-plot!(size=(400, 400))
-
-# %%
-data = [10, 6, 2, 1, 1]
-dist = Multinomial(sum(data), data/sum(data))
-@time pval = sim_pval(dist; κ=0.1, niters=10^5)
-plot(α -> _ecdf(pval, α), 0, 0.1; label="")
-plot!(identity; label="", ls=:dot)
-plot!(xtick=0:0.01:1, ytick=0:0.01:1)
-plot!(size=(400, 400))
+@show data = table2
+mult = multinomial(data)
+n, P = params(mult)
+r = length(P)
+@show n r
+@show round.(P; sigdigits=2)
+plot_pval(mult)
 
 # %%
