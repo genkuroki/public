@@ -30,6 +30,7 @@ simpson_diversity_index(P) = 1 - parameter_C(P)
 estimator_of_C(n, K) = sum(k -> k*(k-1), K) / (n*(n-1))
 estimator_of_T(n, K) = sum(k -> k*(k-1)*(k-2), K) / (n*(n-1)*(n-2))
 estimator_of_simpson_diversity_index(n, K) = 1 - estimator_of_C(n, K)
+estimator_of_simpson_diversity_index(K) = estimator_of_simpson_diversity_index(sum(K), K)
 
 function minimum_of_estimator_of_C(n, r)
     k = n/r
@@ -47,21 +48,26 @@ function variance_of_estimator_of_C(n, P)
     (; a, b, c) = _coefficients_abc(n)
     C = parameter_C(P)
     T = parameter_T(P)
-    a*T - b*C^2 + c*C
+    max(0, a*T - b*C^2 + c*C)
 end
-
 std_of_estimator_of_C(n, P) = √variance_of_estimator_of_C(n, P)
 
+# See https://arxiv.org/abs/2310.03439
 function estimator_of_variance_of_estimator_of_C(n, K)
     (; a, b, c) = _coefficients_abc(n)
     Ĉ = estimator_of_C(n, K)
     T̂ = estimator_of_T(n, K)
     max(0, (a*T̂ - b*Ĉ^2 + c*Ĉ) / (1-b))
 end
+estimator_of_variance_of_estimator_of_C(K) = estimator_of_variance_of_estimator_of_C(sum(K), K)
 
-estimator_of_std_of_esitimator_C(n, K) = √estimator_of_variance_of_estimator_of_C(n, K)
+estimator_of_std_of_estimator_of_C(n, K) = √estimator_of_variance_of_estimator_of_C(n, K)
+estimator_of_std_of_estimator_of_C(K) = estimator_of_std_of_estimator_of_C(sum(K), K)
 
-function sim_sdi(mult::Multinomial; niters=10^5)
+function sim_sdi(mult::Multinomial; niters=10^5,
+        #varhatfunc = estimator_of_variance_of_estimator_of_C, 
+        varhatfunc = variance_of_sdi_in_bootstrap, 
+    )
     n = ntrials(mult)
     sdihat = zeros(niters)
     varhat = zeros(niters)
@@ -70,22 +76,63 @@ function sim_sdi(mult::Multinomial; niters=10^5)
         tid = Threads.threadid()
         K = rand!(mult, Ktmp[tid])
         sdihat[i] = estimator_of_simpson_diversity_index(n, K)
-        varhat[i] = estimator_of_variance_of_estimator_of_C(n, K)
+        varhat[i] = varhatfunc(n, K)
     end
     (; sdihat, varhat)
 end
 
 multinomial(K) = Multinomial(sum(K), K/sum(K)) 
 
-function pvalue_sdi(n, K, sdi; linkfunc=identity)
+function pvalue_sdi(n, K, sdi; linkfunc=identity,
+        #sehatfunc = estimator_of_std_of_estimator_of_C, 
+        sehatfunc = std_of_sdi_in_bootstrap, 
+    )
     dlinkfunc(x) = ForwardDiff.derivative(linkfunc, x)
     sdihat = estimator_of_simpson_diversity_index(n, K)
-    sehat = estimator_of_std_of_esitimator_C(n, K)
+    sehat = sehatfunc(n, K)
     z = (linkfunc(sdihat) - linkfunc(sdi)) / (abs(dlinkfunc(sdihat)) * sehat)
     2ccdf(Normal(), abs(z))
 end
 
 pvalue_sdi(K, sdi) = pvalue(sum(K), K, sdi)
+
+function pvalues_sdi_bootstrap(data, sdi₀; L=10^4)
+    r = length(data)
+    n, P = sum(data), data/sum(data)
+    dist_bootstrap = Multinomial(n, P)
+    Ktmp = rand(dist_bootstrap)
+    c = zeros(Int, length(sdi₀))
+    d = zeros(Int, length(sdi₀))
+    for i in 1:L
+        K = rand!(dist_bootstrap, Ktmp)
+        D̂ = 1 - (n*estimator_of_C(n, K) - 1) / (n-1)
+        @. c += D̂ ≤ sdi₀
+        @. d += D̂ ≥ sdi₀
+    end
+    @. min(1, 2c/L, 2d/L)
+end
+
+function pvalue_sdi_bootstrap(data, sdi₀; L=10^4)
+    r = length(data)
+    n, P = sum(data), data/sum(data)
+    dist_bootstrap = Multinomial(n, P)
+    Ktmp = rand(dist_bootstrap)
+    c = 0
+    d = 0
+    for i in 1:L
+        K = rand!(dist_bootstrap, Ktmp)
+        D̂ = 1 - (n*estimator_of_C(n, K) - 1) / (n - 1)
+        c += D̂ ≤ sdi₀
+        d += D̂ ≥ sdi₀
+    end
+    min(1, 2c/L, 2d/L)
+end
+
+#variance_of_sdi_in_bootstrap(n, data) = variance_of_estimator_of_C(n, data/n)
+variance_of_sdi_in_bootstrap(n, data) = (n/(n-1))^2 * variance_of_estimator_of_C(n, data/n)
+variance_of_sdi_in_bootstrap(data) = variance_of_sdi_in_bootstrap(sum(data), data)
+std_of_sdi_in_bootstrap(n, data) = √variance_of_sdi_in_bootstrap(n, data)
+std_of_sdi_in_bootstrap(data) = std_of_sdi_in_bootstrap(sum(data), data)
 
 function make_link_logit(n, r)
     function link_logit(x)
@@ -96,6 +143,8 @@ function make_link_logit(n, r)
     link_logit
 end
 
+make_link_logit(mult::Multinomial) = make_link_logit(ntrials(mult), length(probs(mult)))
+
 function make_link_log(n, r)
     function link_log(x)
         m = minimum_of_estimator_of_C(n, r)
@@ -105,8 +154,26 @@ function make_link_log(n, r)
     link_log
 end
 
+make_link_log(mult::Multinomial) = make_link_log(ntrials(mult), length(probs(mult)))
+
+function plot_pval(data; sdimin=0, sdimax=1,
+        #sehatfunc = estimator_of_std_of_estimator_of_C, 
+        sehatfunc = std_of_sdi_in_bootstrap, 
+    )
+    n, r = sum(data), length(data)
+    link_logit = make_link_logit(n, r)
+    link_log = make_link_log(n, r)
+    sdis = range(sdimin, sdimax, 200)
+    pval_bs = pvalues_sdi_bootstrap(data, sdis)
+    plot()
+    plot!(sdi -> pvalue_sdi(n, data, sdi; linkfunc=identity, sehatfunc), sdimin, sdimax; label="identity")
+    plot!(sdi -> pvalue_sdi(n, data, sdi; linkfunc=link_logit, sehatfunc), sdimin, sdimax; label="logit", ls=:dash)
+    plot!(sdi -> pvalue_sdi(n, data, sdi; linkfunc=link_log, sehatfunc), sdimin, sdimax; label="log", ls=:dashdot)
+    plot!(sdis, pval_bs; label="bootstrap", ls=:dashdotdot)
+end
+
 function sim_pval(mult::Multinomial;
-        niters=10^5,
+        niters=10^4,
         n = ntrials(mult),
         P = probs(mult),
         r = length(P),
@@ -114,26 +181,31 @@ function sim_pval(mult::Multinomial;
         linkfunc0 = identity,
         linkfunc1 = make_link_logit(n, r),
         linkfunc2 = make_link_log(n, r),
+        L = 10^4,
+        #sehatfunc = estimator_of_std_of_estimator_of_C, 
+        sehatfunc = std_of_sdi_in_bootstrap, 
     )
     n = ntrials(mult)
     pval0 = zeros(niters)
     pval1 = zeros(niters)
     pval2 = zeros(niters)
+    pval_bs = zeros(niters)
     Ktmp = [rand(mult) for _ in 1:Threads.nthreads()]
     Threads.@threads :static for i in 1:niters
         tid = Threads.threadid()
         K = rand!(mult, Ktmp[tid])
-        pval0[i] = pvalue_sdi(n, K, sdi; linkfunc=linkfunc0)
-        pval1[i] = pvalue_sdi(n, K, sdi; linkfunc=linkfunc1)
-        pval2[i] = pvalue_sdi(n, K, sdi; linkfunc=linkfunc2)
+        pval0[i] = pvalue_sdi(n, K, sdi; linkfunc=linkfunc0, sehatfunc)
+        pval1[i] = pvalue_sdi(n, K, sdi; linkfunc=linkfunc1, sehatfunc)
+        pval2[i] = pvalue_sdi(n, K, sdi; linkfunc=linkfunc2, sehatfunc)
+        pval_bs[i] = pvalue_sdi_bootstrap(K, sdi; L)
     end
-    (; pval0, pval1, pval2)
+    (; pval0, pval1, pval2, pval_bs)
 end
 
 _ecdf(A, x) = count(≤(x), A) / length(A)
 
 function plot_pval(mult::Multinomial;
-        niters=10^5,
+        niters=10^4,
         n = ntrials(mult),
         P = probs(mult),
         r = length(P),
@@ -141,28 +213,128 @@ function plot_pval(mult::Multinomial;
         linkfunc0 = identity,
         linkfunc1 = make_link_logit(n, r),
         linkfunc2 = make_link_log(n, r),
+        L = 10^4,
+        #sehatfunc = estimator_of_std_of_estimator_of_C, 
+        sehatfunc = std_of_sdi_in_bootstrap, 
     )
-    (; pval0, pval1, pval2) = sim_pval(mult; niters, n, P, r, sdi, linkfunc0, linkfunc1, linkfunc2)
+    (; pval0, pval1, pval2, pval_bs) = sim_pval(mult; niters, n, P, r, sdi, linkfunc0, linkfunc1, linkfunc2, L, sehatfunc)
     plot()
     plot!(α -> _ecdf(pval0, α), 0, 0.1; label="$linkfunc0")
     plot!(α -> _ecdf(pval1, α), 0, 0.1; label="$linkfunc1", ls=:dash)
     plot!(α -> _ecdf(pval2, α), 0, 0.1; label="$linkfunc2", ls=:dashdot)
+    plot!(α -> _ecdf(pval_bs, α), 0, 0.1; label="bootstrap", ls=:dashdotdot)
     plot!(identity; label="", c=:gray, ls=:dot)
     plot!(xtick=0:0.01:1)
     plot!(size=(400, 400))
 end
 
 # %%
-data1 = [5, 5, 5, 5]
+data = [4, 4, 4, 4]
+sdis = range(0, 1, 200)
+pval_bs = pvalues_sdi_bootstrap(data, sdis)
+plot(sdis, pval_bs)
+
+# %%
+function sample_bootstrap(data; L=10^4)
+    sdi_bootstrap = zeros(L)
+    r = length(data)
+    n, P = sum(data), data/sum(data)
+    dist_bootstrap = Multinomial(n, P)
+    Ktmp = rand(dist_bootstrap)
+    for i in 1:L
+        K = rand!(dist_bootstrap, Ktmp)
+        sdi_bootstrap[i] = (n*estimator_of_C(n, K) - 1) / (n - 1)
+    end
+    sdi_bootstrap
+end
+
+#data = [30; 13; 9; 8; fill(7, 3); fill(6, 2); 5; fill(2, 3); fill(1, 13)]
+data = [4, 4, 4, 4]
+n = sum(data)
+r = length(data)
+
+sdi_bootstrap = sample_bootstrap(data; L=10^6)
+
+@show 0.6^2+0.2^2+0.1^2*2
+@show C = parameter_C(data/n)
+@show (6*5 + 2*1)/(10*9)
+@show Ĉ = estimator_of_C(n, data)
+@show mean(sdi_bootstrap)
+
+stephist(sdi_bootstrap; bin=100)
+vline!([Ĉ])
+
+# %%
+data = [4, 3, 3, 3]
+@show 1 - minimum_of_estimator_of_C(sum(data), length(data))
+@show estimator_of_simpson_diversity_index(data)
+@show estimator_of_std_of_estimator_of_C(data)
+@show std_of_sdi_in_bootstrap(data);
+
+# %%
+data1 = [4, 4, 4, 4]
 data2 = [6, 2]
 data3 = [10, 6, 2, 1, 1]
 table1 = [9; 8; 7; 6; 5; 5; fill(4, 3); fill(3, 4); fill(2, 9); fill(1, 35)]
 table2 = [37; 5; fill(4, 2); fill(3, 4); fill(2, 8); fill(1, 39)]
 table3 = [30; 13; 9; 8; fill(7, 3); fill(6, 2); 5; fill(2, 3); fill(1, 13)]
-;
+
+datasets = [data1, data2, data3, table1, table2, table3]
+
+PP = []
+for data in datasets
+    n, r = sum(data), length(data)
+    @show sdihat = estimator_of_simpson_diversity_index(n, data)
+    @show sehat = estimator_of_std_of_estimator_of_C(n, data)
+    @show sehat = std_of_sdi_in_bootstrap(n, data)
+    println()
+    if sehat == 0
+        sdimin, sdimax = 0, 1
+    else
+        sdimin, sdimax = max(0, sdihat-8sehat), min(1, sdihat+4sehat)
+    end
+    P = plot_pval(data; sdimin, sdimax,
+        sehatfunc = estimator_of_std_of_estimator_of_C, 
+        #sehatfunc = std_of_sdi_in_bootstrap, 
+    )
+    push!(PP, P)
+end
+
+plot!(PP...; size=(800, 900), layout=(3, 2), legend=:topleft)
 
 # %%
-data = table2
+data1 = [4, 4, 4, 4]
+data2 = [6, 2]
+data3 = [10, 6, 2, 1, 1]
+table1 = [9; 8; 7; 6; 5; 5; fill(4, 3); fill(3, 4); fill(2, 9); fill(1, 35)]
+table2 = [37; 5; fill(4, 2); fill(3, 4); fill(2, 8); fill(1, 39)]
+table3 = [30; 13; 9; 8; fill(7, 3); fill(6, 2); 5; fill(2, 3); fill(1, 13)]
+
+datasets = [data1, data2, data3, table1, table2, table3]
+
+PP = []
+for data in datasets
+    n, r = sum(data), length(data)
+    @show sdihat = estimator_of_simpson_diversity_index(n, data)
+    @show sehat = estimator_of_std_of_estimator_of_C(n, data)
+    @show sehat = std_of_sdi_in_bootstrap(n, data)
+    println()
+    if sehat == 0
+        sdimin, sdimax = 0, 1
+    else
+        sdimin, sdimax = max(0, sdihat-8sehat), min(1, sdihat+4sehat)
+    end
+    P = plot_pval(data; sdimin, sdimax,
+        #sehatfunc = estimator_of_std_of_estimator_of_C, 
+        sehatfunc = std_of_sdi_in_bootstrap, 
+    )
+    push!(PP, P)
+end
+
+plot!(PP...; size=(800, 900), layout=(3, 2), legend=:topleft)
+
+# %%
+data = table3
 mult = multinomial(data)
 @show n = ntrials(mult)
 @show P = probs(mult)
@@ -193,12 +365,51 @@ vline!([linkfunc(1-m-sdi_true)]; label="sdihat = linkfunc(1-minimum(Ĉ) - sdi_t
 vline!([linkfunc(1-m-sdi_true) - w*se_true_linked, linkfunc(1-m-sdi_true) + w*se_true_linked]; label="", ls=:dash)
 
 # %%
-@show data = table2
+@show data = data1
 mult = multinomial(data)
 n, P = params(mult)
 r = length(P)
 @show n r
 @show round.(P; sigdigits=2)
-plot_pval(mult)
+@time plot_pval(mult; niters=10000, L=0,
+    sehatfunc = estimator_of_std_of_estimator_of_C, 
+    #sehatfunc = std_of_sdi_in_bootstrap, 
+)
+
+# %%
+@show data = data1
+mult = multinomial(data)
+n, P = params(mult)
+r = length(P)
+@show n r
+@show round.(P; sigdigits=2)
+@time plot_pval(mult; niters=10000, L=10000,
+    #sehatfunc = estimator_of_std_of_estimator_of_C, 
+    sehatfunc = std_of_sdi_in_bootstrap, 
+)
+
+# %%
+@show data = table1
+mult = multinomial(data)
+n, P = params(mult)
+r = length(P)
+@show n r
+@show round.(P; sigdigits=2)
+@time plot_pval(mult; niters=10000, L=0,
+    sehatfunc = estimator_of_std_of_estimator_of_C, 
+    #sehatfunc = std_of_sdi_in_bootstrap, 
+)
+
+# %%
+@show data = table1
+mult = multinomial(data)
+n, P = params(mult)
+r = length(P)
+@show n r
+@show round.(P; sigdigits=2)
+@time plot_pval(mult; niters=10000, L=10000,
+    #sehatfunc = estimator_of_std_of_estimator_of_C, 
+    sehatfunc = std_of_sdi_in_bootstrap, 
+)
 
 # %%
