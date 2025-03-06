@@ -83,6 +83,8 @@ end
 
 multinomial(K) = Multinomial(sum(K), K/sum(K)) 
 
+safediv(x, y) = x == 0 ? zero(x/y) : isinf(x) ? oftype(x/y, x) : x/y
+
 function pvalue_sdi(n, K, sdi; linkfunc=identity,
         #sehatfunc = estimator_of_std_of_estimator_of_C, 
         sehatfunc = std_of_sdi_in_bootstrap, 
@@ -90,11 +92,19 @@ function pvalue_sdi(n, K, sdi; linkfunc=identity,
     dlinkfunc(x) = ForwardDiff.derivative(linkfunc, x)
     sdihat = estimator_of_simpson_diversity_index(n, K)
     sehat = sehatfunc(n, K)
-    z = (linkfunc(sdihat) - linkfunc(sdi)) / (abs(dlinkfunc(sdihat)) * sehat)
-    2ccdf(Normal(), abs(z))
+    if sehat == 0
+        sdihat == sdi ? one(sdi) : zero(sdi)
+    else
+        z = safediv(linkfunc(sdihat) - linkfunc(sdi), abs(dlinkfunc(sdihat)) * sehat)
+        2ccdf(Normal(), abs(z))
+    end
 end
 
-pvalue_sdi(K, sdi) = pvalue(sum(K), K, sdi)
+pvalue_sdi(K, sdi;
+        linkfunc=identity,
+        #sehatfunc = estimator_of_std_of_estimator_of_C, 
+        sehatfunc = std_of_sdi_in_bootstrap,         
+    ) = pvalue_sdi(sum(K), K, sdi; linkfunc, sehatfunc)
 
 function pvalues_sdi_bootstrap(data, sdi₀; L=10^4)
     r = length(data)
@@ -128,29 +138,32 @@ function pvalue_sdi_bootstrap(data, sdi₀; L=10^4)
     min(1, 2c/L, 2d/L)
 end
 
-#variance_of_sdi_in_bootstrap(n, data) = variance_of_estimator_of_C(n, data/n)
 variance_of_sdi_in_bootstrap(n, data) = (n/(n-1))^2 * variance_of_estimator_of_C(n, data/n)
+#variance_of_sdi_in_bootstrap(n, data) = variance_of_estimator_of_C(n, data/n)
+#variance_of_sdi_in_bootstrap(n, data) = (n/(n-1))*(1 - (4n-6)/(n*(n-1))) * variance_of_estimator_of_C(n, data/n)
 variance_of_sdi_in_bootstrap(data) = variance_of_sdi_in_bootstrap(sum(data), data)
 std_of_sdi_in_bootstrap(n, data) = √variance_of_sdi_in_bootstrap(n, data)
 std_of_sdi_in_bootstrap(data) = std_of_sdi_in_bootstrap(sum(data), data)
 
 function make_link_logit(n, r)
-    function link_logit(x)
-        m = minimum_of_estimator_of_C(n, r)
-        t = (1 - m - x)/(1 - m)
-        logit(t)
-    end
+#     function link_logit(x)
+#         m = minimum_of_estimator_of_C(n, r)
+#         t = (1 - m - x)/(1 - m)
+#         logit(t)
+#     end
+    link_logit(x) = -logit(x)
     link_logit
 end
 
 make_link_logit(mult::Multinomial) = make_link_logit(ntrials(mult), length(probs(mult)))
 
 function make_link_log(n, r)
-    function link_log(x)
-        m = minimum_of_estimator_of_C(n, r)
-        t = 1 - m - x
-        log(t)
-    end
+#     function link_log(x)
+#         m = minimum_of_estimator_of_C(n, r)
+#         t = 1 - m - x
+#         log(t)
+#     end
+    link_log(x) = log(1 - x)
     link_log
 end
 
@@ -274,43 +287,15 @@ data = [4, 3, 3, 3]
 # %%
 data1 = [4, 4, 4, 4]
 data2 = [6, 2]
-data3 = [10, 6, 2, 1, 1]
+data3 = [12, 4, 1]
+data4 = [5, 5, 3, 3]
+data5 = [6, 5, 4, 3]
+data6 = [10, 6, 2, 1, 1]
 table1 = [9; 8; 7; 6; 5; 5; fill(4, 3); fill(3, 4); fill(2, 9); fill(1, 35)]
 table2 = [37; 5; fill(4, 2); fill(3, 4); fill(2, 8); fill(1, 39)]
 table3 = [30; 13; 9; 8; fill(7, 3); fill(6, 2); 5; fill(2, 3); fill(1, 13)]
 
-datasets = [data1, data2, data3, table1, table2, table3]
-
-PP = []
-for data in datasets
-    n, r = sum(data), length(data)
-    @show sdihat = estimator_of_simpson_diversity_index(n, data)
-    @show sehat = estimator_of_std_of_estimator_of_C(n, data)
-    @show sehat = std_of_sdi_in_bootstrap(n, data)
-    println()
-    if sehat == 0
-        sdimin, sdimax = 0, 1
-    else
-        sdimin, sdimax = max(0, sdihat-8sehat), min(1, sdihat+4sehat)
-    end
-    P = plot_pval(data; sdimin, sdimax,
-        sehatfunc = estimator_of_std_of_estimator_of_C, 
-        #sehatfunc = std_of_sdi_in_bootstrap, 
-    )
-    push!(PP, P)
-end
-
-plot!(PP...; size=(800, 900), layout=(3, 2), legend=:topleft)
-
-# %%
-data1 = [4, 4, 4, 4]
-data2 = [6, 2]
-data3 = [10, 6, 2, 1, 1]
-table1 = [9; 8; 7; 6; 5; 5; fill(4, 3); fill(3, 4); fill(2, 9); fill(1, 35)]
-table2 = [37; 5; fill(4, 2); fill(3, 4); fill(2, 8); fill(1, 39)]
-table3 = [30; 13; 9; 8; fill(7, 3); fill(6, 2); 5; fill(2, 3); fill(1, 13)]
-
-datasets = [data1, data2, data3, table1, table2, table3]
+datasets = [data1, data2, data3, data4, data5, data6, table1, table2, table3]
 
 PP = []
 for data in datasets
@@ -331,7 +316,41 @@ for data in datasets
     push!(PP, P)
 end
 
-plot!(PP...; size=(800, 900), layout=(3, 2), legend=:topleft)
+plot!(PP...; size=(1200, 800), layout=(3, 3), legend=:topleft)
+
+# %%
+data1 = [4, 4, 4, 4]
+data2 = [6, 2]
+data3 = [12, 4, 1]
+data4 = [5, 5, 3, 3]
+data5 = [6, 5, 4, 3]
+data6 = [10, 6, 2, 1, 1]
+table1 = [9; 8; 7; 6; 5; 5; fill(4, 3); fill(3, 4); fill(2, 9); fill(1, 35)]
+table2 = [37; 5; fill(4, 2); fill(3, 4); fill(2, 8); fill(1, 39)]
+table3 = [30; 13; 9; 8; fill(7, 3); fill(6, 2); 5; fill(2, 3); fill(1, 13)]
+
+datasets = [data1, data2, data3, data4, data5, data6, table1, table2, table3]
+
+PP = []
+for data in datasets
+    n, r = sum(data), length(data)
+    @show sdihat = estimator_of_simpson_diversity_index(n, data)
+    @show sehat = estimator_of_std_of_estimator_of_C(n, data)
+    @show sehat = std_of_sdi_in_bootstrap(n, data)
+    println()
+    if sehat == 0
+        sdimin, sdimax = 0, 1
+    else
+        sdimin, sdimax = max(0, sdihat-8sehat), min(1, sdihat+4sehat)
+    end
+    P = plot_pval(data; sdimin, sdimax,
+        #sehatfunc = estimator_of_std_of_estimator_of_C, 
+        sehatfunc = std_of_sdi_in_bootstrap, 
+    )
+    push!(PP, P)
+end
+
+plot!(PP...; size=(1200, 800), layout=(3, 3), legend=:topleft)
 
 # %%
 data = table3
@@ -389,7 +408,7 @@ r = length(P)
 )
 
 # %%
-@show data = table1
+@show data = data2
 mult = multinomial(data)
 n, P = params(mult)
 r = length(P)
@@ -401,7 +420,103 @@ r = length(P)
 )
 
 # %%
+@show data = data2
+mult = multinomial(data)
+n, P = params(mult)
+r = length(P)
+@show n r
+@show round.(P; sigdigits=2)
+@time plot_pval(mult; niters=10000, L=10000,
+    #sehatfunc = estimator_of_std_of_estimator_of_C, 
+    sehatfunc = std_of_sdi_in_bootstrap, 
+)
+
+# %%
+@show data = data3
+mult = multinomial(data)
+n, P = params(mult)
+r = length(P)
+@show n r
+@show round.(P; sigdigits=2)
+@time plot_pval(mult; niters=10000, L=0,
+    sehatfunc = estimator_of_std_of_estimator_of_C, 
+    #sehatfunc = std_of_sdi_in_bootstrap, 
+)
+
+# %%
+@show data = data3
+mult = multinomial(data)
+n, P = params(mult)
+r = length(P)
+@show n r
+@show round.(P; sigdigits=2)
+@time plot_pval(mult; niters=10000, L=10000,
+    #sehatfunc = estimator_of_std_of_estimator_of_C, 
+    sehatfunc = std_of_sdi_in_bootstrap, 
+)
+
+# %%
+@show data = data4
+mult = multinomial(data)
+n, P = params(mult)
+r = length(P)
+@show n r
+@show round.(P; sigdigits=2)
+@time plot_pval(mult; niters=10000, L=10000,
+    #sehatfunc = estimator_of_std_of_estimator_of_C, 
+    sehatfunc = std_of_sdi_in_bootstrap, 
+)
+
+# %%
+@show data = data5
+mult = multinomial(data)
+n, P = params(mult)
+r = length(P)
+@show n r
+@show round.(P; sigdigits=2)
+@time plot_pval(mult; niters=10000, L=10000,
+    #sehatfunc = estimator_of_std_of_estimator_of_C, 
+    sehatfunc = std_of_sdi_in_bootstrap, 
+)
+
+# %%
+@show data = data6
+mult = multinomial(data)
+n, P = params(mult)
+r = length(P)
+@show n r
+@show round.(P; sigdigits=2)
+@time plot_pval(mult; niters=10000, L=10000,
+    #sehatfunc = estimator_of_std_of_estimator_of_C, 
+    sehatfunc = std_of_sdi_in_bootstrap, 
+)
+
+# %%
 @show data = table1
+mult = multinomial(data)
+n, P = params(mult)
+r = length(P)
+@show n r
+@show round.(P; sigdigits=2)
+@time plot_pval(mult; niters=10000, L=10000,
+    #sehatfunc = estimator_of_std_of_estimator_of_C, 
+    sehatfunc = std_of_sdi_in_bootstrap, 
+)
+
+# %%
+@show data = table2
+mult = multinomial(data)
+n, P = params(mult)
+r = length(P)
+@show n r
+@show round.(P; sigdigits=2)
+@time plot_pval(mult; niters=10000, L=10000,
+    #sehatfunc = estimator_of_std_of_estimator_of_C, 
+    sehatfunc = std_of_sdi_in_bootstrap, 
+)
+
+# %%
+@show data = table3
 mult = multinomial(data)
 n, P = params(mult)
 r = length(P)
