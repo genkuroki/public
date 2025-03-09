@@ -22,26 +22,28 @@ using StatsFuns
 using StatsPlots
 default(fmt=:png)
 
-# %%
-unbiased_estimator_of_C(K) = (n = sum(K); (dot(K, K) - n)/ (n*(n-1)))
-#unbiased_estimator_of_T(K) = (n = sum(K); sum(k -> k*(k-1)*(k-2), K) / (n*(n-1)*(n-2)))
-unbiased_estimator_of_sdi(K) = 1 - unbiased_estimator_of_C(K)
+@inline safediv(x, y) = x == 0 ? zero(x/y) : isinf(x) ? x*sign(y) : x/y
 
-function _coefficients_abc(n)
+# %%
+@inline unbiased_estimator_of_C(K) = (n = sum(K); (dot(K, K) - n)/ (n*(n-1)))
+#@inline unbiased_estimator_of_T(K) = (n = sum(K); sum(k -> k*(k-1)*(k-2), K) / (n*(n-1)*(n-2)))
+@inline unbiased_estimator_of_sdi(K) = 1 - unbiased_estimator_of_C(K)
+
+@inline function _coefficients_abc(n)
     a = 4(n-2)/(n*(n-1))
     b = (4n-6)/(n*(n-1))
     c = 2/(n*(n-1))
     (; a, b, c)
 end
 
-function varhat_sdihat_plugin(K)
+@inline function varhat_sdihat_plugin(K)
     n = sum(K)
     (; a, b, c) = _coefficients_abc(n)
     C̃ = dot(K, K) / n^2
     T̃ = sum(k -> k^3, K) / n^3
     max(0, a*T̃ - b*C̃^2 + c*C̃)
 end
-stdhat_sdihat_plugin(K) = √varhat_sdihat_plugin(K)
+@inline stdhat_sdihat_plugin(K) = √varhat_sdihat_plugin(K)
 
 # Assume that dlink is the derivative of link.
 function pvalue_sdi_linked(K, sdi; link=logit, dlink=x->1/x+1/(1-x))
@@ -58,8 +60,6 @@ sdi = 0.6
 pvalue_sdi_linked(K, sdi)
 
 # %%
-@inline safediv(x, y) = x == 0 ? zero(x/y) : isinf(x) ? x*sign(y) : x/y
-
 @inline function expectval_sdi(dir::Dirichlet)
     κ = params(dir)[1]
     r = length(κ)
