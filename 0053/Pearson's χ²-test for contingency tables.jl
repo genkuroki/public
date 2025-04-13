@@ -17,12 +17,12 @@
 # %%
 # using Pkg
 # Pkg.add("Distributions")
-# Pkg.add("StatsPlots")
+# Pkg.add("Plots")
 
 # %%
 using Random
 using Distributions
-using StatsPlots
+using Plots
 default(fmt=:png)
 
 _ecdf(A, x) = count(≤(x), A) / length(A)
