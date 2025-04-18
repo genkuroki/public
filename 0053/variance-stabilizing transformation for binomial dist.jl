@@ -20,7 +20,7 @@ for pkg in ("Distributions", "StatsFuns")
     if pkg in packages_added
         println("$(pkg).jl is already added.")
     else
-        println("$(pkg).jl is not added yet, do let's add it.")
+        println("$(pkg).jl is not added yet, so let's add it.")
         Pkg.add(pkg)
     end
 end
