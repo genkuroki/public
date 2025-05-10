@@ -4,8 +4,11 @@
 * Since: 2024-05-10
 * https://github.com/genkuroki/public/tree/main/0053/NotebookLM
 * https://nbviewer.org/github/genkuroki/public/blob/main/0053/NotebookLM/README.ipynb
+* [Google NotebookLM](https://notebooklm.google.com/) で作成した音声概要集
 
-[Google NotebookLM](https://notebooklm.google.com/) で作成した音声概要集
+## すべてを含むZIPファイル
+
+* <a href="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/all.zip">all.zip</a>
 
 ---
 
