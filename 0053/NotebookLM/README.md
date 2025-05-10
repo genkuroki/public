@@ -289,3 +289,17 @@
 * 行動経済学における研究不正の件の解説
 
 ---
+
+### 62 What’s the story behind that paper by the Center for Open Science team that just got retracted?
+
+* What’s the story behind that paper by the Center for Open Science team that just got retracted?
+* Andrew Gelman
+* 2024-09-26
+* https://statmodeling.stat.columbia.edu/2024/09/26/whats-the-story-behind-that-paper-by-the-center-for-open-science-team-that-just-got-retracted/
+
+<audio src="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/62%20What%E2%80%99s%20the%20story%20behind%20that%20paper%20by%20the%20Center%20forOpen%20Science%20team%20that%20just%20got%20retracted%EF%BC%9F.m4a" controls></audio>
+
+* <a href="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/62%20What%E2%80%99s%20the%20story%20behind%20that%20paper%20by%20the%20Center%20forOpen%20Science%20team%20that%20just%20got%20retracted%EF%BC%9F.m4a">m4a file</a>
+* 「新たに発見された社会行動学的知見の高い再現性は達成可能である」という刺激的なタイトルの 論文が発表されて撤回された件に関する詳しい解説
+
+---
