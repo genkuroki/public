@@ -2,6 +2,8 @@
 
 * 黒木玄
 * Since: 2024-05-10
+* https://github.com/genkuroki/public/tree/main/0053/NotebookLM
+* https://nbviewer.org/github/genkuroki/public/blob/main/0053/NotebookLM/README.ipynb
 
 [Google NotebookLM](https://notebooklm.google.com/) で作成した音声概要集
 
