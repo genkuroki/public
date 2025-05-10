@@ -15,7 +15,7 @@
 
 ---
 
-### 01
+### 01 Inferential statistics as descriptive statistics: There is no replication crisis if we don't expect replication
 
 * Inferential statistics as descriptive statistics: There is no replication crisis if we don't expect replication
 * V. Amrhein, D. Trafimow, S. Greenland
@@ -30,7 +30,7 @@
 
 ---
 
-### 02
+### 02 Semantic and cognitive tools to aid statistical science: replace confidence and significance by compatibility and surprise
 
 * Semantic and cognitive tools to aid statistical science: replace confidence and significance by compatibility and surprise
 * Z. Rafi, S. Greenland
@@ -45,7 +45,7 @@
 
 ---
 
-### 03
+### 03 Discuss practical importance of results based on interval estimates and p-value functions, not only on point estimates and null p-values
 
 * Discuss practical importance of results based on interval estimates and p-value functions, not only on point estimates and null p-values
 * V. Amrhein, S. Greenland
@@ -60,7 +60,7 @@
 
 ---
 
-### 04
+### 04 Selecting on statistical significance and practical importance is wrong
 
 * Selecting on statistical significance and practical importance is wrong
 * B.B. McShane, A. Gelman
@@ -75,9 +75,9 @@
 
 ---
 
-### 05
+### 05 Scientists rise up against statistical significance - Valentin Amrhein, Sander Greenland, Blake McShane and more than 800 signatories call for an end to hyped claims and the dismissal of possibly crucial effects
 
-* Scientists rise up against statistical significance - Valentin Amrhein, Sander Greenland, Blake McShane and more than 800 signatories call for an end to hyped claims and the dismissal of possibly crucial effects.
+* Scientists rise up against statistical significance - Valentin Amrhein, Sander Greenland, Blake McShane and more than 800 signatories call for an end to hyped claims and the dismissal of possibly crucial effects
 * V. Amrhein, S. Greenland, B. McShane
 * nature 2019
 * https://scholar.google.co.jp/scholar?cluster=10149294426414499676
@@ -90,7 +90,7 @@
 
 ---
 
-### 06
+### 06 Advancing statistics reform: Ways to improve thinking and practice in the face of resistance
 
 * Advancing statistics reform: Ways to improve thinking and practice in the face of resistance
 * Sander Greenland
@@ -105,7 +105,7 @@
 
 ---
 
-### 07
+### 07 Statistical concepts in the relation to reality
 
 * Statistical concepts in the relation to reality
 * E.S. Pearson
@@ -122,7 +122,7 @@
 
 ---
 
-### 08
+### 08 Language for communicating frequentist results about treatment effects
 
 * Language for communicating frequentist results about treatment effects
 * Frank Harrell vs. Sander Greenland
@@ -137,7 +137,7 @@
 
 ---
 
-### 09
+### 09 Philosophy and the practice of Bayesian statistics
 
 * Philosophy and the practice of Bayesian statistics
 * A. Gelman, C.R. Shalizi
@@ -152,7 +152,7 @@
 
 ---
 
-### 10
+### 10 Living with p values: resurrecting a Bayesian perspective on frequentist statistics
 
 * Living with p values: resurrecting a Bayesian perspective on frequentist statistics
 * S. Greenland, C. Poole, Commentary: A. Gelman
@@ -171,7 +171,7 @@
 
 ---
 
-### 11
+### 11 Statistical tests, P values, confidence intervals, and power: a guide to misinterpretations
 
 * Statistical tests, P values, confidence intervals, and power: a guide to misinterpretations
 * Sander Greenland, Stephen J. Senn, Kenneth J. Rothman, John B. Carlin, Charles Poole, Steven N. Goodman & Douglas G. Altman 
@@ -188,7 +188,7 @@
 
 ---
 
-### 12
+### 12 Statistical tests, P values, confidence intervals, and power: a guide to misinterpretations
 
 * Statistical tests, P values, confidence intervals, and power: a guide to misinterpretations
 * Sander Greenland, Stephen J. Senn, Kenneth J. Rothman, John B. Carlin, Charles Poole, Steven N. Goodman & Douglas G. Altman 
@@ -203,7 +203,7 @@
 
 ---
 
-### 13
+### 13 Are confidence intervals better termed “uncertainty intervals”?
 
 * Are confidence intervals better termed “uncertainty intervals”?
 * A. Gelman, S. Greenland
@@ -217,7 +217,7 @@
 
 ---
 
-### 14
+### 14 To Aid Scientific Inference, Emphasize Unconditional Compatibility Descriptions of Statistics
 
 * To Aid Scientific Inference, Emphasize Unconditional Compatibility Descriptions of Statistics
 * Sander Greenland, Zad Rafi, Robert Matthews, Megan Higgs
@@ -233,7 +233,7 @@
 
 ---
 
-### 15
+### 15 Chow and Greenland: “Unconditional Interpretations of Statistics”
 
 * Chow and Greenland: “Unconditional Interpretations of Statistics”
 * Andrew Gelman, Comments: Sander Greenland, Zad Chow, etc.
@@ -252,7 +252,7 @@
 
 ---
 
-### 31
+### 31 On a Class of Bias-Amplifying Variables that Endanger Effect Estimates
 
 * On a Class of Bias-Amplifying Variables that Endanger Effect Estimates
 * Judea Pearl
@@ -272,7 +272,7 @@
 
 ---
 
-### 61
+### 61 They Studied Dishonesty. Was Their Work a Lie? - Dan Ariely and Francesca Gino became famous for their research into why we bend the truth. Now they’ve both been accused of fabricating data.
 
 * They Studied Dishonesty. Was Their Work a Lie? - Dan Ariely and Francesca Gino became famous for their research into why we bend the truth. Now they’ve both been accused of fabricating data.
 * Gideon Lewis-Kraus
