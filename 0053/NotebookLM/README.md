@@ -279,7 +279,7 @@
 
 * They Studied Dishonesty. Was Their Work a Lie? - Dan Ariely and Francesca Gino became famous for their research into why we bend the truth. Now they’ve both been accused of fabricating data.
 * Gideon Lewis-Kraus
-* September 30, 2023
+* 2023-09-30
 * https://www.newyorker.com/magazine/2023/10/09/they-studied-dishonesty-was-their-work-a-lie
 * https://archive.md/ifxn6
 
