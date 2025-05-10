@@ -20,7 +20,7 @@
 * 2019
 * https://scholar.google.co.jp/scholar?cluster=3023429090384832581
 
-<audio src="01 Inferential statistics as descriptive statistics： There is no replication crisis if we don't expect replication.m4a" controls></audio>
+<audio src="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/01 Inferential statistics as descriptive statistics： There is no replication crisis if we don't expect replication.m4a" controls></audio>
 
 * 「再現性を期待しなければ再現性の危機は存在しない」論文
 * https://x.com/genkuroki/status/1919845634930290815
@@ -34,7 +34,7 @@
 * 2020
 * https://scholar.google.co.jp/scholar?cluster=591718439647960929
 
-<audio src="02 Semantic and cognitive tools to aid statistical science： replace confidence and significance by compatibility and surprise.m4a" controls></audio>
+<audio src="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/02 Semantic and cognitive tools to aid statistical science： replace confidence and significance by compatibility and surprise.m4a" controls></audio>
 
 * P値や信頼区間を「データの値との相性の良さ(compatibiliy)」で解釈することの提案
 * https://x.com/genkuroki/status/1919820540128141796
@@ -48,7 +48,7 @@
 * 2022
 * https://scholar.google.co.jp/scholar?cluster=3720622034719550328
 
-<audio src="03 Discuss practical importance of results based on interval estimates and p-value functions， not only on point estimates and null p-values.m4a" controls></audio>
+<audio src="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/03 Discuss practical importance of results based on interval estimates and p-value functions， not only on point estimates and null p-values.m4a" controls></audio>
 
 * 上の論文の短いバージョンのような内容の論文
 * https://x.com/genkuroki/status/1919820767727915348
@@ -62,7 +62,7 @@
 * 2022
 * https://scholar.google.co.jp/scholar?cluster=9139328184649122630
 
-<audio src="04 Selecting on statistical significance and practical importance is wrong.m4a" controls></audio>
+<audio src="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/04 Selecting on statistical significance and practical importance is wrong.m4a" controls></audio>
 
 * 統計的有意性と実践的重要性(効果の推定値が十分に大きいこと)によって結果の重要性を判断する習慣が広まると, 報告全体が標本サイズが小さい場合に統計的有意でかつ大きな効果の推定値の組み合わせに偏ってしまう害が生じる.
 * https://x.com/genkuroki/status/1919820923496202337
@@ -76,7 +76,7 @@
 * nature 2019
 * https://scholar.google.co.jp/scholar?cluster=10149294426414499676
 
-<audio src="05 Scientists rise up against statistical significance.m4a" controls></audio>
+<audio src="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/05 Scientists rise up against statistical significance.m4a" controls></audio>
 
 * 統計的有意性の使用の廃止を訴えた超有名なnature 2019論説
 * https://x.com/genkuroki/status/1919820309340836246
@@ -90,7 +90,7 @@
 * Slide 2022
 * [PDF](https://biostatistics.ucdavis.edu/sites/g/files/dgvnsk4966/files/media/documents/Greenland.Advancing%20statistics%20reform%2C%20part%204.Slides%201-110%2C%2001%20June%202022.pdf)
 
-<audio src="06 [slide] Retire statistical significance - Advancing statistics reform： Ways to improve thinking and practice in the face of resistance.m4a" controls></audio>
+<audio src="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/06%20%5Bslide%5D%20Retire%20statistical%20significance%20-%20Advancing%20statistics%20reform%EF%BC%9A%20Ways%20to%20improve%20thinking%20and%20practice%20in%20the%20face%20of%20resistance.m4a" controls></audio>
 
 * Greenlandが統計学の改革について率直に語っている. 端的で分かり易く, 非常に面白い.
 * https://x.com/genkuroki/status/1919931683723149645
@@ -105,7 +105,7 @@
 * https://scholar.google.co.jp/scholar?cluster=15641126635507293381
 * [PDF](https://errorstatistics.com/wp-content/uploads/2021/02/pearson_1955-stat-concepts-reality.pdf)
 
-<audio src="07 Statistical concepts in the relation to reality.m4a" controls></audio>
+<audio src="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/07 Statistical concepts in the relation to reality.m4a" controls></audio>
 
 * Neyman-PearsonのPearsonの1955年の論文
 * この論文には, Fisherによる「検定は『学習の手段』である」という主張にPearsonが賛成していることがわかる.  Neyman-Pearsonの意味での仮説検定であっても, その結果を最終結論だと解釈してはいけない.  Neyman-Pearsonの意味での仮説検定も最終的な決定を助けるための1つの道具に過ぎない.
@@ -120,7 +120,7 @@
 * Datamethods Discourse 2018
 * https://discourse.datamethods.org/t/language-for-communicating-frequentist-results-about-treatment-effects/934/16
 
-<audio src="08 [datamethods] Language for communicating frequentist results about treatment effects - Frank Harrell vs. Sander Greenland.m4a" controls></audio>
+<audio src="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/08%20%5Bdatamethods%5D%20Language%20for%20communicating%20frequentist%20results%20about%20treatment%20effects%20-%20Frank%20Harrell%20vs.%20Sander%20Greenland.m4a" controls></audio>
 
 * Harrell氏による「P値を廃止して信頼区間を使え」とか「ベイズ統計を使え」という提案が間違っていることをGreenland氏が非常に詳しく解説している.
 * https://x.com/genkuroki/status/1920762558920741159
@@ -134,7 +134,7 @@
 * 2013
 * https://scholar.google.co.jp/scholar?cluster=3508180152464295077
 
-<audio src="09 Philosophy and the practice of Bayesian statistics.m4a" controls></audio>
+<audio src="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/09 Philosophy and the practice of Bayesian statistics.m4a" controls></audio>
 
 * ベイズ統計の方法は素晴らしいが, ベイズ主義は現実の研究において有害である.
 * https://x.com/genkuroki/status/1920786011073769834
@@ -149,7 +149,7 @@
 * https://scholar.google.co.jp/scholar?cluster=14891904419700628304
 * Commentary: https://scholar.google.co.jp/scholar?cluster=4995122852943051381
 
-<audio src="10 Living with p values： resurrecting a Bayesian perspective on frequentist statistics.m4a" controls></audio>
+<audio src="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/10 Living with p values： resurrecting a Bayesian perspective on frequentist statistics.m4a" controls></audio>
 
 * Greenland氏とPoole氏はP値の無情報事前分布におけるベイズ的な解釈を提案しているが, ベイズ的な解釈における事後分布における確率を確からしさの尺度として使うと問題が生じそうなことをGelman氏が指摘している. 無情報事前分布に対応する事後分布における確率は確からしさの尺度として不適切になりやすい.
 * この時点ではGreenland氏達は以下のように解釈すれば安全で便利なことに気付いていないようだ:
@@ -168,7 +168,7 @@
 * https://link.springer.com/article/10.1007/s10654-016-0149-3?src_trk=em669313ea004bc8.025178751464386634
 * 全体の音声概要
 
-<audio src="11 Statistical tests， P values， confidence intervals， and power： a guide to misinterpretations.m4a" controls></audio>
+<audio src="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/11 Statistical tests， P values， confidence intervals， and power： a guide to misinterpretations.m4a" controls></audio>
 
 * おそらくこの論文によってP値の「特定の統計モデルのもとでの, データの値とパラメータの値に関する仮説の相性の良さ(compatibility)の指標の1つ」という解釈の仕方が確立した.
 * この音声概要はその解釈の件に限らずに論文の全体の要約になっている.
@@ -184,7 +184,7 @@
 * https://link.springer.com/article/10.1007/s10654-016-0149-3?src_trk=em669313ea004bc8.025178751464386634
 * P値の相性の良さ(compatibility)による解釈関連の部分の音声要約
 
-<audio src="12 Statistical tests， P values， confidence intervals， and power： compatibility interpretations.m4a" controls></audio>
+<audio src="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/12 Statistical tests， P values， confidence intervals， and power： compatibility interpretations.m4a" controls></audio>
 
 ---
 
@@ -195,7 +195,7 @@
 * 2019
 * https://scholar.google.co.jp/scholar?cluster=9083230676635824516
 
-<audio src="13 Are confidence intervals better termed ``uncertainty intervals''？.m4a" controls></audio>
+<audio src="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/13 Are confidence intervals better termed ``uncertainty intervals''？.m4a" controls></audio>
 
 * この論争は信頼区間の"compatibility interval"という呼び方を提案したGreenland氏の側に分があるように思われる.
 
@@ -208,7 +208,7 @@
 * 2019--2022
 * https://arxiv.org/abs/1909.08583
 
-<audio src="14 To Aid Scientific Inference， Emphasize Unconditional Compatibility Descriptions of Statistics.m4a" controls></audio>
+<audio src="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/14 To Aid Scientific Inference， Emphasize Unconditional Compatibility Descriptions of Statistics.m4a" controls></audio>
 
 * これは次のブログ記事で話題になった論文.
 * 「無条件」は「P値の計算に使ったモデルは妥当である」のような条件を仮定しないという意味である.
@@ -223,7 +223,7 @@
 * 
 * https://statmodeling.stat.columbia.edu/2019/09/24/chow-and-greenland-unconditional-interpretations-of-statistics/
 
-<audio src="15 [blog] Chow and Greenland， Unconditional Interpretations of Statistics.m4a" controls></audio>
+<audio src="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/15%20%5Bblog%5D%20Chow%20and%20Greenland%EF%BC%8C%20Unconditional%20Interpretations%20of%20Statistics.m4a" controls></audio>
 
 * 上の論文に関する議論
 * 多くの人が興味深いコメントをしている. 特にGreenland氏が大量のコメントを寄せている.
@@ -241,7 +241,7 @@
 * 2012
 * https://arxiv.org/abs/1203.3503
 
-<audio src="31 On a Class of Bias-Amplifying Variables that Endanger Effect Estimates.m4a" controls></audio>
+<audio src="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/31 On a Class of Bias-Amplifying Variables that Endanger Effect Estimates.m4a" controls></audio>
 
 * 既知の交絡因子について調節すると未知の交絡因子に関するバイアスが増幅されてしまう場合があることを警告している論文
 * https://x.com/genkuroki/status/1920541898256818289
@@ -261,7 +261,7 @@
 * https://www.newyorker.com/magazine/2023/10/09/they-studied-dishonesty-was-their-work-a-lie
 * https://archive.md/ifxn6
 
-<audio src="61 Studying Dishonesty， Fabricating Data.m4a" controls></audio>
+<audio src="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/61 Studying Dishonesty， Fabricating Data.m4a" controls></audio>
 
 * 行動経済学における研究不正の件の解説
 
