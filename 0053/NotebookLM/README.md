@@ -22,6 +22,7 @@
 
 <audio src="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/01 Inferential statistics as descriptive statistics： There is no replication crisis if we don't expect replication.m4a" controls></audio>
 
+* <a href="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/01 Inferential statistics as descriptive statistics： There is no replication crisis if we don't expect replication.m4a">m4a file</a>
 * 「再現性を期待しなければ再現性の危機は存在しない」論文
 * https://x.com/genkuroki/status/1919845634930290815
 
@@ -36,6 +37,7 @@
 
 <audio src="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/02 Semantic and cognitive tools to aid statistical science： replace confidence and significance by compatibility and surprise.m4a" controls></audio>
 
+* <a href="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/02 Semantic and cognitive tools to aid statistical science： replace confidence and significance by compatibility and surprise.m4a">m4a file</a>
 * P値や信頼区間を「データの値との相性の良さ(compatibiliy)」で解釈することの提案
 * https://x.com/genkuroki/status/1919820540128141796
 
@@ -50,6 +52,7 @@
 
 <audio src="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/03 Discuss practical importance of results based on interval estimates and p-value functions， not only on point estimates and null p-values.m4a" controls></audio>
 
+* <a href="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/03 Discuss practical importance of results based on interval estimates and p-value functions， not only on point estimates and null p-values.m4a">m4a file</a>
 * 上の論文の短いバージョンのような内容の論文
 * https://x.com/genkuroki/status/1919820767727915348
 
@@ -64,6 +67,7 @@
 
 <audio src="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/04 Selecting on statistical significance and practical importance is wrong.m4a" controls></audio>
 
+* <a href="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/04 Selecting on statistical significance and practical importance is wrong.m4a">m4a file</a>
 * 統計的有意性と実践的重要性(効果の推定値が十分に大きいこと)によって結果の重要性を判断する習慣が広まると, 報告全体が標本サイズが小さい場合に統計的有意でかつ大きな効果の推定値の組み合わせに偏ってしまう害が生じる.
 * https://x.com/genkuroki/status/1919820923496202337
 
@@ -78,6 +82,7 @@
 
 <audio src="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/05 Scientists rise up against statistical significance.m4a" controls></audio>
 
+* <a href="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/05 Scientists rise up against statistical significance.m4a">m4a file</a>
 * 統計的有意性の使用の廃止を訴えた超有名なnature 2019論説
 * https://x.com/genkuroki/status/1919820309340836246
 
@@ -92,6 +97,7 @@
 
 <audio src="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/06%20%5Bslide%5D%20Retire%20statistical%20significance%20-%20Advancing%20statistics%20reform%EF%BC%9A%20Ways%20to%20improve%20thinking%20and%20practice%20in%20the%20face%20of%20resistance.m4a" controls></audio>
 
+* <a href="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/06%20%5Bslide%5D%20Retire%20statistical%20significance%20-%20Advancing%20statistics%20reform%EF%BC%9A%20Ways%20to%20improve%20thinking%20and%20practice%20in%20the%20face%20of%20resistance.m4a">m4a file</a>
 * Greenlandが統計学の改革について率直に語っている. 端的で分かり易く, 非常に面白い.
 * https://x.com/genkuroki/status/1919931683723149645
 
@@ -107,6 +113,7 @@
 
 <audio src="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/07 Statistical concepts in the relation to reality.m4a" controls></audio>
 
+* <a href="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/07 Statistical concepts in the relation to reality.m4a">m4a file</a>
 * Neyman-PearsonのPearsonの1955年の論文
 * この論文には, Fisherによる「検定は『学習の手段』である」という主張にPearsonが賛成していることがわかる.  Neyman-Pearsonの意味での仮説検定であっても, その結果を最終結論だと解釈してはいけない.  Neyman-Pearsonの意味での仮説検定も最終的な決定を助けるための1つの道具に過ぎない.
 * https://x.com/genkuroki/status/1920443341755326559
@@ -122,6 +129,7 @@
 
 <audio src="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/08%20%5Bdatamethods%5D%20Language%20for%20communicating%20frequentist%20results%20about%20treatment%20effects%20-%20Frank%20Harrell%20vs.%20Sander%20Greenland.m4a" controls></audio>
 
+* <a href="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/08%20%5Bdatamethods%5D%20Language%20for%20communicating%20frequentist%20results%20about%20treatment%20effects%20-%20Frank%20Harrell%20vs.%20Sander%20Greenland.m4a">m4a file</a>
 * Harrell氏による「P値を廃止して信頼区間を使え」とか「ベイズ統計を使え」という提案が間違っていることをGreenland氏が非常に詳しく解説している.
 * https://x.com/genkuroki/status/1920762558920741159
 
@@ -136,6 +144,7 @@
 
 <audio src="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/09 Philosophy and the practice of Bayesian statistics.m4a" controls></audio>
 
+* <a href="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/09 Philosophy and the practice of Bayesian statistics.m4a">m4a file</a>
 * ベイズ統計の方法は素晴らしいが, ベイズ主義は現実の研究において有害である.
 * https://x.com/genkuroki/status/1920786011073769834
 
@@ -151,6 +160,7 @@
 
 <audio src="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/10 Living with p values： resurrecting a Bayesian perspective on frequentist statistics.m4a" controls></audio>
 
+* <a href="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/10 Living with p values： resurrecting a Bayesian perspective on frequentist statistics.m4a">m4a file</a>
 * Greenland氏とPoole氏はP値の無情報事前分布におけるベイズ的な解釈を提案しているが, ベイズ的な解釈における事後分布における確率を確からしさの尺度として使うと問題が生じそうなことをGelman氏が指摘している. 無情報事前分布に対応する事後分布における確率は確からしさの尺度として不適切になりやすい.
 * この時点ではGreenland氏達は以下のように解釈すれば安全で便利なことに気付いていないようだ:
   * P値はデータの値とモデルのパラメータの値に関する仮説の相性の良さ(compatibility)の指標の1つである.
@@ -170,6 +180,7 @@
 
 <audio src="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/11 Statistical tests， P values， confidence intervals， and power： a guide to misinterpretations.m4a" controls></audio>
 
+* <a href="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/11 Statistical tests， P values， confidence intervals， and power： a guide to misinterpretations.m4a">m4a file</a>
 * おそらくこの論文によってP値の「特定の統計モデルのもとでの, データの値とパラメータの値に関する仮説の相性の良さ(compatibility)の指標の1つ」という解釈の仕方が確立した.
 * この音声概要はその解釈の件に限らずに論文の全体の要約になっている.
 
@@ -186,6 +197,8 @@
 
 <audio src="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/12 Statistical tests， P values， confidence intervals， and power： compatibility interpretations.m4a" controls></audio>
 
+* <a href="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/12 Statistical tests， P values， confidence intervals， and power： compatibility interpretations.m4a">m4a file</a>
+
 ---
 
 ### 13
@@ -197,6 +210,7 @@
 
 <audio src="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/13 Are confidence intervals better termed ``uncertainty intervals''？.m4a" controls></audio>
 
+* <a href="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/13 Are confidence intervals better termed ``uncertainty intervals''？.m4a">m4a file</a>
 * この論争は信頼区間の"compatibility interval"という呼び方を提案したGreenland氏の側に分があるように思われる.
 
 ---
@@ -210,6 +224,7 @@
 
 <audio src="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/14 To Aid Scientific Inference， Emphasize Unconditional Compatibility Descriptions of Statistics.m4a" controls></audio>
 
+* <a href="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/14 To Aid Scientific Inference， Emphasize Unconditional Compatibility Descriptions of Statistics.m4a">m4a file</a>
 * これは次のブログ記事で話題になった論文.
 * 「無条件」は「P値の計算に使ったモデルは妥当である」のような条件を仮定しないという意味である.
 * 「データの値とモデル全体の相性の良さ(compatibility)による解釈」であれば「モデルは妥当である」のような条件を仮定しなくても正しく安全な解釈が可能になる. 相性の良さによる解釈であれば「Pハッキングのような不正をしていない」というような条件さえ仮定する必要がなくなる.
@@ -225,6 +240,7 @@
 
 <audio src="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/15%20%5Bblog%5D%20Chow%20and%20Greenland%EF%BC%8C%20Unconditional%20Interpretations%20of%20Statistics.m4a" controls></audio>
 
+* <a href="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/15%20%5Bblog%5D%20Chow%20and%20Greenland%EF%BC%8C%20Unconditional%20Interpretations%20of%20Statistics.m4a">m4a file</a>
 * 上の論文に関する議論
 * 多くの人が興味深いコメントをしている. 特にGreenland氏が大量のコメントを寄せている.
 
@@ -243,6 +259,7 @@
 
 <audio src="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/31 On a Class of Bias-Amplifying Variables that Endanger Effect Estimates.m4a" controls></audio>
 
+* <a href="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/31 On a Class of Bias-Amplifying Variables that Endanger Effect Estimates.m4a">m4a file</a>
 * 既知の交絡因子について調節すると未知の交絡因子に関するバイアスが増幅されてしまう場合があることを警告している論文
 * https://x.com/genkuroki/status/1920541898256818289
 * https://x.com/genkuroki/status/1621039560091385859
@@ -263,6 +280,7 @@
 
 <audio src="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/61 Studying Dishonesty， Fabricating Data.m4a" controls></audio>
 
+* <a href="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/61 Studying Dishonesty， Fabricating Data.m4a">m4a file</a>
 * 行動経済学における研究不正の件の解説
 
 ---
