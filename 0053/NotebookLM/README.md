@@ -251,6 +251,20 @@
 
 ---
 
+### 16 Principles and guidelines for applied statistics
+
+* Principles and guidelines for applied statistics
+* Sander Greenland
+* 2018
+* https://discourse.datamethods.org/t/principles-and-guidelines-for-applied-statistics/608
+
+<audio src="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/16%20Principles%20and%20guidelines%20for%20applied%20statistics.m4a" controls></audio>
+
+* <a href="https://github.com/genkuroki/public/raw/refs/heads/main/0053/NotebookLM/16%20Principles%20and%20guidelines%20for%20applied%20statistics.m4a">m4a file</a>
+* 主義や哲学によって排他的に方法を制限することを厳しく批判している.
+
+---
+
 ## 因果推論
 
 ---
