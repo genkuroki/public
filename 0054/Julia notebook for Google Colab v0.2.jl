@@ -39,7 +39,7 @@ macro _using(x)
     modsymb = x isa Symbol ? x : x.head == :call ? x.args[2] : x.args[1].args[2]
     pkg = string(modsymb)
     if !(pkg in _packages_added)
-        println("# $(pkg).jl is not added yet, so let's add it.")
+        println(stderr, "# $(pkg).jl is not added yet, so let's add it.")
         Pkg.add(pkg)
     end
     if x isa Symbol
