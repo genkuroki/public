@@ -17,7 +17,7 @@
 # %% [markdown]
 # # ColabでJuliaを使うためのノートブック
 #
-# このノートブックは[Google Colabで実行できる](https://colab.research.google.com/github/genkuroki/).
+# このノートブックは[Google Colabで実行できる](https://colab.research.google.com/github/genkuroki/public/blob/main/0054/Julia%20notebook%20for%20Google%20Colab.ipynb).
 
 # %% tags=[]
 # Google Colabと自分のパソコンの両方で使えるようにするための工夫
