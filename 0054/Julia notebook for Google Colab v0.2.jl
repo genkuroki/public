@@ -38,7 +38,10 @@ _packages_added = [info.name for (uuid, info) in Pkg.dependencies() if info.is_d
 macro _using(x)
     modsymb = x isa Symbol ? x : x.head == :call ? x.args[2] : x.args[1].args[2]
     pkg = string(modsymb)
-    pkg in _packages_added || Pkg.add(pkg)
+    if !(pkg in _packages_added)
+        println("# $(pkg).jl is not added yet, so let's add it.")
+        Pkg.add(pkg)
+    end
     if x isa Symbol
         Expr(:using, Expr(:., modsymb))
     elseif x.head == :call
