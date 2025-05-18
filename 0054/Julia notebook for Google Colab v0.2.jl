@@ -62,6 +62,27 @@ end
 @_using SymPy: SymPy, sympy, "@syms", oo
 
 # %%
+"A" in _packages_added || push!(_packages_added, "A");
+
+# %%
+:(using A) |> dump
+
+# %%
+:(using A) == (@macroexpand @_using A)
+
+# %%
+:(using A: a) |> dump
+
+# %%
+:(using A: a) == (@macroexpand @_using A: a)
+
+# %%
+:(using A: a, @b, c) |> dump
+
+# %%
+:(using A: a, @b, c) == (@macroexpand @_using A: a, "@b", c)
+
+# %%
 dist = Gamma(2, 1/2)
 plot(dist; label="$dist")
 
