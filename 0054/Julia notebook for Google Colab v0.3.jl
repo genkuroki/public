@@ -35,8 +35,8 @@ add_pkg_if_not_added_yet(pkg) = if !(pkg in _packages_added)
     Pkg.add(pkg)
 end
 
-"""ASTからusing内の`.`を含まないモジュール名を抽出"""
-function find_using_pkgs(ast::Expr)
+"""expr::Exprからusing内の`.`を含まないモジュール名を抽出"""
+function find_using_pkgs(expr::Expr)
     pkgs = String[]
     function traverse(expr::Expr)
         if expr.head == :using
@@ -51,14 +51,14 @@ function find_using_pkgs(ast::Expr)
             for arg in expr.args arg isa Expr && traverse(arg) end
         end
     end
-    traverse(ast)
+    traverse(expr)
     pkgs
 end
 
 """必要そうなPkg.addを追加するマクロ"""
-macro autoadd(x)
-    pkgs = find_using_pkgs(x)
-    :(add_pkg_if_not_added_yet.($(pkgs)); $x)
+macro autoadd(expr)
+    pkgs = find_using_pkgs(expr)
+    :(add_pkg_if_not_added_yet.($(pkgs)); $expr)
 end
 
 @autoadd begin
