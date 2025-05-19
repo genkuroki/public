@@ -17,7 +17,7 @@
 # %% [markdown]
 # # ColabでJuliaを使うためのノートブック v0.1
 #
-# このノートブックの内容は再配布や改変や部分的コピーその他すべて自由に行って構いません。
+# このノートブックの内容については再配布・改変・部分的コピーその他すべてを自由に行って構いません。
 #
 # このノートブックは[Google Colabで実行できる](https://colab.research.google.com/github/genkuroki/public/blob/main/0054/Julia%20notebook%20for%20Google%20Colab.ipynb).
 
