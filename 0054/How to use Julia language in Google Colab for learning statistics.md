@@ -33,7 +33,7 @@ $
 
 <!-- #region toc=true -->
 <h1>目次<span class="tocSkip"></span></h1>
-<div class="toc"><ul class="toc-item"><li><span><a href="#Google-ColabでのJulia言語の使い方" data-toc-modified-id="Google-ColabでのJulia言語の使い方-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Google ColabでのJulia言語の使い方</a></span><ul class="toc-item"><li><span><a href="#ColabでのJuliaの実行" data-toc-modified-id="ColabでのJuliaの実行-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>ColabでのJuliaの実行</a></span></li><li><span><a href="#グラフの描き方" data-toc-modified-id="グラフの描き方-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>グラフの描き方</a></span></li><li><span><a href="#標準正規分布乱数のプロット" data-toc-modified-id="標準正規分布乱数のプロット-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>標準正規分布乱数のプロット</a></span></li><li><span><a href="#確率分布の扱い方" data-toc-modified-id="確率分布の扱い方-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>確率分布の扱い方</a></span></li><li><span><a href="#正規分布の確率密度関数のプロット" data-toc-modified-id="正規分布の確率密度関数のプロット-1.5"><span class="toc-item-num">1.5&nbsp;&nbsp;</span>正規分布の確率密度関数のプロット</a></span></li></ul></li><li><span><a href="#Anscombeの例のプロット" data-toc-modified-id="Anscombeの例のプロット-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Anscombeの例のプロット</a></span><ul class="toc-item"><li><span><a href="#RDatasets.jlパッケージのインストール" data-toc-modified-id="RDatasets.jlパッケージのインストール-2.1"><span class="toc-item-num">2.1&nbsp;&nbsp;</span>RDatasets.jlパッケージのインストール</a></span></li><li><span><a href="#データのプロットの仕方" data-toc-modified-id="データのプロットの仕方-2.2"><span class="toc-item-num">2.2&nbsp;&nbsp;</span>データのプロットの仕方</a></span></li></ul></li><li><span><a href="#Datasaurusの散布図のプロット" data-toc-modified-id="Datasaurusの散布図のプロット-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>Datasaurusの散布図のプロット</a></span><ul class="toc-item"><li><span><a href="#データの取得" data-toc-modified-id="データの取得-3.1"><span class="toc-item-num">3.1&nbsp;&nbsp;</span>データの取得</a></span></li><li><span><a href="#散布図の作成" data-toc-modified-id="散布図の作成-3.2"><span class="toc-item-num">3.2&nbsp;&nbsp;</span>散布図の作成</a></span></li></ul></li><li><span><a href="#中心極限定理のプロット" data-toc-modified-id="中心極限定理のプロット-4"><span class="toc-item-num">4&nbsp;&nbsp;</span>中心極限定理のプロット</a></span><ul class="toc-item"><li><span><a href="#素朴なワークフロー" data-toc-modified-id="素朴なワークフロー-4.1"><span class="toc-item-num">4.1&nbsp;&nbsp;</span>素朴なワークフロー</a></span></li><li><span><a href="#関数を作ろう" data-toc-modified-id="関数を作ろう-4.2"><span class="toc-item-num">4.2&nbsp;&nbsp;</span>関数を作ろう</a></span></li><li><span><a href="#問題:-自分で関数を定義して実行してみよ." data-toc-modified-id="問題:-自分で関数を定義して実行してみよ.-4.3"><span class="toc-item-num">4.3&nbsp;&nbsp;</span>問題: 自分で関数を定義して実行してみよ.</a></span></li></ul></li></ul></div>
+<div class="toc"><ul class="toc-item"><li><span><a href="#Google-ColabでのJulia言語の使い方" data-toc-modified-id="Google-ColabでのJulia言語の使い方-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>Google ColabでのJulia言語の使い方</a></span><ul class="toc-item"><li><span><a href="#ColabでのJuliaの実行" data-toc-modified-id="ColabでのJuliaの実行-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>ColabでのJuliaの実行</a></span></li><li><span><a href="#グラフの描き方" data-toc-modified-id="グラフの描き方-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>グラフの描き方</a></span></li><li><span><a href="#標準正規分布乱数のプロット" data-toc-modified-id="標準正規分布乱数のプロット-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>標準正規分布乱数のプロット</a></span></li><li><span><a href="#確率分布の扱い方" data-toc-modified-id="確率分布の扱い方-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>確率分布の扱い方</a></span></li><li><span><a href="#正規分布の確率密度関数のプロット" data-toc-modified-id="正規分布の確率密度関数のプロット-1.5"><span class="toc-item-num">1.5&nbsp;&nbsp;</span>正規分布の確率密度関数のプロット</a></span></li></ul></li><li><span><a href="#Anscombeの例のプロット" data-toc-modified-id="Anscombeの例のプロット-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>Anscombeの例のプロット</a></span><ul class="toc-item"><li><span><a href="#RDatasets.jlパッケージのインストール" data-toc-modified-id="RDatasets.jlパッケージのインストール-2.1"><span class="toc-item-num">2.1&nbsp;&nbsp;</span>RDatasets.jlパッケージのインストール</a></span></li><li><span><a href="#データのプロットの仕方" data-toc-modified-id="データのプロットの仕方-2.2"><span class="toc-item-num">2.2&nbsp;&nbsp;</span>データのプロットの仕方</a></span></li></ul></li><li><span><a href="#Datasaurusの散布図のプロット" data-toc-modified-id="Datasaurusの散布図のプロット-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>Datasaurusの散布図のプロット</a></span><ul class="toc-item"><li><span><a href="#データの取得" data-toc-modified-id="データの取得-3.1"><span class="toc-item-num">3.1&nbsp;&nbsp;</span>データの取得</a></span></li><li><span><a href="#散布図の作成" data-toc-modified-id="散布図の作成-3.2"><span class="toc-item-num">3.2&nbsp;&nbsp;</span>散布図の作成</a></span></li></ul></li><li><span><a href="#中心極限定理のプロット" data-toc-modified-id="中心極限定理のプロット-4"><span class="toc-item-num">4&nbsp;&nbsp;</span>中心極限定理のプロット</a></span><ul class="toc-item"><li><span><a href="#素朴なワークフロー" data-toc-modified-id="素朴なワークフロー-4.1"><span class="toc-item-num">4.1&nbsp;&nbsp;</span>素朴なワークフロー</a></span></li><li><span><a href="#関数を作ろう" data-toc-modified-id="関数を作ろう-4.2"><span class="toc-item-num">4.2&nbsp;&nbsp;</span>関数を作ろう</a></span></li><li><span><a href="#問題:-自分で関数を定義して実行してみよ." data-toc-modified-id="問題:-自分で関数を定義して実行してみよ.-4.3"><span class="toc-item-num">4.3&nbsp;&nbsp;</span>問題: 自分で関数を定義して実行してみよ.</a></span></li></ul></li><li><span><a href="#統計モデルの例" data-toc-modified-id="統計モデルの例-5"><span class="toc-item-num">5&nbsp;&nbsp;</span>統計モデルの例</a></span><ul class="toc-item"><li><span><a href="#t分布が得られる統計モデルの例" data-toc-modified-id="t分布が得られる統計モデルの例-5.1"><span class="toc-item-num">5.1&nbsp;&nbsp;</span>t分布が得られる統計モデルの例</a></span></li><li><span><a href="#t分布が得られる統計モデルの例の別バージョン" data-toc-modified-id="t分布が得られる統計モデルの例の別バージョン-5.2"><span class="toc-item-num">5.2&nbsp;&nbsp;</span>t分布が得られる統計モデルの例の別バージョン</a></span></li><li><span><a href="#負の二項分布が得られる統計モデルの例" data-toc-modified-id="負の二項分布が得られる統計モデルの例-5.3"><span class="toc-item-num">5.3&nbsp;&nbsp;</span>負の二項分布が得られる統計モデルの例</a></span></li></ul></li></ul></div>
 <!-- #endregion -->
 
 ```julia
@@ -682,6 +682,134 @@ plot_dist_clt(Poisson(), 10)
 
 ```julia
 plot_dist_clt(Poisson(), 100)
+```
+
+## 統計モデルの例
+
+階層的な統計モデルは「乱数生成の連鎖」というイメージで理解しておくと理解し易い.
+
+
+### t分布が得られる統計モデルの例
+
+たとえば, 
+
+$$
+\begin{aligned}
+& Z \sim \op{Normal}(0, 1) \\
+& W \sim \op{Chisq}(\nu) \\
+& T = \frac{Z}{\sqrt{W/\nu}}
+\end{aligned}
+$$
+
+は以下のような統計モデルを表す:
+
+1. 標準正規分布に従う乱数 $Z$ を生成する.
+2. 自由度 $\nu$ のχ²分布に従う乱数 $W$ を生成する.
+3. $T = Z\big/\sqrt{W/\nu}$ と定める.
+
+このとき, $T$ は自由度 $\nu$ のt分布に従う乱数になる.
+
+これを確認しよう.
+
+```julia
+using Distributions
+using StatsPlots
+default(fmt=:png, size=(600, 400), titlefontsize=16, legendfontsize=11)
+
+function plot_t(T, nu; Tlabel="T")
+    stephist(T; norm=true, label=Tlabel)
+    plot!(TDist(nu); label="TDist(nu)", ls=:dash)
+    plot!(xlim=(-6, 6))
+    title!("nu = $nu")
+end
+
+function plot_model_t1(; nu=3, L=10^6)
+    Z = rand(Normal(0, 1), L)
+    W = rand(Chisq(nu), L)
+    T = @. Z / sqrt(W / nu)
+    plot_t(T, nu; Tlabel="T = Z/√(W/ν)")
+end
+```
+
+```julia
+plot_model_t1(; nu=3)
+```
+
+```julia
+plot_model_t1(; nu=10)
+```
+
+### t分布が得られる統計モデルの例の別バージョン
+
+$$
+\begin{aligned}
+& Z \sim \op{Normal}(0, 1) \\
+& W \sim \op{Chisq}(\nu) \\
+& T = \frac{Z}{\sqrt{W/\nu}}
+\end{aligned}
+$$
+
+というモデルにおいて, $T$ は期待値 $0$ と分散 $1/(W/\nu)$ を持つ正規分布の乱数であるとも解釈できる. 
+この解釈によって次の統計モデルを考える.
+
+$$
+\begin{aligned}
+& W \sim \op{Chisq}(\nu) \\
+& T \sim \op{Normal}\left(0, 1\big/\sqrt{W/\nu}\right)
+\end{aligned}
+$$
+
+この $T$ も自由度 $\nu$ のt分布に従う乱数になる.
+
+これを確認しよう.
+
+```julia
+function plot_model_t2(; nu=3, L=10^6)
+    W = rand(Chisq(nu), L)
+    T = @. rand(Normal(0, 1/sqrt(W/nu)))
+    plot_t(T, nu; Tlabel="T ~ N(0, 1/√(W/ν))")
+end
+```
+
+```julia
+plot_model_t2(; nu=3)
+```
+
+```julia
+plot_model_t2(; nu=10)
+```
+
+### 負の二項分布が得られる統計モデルの例
+
+$$
+\begin{aligned}
+& \Lambda \sim \op{Gamma}(\alpha, \theta) \\
+& K \sim \op{Poisson}(\Lambda)
+\end{aligned}
+$$
+
+このとき $K \sim \op{NegativeBinomial}(\alpha, 1/(1+\theta))$ となることを確認しよう.
+
+```julia
+function plot_gampoi(α, θ; L = 10^6)
+    p = 1/(1 + θ)
+    Λ = rand(Gamma(α, θ), L) # ガンマ分布で乱数達を大量生成
+    M_gampoi = @. rand(Poisson(Λ)) # その各々を期待値とするPoisson分布の乱数を生成
+    M_negbin = rand(NegativeBinomial(α, p), L) # 直接的に負の二項分布の乱数を大量生成
+
+    # 比較のための同時プロット
+    binmin, binmax = round.(quantile.(Ref(M_negbin), (0.001, 0.999)))
+    stephist(M_gampoi; norm=true, bin=binmin-0.5:binmax+0.5, label="Gamma-Poisson")
+    stephist!(M_negbin; norm=true, bin=binmin-0.5:binmax+0.5, ls=:dash, label="NegativeBinomial")
+end
+```
+
+```julia
+plot_gampoi(2, 3)
+```
+
+```julia
+plot_gampoi(10, 0.5)
 ```
 
 ```julia
