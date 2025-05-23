@@ -84,6 +84,36 @@ default(fmt=:png, size=(600, 400))
 end
 ```
 
+<!-- #region -->
+上のセルでは Distributions.jl, RDataset.jl, StatsPlots.jl の3つのパッケージをインストール(`Pkg.add`)した後に, それらの `using` を実行している. 必要な `Pkg.add` のコードは `@autoadd` マクロが追加してくれている.
+
+存在するパッケージ A.jl について `using A` を実行したとき,
+
+```
+ArgumentError: Package A not found in current path.
+- Run `import Pkg; Pkg.add("A")` to install the A package.
+```
+
+と表示されたならば
+
+```julia
+import Pkg; Pkg.add("A")
+using A
+```
+
+または, `@autoadd` マクロを使って
+
+```julia
+@autoadd using A
+```
+
+を実行すればよい.
+<!-- #endregion -->
+
+```julia
+using A
+```
+
 ## Google ColabでのJulia言語の使い方
 
 <!-- #region -->
@@ -131,7 +161,7 @@ sinpi(1/6)
 <!-- #region -->
 ### グラフの描き方
 
-(7) Colabで統計学対応のグラフ作画パッケージを使うためには次を実行する:
+(8) Colabで統計学対応のグラフ作画パッケージを使うためには次を実行する:
 
 ```julia
 import Pkg
@@ -168,7 +198,7 @@ plot!(x -> exp(-x^2/2)/sqrt(2pi), -4, 4; label="", lw=3)
 <!-- #region -->
 ### 確率分布の扱い方
 
-(7) 確率分布を扱うためのパッケージを使うためには次を実行する:
+(9) 確率分布を扱うためのパッケージを使うためには次を実行する:
 
 ```julia
 import Pkg
@@ -203,7 +233,7 @@ plot!(Normal(2, 3); label="Normal(2, 3)", lw=2)
 <!-- #region -->
 ### RDatasets.jlパッケージのインストール
 
-確率分布を扱うためのパッケージを入れるためには次を実行する:
+Rのデータセット達を扱うためのパッケージを入れるためには次を実行する:
 
 ```julia
 import Pkg
@@ -561,7 +591,7 @@ plot!(normal_approx; label="normal approx", lw=2)
 
 上のように素朴に毎回コードを入力することは非常に面倒である.
 
-似た仕事は関数化して1行の入力で実行できるようにしておく方がよい.
+同じような仕事を繰り返したい場合には, その仕事を関数化して1行の入力の繰り返しで実行できるようにしておく方がよい.
 
 
 ### 問題: 自分で関数を定義して実行してみよ.
