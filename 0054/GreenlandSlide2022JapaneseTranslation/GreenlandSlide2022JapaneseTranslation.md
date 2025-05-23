@@ -53,9 +53,13 @@ but in statistics authority is immortal**
 
 Consequence: Fig. 1 van Zwet & Cator 2021 Over a million z-values from Medline 1976-2019. Imputed curve right-skewed with >75% above 0:
 
+<img src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/van_Zwet--Cator_2021_Fig1.jpg">
+
 1 June 2022 Greenland – Reforming Statistics 3
 
 結果：図1 van Zwet & Cator 2021 Medline 1976-2019から抽出された100万以上のZ値。補間曲線は右に歪んでおり、75%以上が0を上回る：
+
+<img src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/van_Zwet--Cator_2021_Fig1.jpg">
 
 ---
 
@@ -146,9 +150,13 @@ DeFinettiのラディカル・ベイズ主義では、すべての確率は「�
 
 Answer: **Any** reform that still leads to selective reporting based on study outcomes will distort the distribution of available outcomes relative to the total
 
+<img src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/van_Zwet--Cator_2021_Fig1.jpg">
+
 1 June 2022 Greenland – Reforming Statistics 8
 
 答え：研究結果に基づいて選択的な報告を依然として行う改革は、利用可能な結果の分布を全体に対して歪めるだろう。
+
+<img src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/van_Zwet--Cator_2021_Fig1.jpg">
 
 ---
 
@@ -330,9 +338,13 @@ Example – a common label on dairy products:<br>
 
 Millstone et al. Nature 1994: 8 trials, 19% average increase in somatic cell count (pus) in milk from cows treated with rBST (meta p=0.004):
 
+<img src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/Milstone_et_al_1994_8trials.jpg">
+
 1 June 2022 Greenland – Reforming Statistics 17
 
 Millstone et al. Nature 1994: 8件の試験、rBST処理された牛の牛乳の体細胞数(膿)が平均19%増加(メタ分析 p=0.004)：
+
+<img src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/Milstone_et_al_1994_8trials.jpg">
 
 ---
 
@@ -717,9 +729,13 @@ Example: “if the p-value for the effect is greater than the journal’s thresh
 
 Ignores a fact noted by the 1950s: Any selective reporting based on study outcomes will distort the distribution of available outcomes relative to the total
 
+<img src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/van_Zwet--Cator_2021_Fig1.jpg">
+
 1 June 2022 Greenland – Reforming Statistics 38
 
 1950年代には指摘されていた事実を無視している：研究結果に基づくいかなる選択的報告も、利用可能な結果の分布を全体に対して歪めるだろう。
+
+<img src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/van_Zwet--Cator_2021_Fig1.jpg">
 
 ---
 
@@ -1158,9 +1174,13 @@ as the hypothesis most important to not reject incorrectly, and apply the Type-I
 
 Example: Again, fig. 1 of van Zwet & Cator 2021. Some Bayesians would shrink estimates toward 0 despite an imputed curve right-skewed with >75% above 0. Empirical Bayesians would instead use shrinkage toward estimated topic-specific means.
 
+<img src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/van_Zwet--Cator_2021_Fig1.jpg">
+
 1 June 2022 Greenland – Reforming Statistics 62
 
 例：再び、van Zwet & Cator 2021の図1。一部のベイズ主義者は、補間曲線が右に歪んでおり、75%以上が0を上回っているにもかかわらず、推定値を0に縮小させるだろう。経験的ベイズ主義者は代わりに、推定されたトピック固有の平均値に向かって縮小を使用するだろう。
+
+<img src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/van_Zwet--Cator_2021_Fig1.jpg">
 
 ---
 
@@ -1412,707 +1432,741 @@ probability of a test hypothesis H (usually, a null hypothesis of no association
 
 from Greenland & Rafi “Semantic and cognitive tools to aid statistical science” http://arxiv.org/abs/1909.08583
 
-<img src="Greenland--Rafi_1909.08583.jpg" width="90%">
+<img src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/Greenland--Rafi_1909.08583.jpg">
 
 1 June 2022 Greenland – Reforming Statistics 75
 
 Greenland & Rafi 「統計科学を支援する意味論的および認知的ツール」より http://arxiv.org/abs/1909.08583
 
-<img src="Greenland--Rafi_1909.08583_J.jpg" width="90%">
-
+<img src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/Greenland--Rafi_1909.08583_J.jpg">
 ---
 
 **Slide 76**
 
-A test statistic measures discrepancy of data from predictions of a test model that contains both H and background assumptions.
+* A test statistic measures discrepancy of data from predictions of a test model that contains both H and background assumptions.
 
-The P-value is thus computed assuming the entire test model, not just H.
+* The P-value is thus computed assuming the entire test model, not just H.
 
-Deconditioning emphasizes that violations of any assumption used to derive the P-value can be responsible for its size, not just violation of the test hypothesis H.
+* Deconditioning emphasizes that violations of any assumption used to derive the P-value can be responsible for its size, not just violation of the test hypothesis H.
 
-A large P-value does not support or confirm H or the test model (absence of evidence is not evidence of absence of model violations).
+* A large P-value does not support or confirm H or the test model (absence of evidence is not evidence of absence of model violations).
 
-1 June 2022 Greenland – Reforming Statistics 75
+1 June 2022 Greenland – Reforming Statistics 76
 
+* 検定統計量は、Hと背景仮定の両方を含む検定モデルの予測からのデータの不一致を測定する。
 
+* したがって、P値はHだけでなく、検定モデル全体を仮定して計算される。
 
-検定統計量は、Hと背景仮定の両方を含む検定モデルの予測からのデータの不一致を測定する。
+* 脱条件付けは、P値を導出するために使用されたいかなる仮定の違反も、検定仮説Hの違反だけでなく、その値の原因となりうることを強調する。
 
-したがって、P値はHだけでなく、検定モデル全体を仮定して計算される。
-
-脱条件付けは、P値を導出するために使用されたいかなる仮定の違反も、検定仮説Hの違反だけでなく、その値の原因となりうることを強調する。
-
-大きなP値は、Hまたは検定モデルを支持または確認するものではない(証拠の不在はモデル違反の不在の証拠ではない)。
+* 大きなP値は、Hまたは検定モデルを支持または確認するものではない(証拠の不在はモデル違反の不在の証拠ではない)。
 
 ---
 
 **Slide 68**
 
-Overthrow misleading traditional jargon (Statspeak) to realign statistical terminology
-with ordinary language:
-Replace “significance” (Edgeworth 1885) and
-“confidence” (Neyman 1934) with compatibility* measured by the P-value p as it ranges from 0 = no compatibility to 1 = full compatibility of data with the test model used to compute p, in the direction measured by the test statistic. [*“Consistency” is nearly equivalent but is used for too many other concepts.]
+**Overthrow misleading traditional jargon (Statspeak) to realign statistical terminology with ordinary language:**
 
-1 June 2022 Greenland – Reforming Statistics 76
-
-1 June 2022 Greenland – Reforming Statistics 76
-
-統計用語を日常言語と再調整するために、誤解を招く伝統的な専門用語(統計 jargon)を覆す：
-「有意性」(Edgeworth 1885)および
-「信頼性」(Neyman 1934)を、P値pによって測定される相性の良さ*に置き換える。相性の良さ*は、pが0(相性の良さなし)から1(データとpを計算するために使用された検定モデルとの完全な相性の良さ)まで変化するにつれて、検定統計量によって測定される方向において示される。[*「整合性」はほぼ同等であるが、あまりにも多くの他の概念に使用されている。]
-
----
-
-**Slide 69**
-
-Why? Because typical modern users depend on words – for them the maths are simply symbolic incantations they must take on faith to get funded and published.
-
-“That's just semantics” irresponsibly fails to grasp the essential analogical information conveyed by the semantics. That failure is common among the mathematically able, who place syntax and deduction above analogical processes, or dismiss or overlook the role of analogy in mapping between reality and math.
+* Replace “significance” (Edgeworth 1885) and “confidence” (Neyman 1934) with compatibility\* measured by the P-value p as it ranges from 0 = no compatibility to 1 = full compatibility of data with the test model used to compute p, in the direction measured by the test statistic.  \[\* “Consistency” is nearly equivalent but is used for too many other concepts.\]
 
 1 June 2022 Greenland – Reforming Statistics 77
 
-1 June 2022 Greenland – Reforming Statistics 77
+**誤解を招く伝統的な専門用語(統計語＝Statspeak)を打破し、統計用語を日常言語と再整合させる：**
 
-なぜか？それは、典型的な現代のユーザーは言葉に依存しているからである – 彼らにとって数学は、資金を得て出版するために信仰をもって受け入れなければならない単なる象徴的な呪文にすぎない。
+* 「有意性(significance)」(エッジワース 1885)や「信頼性(confidence)」(ネイマン 1934)といった用語は、「相性の良さ(compatibility\*)」という語に置き換えるべきである。
 
-「それは単なる意味論だ」と言うのは、意味論が伝える本質的な類推情報を捉え損ねる無責任な態度である。この失敗は、構文と演繹を類推プロセスの上に置く、あるいは現実と数学の間のマッピングにおける類推の役割を却下または見落とす、数学が得意な人々の間でよく見られる。
+* この「相性の良さ」は、P値 p によって測定され、p = 0 は「そのデータは検定モデルと完全に相性が悪い」ことを意味し、p = 1 は「そのデータは検定モデルと完全に相性が良い」ことを意味する。ここでの「相性の良さ」は、検定統計量が測定している方向におけるデータとモデルの一致度を表す。
 
----
-
-**Slide 70**
-
-Stop repeating Fisher’s error of using “null hypothesis” for any test hypothesis
-( an error which openly invites nullistic bias) “Null” in English Dictionaries:
-
-Oxford: adj. 2. Having or associated with the
-value zero; noun 1. Zero.
-Merriam-Webster: adj. 6. Of, being, or
-relating to zero; noun 7. Zero.
-Instead, use Neyman’s term tested (or test)
-hypothesis, and emphasize testing directional, non-null, and interval hypotheses instead of point null hypotheses.
-
-1 June 2022 Greenland – Reforming Statistics 78
-
-1 June 2022 Greenland – Reforming Statistics 78
-
-いかなる検定仮説に対しても「帰無仮説」を使用するというフィッシャーの誤りを繰り返すのをやめなさい。
-(これは露骨にゼロ仮説主義バイアスを招く誤りである) 英語辞書における「Null」：
-
-Oxford: 形容詞 2. 値ゼロを持つ、またはそれに関連する；名詞 1. ゼロ。
-Merriam-Webster: 形容詞 6. ゼロの、ゼロである、またはゼロに関連する；名詞 7. ゼロ。
-代わりに、ネイマンの用語である検定された(または検定)
-仮説を使用し、点帰無仮説ではなく、方向性のある、非帰無仮説、および区間仮説の検定を強調しなさい。
-
----
-
-**Slide 71**
-
-Get rid of Neyman’s “confidence trick”
-
-Assigning high “confidence” is not distinct
-from assigning high probability.
-
-So: Rename and reconceptualize “CI” as
-compatibility intervals showing parameter values found most compatible with the data under some compatibility criterion like P > 0.03 (which as shown below is about 5 coin-flips worth of evidence or less against any parameter value in the interval).
-
-This involves no computational or numeric change! It’s all about perception…
-
-1 June 2022 Greenland – P-values as evidence 80
-
-1 June 2022 Greenland – P-values as evidence 80
-
-ネイマンの「信頼のトリック」を取り除きなさい。
-
-高い「信頼性」を割り当てることは、高い確率を
-割り当てることと区別できない。
-
-したがって：「信頼区間(CI)」を、何らかの相性の良さの基準(例えばP > 0.03)の下でデータと最も相性が良いと見なされたパラメータ値を示す相性区間として再命名し概念化しなさい(後述するように、これは区間内のいかなるパラメータ値に対しても、約5回のコイン投げの証拠以下に相当する)。
-
-これには計算上または数値上の変更は一切伴わない！すべては認識の問題である…
-
----
-
-**Slide 72**
-
-“Compatible” is far more cautious (and logically much weaker) than “confidence”:
-
-There is always an infinitude of possibilities (models) compatible with our data. Most are unimagined, even unimaginable given current knowledge.
-
-We should recount the dogmatic denials by “great men” like Kelvin and Jeffreys of what became accepted facts.
-
-“Confidence” implies belief and encourages the inversion fallacies that treat the CI as a credible posterior interval. In contrast…
-
-1 June 2022 Greenland – P-values as evidence 81
-
-1 June 2022 Greenland – P-values as evidence 81
-
-「相性が良い」は「信頼性」よりもはるかに慎重であり(そして論理的にはるかに弱い)：
-
-常に、我々のデータと相性の良い可能性(モデル)は無限に存在する。ほとんどは想像もされていない、現在の知識では想像すらできないものもある。
-
-ケルビンやジェフリーズのような「偉大な人物」による、後に受け入れられた事実に対する独断的な否定を、我々は語り直すべきである。
-
-「信頼性」は信念を暗示し、CIを信用できる事後区間として扱う逆転の誤謬を助長する。対照的に…
-
----
-
-**Slide 73**
-
-Compatibility is no basis for confidence:
-
-False stories can be compatible with data
-and lead to effective interventions.
-
-Example: “Malaria is caused by bad air that
-collects near the ground around swamps.”
-
-Implied effective solutions: raise dwellings,
-drain swamps – compatible cause (bad air) and actual cause (mosquitos) are both reduced by those interventions.
-
-But confidence in the story will eventually mislead, e.g., it leads away from use of nets.
-
-1 June 2022 Greenland – Reforming Statistics 82
-
-1 June 2022 Greenland – Reforming Statistics 82
-
-相性の良さは信頼性の根拠にはならない：
-
-偽りの話はデータと相性が良く
-効果的な介入につながる可能性がある。
-
-例：「マラリアは沼地の近くの地面に溜まる悪い空気によって引き起こされる。」
-
-示唆される効果的な解決策：住居を高くする、
-沼地を排水する – 相性の良い原因(悪い空気)と実際の原因(蚊)は、どちらもこれらの介入によって減少する。
-
-しかし、その話への信頼は最終的に誤解を招く。例えば、それは蚊帳の使用から遠ざかることにつながる。
-
----
-
-**Slide 74**
-
-Problem: The stated (“nominal”) coverage of a CI is a purely hypothetical frequency property
-in which we should have no confidence!
-
-“Confidence” requires us to know for certain
-that the actual relative frequency with which the algorithmic interval covers the “true value” for the generator is as stated (eg 95%).
-
-But the actual generator frequencies are unknown, so no such confidence is warranted.
-
-The stated coverage thus refers only to repeated draws from a hypothetical data-generating algorithm, not to a causal story we are sure of.
-
-1 June 2022 Greenland – Reforming Statistics 83
-
-1 June 2022 Greenland – Reforming Statistics 83
-
-問題：CIの示されている(「名目上の」)カバレッジは、純粋に仮説的な頻度プロパティであり、
-それについて我々は信頼を持つべきではない！
-
-「信頼性」は、生成器の「真の値」をアルゴリズム的区間がカバーする実際の相対頻度が、述べられている通りである(例えば95%)と
-我々が確実に知っていることを要求する。
-
-しかし、実際の生成器の頻度は未知であるため、そのような信頼性は正当化されない。
-
-したがって、示されているカバレッジは、仮説的なデータ生成アルゴリズムからの繰り返しの抽出のみを参照し、我々が確信している因果関係の話を参照するものではない。
-
----
-
-**Slide 75**
-
-In contrast, compatibility is merely an observed relation between data and models
-
-Compatibility only means the data set is “not far” (in percentile terms along the tested direction) from where it would be expected if it had come from the data-generating algorithm derived from the model under scrutiny.
-
-A 95% compatibility interval (or region) shows results for every model having p > 0.05 in the tested direction. This a region of “high compatibility” when translated into a simple coin-tossing experiment, as described below.
-
-1 June 2022 Greenland – Reforming Statistics 84
-
-1 June 2022 Greenland – Reforming Statistics 84
-
-対照的に、相性の良さは、データとモデルの間の単なる観測された関係である。
-
-相性の良さは、データセットが、検討中のモデルから導出されたデータ生成アルゴリズムから来たとした場合に期待される位置から、(検定された方向でのパーセンタイルの観点から)「遠くない」ことを意味するだけである。
-
-95%相性区間(または領域)は、検定された方向でp > 0.05となるすべてのモデルの結果を示す。これは、後述する簡単なコイン投げ実験に翻訳すると、「高い相性の良さ」の領域となる。
-
----
-
-**Slide 76**
-
-An honest report of Brown et al. JAMA 2017, “Association between serotonergic antidepressant [SSRI] use during pregnancy and autism spectrum disorder [ASD] in children”, could be:
-
-Abstract: The Cox-model adjusted HR was 1.59,
-95% compatibility limits (CL) 1.17, 2.17. Using IPTW HDPS, the HR estimate was much less precise (HR 1.61, 95% CL: 1.00, 2.59).
-
-Conclusion: Under our HDPS model, the data appear most compatible with associations ranging from zero to a 2.6-fold elevation of ASD in children with in utero SSRI exposure.
-
-1 June 2022 Greenland – Reforming Statistics 85
-
-1 June 2022 Greenland – Reforming Statistics 85
-
-Brown et al. JAMA 2017の正直な報告、「妊娠中のセロトニン系抗うつ薬[SSRI]の使用と子供の自閉症スペクトラム障害[ASD]との関連」は以下のようになるだろう：
-
-要旨：Coxモデル調整済みHRは1.59、
-95%相性の良さ限界(CL)は1.17、2.17であった。IPTW HDPSを使用すると、HR推定値ははるかに不正確になった(HR 1.61、95%相性の良さ限界：1.00、2.59)。
-
-結論：我々のHDPSモデルの下では、データは、出生前SSRI曝露のある子供において、関連性がゼロからASDの2.6倍の増加までの範囲と最も相性が良いように見える。
-
----
-
-**Slide 77**
-
-An honest report of Vallejos et al. ‘Ivermectin to prevent hospitalizations in patients with COVID-19’ BMC ID 2 July 2021:
-
-Abstract: The hospitalization odds ratio was 0.65,
-95% compatibility limits (CL) 0.32, 1.31; the mortality odds ratio was 1.34, 95% CL 0.30, 6.07.
-
-Conclusion: The results were too imprecise to determine the size or direction of the effect, being most compatible with hospitalization odds from 68% lower to 31% higher and mortality odds from 70% lower to 500% higher in the ivermectin group compared to the placebo group.
-
-1 June 2022 Greenland – Reforming Statistics 86
-
-1 June 2022 Greenland – Reforming Statistics 86
-
-Vallejos et al. 「COVID-19患者の入院を予防するためのイベルメクチン」 BMC ID 2021年7月2日 の正直な報告：
-
-要旨：入院オッズ比は0.65、
-95%相性の良さ限界(CL)は0.32、1.31であった。死亡オッズ比は1.34、95%相性の良さ限界は0.30、6.07であった。
-
-結論：結果は効果の大きさや方向を決定するにはあまりにも不正確であり、プラセボ群と比較してイベルメクチン群では、入院オッズが68%減から31%増まで、死亡オッズが70%減から500%増までと最も相性が良かった。
+\[\* consistency (整合性)もほぼ同義だが、他の多くの概念にも使われているため、ここでは避けたほうが良い。\]
 
 ---
 
 **Slide 78**
 
-STOP repeating the massive error of NOT treating P-values as estimation tools
-(another error openly inviting nullistic bias) “The distinction between significance testing [meaning: P-values] and estimation is artificial” – Edwin Jaynes, Bayesian informationalist
+* Why? Because typical modern users depend on words – for them the maths are simply symbolic incantations they must take on faith to get funded and published.
 
-Indeed, the distinction has been entirely
-destructive in focusing tests and decisions on just one hypothesis (the null) or model in an entire spectrum of hypotheses and models.
+* “That's just semantics” irresponsibly fails to grasp the essential analogical information conveyed by the semantics. That failure is common among the mathematically able, who place syntax and deduction above analogical processes, or dismiss or overlook the role of analogy in mapping between reality and math.
 
-Visualize P-values and CLs as indicating points on an entire P-graph (P-value function)
+1 June 2022 Greenland – Reforming Statistics 78
 
-1 June 2022 Greenland – P-values as evidence 87
+* なぜか？それは、典型的な現代のユーザーは言葉に依存しているからである – 彼らにとって数学は、資金を得て出版するために信仰をもって受け入れなければならない単なる象徴的な呪文にすぎない。
 
-1 June 2022 Greenland – P-values as evidence 87
-
-P値を推定ツールとして扱わないという大きな誤りを繰り返すのをやめなさい。
-(ゼロ仮説主義バイアスを露骨に招くもう一つの誤り) 「有意性検定[意味：P値]と推定の区別は人工的である」 – エドウィン・ジェインズ、ベイズ情報主義者
-
-実際、この区別は、
-テストと決定を、仮説とモデルのスペクトル全体の中のたった一つの仮説(帰無仮説)またはモデルに集中させる点で、全く破壊的であった。
-
-P値とCLを、Pグラフ(P値関数)全体上の点を示すものとして視覚化しなさい。
+* 「それは単なる意味論だ」と言うのは、意味論が伝える本質的な類推情報を捉え損ねる無責任な態度である。この失敗は、構文と演繹を類推プロセスの上に置く、あるいは現実と数学の間のマッピングにおける類推の役割を却下または見落とす、数学が得意な人々の間でよく見られる。
 
 ---
 
 **Slide 79**
 
-from Rafi & Greenland BMC Med Res Methodol 2020
-1 June 2022 Greenland – Reforming Statistics 88
-TRANSLATE P-values to S-values (surprisals) to gauge the evidence supplied by test statistics
+**Stop repeating Fisher’s error of using “null hypothesis” for any test hypothesis**<br>
+(an error which openly invites nullistic bias)
 
-A central aspect of the Fisherian treatment of P-
-values is their provision of a shared scale of evidence against hypotheses or models across different settings and tests.
+“Null” in English Dictionaries:
 
-To express this scale in everyday currency, any P-value can be compared to the probability ½s of all heads from a sequence of s coin tosses that are independent and “fair” (chance of heads = ½)
+* Oxford: adj. 2. Having or associated with the value zero; noun 1. Zero.
+* Merriam-Webster: adj. 6. Of, being, or relating to zero; noun 7. Zero.
+* Instead, use Neyman’s term tested (or test) hypothesis, and emphasize testing directional, non-null, and interval hypotheses instead of point null hypotheses.
 
-1 June 2022 Greenland – Reforming Statistics 89
+1 June 2022 Greenland – Reforming Statistics 79
 
-1 June 2022 Greenland – Reforming Statistics 89
+**いかなる検定仮説に対しても「帰無仮説」を使用するというフィッシャーの誤りを繰り返すのをやめよ。**<br>
+(これは露骨にゼロ仮説主義バイアスを招く誤りである)
 
-Rafi & Greenland BMC Med Res Methodol 2020 より
-2022年6月1日 グリーンランド – 統計学改革 88
-P値をS値(意外度)に変換して、検定統計量によって提供される証拠を測定する。
+英語辞書における「Null」：
 
-フィッシャーによるP値の扱いの中核的な側面は、異なる設定と検定を横断して、仮説またはモデルに対する共通の証拠尺度を提供することである。
-
-この尺度を日常的な通貨で表現するために、いかなるP値も、独立していて「公正な」(表が出る確率 = ½)s回のコイン投げのシーケンスから、すべて表が出る確率 ½s と比較することができる。
+* Oxford: 形容詞 2. 値ゼロを持つ、またはそれに関連する；名詞 1. ゼロ。
+* Merriam-Webster: 形容詞 6. ゼロの、ゼロである、またはゼロに関連する；名詞 7. ゼロ。
+* 代わりに、ネイマンの用語である検定された仮説(または検定仮説)を使用し、点帰無仮説ではなく、方向性のある、非帰無仮説、および区間仮説の検定を強調せよ。
 
 ---
 
 **Slide 80**
 
-Given a P-value p, find the number of heads s in a row that gives back p …
+**Get rid of Neyman’s “confidence trick”**
 
-All heads in s tosses would give p = ½s
+* Assigning high “confidence” is not distinct from assigning high probability.
 
-Solving for s gives s = log2(1/p) = –log2(p), so
-p = ½4 = .0625 becomes s = 4 heads in 4 tosses
-p = ½5 = .0313 becomes s = 5 heads in 5 tosses
-p = 0.04 = ½4.6 becomes s = –log2(.04) = 4.6.
-Thus p = 0.04 = ½4.6 provides the same evidence against the model used to compute p as about 4 or 5 heads in a row provides against the hypothesis that the tosses are independent with chance of heads no more than ½.
+* So: Rename and reconceptualize “CI” as compatibility intervals showing parameter values found most compatible with the data under some compatibility criterion like P > 0.03 (which as shown below is about 5 coin-flips worth of evidence or less against any parameter value in the interval).
 
-1 June 2022 Greenland – Reforming Statistics 90
+* This involves no computational or numeric change! It’s all about perception…
 
-1 June 2022 Greenland – Reforming Statistics 90
+1 June 2022 Greenland – P-values as evidence 80
 
-P値 p が与えられたとき、p を返す連続した表の数 s を見つける…
+**ネイマンの「信頼のトリック」を取り除け。**
 
-s回の投げで全て表が出ると、p = ½s となる。
+* 高い「信頼性」を割り当てることは、高い確率を割り当てることと区別できない。
 
-sについて解くと、s = log2(1/p) = –log2(p) となる。したがって、
-p = ½4 = .0625 は s = 4回の投げで4回の表 になる。
-p = ½5 = .0313 は s = 5回の投げで5回の表 になる。
-p = 0.04 = ½4.6 は s = –log2(.04) = 4.6 になる。
-したがって、p = 0.04 = ½4.6 は、pを計算するために使用されたモデルに対する証拠として、コイン投げが独立しており、表が出る確率が½以下であるという仮説に対する、約4回または5回の連続した表によって提供される証拠と同じ程度のものである。
+* したがって：「信頼区間(CI)」を、何らかの相性の良さの基準(例えばP > 0.03)の下でデータと最も相性が良いと見なされたパラメータ値を示す相性区間として再命名し概念化しなさい(後述するように、これは区間内のいかなるパラメータ値に対しても、約5回のコイン投げの証拠以下に相当する)。
+
+* これには計算上または数値上の変更は一切伴わない！すべては認識の問題である…
 
 ---
 
 **Slide 81**
 
-―log2(0.05) = 4.3 ≈ 4 heads in 4 tosses
-―log2(.005) = 7.6 ≈ 7 heads in 7 or 8 in 8 tosses
-1 June 2022 Greenland – Reforming Statistics 90
+**“Compatible” is far more cautious (and logically much weaker) than “confidence”:**
 
-The binary S-value (surprisal, logworth) s measures the information the P-value p supplies against the model used to compute p.
+* There is always an infinitude of possibilities (models) compatible with our data. Most are unimagined, even unimaginable given current knowledge.
 
-The units of s are called Shannons or bits.
-The P-value scale is highly nonlinear: In terms
-of information against a model, the difference between 0.001 and 0.05 is large, yet the difference between 0.95 and 0.999 is trivial, despite their being the same distance apart.
+* We should recount the dogmatic denials by “great men” like Kelvin and Jeffreys of what became accepted facts.
 
-1 June 2022 Greenland – Reforming Statistics 91
+* “Confidence” implies belief and encourages the inversion fallacies that treat the CI as a credible posterior interval. In contrast…
 
-1 June 2022 Greenland – Reforming Statistics 91
+1 June 2022 Greenland – P-values as evidence 81
 
-―log2(0.05) = 4.3 ≒ 4回の投げで4回の表
-―log2(.005) = 7.6 ≒ 7回の投げで7回または8回の投げで8回の表
-2022年6月1日 グリーンランド – 統計学改革 90
+* 「相性の良さ」という言葉の響きは「信頼性」よりもはるかに慎重であり(そして論理的にはるかに弱い)：
 
-二進数のS値(意外度、logworth)sは、P値 p が p を計算するために使用されたモデルに対して提供する情報を測定する。
+* 常に、我々のデータと相性の良い可能性(モデル)は無限に存在する。ほとんどは想像もされていない、現在の知識では想像すらできないものもある。
 
-sの単位はシャノンまたはビットと呼ばれる。
-P値の尺度は非常に非線形である：モデルに対する
-情報の観点から見ると、0.001と0.05の差は大きいが、0.95と0.999の差は、同じ距離だけ離れているにもかかわらず、些細である。
+* ケルビンやジェフリーズのような「偉大な人物」による、後に受け入れられた事実に対する独断的な否定を、我々は語り直すべきである。
+
+* 「信頼性」は信念を暗示し、CIを信用できる事後区間として扱う逆転の誤謬を助長する。それとは対照的に…
 
 ---
 
 **Slide 82**
 
-S-values have resurfaced repeatedly since the 1950s when theorists needed to gauge the evidence or information in P-values, and examine test behavior under alternatives.
+**Compatibility is no basis for confidence:**
 
-S-values are hard to confuse with Bayesian probabilities because they range far above 1.
+* False stories can be compatible with data
+and lead to effective interventions.
 
-S-values do not require a prior distribution. But they can incorporate a prior distribution by computing p from a test of fit of a compound sampling model that treats the prior as a parameter-sampling distribution (a “random-effects” model). Relation to likelihood ratios…
+* Example: “Malaria is caused by bad air that collects near the ground around swamps.”
 
-1 June 2022 Greenland – Reforming Statistics 93
+* Implied effective solutions: raise dwellings, drain swamps – compatible cause (bad air) and actual cause (mosquitos) are both reduced by those interventions.
 
-1 June 2022 Greenland – Reforming Statistics 92
+* But confidence in the story will eventually mislead, e.g., it leads away from use of nets.
 
-S値は、理論家がP値における証拠や情報を測定し、代替案の下での検定挙動を調べる必要があった1950年代以降、繰り返し再浮上している。
+1 June 2022 Greenland – Reforming Statistics 82
 
-S値は1をはるかに超える範囲を持つため、ベイズ確率と混同しにくい。
+**相性の良さは信頼性の根拠にはならない：**
 
-S値は事前分布を必要としない。しかし、事前分布をパラメータサンプリング分布(「ランダム効果」モデル)として扱う複合サンプリングモデルの適合度検定からpを計算することで、事前分布を組み込むことができる。尤度比との関係…
+* 偽りの話はデータと相性が良く効果的な介入につながる可能性がある。
+
+* 例：「マラリアは沼地の近くの地面に溜まる悪い空気によって引き起こされる。」
+
+* 示唆される効果的な解決策：住居を高くする、沼地を排水する – 相性の良い原因(悪い空気)と実際の原因(蚊)は、どちらもこれらの介入によって減少する。
+
+* しかし、その話への信頼は最終的に誤解を招く。例えば、それは蚊帳の使用から遠ざかることにつながる。
 
 ---
 
 **Slide 83**
 
-from Rafi & Greenland BMC Med Res Methodol 2020
-1 June 2022 Greenland – Reforming Statistics 94
-Some background and further readings on my views (all should be open access at the links given)
+**Problem: The stated (“nominal”) coverage of a CI is a purely hypothetical frequency property in which we should have no confidence!**
 
-Greenland S. For and against methodology: Some perspectives on recent causal and statistical inference debates. Eur J Epidemiol, 2017;32:3-20. https://link.springer.com/article/10.1007%2Fs10654-017-0230-6 Greenland S. The need for cognitive science in methodology. Am J Epidemiol 2017;186:639-645. https://academic.oup.com/aje/article/186/6/639/3886035 Greenland S. The causal foundations of applied probability and statistics. In Dechter R, Halpern J, Geffner H, eds. Probabilistic and Causal Inference: The Works of Judea Pearl. ACM Books 2022; 36: 605-624, https://arxiv.org/abs/2011.02677 (version with corrections) Greenland S. Analysis goals, error-cost sensitivity, and analysis hacking: essential considerations in hypothesis testing and multiple comparisons. Ped Perinatal Epidemiol 2021;35:8-23. https://doi.org/10.1111/ppe.12711 20-01105-9 Greenland S. Valid P-values behave exactly as they should: some misleading criticisms of P-values and their resolution with S-values. Am Stat 2019; 73: 106-114. http://www.tandfonline.com/doi/pdf/10.1080/00031305.2018.1529625
+* “Confidence” requires us to know for certain
+that the actual relative frequency with which the algorithmic interval covers the “true value” for the generator is as stated (eg 95%).
 
-1 June 2022 Greenland – Reforming Statistics 94
+* But the actual generator frequencies are unknown, so no such confidence is warranted.
 
-Rafi & Greenland BMC Med Res Methodol 2020 より
-2022年6月1日 グリーンランド – 統計学改革 94
-私の見解に関する背景情報とさらなる読み物(すべて指定されたリンクでオープンアクセスであるはずです)
+* The stated coverage thus refers only to repeated draws from a hypothetical data-generating algorithm, not to a causal story we are sure of.
 
-Greenland S. For and against methodology: Some perspectives on recent causal and statistical inference debates. Eur J Epidemiol, 2017;32:3-20. https://link.springer.com/article/10.1007%2Fs10654-017-0230-6 Greenland S. The need for cognitive science in methodology. Am J Epidemiol 2017;186:639-645. https://academic.oup.com/aje/article/186/6/639/3886035 Greenland S. The causal foundations of applied probability and statistics. In Dechter R, Halpern J, Geffner H, eds. Probabilistic and Causal Inference: The Works of Judea Pearl. ACM Books 2022; 36: 605-624, https://arxiv.org/abs/2011.02677 (version with corrections) Greenland S. Analysis goals, error-cost sensitivity, and analysis hacking: essential considerations in hypothesis testing and multiple comparisons. Ped Perinatal Epidemiol 2021;35:8-23. https://doi.org/10.1111/ppe.12711 20-01105-9 Greenland S. Valid P-values behave exactly as they should: some misleading criticisms of P-values and their resolution with S-values. Am Stat 2019; 73: 106-114. http://www.tandfonline.com/doi/pdf/10.1080/00031305.2018.1529625
+1 June 2022 Greenland – Reforming Statistics 83
+
+**問題：CIの示されている(「名目上の」)カバレッジは、純粋に仮説的な頻度プロパティであり、それについて我々は信頼を持つべきではない！**
+
+* 「信頼性」は、生成器の「真の値」をアルゴリズム的区間がカバーする実際の相対頻度が、述べられている通りである(例えば95%)と我々が確実に知っていることを要求する。
+
+* しかし、実際の生成器の頻度は未知であるため、そのような信頼性は正当化されない。
+
+* したがって、示されているカバレッジは、仮説的なデータ生成アルゴリズムからの繰り返しの抽出のみを参照し、我々が確信している因果関係の話を参照するものではない。
 
 ---
 
 **Slide 84**
 
-Educational readings for students, authors, editors and instructors Greenland S, Senn SJ, Rothman KJ, Carlin JC, Poole C, Goodman SN, Altman DG. Statistical tests, confidence intervals, and power: A guide to misinterpretations. The American Statistician 2016;70 suppl. 1, https://amstat.tandfonline.com/doi/suppl/10.1080/00031305.2016.1154108 /suppl_file/utas_a_1154108_sm5368.pdf Amrhein V, Greenland S, McShane B. Retire statistical significance. Nature 2019;567:305-307. https://www.nature.com/articles/d41586-019-00857-9 Amrhein V, Trafimow D, Greenland S. Inferential statistics as descriptive statistics. The American Statistician 2019;73 suppl 1:262-270. www.tandfonline.com/doi/pdf/10.1080/00031305.2018.1543137 Rafi Z, Greenland S. Semantic and cognitive tools to aid statistical science: Replace confidence and significance by compatibility and surprise. BMC Medical Research Methodology 2020;20:244 https://bmcmedresmethodol.biomedcentral.com/articles/10.1186/s12874-020-01105-9
+**In contrast, compatibility is merely an observed relation between data and models**
 
-1 June 2022 Greenland – Reforming Statistics 95
+* Compatibility only means the data set is “not far” (in percentile terms along the tested direction) from where it would be expected if it had come from the data-generating algorithm derived from the model under scrutiny.
 
-学生、著者、編集者、教員向けの教育的な読み物 Greenland S, Senn SJ, Rothman KJ, Carlin JC, Poole C, Goodman SN, Altman DG. Statistical tests, confidence intervals, and power: A guide to misinterpretations. The American Statistician 2016;70 suppl. 1, https://amstat.tandfonline.com/doi/suppl/10.1080/00031305.2016.1154108 /suppl_file/utas_a_1154108_sm5368.pdf Amrhein V, Greenland S, McShane B. Retire statistical significance. Nature 2019;567:305-307. https://www.nature.com/articles/d41586-019-00857-9 Amrhein V, Trafimow D, Greenland S. Inferential statistics as descriptive statistics. The American Statistician 2019;73 suppl 1:262-270. www.tandfonline.com/doi/pdf/10.1080/00031305.2018.1543137 Rafi Z, Greenland S. Semantic and cognitive tools to aid statistical science: Replace confidence and significance by compatibility and surprise. BMC Medical Research Methodology 2020;20:244 https://bmcmedresmethodol.biomedcentral.com/articles/10.1186/s12874-020-01105-9
+* A 95% compatibility interval (or region) shows results for every model having p > 0.05 in the tested direction. This a region of “high compatibility” when translated into a simple coin-tossing experiment, as described below.
+
+1 June 2022 Greenland – Reforming Statistics 84
+
+**対照的に、相性の良さは、データとモデルの間の単なる観測された関係である。**
+
+* 相性の良さは、データセットが、検討中のモデルから導出されたデータ生成アルゴリズムから来たとした場合に期待される位置から、(検定された方向でのパーセンタイルの観点から)「遠くない」ことを意味するだけである。
+
+* 95%相性区間(または領域)は、検定された方向でp > 0.05となるすべてのモデルの結果を示す。これは、後述する簡単なコイン投げ実験に翻訳すると、「高い相性の良さ」の領域となる。
 
 ---
 
 **Slide 85**
 
-Greenland S, Rafi Z. To aid scientific inference, emphasize unconditional descriptions of statistics. 2021, http://arxiv.org/abs/1909.08583
+An honest report of Brown et al. JAMA 2017, “Association between serotonergic antidepressant [SSRI] use during pregnancy and autism spectrum disorder [ASD] in children”, could be:
 
-‘Pearl’s thesis’: Around 1900 science and statistics took a serious misstep in dismissing, even attempting to ban causation from theory.
+* Abstract: The Cox-model adjusted HR was 1.59,
+95% compatibility limits (CL) 1.17, 2.17. Using IPTW HDPS, the HR estimate was much less precise (HR 1.61, 95% CL: 1.00, 2.59).
 
-A motive: Temporal symmetry in physical laws.
-Yet that overlooked the asymmetry emergent in
-thermodynamics, and the causal structure of information transmission as seen in c = max speed of energy flow, communication, causation.
+* Conclusion: Under our HDPS model, the data appear most compatible with associations ranging from zero to a 2.6-fold elevation of ASD in children with in utero SSRI exposure.
 
-1 June 2022 Greenland – Reforming Statistics 96
+1 June 2022 Greenland – Reforming Statistics 85
 
-1 June 2022 Greenland – Reforming Statistics 96
+Brown et al. JAMA 2017の正直な報告、「妊娠中のセロトニン系抗うつ薬[SSRI]の使用と子供の自閉症スペクトラム障害[ASD]との関連」は以下のようになるだろう：
 
-Greenland S, Rafi Z. To aid scientific inference, emphasize unconditional descriptions of statistics. 2021, http://arxiv.org/abs/1909.08583
+* 要旨：Coxモデル調整済みHRは1.59、95%相性限界(compatibility limits, CLs)は1.17、2.17であった。IPTW HDPSを使用すると、HR推定値ははるかに不正確になった(HR 1.61、95%相性の良さ限界：1.00、2.59)。
 
-「パールのテーゼ」：1900年頃、科学と統計学は、理論から因果関係を排除し、さらには禁止しようとすることで、深刻な誤りを犯した。
-
-動機：物理法則における時間対称性。
-しかし、それは熱力学において現れる非対称性と、c = エネルギーの流れ、通信、因果関係の最大速度に見られる情報伝達の因果構造を見落としていた。
+* 結論：我々のHDPSモデルの下では、データは、出生前SSRI曝露のある子供において、関連性がゼロからASDの2.6倍の増加までの範囲と相性が良いように見える。
 
 ---
 
 **Slide 86**
 
-Causal (path) diagrams and potential-outcome models date from c. 1920, but did not fully develop and begin to spread widely until c. 1990.
+An honest report of Vallejos et al. ‘Ivermectin to prevent hospitalizations in patients with COVID-19’ BMC ID 2 July 2021:
 
-They should be integrated into basic statistics! 1 June 2022 Greenland – Reforming Statistics 97
-Graphical example of a cognitive blindness: The parsimony fallacy to defend causal nulls
-in observational research
+* Abstract: The hospitalization odds ratio was 0.65,
+95% compatibility limits (CL) 0.32, 1.31; the mortality odds ratio was 1.34, 95% CL 0.30, 6.07.
 
-Due to their qualitative nature, graphs say
-nothing about bias-variance tradeoffs, and so are often dismissed by those limited to pure predictive or potential-outcome models.
+* Conclusion: The results were too imprecise to determine the size or direction of the effect, being most compatible with hospitalization odds from 68% lower to 31% higher and mortality odds from 70% lower to 500% higher in the ivermectin group compared to the placebo group.
 
-1 June 2022 Greenland – Reforming Statistics 97
+1 June 2022 Greenland – Reforming Statistics 86
 
-因果(経路)図と潜在結果モデルは紀元1920年頃にさかのぼるが、紀元1990年頃まで十分に発展し、広く普及し始めることはなかった。
+Vallejos et al. 「COVID-19患者の入院を予防するためのイベルメクチン」 BMC ID 2021年7月2日 の正直な報告：
 
-それらは基礎統計学に統合されるべきである！ 2022年6月1日 グリーンランド – 統計学改革 97
-認知的盲点の図解例：観察研究における因果的帰無仮説を擁護するための単純性の誤謬。
+* 要旨：入院オッズ比は0.65、95%相性限界(compatibility limits, CLs)は0.32、1.31であった。死亡オッズ比は1.34、95%相性の良さ限界は0.30、6.07であった。
 
-グラフはその定性的な性質のため、
-バイアス-分散トレードオフについて何も語らないため、純粋な予測モデルや潜在結果モデルに限定されている人々からはしばしば却下される。
+* 結論：結果は効果の大きさや方向を決定するにはあまりにも不正確であり、プラセボ群と比較してイベルメクチン群では、入院オッズが68%減から31%増までの値が、死亡オッズが70%減から500%増までの値がデータとの相性が良かった。
 
 ---
 
 **Slide 87**
 
-Yet graphs show how statistical criteria fall short for evaluating causal effects, because causality involves constraints that cannot be captured by probability alone.
-1 June 2022 Greenland – Reforming Statistics 98
-Every missing arrow in a graph is an assumed causal null hypothesis
-In “soft” sciences, we can rarely distinguish ‘no effect’ from alternatives that are within an interval around it containing important effects.
+**STOP repeating the massive error of NOT treating P-values as estimation tools**<br>
+(another error openly inviting nullistic bias) 
 
-Technically: A discontinuous distribution (one
-with mass concentrations) cannot be effectively distinguished empirically from a nearby continuous distribution. And…
+“The distinction between significance testing [meaning: P-values] and estimation is artificial” ― Edwin Jaynes, Bayesian informationalist
 
-1 June 2022 Greenland – Reforming Statistics 98
+* Indeed, the distinction has been entirely destructive in focusing tests and decisions on just one hypothesis (the null) or model in an entire spectrum of hypotheses and models.
 
-しかし、グラフは、因果関係が確率だけでは捉えられない制約を含むため、統計的基準が因果効果の評価にいかに不十分であるかを示している。
-2022年6月1日 グリーンランド – 統計学改革 98
-グラフ内のすべての欠落した矢印は、仮定された因果的帰無仮説である。
-「ソフト」サイエンスでは、重要な効果を含むその周りの区間内にある代替案から、「効果なし」を効果的に区別することはめったにできない。
+* Visualize P-values and CLs as indicating points on an entire P-graph (P-value function)
 
-技術的に：不連続な分布(質量が集中した分布)は、経験的に近くの連続分布と効果的に区別することはできない。そして…
+1 June 2022 Greenland – P-values as evidence 87
+
+**P値を推定ツールとして扱わないという大きな誤りを繰り返すのをやめよ。**<br>
+(ゼロ仮説主義バイアスを露骨に招くもう一つの誤り) 
+
+「有意性検定\[意味：P値\]と推定の区別は人工的である」 ― エドウィン・ジェインズ、ベイズ情報主義者
+
+* 実際、この区別は、テストと決定を、仮説とモデルのスペクトル全体の中のたった一つの仮説(帰無仮説)またはモデルに集中させる点で、全く破壊的であった。
+
+* P値と相性限界(compatibility limits, CLs)を、Pグラフ(P値関数)全体上の点を示すものとして視覚化しなさい。
 
 ---
 
 **Slide 88**
 
-The approximation error from replacing continuities with point masses can multiply through a causal network into huge errors.
-1 June 2022 Greenland – Reforming Statistics 99
-Ironically for those who deny specific effects are present on the grounds of parsimony, a null hypothesis is rarely the most parsimonious causal explanation for nonexperimental observations. In fact
+from Rafi & Greenland BMC Med Res Methodol 2020
 
-When any association is present,
-the null hypothesis of ‘no effect’ is not parsimonious because, under the null, the association requires indirect explanations, which are causally more complex than direct causation. 1 June 2022 Greenland – Reforming Statistics 100
+<img src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/Rafi--Greenland_2020a.jpg">
 
-1 June 2022 Greenland – Reforming Statistics 100
+1 June 2022 Greenland – Reforming Statistics 88
 
-連続性を点質量で置き換えることによる近似誤差は、因果ネットワークを介して増幅され、大きな誤りとなる可能性がある。
-2022年6月1日 グリーンランド – 統計学改革 99
-単純性の根拠で特定の効果が存在することを否定する人々にとって皮肉なことに、帰無仮説は、非実験的観察に対する最も単純な因果的説明であることはめったにない。実際、
+Rafi & Greenland BMC Med Res Methodol 2020 より
 
-何らかの関連性が存在する場合、
-「効果なし」という帰無仮説は単純ではない。なぜなら、帰無仮説の下では、その関連性は間接的な説明を必要とし、それは直接的な因果関係よりも因果的に複雑だからである。
+<img src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/Rafi--Greenland_2020a.jpg">
 
 ---
 
-**Slide 89**
+** Slide 89**
 
-Suppose causal parsimony is defined as preferring the simplest causal diagram compatible with the observed (nonparametric) data distribution. Then
+**TRANSLATE P-values to S-values (surprisals) to gauge the evidence supplied by test statistics**
 
-There is no basis for dismissing a reported effect without appeal to a more complex system of mechanisms that produces the association: The necessary causal diagram requires more arrows and larger effects.
-1 June 2022 Greenland – Reforming Statistics 101
-Consider: If an X-Y association is observed, what is the simplest single explanation?:
-a) Simple confounding: X←C→Y
+* A central aspect of the Fisherian treatment of P-
+values is their provision of a shared scale of evidence against hypotheses or models across different settings and tests.
 
-1 June 2022 Greenland – Reforming Statistics 101
+* To express this scale in everyday currency, any P-value can be compared to the probability ½s of all heads from a sequence of s coin tosses that are independent and “fair” (chance of heads = ½)
 
-因果的な単純性が、観察された(ノンパラメトリックな)データ分布と相性の良い最も単純な因果図を好むこととして定義されると仮定する。そうすれば、
+* Given a P-value p, find the number of heads s in a row that gives back p …
 
-関連性を生み出すより複雑なメカニズムのシステムに訴えることなしに、報告された効果を却下する根拠はない：必要な因果図は、より多くの矢印とより大きな効果を必要とする。
-2022年6月1日 グリーンランド – 統計学改革 101
-考えてみよう：X-Y間の関連性が観察された場合、最も単純な単一の説明は何か？：
-a) 単純な交絡：X←C→Y
+1 June 2022 Greenland – Reforming Statistics 89
+
+**P値をS値(意外度)に変換して、検定統計量によって提供される証拠を測定する。**
+
+* フィッシャーによるP値の扱いの中核的な側面は、異なる設定と検定を横断して、仮説またはモデルに対する共通の証拠尺度を提供することである。
+
+* この尺度を日常的な通貨で表現するために、いかなるP値も、独立していて「公正な」(表が出る確率 = ½)s回のコイン投げのシーケンスから、すべて表が出る確率 ½s と比較することができる。
+
+* P値 p が与えられたとき、p を返す連続した表の数 s を見つける…
 
 ---
 
 **Slide 90**
 
-b) Simple selection bias: X→[S]←Y
-c) Differential error: X→X*←Y or X→Y*←Y
-(X or Y observed with error as X* or Y*)
-d) Simple random error: X Y←ε
-e) Simple causation: X→Y
-Asserting the null (a-d) requires an extra variable (node) or effect (arrow) relative to causation (e).
-1 June 2022 Greenland – Reforming Statistics 102
+* All heads in $s$ tosses would give $p = 1/2^s$
 
-1 June 2022 Greenland – Reforming Statistics 102
+* Solving for $s$ gives $s = \log_2(1/p) = –log_2(p)$, so
+$p = 1/2^4 = .0625$ becomes $s = 4$ heads in 4 tosses
 
-b) 単純な選択バイアス：X→[S]←Y
-c) 差動誤差：X→X*←Y または X→Y*←Y
-(XまたはYが誤差を伴ってX*またはY*として観測される)
-d) 単純なランダム誤差：X Y←ε
-e) 単純な因果関係：X→Y
-因果関係(e)に対して、帰無仮説(a-d)を主張するには、余分な変数(ノード)または効果(矢印)が必要となる。
+* $p = 1/2^5 = .0313$ becomes $s = 5$ heads in 5 tosses
+
+* $p = 0.04 = 1/2^{4.6}$ becomes $s = –\log_2(.04) = 4.6$.
+Thus $p = 0.04 = 1/2^{4.6}$ provides the same evidence against the model used to compute $p$ as about 4 or 5 heads in a row provides against the hypothesis that the tosses are independent with chance of heads no more than $1/2$.
+
+* $―\log_2(0.05) = 4.3 ≈ 4$ heads in 4 tosses
+
+* $―\log_2(.005) = 7.6 ≈ 7$ heads in 7 or 8 in 8 tosses
+
+1 June 2022 Greenland – Reforming Statistics 90
+
+* $s$ 回の投げで全て表が出る確立は $p = 1/2^s$ である.
+
+* $s$ について解くと、$s = \log_2(1/p) = –\log_2(p)$ となる。したがって、
+
+* $p = 1/2^4 = .0625$ は $s=4$ 回のコイン投げですべて表が出る場合に対応
+
+* $p = 1/2^5 = .0313$ は $s = 5$ 回のコイン投げですべて表が出る場合に対応
+
+* $p = 0.04 = 1/2^{4.6}$ は $s = –\log_2(.04) = 4.6$ である。したがって、$p = 0.04 = 1/2^{4.6}$ の「$p$ を計算するために使用されたモデルに反対するための証拠としての強さ」は、コイン投げで4回から5回程度連続して表が出たことの「コイン投げが独立かつ表が出る確率が$1/2$以下であるという仮説に反対するための証拠」としての強さと同程度である。
+
+* $-\log_2(0.05) = 4.3 \approx 4$ なので、 $p=0.05$ は4回から5回程度のコイン投げですべて表が出る場合に対応
+
+* $-\log_2(0.005) = 7.6 \approx 7$ なので、 $p=0.005$ は7回から8回程度のコイン投げですべて表が出る場合に対応
 
 ---
 
 **Slide 91**
 
-In sum: If any association is observed (regardless of whether it falls within bounds for declaring it “nonsignificant”), maintaining the null requires alternative explanations for the association.
+* The binary S-value (surprisal, logworth) s measures the information the P-value p supplies against the model used to compute p.
 
-Those alternative explanations are always more complex than the direct causal explanation (rejection of the causal null) if we define complexity as the minimum number of variables and arrows needed for the causal diagram (cDAG) of the explanation.
-1 June 2022 Greenland – Reforming Statistics 103
+* The units of s are called Shannons or bits.
 
-1 June 2022 Greenland – Reforming Statistics 103
+* The P-value scale is highly nonlinear: In terms of information against a model, the difference between 0.001 and 0.05 is large, yet the difference between 0.95 and 0.999 is trivial, despite their being the same distance apart.
 
-まとめ：いかなる関連性が観察された場合(それが「非有意」と宣言するための境界内にあるかどうかに関わらず)、帰無仮説を維持するためには、その関連性に対する代替の説明が必要となる。
+* S-values show their information difference:<br>
+$−\log_2(.001) = 10$, $−\log_2(.05) = 4.3$, $\Delta = 5.7$ bits;<br>
+$−\log_2(.95) = .07$, $−\log_2(.999) = .01$, $\Delta = .06$  bits
 
-それらの代替の説明は、説明の因果図(cDAG)に必要な最小限の変数と矢印の数として複雑さを定義する場合、直接的な因果的説明(因果的帰無仮説の棄却)よりも常に複雑である。
+1 June 2022 Greenland – Reforming Statistics 91
+
+* 二進数のS値(意外度、logworth)sは、P値 p が p を計算するために使用されたモデルに対して提供する情報を測定する。
+
+* sの単位はシャノンまたはビットと呼ばれる。
+
+* P値の尺度は非常に非線形である：モデルに対する情報の観点から見ると、0.001と0.05の差は大きいが、0.95と0.999の差は、同じ距離だけ離れているにもかかわらず、些細である。
+
+* S値は、情報の違いを表す:<br>
+$−\log_2(.001) = 10$, $−\log_2(.05) = 4.3$, $\Delta = 5.7$ bits;<br>
+$−\log_2(.95) = .07$, $−\log_2(.999) = .01$, $\Delta = .06$  bits
 
 ---
 
 **Slide 92**
 
-1 June 2022 Greenland – Reforming Statistics 103
-1 June 2022 104
-The complex observational reality: Any effect of X on Y is buried within a web of bias sources (confounding, selection bias, measurement error):
-(U)
-(X) (Z) X* Z*
+from Rafi&Greenland http://arxiv.org/abs/1909.08579
 
-1 June 2022 Greenland – Reforming Statistics 104
+<img src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/Rafi--Greenland_1909.08579.jpg">
 
-2022年6月1日 グリーンランド – 統計学改革 103
-2022年6月1日 104
-複雑な観察現実：XがYに与えるいかなる効果も、バイアス源(交絡、選択バイアス、測定誤差)のウェブの中に埋もれている：
-(U)
-(X) (Z) X* Z*
+1 June 2022 Greenland – Reforming Statistics 92
+
+Rafi&Greenland http://arxiv.org/abs/1909.08579 より
+
+<img src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/Rafi--Greenland_1909.08579.jpg">
 
 ---
 
 **Slide 93**
 
-(Y) Y* [S=1]
-Greenland – Reforming Statistics
-1 June 2022 105
-The simplest realistic DAGs with X*-Y* associations and hidden variables include those with X* and Y* d-connected only through X→Y, for example as in
-(U)
-(X) (Z) X* Z*
-(Y) Y* [S=1]
-Greenland – Reforming Statistics
+* S-values have resurfaced repeatedly since the 1950s when theorists needed to gauge the evidence or information in P-values, and examine test behavior under alternatives.
 
-The hypothesis that there is no uncontrolled bias (no open noncausal path from X to Y) is the most parsimonious explanation one can provide for an observed relation of X to Y.
+* S-values are hard to confuse with Bayesian probabilities because they range far above 1.
 
-1 June 2022 Greenland – Reforming Statistics 105
+* S-values do not require a prior distribution. But they can incorporate a prior distribution by computing p from a test of fit of a compound sampling model that treats the prior as a parameter-sampling distribution (a “random-effects” model). Relation to likelihood ratios…
 
-(Y) Y* [S=1]
-グリーンランド – 統計学改革
-2022年6月1日 105
-X*-Y*間の関連性と隠れた変数を持つ最も単純な現実的なDAGは、X*とY*がX→Yのみを介してd連結されているものを含む。例えば以下の通りである。
-(U)
-(X) (Z) X* Z*
-(Y) Y* [S=1]
-グリーンランド – 統計学改革
+1 June 2022 Greenland – Reforming Statistics 93
 
-制御されていないバイアスがない(XからYへの開いた非因果的経路がない)という仮説は、XとYの観察された関係に対して提供できる最も単純な説明である。
+* S値は、理論家がP値における証拠や情報を測定し、代替案の下での検定挙動を調べる必要があった1950年代以降、繰り返し再浮上している。
+
+* S値は1をはるかに超える範囲を持つため、ベイズ確率と混同しにくい。
+
+* S値は事前分布を必要としない。しかし、事前分布をパラメータサンプリング分布(「ランダム効果」モデル)として扱う複合サンプリングモデルの適合度検定からpを計算することで、事前分布を組み込むことができる。尤度比との関係…
 
 ---
 
 **Slide 94**
 
-Yet those who offer parsimony in defense of null hypotheses don’t apply parsimony to biasing (open nondirected) paths and are supremely confident in more complex alternatives.
+from Rafi & Greenland BMC Med Res Methodol 2020
 
-This behavior reveals cognitive illusions influenced by hidden value biases toward the null (specific or general).
-1 June 2022 Greenland – Reforming Statistics 106
+<img src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/Refi--Greenland_2020b.jpg">
 
-1 June 2022 Greenland – Reforming Statistics 106
+1 June 2022 Greenland – Reforming Statistics 94
 
-それでも、帰無仮説を擁護するために単純性を主張する人々は、バイアスをかける(開いた無方向の)経路に単純性を適用せず、より複雑な代替案に極めて自信を持っている。
+Rafi & Greenland BMC Med Res Methodol 2020 より
 
-この行動は、帰無仮説(特定または一般的)への隠された価値バイアスに影響された認知的な錯覚を示している。
+<img src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/Refi--Greenland_2020b.jpg">
 
 ---
 
 **Slide 95**
 
-Valid counterpoint: Parsimony is misleading when it fails to reflect essential complexity
-Paraphrasing Neil de Grasse Tyson: ‘Nature is under no obligation to be simple for you’; Twain: ‘It ain’t what you model that gets you into trouble, it’s what you don’t model that’s there.’
+**Some background and further readings on my views**<br>
+(all should be open access at the links given)
 
-Every arrow missing between two graphed
-variables is a null hypothesis.
-Every exogenous variable missing from a graph
-represents a set of null hypotheses, one for every arrow from that variable to a graphed variable.
-Greenland – Reforming Statistics
-1 June 2022 108
+* Greenland S. For and against methodology: Some perspectives on recent causal and statistical inference debates. Eur J Epidemiol, 2017;32:3-20. https://link.springer.com/article/10.1007%2Fs10654-017-0230-6 
+* Greenland S. The need for cognitive science in methodology. Am J Epidemiol 2017;186:639-645. https://academic.oup.com/aje/article/186/6/639/3886035
+* Greenland S. The causal foundations of applied probability and statistics. In Dechter R, Halpern J, Geffner H, eds. Probabilistic and Causal Inference: The Works of Judea Pearl. ACM Books 2022; 36: 605-624, https://arxiv.org/abs/2011.02677 (version with corrections)
+* Greenland S. Analysis goals, error-cost sensitivity, and analysis hacking: essential considerations in hypothesis testing and multiple comparisons. Ped Perinatal Epidemiol 2021;35:8-23. https://doi.org/10.1111/ppe.12711 20-01105-9 
+* Greenland S. Valid P-values behave exactly as they should: some misleading criticisms of P-values and their resolution with S-values. Am Stat 2019; 73: 106-114. http://www.tandfonline.com/doi/pdf/10.1080/00031305.2018.1529625
 
-1 June 2022 Greenland – Reforming Statistics 108
+1 June 2022 Greenland – Reforming Statistics 94
 
-正当な反論：単純性は、本質的な複雑さを反映しない場合、誤解を招く。
-ニール・ドグラース・タイソンを言い換えるなら：「自然はあなたにとって単純である義務はない」。マーク・トウェイン：「あなたをトラブルに巻き込むのは、あなたがモデル化したものではなく、そこに存在するのにあなたがモデル化しなかったものである。」
+**私の見解に関する背景情報とさらなる読み物**<br>
+(すべて指定されたリンクでオープンアクセスであるはずです)
 
-グラフ化された2つの変数の間に欠落しているすべての矢印は
-帰無仮説である。
-グラフから欠落しているすべての外生変数は、
-その変数からグラフ化された変数へのすべての矢印に対して、一連の帰無仮説を代表している。
-グリーンランド – 統計学改革
-2022年6月1日 108
+* Greenland S. For and against methodology: Some perspectives on recent causal and statistical inference debates. Eur J Epidemiol, 2017;32:3-20. https://link.springer.com/article/10.1007%2Fs10654-017-0230-6 
+* Greenland S. The need for cognitive science in methodology. Am J Epidemiol 2017;186:639-645. https://academic.oup.com/aje/article/186/6/639/3886035
+* Greenland S. The causal foundations of applied probability and statistics. In Dechter R, Halpern J, Geffner H, eds. Probabilistic and Causal Inference: The Works of Judea Pearl. ACM Books 2022; 36: 605-624, https://arxiv.org/abs/2011.02677 (version with corrections)
+* Greenland S. Analysis goals, error-cost sensitivity, and analysis hacking: essential considerations in hypothesis testing and multiple comparisons. Ped Perinatal Epidemiol 2021;35:8-23. https://doi.org/10.1111/ppe.12711 20-01105-9 
+* Greenland S. Valid P-values behave exactly as they should: some misleading criticisms of P-values and their resolution with S-values. Am Stat 2019; 73: 106-114. http://www.tandfonline.com/doi/pdf/10.1080/00031305.2018.1529625
 
 ---
 
 **Slide 96**
 
-What causally warrants deleting arrows or nodes? Answer: Forcing deletion by causal design – e.g., cohort matching (blocking), randomization.
-If X is randomized we can drop arrows to X.
-Random selection allows dropping arrows to S. But, by the definition of observational studies,
-The study treatment X isn’t randomized. Furthermore, in health-science reality
-Selection and participation S is not random. No randomization = no ‘objective’ statistics, only conditional statements of “under this model…”
+**Educational readings for students, authors, editors and instructors**
 
-In “soft sciences”, prior distributions tightly concentrated near the null rarely have a basis in genuine evidence. They may have some support in some settings (e.g., genomics).
+* Greenland S, Senn SJ, Rothman KJ, Carlin JC, Poole C, Goodman SN, Altman DG. Statistical tests, confidence intervals, and power: A guide to misinterpretations. The American Statistician 2016;70 suppl. 1, https://amstat.tandfonline.com/doi/suppl/10.1080/00031305.2016.1154108/suppl_file/utas_a_1154108_sm5368.pdf
+* Amrhein V, Greenland S, McShane B. Retire statistical significance. Nature 2019;567:305-307. https://www.nature.com/articles/d41586-019-00857-9
+* Amrhein V, Trafimow D, Greenland S. Inferential statistics as descriptive statistics. The American Statistician 2019;73 suppl 1:262-270. www.tandfonline.com/doi/pdf/10.1080/00031305.2018.1543137
+* Rafi Z, Greenland S. Semantic and cognitive tools to aid statistical science: Replace confidence and significance by compatibility and surprise. BMC Medical Research Methodology 2020;20:244 https://bmcmedresmethodol.biomedcentral.com/articles/10.1186/s12874-020-01105-9
+* Greenland S, Rafi Z. To aid scientific inference, emphasize unconditional descriptions of statistics. 2021, http://arxiv.org/abs/1909.08583
 
-If all causal paths were random walks, actual effects might cluster near nulls, making most effect sizes “unimportant”… But
+1 June 2022 Greenland – Reforming Statistics 95
 
-1 June 2022 Greenland – Reforming Statistics 109
+**学生、著者、編集者、教員向けの教育的な読み物**
 
-1 June 2022 Greenland – Reforming Statistics 109
-
-因果的に矢印やノードを削除することを正当化するものは何か？答え：因果的デザインによる削除の強制 – 例：コホートマッチング(ブロッキング)、ランダム化。
-Xがランダム化されている場合、Xへの矢印を落とすことができる。
-ランダム選択はSへの矢印を落とすことを可能にする。しかし、観察研究の定義により、
-研究治療Xはランダム化されていない。さらに、健康科学の現実では、
-選択と参加Sはランダムではない。ランダム化なし = 「客観的な」統計量なし、存在するのは「このモデルの下で…」という条件付きの記述のみである。
-
-「ソフトサイエンス」では、帰無仮説近くに密に集中した事前分布が真の証拠に基づいていることはめったにない。一部の設定(例えばゲノミクス)ではある程度の裏付けがあるかもしれない。
-
-もしすべての因果経路がランダムウォークであったなら、実際の影響は帰無仮説の近くに集まる可能性があり、ほとんどの効果量を「重要でない」ものにするかもしれない…しかし、
+* Greenland S, Senn SJ, Rothman KJ, Carlin JC, Poole C, Goodman SN, Altman DG. Statistical tests, confidence intervals, and power: A guide to misinterpretations. The American Statistician 2016;70 suppl. 1, https://amstat.tandfonline.com/doi/suppl/10.1080/00031305.2016.1154108/suppl_file/utas_a_1154108_sm5368.pdf
+* Amrhein V, Greenland S, McShane B. Retire statistical significance. Nature 2019;567:305-307. https://www.nature.com/articles/d41586-019-00857-9
+* Amrhein V, Trafimow D, Greenland S. Inferential statistics as descriptive statistics. The American Statistician 2019;73 suppl 1:262-270. www.tandfonline.com/doi/pdf/10.1080/00031305.2018.1543137
+* Rafi Z, Greenland S. Semantic and cognitive tools to aid statistical science: Replace confidence and significance by compatibility and surprise. BMC Medical Research Methodology 2020;20:244 https://bmcmedresmethodol.biomedcentral.com/articles/10.1186/s12874-020-01105-9
+* Greenland S, Rafi Z. To aid scientific inference, emphasize unconditional descriptions of statistics. 2021, http://arxiv.org/abs/1909.08583
 
 ---
 
 **Slide 97**
 
-“Importance” is value laden. Declaring an effect to be exactly null buries this problem.
+* ‘Pearl’s thesis’: Around 1900 science and statistics took a serious misstep in dismissing, even attempting to ban causation from theory.
+
+* A motive: Temporal symmetry in physical laws.
+
+* Yet that overlooked the asymmetry emergent in thermodynamics, and the causal structure of information transmission as seen in c = max speed of energy flow, communication, causation.
+
+* Causal (path) diagrams and potential-outcome models date from c. 1920, but did not fully develop and begin to spread widely until c. 1990.
+
+* They should be integrated into basic statistics!
+
+1 June 2022 Greenland – Reforming Statistics 97
+
+* 「パールのテーゼ」：1900年頃、科学と統計学は、理論から因果関係を排除し、さらには禁止しようとすることで、深刻な誤りを犯した。
+
+* 動機：物理法則における時間対称性。
+
+* しかし、それは熱力学において現れる非対称性と、c = エネルギーの流れ、通信、因果関係の最大速度に見られる情報伝達の因果構造を見落としていた。
+
+* 因果(経路)図と潜在結果モデルは紀元1920年頃にさかのぼるが、紀元1990年頃まで十分に発展し、広く普及し始めることはなかった。
+
+* それらは基礎統計学に統合されるべきである！
+
+---
+
+**Slide 98**
+
+Graphical example of a cognitive blindness: **The parsimony fallacy** to defend causal nulls in observational research
+
+* Due to their qualitative nature, graphs say nothing about bias-variance tradeoffs, and so are often dismissed by those limited to pure predictive or potential-outcome models.
+
+* Yet graphs show how statistical criteria fall short for evaluating causal effects, because **causality involves constraints that cannot be captured by probability alone**.
+
+1 June 2022 Greenland – Reforming Statistics 98
+
+認知的盲点の図解例：観察研究における因果的帰無仮説を擁護するための**節約性の誤謬**。
+
+* グラフはその定性的な性質のため、バイアス-分散トレードオフについて何も語らないため、純粋な予測モデルや潜在結果モデルに限定されている人々からはしばしば却下される。
+
+* しかし、グラフは、**因果関係が確率だけでは捉えられない制約を含むせいで**、統計的規準が因果効果の評価にいかに不十分であるかを示している。
+
+---
+
+**Slide 99**
+
+**Every missing arrow in a graph is an assumed causal null hypothesis**
+
+In “soft” sciences, we can rarely distinguish ‘no effect’ from alternatives that are within an interval around it containing important effects.
+
+* Technically: A discontinuous distribution (one with mass concentrations) cannot be effectively distinguished empirically from a nearby continuous distribution. And…
+
+* The approximation error from replacing continuities with point masses can multiply through a causal network into huge errors.
+
+1 June 2022 Greenland – Reforming Statistics 99
+
+**グラフ内のすべての欠落した矢印は、仮定された因果的帰無仮説である。**
+
+「ソフト」サイエンスでは、重要な効果を含むその周りの区間内にある代替案から、「効果なし」を効果的に区別することはめったにできない。
+
+* 技術的に：不連続な分布(質量が集中した分布)は、経験的に近くの連続分布と効果的に区別することはできない。そして…
+
+* 連続性を点質量で置き換えることによる近似誤差は、因果ネットワークを介して増幅され、大きな誤りとなる可能性がある。
+
+---
+
+**Slide 100**
+
+Ironically for those who deny specific effects are present on the grounds of parsimony, a null hypothesis is rarely the most parsimonious *causal* explanation for nonexperimental observations. In fact
+
+* When any association is present, **the null hypothesis of ‘no effect’ is not parsimonious** because, under the null, the association requires indirect explanations, which are causally more complex than direct causation. 
+
+1 June 2022 Greenland – Reforming Statistics 100
+
+単純性の根拠で特定の効果が存在することを否定する人々にとって皮肉なことに、帰無仮説は、非実験的観察に対する最も単純な*因果的*説明であることはめったにない。実際、
+
+* 何らかの関連性が存在する場合、**「効果なし」という帰無仮説は単純ではない**。なぜなら、帰無仮説の下では、その関連性は間接的な説明を必要とし、それは直接的な因果関係よりも因果的に複雑だからである。
+
+---
+
+**Slide 101**
+
+Suppose *causal parsimony* is defined as preferring the simplest causal diagram compatible with the observed (nonparametric) data distribution. 
+
+Then
+
+* There is no basis for dismissing a reported effect without appeal to a more complex system of mechanisms that produces the association: The necessary causal diagram requires more arrows and larger effects.
+
+1 June 2022 Greenland – Reforming Statistics 101
+
+*因果的節約性*が、観察された(ノンパラメトリックな)データ分布と相性の良い最も単純な因果図を好むこととして定義されると仮定する。
+
+そのとき
+
+* 関連性を生み出すより複雑なメカニズムのシステムに訴えることなしに、報告された効果を却下する根拠はない：必要な因果図は、より多くの矢印とより大きな効果を必要とする。
+
+---
+
+**Slide 102**
+
+Consider: If an X-Y association is observed, what is the simplest single explanation?:
+
+a) Simple confounding: X←C→Y
+
+b) Simple selection bias: X→[S]←Y
+
+c) Differential error: X→X*←Y or X→Y*←Y<br>
+(X or Y observed with error as X* or Y*)
+
+d) Simple random error: X Y←ε
+
+e) Simple causation: X→Y
+
+Asserting the null (a-d) requires an extra variable (node) or effect (arrow) relative to causation (e).
+
+
+1 June 2022 Greenland – Reforming Statistics 102
+
+考えてみよう：X-Y間の関連性が観察された場合、最も単純な単一の説明は何か？
+：
+a) 単純な交絡：X←C→Y
+
+b) 単純な選択バイアス：X→[S]←Y
+
+c) 差動誤差：X→X*←Y または X→Y*←Y<br>
+(XまたはYが誤差を伴ってX*またはY*として観測される)
+
+d) 単純なランダム誤差：X Y←ε
+
+e) 単純な因果関係：X→Y
+
+因果関係(e)に対して、帰無仮説(a-d)を主張するには、余分な変数(ノード)または効果(矢印)が必要となる。
+
+---
+
+**Slide 103**
+
+* In sum: If any association is observed (regardless of whether it falls within bounds for declaring it “nonsignificant”), maintaining the null requires alternative explanations for the association.
+
+* Those alternative explanations are always more complex than the direct causal explanation (rejection of the causal null) if we define complexity as the minimum number of variables and arrows needed for the causal diagram (cDAG) of the explanation.
+
+1 June 2022 Greenland – Reforming Statistics 103
+
+* まとめ：いかなる関連性が観察された場合(それが「非有意」と宣言するための境界内にあるかどうかに関わらず)、帰無仮説を維持するためには、その関連性に対する代替の説明が必要となる。
+
+* それらの代替の説明は、説明の因果図(cDAG)に必要な最小限の変数と矢印の数として複雑さを定義する場合、直接的な因果的説明(因果的帰無仮説の棄却)よりも常に複雑である。
+
+---
+
+**Slide 104**
+
+The complex observational reality: Any effect of X on Y is buried within a web of bias sources (confounding, selection bias, measurement error):
+
+<img src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/DAG1.jpg">
+
+1 June 2022 Greenland – Reforming Statistics 104
+
+複雑な観察現実：XがYに与えるいかなる効果も、バイアス源(交絡、選択バイアス、測定誤差)のウェブの中に埋もれている：
+
+<img src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/DAG1.jpg">
+
+---
+
+**Slide 105**
+
+The simplest realistic DAGs with X*-Y* associations and hidden variables include those with X* and Y* d-connected only through X→Y, for example as in
+
+<img src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/DAG2.jpg">
+
+1 June 2022 Greenland – Reforming Statistics 105
+
+X*-Y*間の関連性と隠れた変数を持つ最も単純な現実的なDAGは、X*とY*がX→Yのみを介してd連結されているものを含む。例えば以下の通りである。
+
+<img src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/DAG2.jpg">
+
+---
+
+**Slide 106**
+
+* The hypothesis that there is no uncontrolled bias (no open noncausal path from X to Y) is the most parsimonious explanation one can provide for an observed relation of X to Y.
+
+* Yet those who offer parsimony in defense of null hypotheses don’t apply parsimony to biasing (open nondirected) paths and are supremely confident in more complex alternatives.
+
+* This behavior reveals cognitive illusions influenced by hidden value biases toward the null (specific or general).
+
+1 June 2022 Greenland – Reforming Statistics 106
+
+* 制御されていないバイアスがない(XからYへの開いた非因果的経路がない)という仮説は、XとYの観察された関係に対して提供できる最も単純な説明である。
+
+* それでも、帰無仮説を擁護するために単純性を主張する人々は、バイアスをかける(開いた無方向の)経路に単純性を適用せず、より複雑な代替案に極めて自信を持っている。
+
+* この行動は、帰無仮説(特定または一般的)への隠された価値バイアスに影響された認知的な錯覚を示している。
+
+---
+
+**Slide 107**
+
+**Valid counterpoint: Parsimony is misleading when it fails to reflect essential complexity**
+
+Paraphrasing Neil de Grasse Tyson: ‘Nature is under no obligation to be simple for you’; 
+
+Twain: ‘It ain’t what you model that gets you into trouble, it’s what you don’t model that’s there.’
+
+* Every arrow missing between two graphed
+variables is a null hypothesis.
+
+* Every exogenous variable missing from a graph
+represents a set of null hypotheses, one for every arrow from that variable to a graphed variable.
+
+1 June 2022 Greenland – Reforming Statistics 108
+
+**正当な反論：単純性は、本質的な複雑さを反映しない場合、誤解を招く。**
+
+ニール・ドグラース・タイソンを言い換えるなら：「自然はあなたにとって単純である義務はない」。
+
+マーク・トウェイン：「あなたをトラブルに巻き込むのは、あなたがモデル化したものではなく、そこに存在するのにあなたがモデル化しなかったものである。」
+
+* グラフ化された2つの変数の間に欠落しているすべての矢印は帰無仮説である。
+
+* グラフから欠落しているすべての外生変数は、その変数からグラフ化された変数へのすべての矢印に対して、一連の帰無仮説を代表している。
+
+---
+
+**Slide 108**
+
+What causally warrants deleting arrows or nodes?
+
+Answer: Forcing deletion by causal design – e.g., cohort matching (blocking), randomization.
+
+* If X is randomized we can drop arrows to X.
+
+* Random selection allows dropping arrows to S. But, by the definition of observational studies,
+
+* The study treatment X isn’t randomized. Furthermore, in health-science reality
+
+* Selection and participation S is not random. No randomization = no ‘objective’ statistics, only conditional statements of “under this model…”
+
+1 June 2022 Greenland – Reforming Statistics 108
+
+因果的に矢印やノードを削除することを正当化するものは何か？
+
+答え：因果的デザインによる削除の強制 – 例：コホートマッチング(ブロッキング)、ランダム化。
+
+* Xがランダム化されている場合、Xへの矢印を落とすことができる。
+
+* ランダム選択はSへの矢印を落とすことを可能にする。しかし、観察研究の定義により、
+
+* 研究治療Xはランダム化されていない。さらに、健康科学の現実では、
+
+* 選択と参加Sはランダムではない。ランダム化なし = 「客観的な」統計量なし、存在するのは「このモデルの下で…」という条件付きの記述のみである。
+
+---
+
+**Slide 109**
+
+* In “soft sciences”, prior distributions tightly concentrated near the null rarely have a basis in genuine evidence. They may have some support in some settings (e.g., genomics).
+
+* If all causal paths were random walks, actual effects might cluster near nulls, making most effect sizes “unimportant”… But
+
+* “Importance” is value laden. Declaring an effect to be exactly null buries this problem.
+
 1 June 2022 Greenland – Reforming Statistics 109
 
-Under continuity, there are almost no “false positives”, because almost all associations are nonzero (“true positives”).
+* 「ソフトサイエンス」では、帰無仮説近くに密に集中した事前分布が真の証拠に基づいていることはめったにない。一部の設定(例えばゲノミクス)ではある程度の裏付けがあるかもしれない。
 
-The “false-positive problem” is a distortive oversimplification of the problem of when to prune or ignore effects, which are decisions that require loss (penalty) functions.
+* もしすべての因果経路がランダムウォークであったなら、実際の影響は帰無仮説の近くに集まる可能性があり、ほとんどの効果量を「重要でない」ものにするかもしれない…しかし、
 
-Effective pruning algorithms can retain prior continuity, e.g., use absolute-distance (LASSO, Laplacian) instead of squared-distance (Gaussian) penalties.
+* 「重要性」は価値観に満ちている。効果が正確に帰無仮説であると宣言することは、この問題を覆い隠す。
+
+---
+
+**Slide 110**
+
+* Under continuity, there are almost no “false positives”, because almost all associations are nonzero (“true positives”).
+
+* The “false-positive problem” is a distortive oversimplification of the problem of when to prune or ignore effects, which are decisions that require loss (penalty) functions.
+
+* Effective pruning algorithms can retain prior continuity, e.g., use absolute-distance (LASSO, Laplacian) instead of squared-distance (Gaussian) penalties.
+
 1 June 2022 Greenland – Reforming Statistics 110
 
-1 June 2022 Greenland – Reforming Statistics 110
+* 連続性の下では、「偽陽性」はほとんど存在しない。なぜなら、ほとんどすべての関連性は非ゼロである(「真陽性」)。
 
-「重要性」は価値観に満ちている。効果が正確に帰無仮説であると宣言することは、この問題を覆い隠す。
-2022年6月1日 グリーンランド – 統計学改革 109
+* 「偽陽性問題」は、効果をいつ刈り取るか、あるいは無視するかという問題の歪んだ過度の単純化であり、それは損失(ペナルティ)関数を必要とする決定である。
 
-連続性の下では、「偽陽性」はほとんど存在しない。なぜなら、ほとんどすべての関連性は非ゼロである(「真陽性」)。
-
-「偽陽性問題」は、効果をいつ刈り取るか、あるいは無視するかという問題の歪んだ過度の単純化であり、それは損失(ペナルティ)関数を必要とする決定である。
-
-効果的な剪定アルゴリズムは、事前の連続性を維持することができる。例えば、二乗距離(ガウス)ペナルティの代わりに、絶対距離(LASSO、ラプラシアン)ペナルティを使用するなど。
+* 効果的な剪定アルゴリズムは、事前の連続性を維持することができる。例えば、二乗距離(ガウス)ペナルティの代わりに、絶対距離(LASSO、ラプラシアン)ペナルティを使用するなど。
 
 ---
