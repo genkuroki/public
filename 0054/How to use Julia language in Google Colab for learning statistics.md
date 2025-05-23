@@ -76,11 +76,14 @@ macro autoadd(expr)
     :(add_pkg_if_not_added_yet.($(pkgs)); $expr)
 end
 
+using Random
+Random.seed!(4649373)
+
 @autoadd begin
 using Distributions
 using RDatasets
 using StatsPlots
-default(fmt=:png, size=(600, 400))
+default(fmt=:png)
 end
 ```
 
@@ -108,11 +111,9 @@ using A
 ```
 
 を実行すればよい.
-<!-- #endregion -->
 
-```julia
-using A
-```
+<a href="https://docs.julialang.org/en/v1/">Julia言語</a>のBaseやStandard Libraryに含まれるパッケージは`Pkg.add`をしなくても使用できる. たとえば上のセルのように `using Random` には `@autoadd` を適用する必要はない. 他にも `using LinearAlgebra` や `using Printf` の類も `@autoadd` は必要ない. 
+<!-- #endregion -->
 
 ## Google ColabでのJulia言語の使い方
 
@@ -601,14 +602,40 @@ plot!(normal_approx; label="normal approx", lw=2)
 ```julia
 using Distributions
 using StatsPlots
-default(size=(400, 250), titlefontsize=10)
+default(fmt=:png)
 
 function hello_sine()
     println("Hello, Sine!")
     plot(sin; label="y=sin(x)")
 end
 
-function plot_central_limit_theorem(dist, n; L=10^4, bin=:auto)
+mypdf(dist, x) = pdf(dist, x)
+mypdf(dist::ContinuousUnivariateDistribution, x) =
+    minimum(dist) < x < maximum(dist) ? pdf(dist, x) : zero(eltype(dist))
+mypdf(dist::DiscreteUnivariateDistribution, x) = pdf(dist, round(Int, x))
+mydistname(dist) = replace(string(dist), r"{[^}]*}"=>"")
+mydistname(dist::InverseGamma) = "InverseGamma(α=$(shape(dist)), θ=$(scale(dist)))"
+
+function plot_dist(dist; xlim0=nothing)
+    distname = mydistname(dist)
+    if isnothing(xlim0)
+        mu = mean(dist)
+        sigma = std(dist)
+        a = max(minimum(dist), mu - 4.5sigma)
+        b = min(maximum(dist), mu + 4.5sigma)
+        if dist isa DiscreteUnivariateDistribution
+            a, b = round(a)-1, round(b)+1
+        else
+            a, b = a-0.025(b-a), b+0.025(b-a)
+        end
+        xlim0 = (a, b)
+    end
+    xs = range(xlim0..., 1000)
+    plot(xs, x -> mypdf(dist, x); label="", title="$distname")
+    plot!(; size=(400, 250))
+end
+
+function plot_central_limit_theorem(dist, n; L=10^5, bin=:auto, xlim1=nothing)
     distname = mydistname(dist)
     mu = mean(dist)
     sigma = std(dist)
@@ -625,42 +652,30 @@ function plot_central_limit_theorem(dist, n; L=10^4, bin=:auto)
         bin = ran / n
     end
     
-    histogram(Xbars; bin, norm=true, alpha=0.5, label="Xbars")
+    #histogram(Xbars; bin, norm=true, alpha=0.5, label="Xbars")
+    stephist(Xbars; bin, norm=true, label="Xbars")
     plot!(normal_approx; lw=2, label="normal approx")
+    isnothing(xlim1) || plot!(; xlim=xlim1)
     title!("$distname, n=$n")
+    plot!(; size=(400, 250))
 end
 
-mypdf(dist, x) = pdf(dist, x)
-mypdf(dist::DiscreteUnivariateDistribution, x) = pdf(dist, round(Int, x))
-mydistname(dist) = replace(string(dist), r"{[^}]*}"=>"")
-
-function plot_dist(dist; xlim0=nothing)
-    distname = mydistname(dist)
-    if isnothing(xlim0)
-        mu = mean(dist)
-        sigma = std(dist)
-        a = max(minimum(dist), mu - 4.5sigma)
-        b = min(maximum(dist), mu + 4.5sigma)
-        if dist isa DiscreteUnivariateDistribution
-            a, b = a-1, b+1
-        else
-            a, b = a-0.025(b-a), b+0.025(b-a)
-        end
-        xlim0 = (a, b)
-    end
-    plot(x -> mypdf(dist, x), xlim0...; label="", title="$distname")
-end
-
-function plot_dist_clt(dist, n; L=10^4, xlim0=nothing)
+function plot_dist_clt(dist, n; L=10^5, xlim0=nothing, xlim1=nothing, bin=100)
     P0 = plot_dist(dist; xlim0)
-    P1 = plot_central_limit_theorem(dist, n; L)
+    P1 = plot_central_limit_theorem(dist, n; L, bin, xlim1)
     plot(P0, P1; size=(800, 250), layout=(1, 2))
+    plot!(; titlefontsize=10)
 end
 ```
 
 ```julia
 hello_sine()
 ```
+
+以下で登場する確率分布(`Uniform()`, etc.)の解説が以下の場所にある:
+
+* https://juliastats.org/Distributions.jl/stable/univariate/#Continuous-Distributions
+* https://juliastats.org/Distributions.jl/stable/univariate/#Discrete-Distributions
 
 ```julia
 plot_dist_clt(Uniform(), 10)
@@ -688,6 +703,26 @@ plot_dist_clt(Exponential(), 10)
 
 ```julia
 plot_dist_clt(Exponential(), 100)
+```
+
+```julia
+plot_dist_clt(LogNormal(), 10)
+```
+
+```julia
+plot_dist_clt(LogNormal(), 100)
+```
+
+```julia
+plot_dist_clt(InverseGamma(3, 3), 10; xlim0=(-0.2, 8.2), xlim1=(-0.5, 3.5))
+```
+
+```julia
+plot_dist_clt(InverseGamma(3, 3), 100; xlim0=(-0.2, 6.2), xlim1=(0.9, 2.1))
+```
+
+```julia
+plot_dist_clt(InverseGamma(3, 3), 1000; xlim0=(-0.2, 6.2), xlim1=(1.3, 1.7))
 ```
 
 ```julia
@@ -744,7 +779,7 @@ $$
 ```julia
 using Distributions
 using StatsPlots
-default(fmt=:png, size=(600, 400), titlefontsize=16, legendfontsize=11)
+default(fmt=:png)
 
 function plot_t(T, nu; Tlabel="T")
     stephist(T; norm=true, label=Tlabel)
@@ -758,6 +793,7 @@ function plot_model_t1(; nu=3, L=10^6)
     W = rand(Chisq(nu), L)
     T = @. Z / sqrt(W / nu)
     plot_t(T, nu; Tlabel="T = Z/√(W/ν)")
+    plot!(; size=(500, 300), titlefontsize=14, legendfontsize=10)
 end
 ```
 
@@ -797,7 +833,7 @@ $$
 function plot_model_t2(; nu=3, L=10^6)
     W = rand(Chisq(nu), L)
     T = @. rand(Normal(0, 1/sqrt(W/nu)))
-    plot_t(T, nu; Tlabel="T ~ N(0, 1/√(W/ν))")
+    plot_t(T, nu; Tlabel="T~N(0, 1/√(W/ν))")
 end
 ```
 
@@ -831,7 +867,12 @@ function plot_gampoi(α, θ; L = 10^6)
     binmin, binmax = round.(quantile.(Ref(M_negbin), (0.001, 0.999)))
     stephist(M_gampoi; norm=true, bin=binmin-0.5:binmax+0.5, label="Gamma-Poisson")
     stephist!(M_negbin; norm=true, bin=binmin-0.5:binmax+0.5, ls=:dash, label="NegativeBinomial")
+    title!("α=$α, θ=$θ")
 end
+```
+
+```julia
+plot_gampoi(2, 1)
 ```
 
 ```julia
@@ -839,7 +880,7 @@ plot_gampoi(2, 3)
 ```
 
 ```julia
-plot_gampoi(10, 0.5)
+plot_gampoi(2, 10)
 ```
 
 ```julia
