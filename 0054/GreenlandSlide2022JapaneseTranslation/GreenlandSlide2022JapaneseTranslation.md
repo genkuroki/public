@@ -67,7 +67,7 @@ Consequence: Fig. 1 van Zwet & Cator 2021 Over a million z-values from Medline 1
 
 1 June 2022 Greenland – Reforming Statistics 4
 
-* 認知バイアス（ゼロ仮説主義や二分法病など）を「科学的原則」として神聖化すること、数学的枠組みを物理的現実であるかのように扱うこと（モデルと現実の混同）、そして人間のバイアス（確実性や最終性を切望するなど）を無視することが、統計学の核心を腐敗させてきた。
+* 認知バイアス(ゼロ仮説主義や二分法病など)を「科学的原則」として神聖化すること、数学的枠組みを物理的現実であるかのように扱うこと(モデルと現実の混同)、そして人間のバイアス(確実性や最終性を切望するなど)を無視することが、統計学の核心を腐敗させてきた。
 
 * 解決策：統計学を確率論の一分野としてではなく、認知科学と因果関係理論を中核要素とする情報科学として再構築する。
 
@@ -92,7 +92,7 @@ DeFinettiのラディカル・ベイズ主義では、すべての確率は「�
 * パターンが「偶然によって引き起こされる」という考えは、
 世界に関する因果的な言明としては不合理である。
 
-* むしろ、我々は認識されたパターンに対する因果的説明を、妥当であると提唱される少数の因果的可能性から、極めて非ランダムな（偏りのある）選択を考慮することによって探求する。
+* むしろ、我々は認識されたパターンに対する因果的説明を、妥当であると提唱される少数の因果的可能性から、極めて非ランダムな(偏りのある)選択を考慮することによって探求する。
 
 * 我々は次に、考慮されなかった残りの無限の因果的説明を、「偶然」と呼ばれる形而上学的な原因を形成するものとして、モデルと現実の混同を行う。
 
@@ -114,7 +114,7 @@ DeFinettiのラディカル・ベイズ主義では、すべての確率は「�
 
 * 頻度論者とベイズ主義者の論争は、詳細な論理分析の下で消滅する宗教的な論争である。
 
-* Box的な見方：ベイズツールは手法やモデル構築のため、頻度論ツールはその評価のためである（他の多くの有用な組み合わせがある）。
+* Box的な見方：ベイズツールは手法やモデル構築のため、頻度論ツールはその評価のためである(他の多くの有用な組み合わせがある)。
 
 * 最近まで、両方の「学派」は、彼らの手法がそこから導き出されるべき必須の因果的／文脈的側面を網羅していなかった。
 
@@ -134,7 +134,7 @@ DeFinettiのラディカル・ベイズ主義では、すべての確率は「�
 
 **これらの推論の概念を統一するものは何か？ - 確率ではなく、因果関係である：**
 
-* 過去の原因：我々の観察は何によって引き起こされたのか（「説明される」のか）？これは物理的メカニズムに関する問いであり、その振る舞いの抽象化（確率など）に関するものではない。
+* 過去の原因：我々の観察は何によって引き起こされたのか(「説明される」のか)？これは物理的メカニズムに関する問いであり、その振る舞いの抽象化(確率など)に関するものではない。
 
 * 将来の影響：行動は将来にどのように影響するか？これは、確率分布ではなく、実際の事象の頻度などのメカニズムの振る舞いをどのように変えるかに関する問いである。
 
@@ -176,7 +176,7 @@ My perception ← Reality → Your perception
 
 * 科学的推論は複雑ではあるが、
 現実についての狭く調整された判断であり、以下の仮定に基づいている：<br>
-発見可能な法則に従って我々の知覚を引き起こす、論理的に首尾一貫した「客観的」（観察者外部）な現実がある：
+発見可能な法則に従って我々の知覚を引き起こす、論理的に首尾一貫した「客観的」(観察者外部)な現実がある：
 
 私の知覚 ← 現実 → あなたの知覚
 
@@ -198,11 +198,11 @@ My perception ← Reality → Your perception
 
 **科学的推論と対比されるべきは、**
 
-* 「統計的推論」である。これは、あらゆる形式主義、学派、ツールキットにおいて、データ処理プログラム（学習アルゴリズム）からの出力を受け取り、文脈から切り離された規則を介して「推論」を生成することになっている。
+* 「統計的推論」である。これは、あらゆる形式主義、学派、ツールキットにおいて、データ処理プログラム(学習アルゴリズム)からの出力を受け取り、文脈から切り離された規則を介して「推論」を生成することになっている。
 
-* それは、データを生成するメカニズム（データの原因）の過度に単純化されたモデルを、抽象的な確率分布に変換する。
+* それは、データを生成するメカニズム(データの原因)の過度に単純化されたモデルを、抽象的な確率分布に変換する。
 
-* それが残す意味論的な空白は、推論の誤りを引き起こし、欺瞞（自己または他者）を助長する。
+* それが残す意味論的な空白は、推論の誤りを引き起こし、欺瞞(自己または他者)を助長する。
 
 ---
 
@@ -260,7 +260,7 @@ Rules that were apparently successful for narrow automated environments induced 
 
 **普及した規則は、強制された二分法病によって特に人気があり、破壊的となった。**
 
-* 二分法は、研究（実際の物理的なデータ生成器）が、厳密に吟味された場合、そのような結論を強要できない場合でも適用されるため、決定的な結論を求める人間の欲求を満たす。\*
+* 二分法は、研究(実際の物理的なデータ生成器)が、厳密に吟味された場合、そのような結論を強要できない場合でも適用されるため、決定的な結論を求める人間の欲求を満たす。\*
 
 \* 「さらなる研究が必要である」という場合を除いて、費用対効果の考慮事項や他の研究を考慮すると、それさえも正当化されないことが多い。
 
@@ -280,11 +280,11 @@ The degeneration of statistical science into a collection of mathematical skelet
 
 統計科学が数学的な骨組みの集まりに退化し、科学的推論の本質的な構成要素の説明と訓練が置き去りにされた：
 
-* 因果ネットワーク（確率ではない）がデータ、推論、決定をどのように生成するか。
+* 因果ネットワーク(確率ではない)がデータ、推論、決定をどのように生成するか。
 
 * 認知バイアスや手続き上の問題がそれらの因果ネットワークにどのように入り込むか。
 
-* 評価（動機、目標、実際のコストと利益）が認知にどのように影響し、すべての方法論に暗黙的に含まれているか。
+* 評価(動機、目標、実際のコストと利益)が認知にどのように影響し、すべての方法論に暗黙的に含まれているか。
 
 ---
 
@@ -298,9 +298,9 @@ The degeneration of statistical science into a collection of mathematical skelet
 
 1 June 2022 Greenland – Reforming Statistics 15
 
-* 醜い事実：P値の主な問題はあらゆる統計量に拡大するだろう。なぜなら、それらはP値からではなく、真実を覆すような（倒錯した）インセンティブと認知バイアスに起因するからである。
+* 醜い事実：P値の主な問題はあらゆる統計量に拡大するだろう。なぜなら、それらはP値からではなく、真実を覆すような(倒錯した)インセンティブと認知バイアスに起因するからである。
 
-* 倒錯したインセンティブは、インセンティブが命じるものを見るために認知バイアス（希望的観測、心の投影）を生み出す。これらのバイアスは医学のような分野の報告に蔓延している。
+* 倒錯したインセンティブは、インセンティブが命じるものを見るために認知バイアス(希望的観測、心の投影)を生み出す。これらのバイアスは医学のような分野の報告に蔓延している。
 
 * 現在、認識は、否定的な報告に対するインセンティブを無視しながら、肯定的な報告に対するインセンティブを見るように操作されている…
 
@@ -332,7 +332,7 @@ Millstone et al. Nature 1994: 8 trials, 19% average increase in somatic cell cou
 
 1 June 2022 Greenland – Reforming Statistics 17
 
-Millstone et al. Nature 1994: 8件の試験、rBST処理された牛の牛乳の体細胞数（膿）が平均19%増加（メタ分析 p=0.004）：
+Millstone et al. Nature 1994: 8件の試験、rBST処理された牛の牛乳の体細胞数(膿)が平均19%増加(メタ分析 p=0.004)：
 
 ---
 
@@ -372,7 +372,7 @@ to dismiss undesirable associations; or
 
 1 June 2022 Greenland – Reforming Statistics 19
 
-* より巧妙には、標準的な「再現性の危機」の物語は、否定的な結果を見つけて報告するための倒錯したインセンティブの事例（例えば、上方P値操作や、曖昧な結果を否定的な結果として誤って報告することなど）を無視している。例えば
+* より巧妙には、標準的な「再現性の危機」の物語は、否定的な結果を見つけて報告するための倒錯したインセンティブの事例(例えば、上方P値操作や、曖昧な結果を否定的な結果として誤って報告することなど)を無視している。例えば
 
 * 研究者、スポンサー、編集者が望ましくない関連性を却下したい場合、または「再現性の失敗」やその他の関連性への異議申し立てが、単なる再現よりも出版されやすい場合。
 
@@ -392,9 +392,9 @@ to dismiss undesirable associations; or
 
 1 June 2022 Greenland – Reforming Statistics 20
 
-**典型的な例**（Brown et al., “Association between serotonergic antidepressant use during pregnancy and autism spectrum disorder in children”, JAMA 2017;317:1544-52）、要旨：
+**典型的な例**(Brown et al., “Association between serotonergic antidepressant use during pregnancy and autism spectrum disorder in children”, JAMA 2017;317:1544-52)、要旨：
 
-* 「\[Coxモデル\]調整済みHR、1.59 \[95%信頼区間、1.17, 2.17\]）。IPTW HDPS後、関連性は有意ではなかった（HR、1.61 \[95%信頼区間：0.997, 2.59\]）。」（p = 0.0505）
+* 「\[Coxモデル\]調整済みHR、1.59 \[95%信頼区間、1.17, 2.17\])。IPTW HDPS後、関連性は有意ではなかった(HR、1.61 \[95%信頼区間：0.997, 2.59\])。」(p = 0.0505)
 
 * 彼らの結論：「出生前曝露は自閉症スペクトラム障害とは関連がなかった。」
 
@@ -458,9 +458,9 @@ Why no discussion of the consistent association of 60-70% higher risk among the 
 
 1 June 2022 Greenland – Reforming Statistics 24
 
-Brown et al. は、以前の4つのコホートの彼ら自身のメタ分析における同じリスク増加（HR 1.7 [1.1, 2.6]）の報告を引用したが…
+Brown et al. は、以前の4つのコホートの彼ら自身のメタ分析における同じリスク増加(HR 1.7 [1.1, 2.6])の報告を引用したが…
 
-* 彼らは新しい研究をそれらの研究と結合しようとしなかった。そして Healy et al. による2016年のメタ分析（コホート研究16件でHR 1.74 \[1.19, 2.54\]、ケースコントロール研究5件でHR 1.95 \[1.63, 2.34\]）を引用しなかった。
+* 彼らは新しい研究をそれらの研究と結合しようとしなかった。そして Healy et al. による2016年のメタ分析(コホート研究16件でHR 1.74 \[1.19, 2.54\]、ケースコントロール研究5件でHR 1.95 \[1.63, 2.34\])を引用しなかった。
 
 * なぜ曝露群における60-70%高いリスクの一貫した関連性について議論しなかったのか？
 
@@ -476,7 +476,7 @@ That’s because most were certain this highly replicated association was pure c
 
 それは、ほとんどの人が、この高度に再現された関連性が純粋な交絡であると確信していたからである。
 
-* Medscape 2017：「抗うつ薬の使用は妊娠前および妊娠中の期間中に、自閉症やADHDを引き起こすものではないことが新しい研究で示されている。3つの研究は、妊婦における抗うつ薬の使用が子供の自閉症スペクトラム障害（ASDs）の原因である可能性は低く、以前の研究で見られた関連性は交絡因子による可能性が高いことを示している。」
+* Medscape 2017：「抗うつ薬の使用は妊娠前および妊娠中の期間中に、自閉症やADHDを引き起こすものではないことが新しい研究で示されている。3つの研究は、妊婦における抗うつ薬の使用が子供の自閉症スペクトラム障害(ASDs)の原因である可能性は低く、以前の研究で見られた関連性は交絡因子による可能性が高いことを示している。」
 
 ---
 
@@ -491,7 +491,7 @@ The dominant social bias talks as if all incentives are to “discover” rather
 
 支配的な社会的バイアスは、すべてのインセンティブが効果を反駁することではなく、「発見する」ことにあるかのように語る。このメタバイアスは、「再現性の危機」に関する文献に蔓延しており、トピックや著者によるインセンティブの違いを無批判に無視している。
 
-* Brown et al. の例は、CIが最終的に1を含むまで調整して幅を広げるという、信頼区間操作(CI-hacking)のように見える（ただし、最初のCoxモデルを超えた調整は、バイアスを除去せずに分散を膨張させる過剰調整のように見える）。
+* Brown et al. の例は、CIが最終的に1を含むまで調整して幅を広げるという、信頼区間操作(CI-hacking)のように見える(ただし、最初のCoxモデルを超えた調整は、バイアスを除去せずに分散を膨張させる過剰調整のように見える)。
 
 ---
 
@@ -508,9 +508,9 @@ Forking Paths: “objective” statistics are perceived, selected, and reported 
 
 1 June 2022 Greenland – Reforming Statistics 27
 
-重要な点は、出生前のSSRIがASDを引き起こすかどうかを議論することではない（これは巨大なテーマである！）が、むしろ
+重要な点は、出生前のSSRIがASDを引き起こすかどうかを議論することではない(これは巨大なテーマである！)が、むしろ
 
-* 「スピン」（有利なように見せかけること）が、フォークする道の庭（Garden of Forking Paths）を通る推進力であるということである：「客観的な」統計量は、好ましい因果関係の物語に基づいて、そして高リスクの状況では、政治的および訴訟上の懸念に基づいて認識され、選択され、報告される。
+* 「スピン」(有利なように見せかけること)が、フォークする道の庭(Garden of Forking Paths)を通る推進力であるということである：「客観的な」統計量は、好ましい因果関係の物語に基づいて、そして高リスクの状況では、政治的および訴訟上の懸念に基づいて認識され、選択され、報告される。
 
 * 例は健康科学や医学科学全体に豊富に存在する – これはあなたを恐れさせるべきだ！
 
@@ -526,7 +526,7 @@ Forking Paths: “objective” statistics are perceived, selected, and reported 
 
 1 June 2022 Greenland – Reforming Statistics 28
 
-* 「我々」（研究者、査読者、編集者）が信じさせたい因果関係の物語は、分析の選択と出力の解釈に因果的に影響する。その結果、報告書はしばしばそれらの物語のための弁護士業務として機能する。
+* 「我々」(研究者、査読者、編集者)が信じさせたい因果関係の物語は、分析の選択と出力の解釈に因果的に影響する。その結果、報告書はしばしばそれらの物語のための弁護士業務として機能する。
 
 * この問題に対する盲点の主要な原因は、統計学や「メタ研究」の専門家が、自分自身の認知バイアスや政治的バイアス、訓練の欠陥、さらには統計学の開発者、教員、使用者、消費者の欠陥を無視していることである。
 
@@ -562,7 +562,7 @@ Example: The endless expert “EBM” promotion of randomized trials as “gold 
 
 1 June 2022 Greenland – Reforming Statistics 30
 
-例：ランダム化比較試験（RCT）を「ゴールドスタンダード」として専門家が際限なく「EBM」で推進しているが、実際にはそうではない。その理由は以下の通りである。
+例：ランダム化比較試験(RCT)を「ゴールドスタンダード」として専門家が際限なく「EBM」で推進しているが、実際にはそうではない。その理由は以下の通りである。
 
 * 倫理的および法的責任の理由で高リスク患者が除外されることによる大きな一般化バイアス、および実際の副作用があるプラセボ製剤
 
@@ -589,7 +589,7 @@ Example: The endless expert “EBM” promotion of randomized trials as “gold 
 * 要旨：OR = 0.65; 95%信頼区間 0.32, 1.31; p = .23
 と報告され、「イベルメクチンは入院予防に有意な効果はなかった」。
 
-* Gideon M-K「ヘルスナード」（Medium 2021年7月16日）は、この試験が「イベルメクチンの死亡に対する効果は認められなかった」と書いた – しかし、Vallejos et al. のp. 5には：イベルメクチン群4名+プラセボ群3名の死亡からのOR = 1.34, 95%信頼区間 0.30, 6.07。
+* Gideon M-K「ヘルスナード」(Medium 2021年7月16日)は、この試験が「イベルメクチンの死亡に対する効果は認められなかった」と書いた – しかし、Vallejos et al. のp. 5には：イベルメクチン群4名+プラセボ群3名の死亡からのOR = 1.34, 95%信頼区間 0.30, 6.07。
 
 * この試験は何かを示すには小さすぎた！
 
@@ -606,9 +606,9 @@ Other studies found many registered trials are never published despite stated in
 
 1 June 2022 Greenland – Reforming Statistics 32
 
-MedPage Today 2021年5月21日からの調査：「IBD試験におけるベイトアンドスイッチ（おとり商法）？主要評価項目はしばしば報告されないか、途中で変更される」
+MedPage Today 2021年5月21日からの調査：「IBD試験におけるベイトアンドスイッチ(おとり商法)？主要評価項目はしばしば報告されないか、途中で変更される」
 
-* 「公開された結果を持つ57件の第III相試験の分析は、半数\[約50%\]が事前に指定された主要評価項目の少なくとも一つを全く報告しなかった（17.5%）、または少なくとも一つが説明なく変更された（33.3%）ことを示した。」
+* 「公開された結果を持つ57件の第III相試験の分析は、半数\[約50%\]が事前に指定された主要評価項目の少なくとも一つを全く報告しなかった(17.5%)、または少なくとも一つが説明なく変更された(33.3%)ことを示した。」
 
 他の研究では、多くの登録された試験が、その旨を明記しているにもかかわらず、決して出版されないことがわかった。
 
@@ -626,7 +626,7 @@ Example: P-value = “probability of the null” vs. P-value = “probability ch
 
 1 June 2022 Greenland – Reforming Statistics 33
 
-経験的事実：我々は皆愚かである（腐敗していないとしても）
+経験的事実：我々は皆愚かである(腐敗していないとしても)
 
 Amos Tversky：「私の同僚は人工知能を研究している。私は自然な愚かさを研究している。」
 
@@ -668,7 +668,7 @@ Tversky: “It's frightening to think that you might not know something, but mor
 
 * Kahneman：「人々は、保証されている以上に、自分たちの意見の真実性に遥かに高い確率を割り当てる。」
 
-* 純粋な意見を神聖化することにより、ベイズ法は事前確率スパイクや「引き出された事前確率」（バイアス、文献の誤読、個人的偏見の要約表現）を介して、統計学をさらに多くの乱用に対して開く。
+* 純粋な意見を神聖化することにより、ベイズ法は事前確率スパイクや「引き出された事前確率」(バイアス、文献の誤読、個人的偏見の要約表現)を介して、統計学をさらに多くの乱用に対して開く。
 
 * ― 例：Pr(null)=0.5が「無関心」であると主張することは、無関心ではなく、重大なゼロ仮説バイアスである。
 
@@ -708,267 +708,254 @@ Example: “if the p-value for the effect is greater than the journal’s thresh
 
 1 June 2022 Greenland – Reforming Statistics 37
 
-例：「効果のp値がジャーナルの閾値p値より大きい場合、編集者はその論文を直ちに却下でき、それによってジャーナルはその（説得力のない）論文にそれ以上の時間を費やすことを避けることができる…結果が統計的に有意である場合、これは、研究された効果に対する証拠の十分な重みがあり、その効果を報告する論文が出版を検討する価値があるという以上の意味はない。」<br> 
+例：「効果のp値がジャーナルの閾値p値より大きい場合、編集者はその論文を直ちに却下でき、それによってジャーナルはその(説得力のない)論文にそれ以上の時間を費やすことを避けることができる…結果が統計的に有意である場合、これは、研究された効果に対する証拠の十分な重みがあり、その効果を報告する論文が出版を検討する価値があるという以上の意味はない。」<br> 
 ― これは1920年代のFisherですか？ いいえ2021年の統計学です：Mcnaughton, *The War on Statistical Significance*.。
-
----
-
-**Slide 33**
-
-Ignores a fact noted by the 1950s: Any selective reporting based on study outcomes will distort the
-distribution of available outcomes relative to the total
-1 June 2022 Greenland – Reforming Statistics 38
-Any instruction purporting to cover the basics of inference needs to include cognitive science to deal with social delusions and biases such as
-
-Nullism: Confusion of our need for parsimony (or shrinkage to zero) with reality.
-
-Dichotomania: Confusion of our need for summarization (simplification) and decision with our preference for black-or-white thinking.
-
-1 June 2022 Greenland – Reforming Statistics 39
-
-1950年代には指摘されていた事実を無視している：研究結果に基づくいかなる選択的報告も、
-利用可能な結果の分布を全体に対して歪めるだろう。
-2022年6月1日 グリーンランド – 統計学改革 38
-推論の基礎を網羅すると称するいかなる指導も、社会的妄想やバイアスに対処するために認知科学を含める必要がある。例えば、
-
-ゼロ仮説主義：我々の単純性の必要性（またはゼロへの収縮）を現実と混同すること。
-
-二分法病：要約（単純化）と決定の必要性を、白黒思考への我々の好みと混同すること。
-
-2022年6月1日 グリーンランド – 統計学改革 39
-
----
-
-**Slide 34**
-
-Nullism has a long and glorious history among physics idolaters as pseudo-skepticism
-(empirically indefensible certainty about nulls):
-
-“Heavier than air flying machines are
-impossible” – Lord Kelvin 1895, repeated 1902
-“Continental drift is out of the question”
-because no mechanism is strong enough – Sir Harold Jeffreys, geophysicist originator of spiked priors = formalized overconfidence.
-
-See also Fisher arguing against cigarettes causing lung cancer, despite extensive evidence.
-1 June 2022 Greenland – Reforming Statistics 40
-
-1 June 2022 Greenland – Reforming Statistics 40
-
-ゼロ仮説主義は、物理学偶像崇拝者の間で疑似懐疑論として長く輝かしい歴史を持っている
-（経験的に擁護できない帰無仮説に関する確実性）：
-
-「空気より重い飛行機械は
-不可能である」 – ケルビン卿 1895年、1902年に繰り返される
-「大陸移動は論外である」
-なぜなら十分な強さを持つメカニズムが存在しないからだ – ハロルド・ジェフリーズ卿、スパイク事前確率の創始者である地球物理学者 = 形式化された過信。
-
-また、広範な証拠があるにもかかわらず、タバコが肺がんを引き起こすことに反対するフィッシャーも参照。
-
----
-
-**Slide 35**
-
-Against Nullism: Reality is under no obligation to be simple or decisive.
-
-Against Dichotomania: Many if not most important decisions are not or should not be binary: Where do you set your oven? Your thermostat? Your medication level?
-
-Hidden Reification: Researchers routinely publish “inferences” that ignore vast model uncertainties – they don’t know a rationale for neglecting all the simplifications in their models, and they just don’t think about them.
-
-1 June 2022 Greenland – Reforming Statistics 41
-
-1 June 2022 Greenland – Reforming Statistics 41
-
-ゼロ仮説主義に反対して：現実は単純であるか決定的である義務はない。
-
-二分法病に反対して：多くの、もしそうでなければ最も重要な決定は、二元的ではない、またはそうであるべきではない：オーブンはどこに設定しますか？サーモスタットは？薬のレベルは？
-
-隠されたモデルと現実の混同：研究者は日常的に、広範なモデルの不確実性を無視した「推論」を発表している – 彼らはモデルにおけるすべての単純化を無視する理由を知らず、それについて考えてすらいない。
-
----
-
-**Slide 36**
-
-Many other cognitive biases contribute to design, analysis, reporting, publication biases
-https://en.wikipedia.org/wiki/List_of_cognitive_biases
-All of the following and more should form part of basic training for moderating inferences:
-Anchoring to perceived consensus and desired
-yet erroneous belief even after correction.
-Confirmation bias: selective focus on desirable
-evidence and neglect of undesirable evidence.
-Courtesy bias: Tendency to be obscure about
-
-1 June 2022 Greenland – Reforming Statistics 42
-
-1 June 2022 Greenland – Reforming Statistics 42
-
-他の多くの認知バイアスが、デザイン、分析、報告、出版のバイアスに寄与している。
-https://en.wikipedia.org/wiki/List_of_cognitive_biases
-以下のすべてとそれ以上が、推論を調整するための基本訓練の一部を形成すべきである：
-認識されたコンセンサスと望ましい、
-しかし誤った信念への固着（修正後であっても）。
-確証バイアス：好ましい証拠に選択的に焦点を当て、
-望ましくない証拠を無視すること。
-配慮バイアス：不快感を与える批判について不明瞭にする傾向。
-
----
-
-**Slide 37**
-
-criticisms that will cause offense. 1 June 2022 Greenland – Reforming Statistics 42
-
-Failure to test alternatives (“congruence bias”)
-Selective criticism of undesirable evidence.
-Selective reasoning to desired conclusions via
-selective assumptions, explanations, and data.
-Dunning–Kruger effects: The less expertise, the
-more the overestimation of one’s competence (as in researchers’ overestimation of their statistical expertise, e.g., statistical editors of med journals).
-
-Overconfidence, validity illusions: The tendency to think methods or judgments are as accurate about the world as they are in the math (thought experiments) used to derive them.
-
-1 June 2022 Greenland – Reforming Statistics 43
-
-1 June 2022 Greenland – Reforming Statistics 43
-
-不快感を与える批判。 2022年6月1日 グリーンランド – 統計学改革 42
-
-代替案をテストしないこと（「合同バイアス」）。
-望ましくない証拠に対する選択的な批判。
-選択的な仮定、説明、データによる
-望ましい結論への選択的な推論。
-ダニング＝クルーガー効果：専門知識が少ないほど、
-自分の能力を過大評価する（例えば、医学雑誌の統計編集者における、研究者の統計専門知識の過大評価など）。
-
-過信、妥当性の錯覚：方法や判断が、それらを導き出すために使用される数学（思考実験）において正確であるのと同様に、世界についても正確であると考える傾向。
 
 ---
 
 **Slide 38**
 
-Familiarity bias – over-reliance on familiar methods, ignoring alternative approaches (“gets me grants and papers, so no need to change”).
+Ignores a fact noted by the 1950s: Any selective reporting based on study outcomes will distort the distribution of available outcomes relative to the total
 
-Territorial (exclusionary) bias – promoting familiar methods as exclusively correct approaches, thus protecting self-authority and preventing competition from gaining ground (“Strictly Ballroom” effect: You can’t be an authority about what you haven’t studied and used extensively).
+1 June 2022 Greenland – Reforming Statistics 38
 
-Groupthink and herd-behavior biases such as repetition bias (echo-chamber effect, group reinforcement causing overcount of evidence).
-
-1 June 2022 Greenland – Reforming Statistics 44
-
-1 June 2022 Greenland – Reforming Statistics 44
-
-親近性バイアス – 慣れ親しんだ方法への過度の依存、代替アプローチの無視（「これにより助成金や論文が得られるのだから、変える必要はない」）。
-
-縄張り（排他的）バイアス – 慣れ親しんだ方法を唯一正しいアプローチとして推進し、自己の権威を守り、競争相手が進出するのを防ぐ（「ストリクトリー・ボールルーム」効果：徹底的に研究し使用していないことについて権威であることはできない）。
-
-集団思考と群集行動バイアス、例えば反復バイアス（エコーチャンバー効果、証拠の過剰計数を引き起こす集団強化）。
+1950年代には指摘されていた事実を無視している：研究結果に基づくいかなる選択的報告も、利用可能な結果の分布を全体に対して歪めるだろう。
 
 ---
 
 **Slide 39**
 
-Mind-projection fallacies: Imbuing inert quantities with attitudes, opinions, values, inferences, judgments, and decisions.
-- Rampant in statistical discussions, thanks to using value descriptors like “significance”, “confidence” and “severity” for narrow math concepts that cannot capture the word meanings.
+Any instruction purporting to cover the basics of inference needs to include cognitive science to deal with social delusions and biases such as
 
-Top example of nonsense: “P-values overstate evidence.” P-values only provide the position of a statistic in a reference distribution (e.g., chi-squared) derived from a model. Any evidence overstatement is by the viewer.
+* Nullism: Confusion of our need for parsimony (or shrinkage to zero) with reality.
 
-1 June 2022 Greenland – Reforming Statistics 45
+* Dichotomania: Confusion of our need for summarization (simplification) and decision with our preference for black-or-white thinking.
 
-1 June 2022 Greenland – Reforming Statistics 45
+* Reification: Faith that formal methods for reasoning, inference, and decision suffice for real-world reasoning, inference, and decision.
 
-心の投影の誤謬：不活性な量に態度、意見、価値、推論、判断、および決定を吹き込むこと。
-- 言葉の意味を捉えることができない狭い数学的概念に対して、「有意性」、「信頼性」、「厳しさ」のような価値記述子を使用しているため、統計的議論で蔓延している。
+1 June 2022 Greenland – Reforming Statistics 39
 
-ナンセンスの最たる例：「P値は証拠を過大に表現している。」P値は、モデルから導出された参照分布（例えばカイ二乗分布）における統計量の位置を提供するだけである。証拠の過大表現は観察者によるものである。
+推論の基礎を網羅すると称するいかなる指導も、社会的妄想やバイアスに対処するために認知科学を含める必要がある。例えば、
+
+* ゼロ仮説主義()：我々の単純性の必要性(またはゼロへの収縮)を現実と混同すること。
+
+* 二分法病(dichotomania)：要約(単純化)と決定の必要性を、白黒思考への我々の好みと混同すること。
+
+* モデルと現実の混同(Reification)：形式的な推論・推測・意思決定の手法だけで、現実世界における推論・推測・意思決定も十分に行えると信じること。
 
 ---
 
 **Slide 40**
 
-These are not absolute or sharp categories, but rather are heuristic triggers to avoid getting lulled or suckered by colleagues (however well-meaning), “experts,” and most of all ourselves. Example:
+Nullism has a long and glorious history among physics idolaters as pseudo-skepticism (empirically indefensible certainty about nulls):
 
-A Dunning-Kruger form of overconfidence bias that is rampant among medical pundits (and not only when they comment on statistical methods): We may know our specialty superbly, but not realize how that expertise doesn't instantly generalize to other topics. True even for topics we think are close to our specialty, but actually have a lot more literature than we are aware of.
+* “Heavier than air flying machines are impossible” – Lord Kelvin 1895, repeated 1902
 
-1 June 2022 Greenland – Reforming Statistics 46
+* “Continental drift is out of the question” because no mechanism is strong enough – Sir Harold Jeffreys, geophysicist originator of spiked priors = formalized overconfidence.
 
-1 June 2022 Greenland – Reforming Statistics 46
+* See also Fisher arguing against cigarettes causing lung cancer, despite extensive evidence.
 
-これらは絶対的または明確なカテゴリーではなく、むしろ同僚（どんなに善意であっても）、「専門家」、そして何よりも自分自身に騙されたり欺かれたりしないようにするためのヒューリスティックなトリガーである。例：
+1 June 2022 Greenland – Reforming Statistics 40
 
-医学専門家の間で蔓延しているダニング＝クルーガー型の過信バイアス（統計的手法についてコメントする場合に限らない）：我々は自分の専門分野を素晴らしく知っているかもしれないが、その専門知識が他のトピックにすぐには一般化しないことを理解していない。自分たちの専門分野に近いと思っているトピックでさえも、実際には我々が知っているよりもはるかに多くの文献が存在する場合でも、これは当てはまる。
+ゼロ仮説主義は、物理学偶像崇拝者の間で疑似懐疑論として長く輝かしい歴史を持っている(経験的に擁護できない帰無仮説に関する確実性)：
+
+* 「空気より重い飛行機械は不可能である」 ― ケルビン卿 1895年、1902年に繰り返される
+
+* 「大陸移動は論外である」<br>なぜなら十分な強さを持つメカニズムが存在しないからだ ― ハロルド・ジェフリーズ卿、スパイク事前確率の創始者である地球物理学者 = 形式化された過信。
+
+* また、広範な証拠があるにもかかわらず、タバコが肺がんを引き起こすことに反対するフィッシャーも参照。
 
 ---
 
 **Slide 41**
 
-Systemic problems are major reasons why ‘most published research findings are false’:
+* Against Nullism: Reality is under no obligation to be simple or decisive.
 
-Like everyone, stat instructors, users, and consumers suffer from dichotomania, nullism, and reification: They crave true-or-false conclusions for null hypotheses and so will accept them from oversimplified models.
+* Against Dichotomania: Many if not most important decisions are not or should not be binary: Where do you set your oven? Your thermostat? Your medication level?
 
-But in “soft-science” applications, observations (even from RCTs) can never provide such absolute certainties, and can’t even provide accurate assessments of uncertainties.
+* Hidden Reification: Researchers routinely publish “inferences” that ignore vast model uncertainties – they don’t know a rationale for neglecting all the simplifications in their models, and they just don’t think about them.
 
-1 June 2022 Greenland – Reforming Statistics 47
+1 June 2022 Greenland – Reforming Statistics 41
 
-1 June 2022 Greenland – Reforming Statistics 47
+* ゼロ仮説主義(nullism)に反対する：現実は単純であるか決定的である義務はない。
 
-システム的な問題は、「出版された研究結果のほとんどが偽である」という主要な理由である：
+* 二分法病(dichotomania)に反対する：多くの、もしそうでなければ最も重要な決定は、二元的ではない、またはそうであるべきではない：オーブンはどこに設定しますか？サーモスタットは？薬のレベルは？
 
-誰もがそうであるように、統計学の教員、使用者、消費者は二分法病、ゼロ仮説主義、モデルと現実の混同に苦しんでいる。彼らは帰無仮説に対する真偽の結論を切望し、過度に単純化されたモデルからそれらを受け入れてしまう。
-
-しかし、「ソフトサイエンス」の応用においては、観察（RCTからであっても）は決してそのような絶対的な確実性を提供できず、不確実性の正確な評価さえも提供できない。
+* 隠されたモデルと現実の混同(hidden reification)に反対する：研究者は日常的に、広範なモデルの不確実性を無視した「推論」を発表している – 彼らはモデルにおけるすべての単純化を無視する理由を知らず、それについて考えてすらいない。
 
 ---
 
 **Slide 42**
 
-Statistics caters to our cravings by providing sophisticated decision theories which make it appear to users that observations can provide definitive risk and uncertainty assessments.
+Many other cognitive biases contribute to design, analysis, reporting, publication biases<br>
+https://en.wikipedia.org/wiki/List_of_cognitive_biases
 
-“Confidence intervals” perpetuate these illusions by deceptively appearing to capture all the uncertainty sources in applications, when the only uncertainty they capture is that given the model used to compute them.
+All of the following and more should form part of basic training for moderating inferences:
 
-Worse, standard presentations rarely mention their neglect of model uncertainty!
+* Anchoring to perceived consensus and desired yet erroneous belief even after correction.
 
-1 June 2022 Greenland – Reforming Statistics 48
+* Confirmation bias: selective focus on desirable evidence and neglect of undesirable evidence.
 
-1 June 2022 Greenland – Reforming Statistics 48
+* Courtesy bias: Tendency to be obscure about criticisms that will cause offense.
 
-統計学は、洗練された決定理論を提供することで、ユーザーに観察が決定的なリスクと不確実性の評価を提供できるように見せかけ、我々の切望に応える。
+1 June 2022 Greenland – Reforming Statistics 42
 
-「信頼区間」は、応用においてすべての不確実性の源を捉えているかのように欺瞞的に見えることで、これらの錯覚を永続させるが、それらが捉える不確実性は、計算に使用されたモデルを前提としたものだけである。
+他の多くの認知バイアスが、デザイン、分析、報告、出版のバイアスに寄与している。<br>
+https://en.wikipedia.org/wiki/List_of_cognitive_biases
 
-さらに悪いことに、標準的なプレゼンテーションでは、モデルの不確実性の無視についてほとんど言及されない！
+以下のすべてとそれ以上が、推論を調整するための基本訓練の一部を形成すべきである：
+
+* 認識されたコンセンサスと望ましい、しかし誤った信念への固着(修正後であっても)。
+
+* 確証バイアス：好ましい証拠に選択的に焦点を当て、望ましくない証拠を無視すること。
+
+* 配慮バイアス：不快感を与える批判について不明瞭にする傾向。
 
 ---
 
 **Slide 43**
 
-Statistics also freely indulges in the ludic fallacy of treating all uncertainty as if from games of chance (random draws from a distribution of known form) instead of addressing our deep uncertainties about the form and causes of variation and bias.
+* Failure to test alternatives (“congruence bias”)
 
-These problems underscore the need for coverage of causal reasoning errors and cognitive biases as an essential component of any specialty claiming to promote sound scientific inference from data.
+* Selective criticism of undesirable evidence.
 
-1 June 2022 Greenland – Reforming Statistics 49
+* Selective reasoning to desired conclusions via selective assumptions, explanations, and data.
 
-1 June 2022 Greenland – Reforming Statistics 49
+* Dunning–Kruger effects: The less expertise, the more the overestimation of one’s competence (as in researchers’ overestimation of their statistical expertise, e.g., statistical editors of med journals).
 
-統計学はまた、すべての不確実性を偶然のゲーム（既知の形式の分布からのランダムな抽出）から来たかのように扱うという遊戯の誤謬に自由にふけり、変動とバイアスの形式と原因に関する我々の深い不確実性に対処しない。
+* Overconfidence, validity illusions: The tendency to think methods or judgments are as accurate about the world as they are in the math (thought experiments) used to derive them.
 
-これらの問題は、データからの健全な科学的推論を促進すると主張するあらゆる専門分野の必須要素として、因果推論の誤りや認知バイアスを網羅する必要性を強調している。
+1 June 2022 Greenland – Reforming Statistics 43
+
+* 代替案をテストしないこと(「合同バイアス」)。
+
+* 望ましくない証拠に対する選択的な批判。
+
+* 選択的な仮定、説明、データによる
+
+* 望ましい結論への選択的な推論。
+
+* ダニング＝クルーガー効果：専門知識が少ないほど、自分の能力を過大評価する(例えば、医学雑誌の統計編集者における、研究者の統計専門知識の過大評価など)。
+
+* 過信、妥当性の錯覚：方法や判断が、それらを導き出すために使用される数学(思考実験)において正確であるのと同様に、世界についても正確であると考える傾向。
 
 ---
 
 **Slide 44**
 
-Mathematizations amplify overconfidence in these fallacies, making statistical theory a fountain of real-world misinformation:
+* Familiarity bias – over-reliance on familiar methods, ignoring alternative approaches (“gets me grants and papers, so no need to change”).
 
-Math derivations only warrant certainty in conclusions (such as “optimality”) given their assumptions (e.g., that a small class of model candidates can approximate reality well).
+* Territorial (exclusionary) bias – promoting familiar methods as exclusively correct approaches, thus protecting self-authority and preventing competition from gaining ground (“Strictly Ballroom” effect: You can’t be an authority about what you haven’t studied and used extensively).
 
-Yet the conclusions are then treated as self-evident truths, a feeling reinforced by commitment to previous training, teaching, and practice. The resulting shared cognitive biases are then reinforced by social feedback loops.
+* Groupthink and herd-behavior biases such as repetition bias (echo-chamber effect, group reinforcement causing overcount of evidence).
+
+1 June 2022 Greenland – Reforming Statistics 44
+
+* 親近性バイアス – 慣れ親しんだ方法への過度の依存、代替アプローチの無視(「これにより助成金や論文が得られるのだから、変える必要はない」)。
+
+* 縄張り(排他的)バイアス – 慣れ親しんだ方法を唯一正しいアプローチとして推進し、自己の権威を守り、競争相手が進出するのを防ぐ(「ストリクトリー・ボールルーム」効果：徹底的に研究し使用していないことについて権威であることはできない)。
+
+* 集団思考と群集行動バイアス、例えば反復バイアス(エコーチャンバー効果、証拠の過剰計数を引き起こす集団強化)。
+
+---
+
+**Slide 45**
+
+* Mind-projection fallacies: Imbuing inert quantities with attitudes, opinions, values, inferences, judgments, and decisions.
+
+― Rampant in statistical discussions, thanks to using value descriptors like “significance”, “confidence” and “severity” for narrow math concepts that cannot capture the word meanings.
+
+* Top example of nonsense: “P-values overstate evidence.” P-values only provide the position of a statistic in a reference distribution (e.g., chi-squared) derived from a model. Any evidence overstatement is by the viewer.
+
+1 June 2022 Greenland – Reforming Statistics 45
+
+*心の投影の誤謬：不活性な量に態度、意見、価値、推論、判断、および決定を吹き込むこと。
+
+― 言葉の意味を捉えることができない狭い数学的概念に対して、「有意性」、「信頼性」、「厳しさ」のような価値記述子を使用しているため、統計的議論で蔓延している。
+
+* ナンセンスの最たる例：「P値は証拠を過大に表現している。」P値は、モデルから導出された参照分布(例えばカイ二乗分布)における統計量の位置を提供するだけである。証拠の過大表現は観察者によるものである。
+
+---
+
+**Slide 46**
+
+These are not absolute or sharp categories, but rather are heuristic triggers to avoid getting lulled or suckered by colleagues (however well-meaning), “experts,” and most of all ourselves. Example:
+
+* A Dunning-Kruger form of overconfidence bias that is rampant among medical pundits (and not only when they comment on statistical methods): We may know our specialty superbly, but not realize how that expertise doesn't instantly generalize to other topics. True even for topics we think are close to our specialty, but actually have a lot more literature than we are aware of.
+
+1 June 2022 Greenland – Reforming Statistics 46
+
+これらは絶対的または明確なカテゴリーではなく、むしろ同僚(どんなに善意であっても)、「専門家」、そして何よりも自分自身に騙されたり欺かれたりしないようにするためのヒューリスティックなトリガーである。例：
+
+* 医学専門家の間で蔓延しているダニング＝クルーガー型の過信バイアス(統計的手法についてコメントする場合に限らない)：我々は自分の専門分野を素晴らしく知っているかもしれないが、その専門知識が他のトピックにすぐには一般化しないことを理解していない。自分たちの専門分野に近いと思っているトピックでさえも、実際には我々が知っているよりもはるかに多くの文献が存在する場合でも、これは当てはまる。
+
+---
+
+**Slide 47**
+
+Systemic problems are major reasons why ‘most published research findings are false’:
+
+* Like everyone, stat instructors, users, and consumers suffer from dichotomania, nullism, and reification: They crave true-or-false conclusions for null hypotheses and so will accept them from oversimplified models.
+
+* But in “soft-science” applications, observations (even from RCTs) can never provide such absolute certainties, and can’t even provide accurate assessments of uncertainties.
+
+1 June 2022 Greenland – Reforming Statistics 47
+
+「発表された研究成果の大半が誤りである」とされる主な理由の一つは、体系的な問題にある：
+
+* 誰もがそうであるように、統計学の教員、使用者、消費者は二分法病、ゼロ仮説主義、モデルと現実の混同に苦しんでいる。彼らは帰無仮説に対する真偽の結論を切望し、過度に単純化されたモデルからそれらを受け入れてしまう。
+
+* しかし、「ソフトサイエンス」の応用においては、観察(RCTからであっても)は決してそのような絶対的な確実性を提供できず、不確実性の正確な評価さえも提供できない。
+
+---
+
+**Slide 48**
+
+* Statistics caters to our cravings by providing sophisticated decision theories which make it appear to users that observations can provide definitive risk and uncertainty assessments.
+
+* “Confidence intervals” perpetuate these illusions by deceptively appearing to capture all the uncertainty sources in applications, when the only uncertainty they capture is that given the model used to compute them.
+
+* Worse, standard presentations rarely mention their neglect of model uncertainty!
+
+1 June 2022 Greenland – Reforming Statistics 48
+
+* 統計学は、洗練された決定理論を提供することで、ユーザーに観察が決定的なリスクと不確実性の評価を提供できるように見せかけ、我々の切望に応える。
+
+* 「信頼区間」は、応用においてすべての不確実性の源を捉えているかのように欺瞞的に見えることで、これらの錯覚を永続させるが、それらが捉える不確実性は、計算に使用されたモデルを前提としたものだけである。
+
+* さらに悪いことに、標準的なプレゼンテーションでは、モデルの不確実性の無視についてほとんど言及されない！
+
+---
+
+**Slide 49**
+
+* Statistics also freely indulges in the ludic fallacy of treating all uncertainty as if from games of chance (random draws from a distribution of known form) instead of addressing our deep uncertainties about the form and causes of variation and bias.
+
+* These problems underscore the need for coverage of causal reasoning errors and cognitive biases as an essential component of any specialty claiming to promote sound scientific inference from data.
+
+1 June 2022 Greenland – Reforming Statistics 49
+
+* 統計学はまた、すべての不確実性を偶然のゲーム(既知の形式の分布からのランダムな抽出)から来たかのように扱うという遊戯の誤謬に自由にふけり、変動とバイアスの形式と原因に関する我々の深い不確実性に対処しない。
+
+* これらの問題は、データからの健全な科学的推論を促進すると主張するあらゆる専門分野の必須要素として、因果推論の誤りや認知バイアスを網羅する必要性を強調している。
+
+---
+
+**Slide 50**
+
+* Mathematizations amplify overconfidence in these fallacies, making statistical theory a fountain of real-world misinformation:
+
+* Math derivations only warrant certainty in conclusions (such as “optimality”) given their assumptions (e.g., that a small class of model candidates can approximate reality well).
+
+* Yet the conclusions are then treated as self-evident truths, a feeling reinforced by commitment to previous training, teaching, and practice. The resulting shared cognitive biases are then reinforced by social feedback loops.
 
 1 June 2022 Greenland – Reforming Statistics 50
 
-1 June 2022 Greenland – Reforming Statistics 50
+* 数学化はこれらの誤謬に対する過信を増幅させ、統計理論を現実世界の誤った情報の源泉にしている：
 
-数学化はこれらの誤謬に対する過信を増幅させ、統計理論を現実世界の誤った情報の源泉にしている：
+* 数学的導出は、その仮定(例えば、少数の候補モデルクラスが現実をうまく近似できるという仮定など)が与えられている場合にのみ、結論(「最適性」など)の確実性を保証する。
 
-数学的導出は、その仮定（例えば、少数の候補モデルクラスが現実をうまく近似できるという仮定など）が与えられている場合にのみ、結論（「最適性」など）の確実性を保証する。
-
-しかし、その結論は自明の真理として扱われ、これは以前の訓練、教育、実践へのコミットメントによって強化される感覚である。結果として生じる共有された認知バイアスは、社会的フィードバックループによってさらに強化される。
+* しかし、その結論は自明の真理として扱われ、これは以前の訓練、教育、実践へのコミットメントによって強化される感覚である。結果として生じる共有された認知バイアスは、社会的フィードバックループによってさらに強化される。
 
 ---
 
@@ -986,7 +973,7 @@ Examples: Demanding calibration or Bayesian coherency as prime directives for re
 
 結果は、最も技術的に熟練した提唱者による議論における集団思考、隠されたバイアス、循環論法である！
 
-ネイマン流とベイズ流の優位性を主張する一般的な議論（ネイマンやベイズの著作に見られるものよりも悪い）に典型的に表れている。
+ネイマン流とベイズ流の優位性を主張する一般的な議論(ネイマンやベイズの著作に見られるものよりも悪い)に典型的に表れている。
 
 例：現実世界の結論と決定に対する最優先の指令として、キャリブレーションやベイズ的整合性を要求すること。それらは彼らの表現内での指令にすぎず、捉えられていない文脈からの破滅につながる可能性がある。
 
@@ -1035,7 +1022,7 @@ These biases are usually obscured from public recognition by adherence to statis
 数学的な「最適性」の結果も、数学的な設定で問題が見つからないことも、実際的な応用における良い性能を保証するものではない。
 2022年6月1日 グリーンランド – 統計学改革 52
 価値バイアスは統計学的手法に蔓延しており、最も頻繁にはゼロ仮説主義の形をとる。
-（「帰無仮説を受け入れる」ことに偏った価値観）
+(「帰無仮説を受け入れる」ことに偏った価値観)
 
 すべての利害関係者によって共有されない費用対効果の仮定を
 組み込んでいる場合、その方法論は価値バイアスがかかっていると言う。
@@ -1056,11 +1043,11 @@ Many researchers do not realize that any effect size can be given a P-value (“
 
 1 June 2022 Greenland – Reforming Statistics 54
 
-例：帰無仮説と検定仮説の区別をしないほど、帰無仮説を検定仮説として一貫して使用すること（フィッシャーに遡る誤り）。
+例：帰無仮説と検定仮説の区別をしないほど、帰無仮説を検定仮説として一貫して使用すること(フィッシャーに遡る誤り)。
 
-これはゼロ仮説主義の一例であり、帰無仮説に利害関係を持つ人々（製品監視で見られるように）や、帰無仮説に形而上学的な信念を持つ人々（単純性の発見的手法と自然法則を混同する疑似懐疑論者）を利する帰無仮説への価値バイアスである。
+これはゼロ仮説主義の一例であり、帰無仮説に利害関係を持つ人々(製品監視で見られるように)や、帰無仮説に形而上学的な信念を持つ人々(単純性の発見的手法と自然法則を混同する疑似懐疑論者)を利する帰無仮説への価値バイアスである。
 
-多くの研究者は、いかなる効果量にもP値を与えることができる（「検定される」）ということを認識していない。
+多くの研究者は、いかなる効果量にもP値を与えることができる(「検定される」)ということを認識していない。
 
 ---
 
@@ -1074,7 +1061,7 @@ Via NHST, nullism has been taught as an integral part of Neyman-Pearson testing 
 
 1 June 2022 Greenland – Reforming Statistics 55
 
-NHSTを介して、ゼロ仮説主義はネイマン＝ピアソン検定の不可欠な部分として教えられてきた – そうではないにもかかわらず！ネイマンの Synthese 1977 p. 104, 106 より（強調追加）：
+NHSTを介して、ゼロ仮説主義はネイマン＝ピアソン検定の不可欠な部分として教えられてきた – そうではないにもかかわらず！ネイマンの Synthese 1977 p. 104, 106 より(強調追加)：
 
 「状況と研究者の主観的な態度に応じて、一方の誤りが他方の誤りよりも避けるべきより重要なものに見えることがある。避けるべきより重要な誤りを「第一種の誤り」と呼ぶだろう。」[「第一種」誤り、アルファ誤り、検定仮説Hの誤った棄却]
 
@@ -1096,7 +1083,7 @@ Note how this description allows that the test hypothesis H may be non-null.
 
 この記述が、検定仮説Hが非帰無仮説でありうることをどのように許容しているかに注目してほしい。
 
-「[化学物質Aの]製造業者の観点からは、Aの発癌性を主張する際の誤りは、Aが無害であると主張する際の誤りよりも避けるべきより重要なものである（またはそうであるかもしれない）。したがって、製造業者にとって、『検定される仮説』は、『Aは発癌性がない』である可能性が高い。」
+「[化学物質Aの]製造業者の観点からは、Aの発癌性を主張する際の誤りは、Aが無害であると主張する際の誤りよりも避けるべきより重要なものである(またはそうであるかもしれない)。したがって、製造業者にとって、『検定される仮説』は、『Aは発癌性がない』である可能性が高い。」
 
 ---
 
@@ -1110,7 +1097,7 @@ Note how this description allows that the test hypothesis H may be non-null.
 1 June 2022 Greenland – Reforming Statistics 57
 
 「一方、化学物質Aの将来の使用者にとっては、検定される仮説は明確に『Aは発癌性がある』であろう。実際、この使用者は、この仮説を棄却する際の誤りの確率が非常に小さな値に減らされることを望む可能性が高い！」
-― これは、統計的検定を教え、推奨し、使用する者は、検定仮説Hの選択だけでなく、使用されるカットオフ（そのカットオフがP値、ベイズ因子、尤度比のいずれであるかにかかわらず）も正当化しなければならないことを意味する。
+― これは、統計的検定を教え、推奨し、使用する者は、検定仮説Hの選択だけでなく、使用されるカットオフ(そのカットオフがP値、ベイズ因子、尤度比のいずれであるかにかかわらず)も正当化しなければならないことを意味する。
 
 ---
 
@@ -1124,7 +1111,7 @@ Yet many “opinion leaders” maintain rigid practices of testing only the null
 
 1 June 2022 Greenland – Reforming Statistics 58
 
-したがって、ネイマンは、検定仮説を選択する上での価値観の役割と、それらがどのように利害関係者の間でトピック内で異なりうるか（そしてしばしば異なる）を明確に記述した。
+したがって、ネイマンは、検定仮説を選択する上での価値観の役割と、それらがどのように利害関係者の間でトピック内で異なりうるか(そしてしばしば異なる)を明確に記述した。
 
 しかし、多くの「オピニオンリーダー」は、著しく単純化された生物学的モデルへの信仰、選択的な観察からの一般化、単純性や節約の発見的手法を形而上学的な原則であるかのように扱うこと、そしてもちろんスポンサーやイデオロギーへの奉仕を含む隠された価値観に基づいて、帰無仮説のみを検定する厳格な慣行を維持している。
 
@@ -1217,7 +1204,7 @@ The persistent practical mistake promoted by statistical methodology: That we sh
 
 1 June 2022 Greenland – Reforming Statistics 64
 
-「再現性の危機」ヒステリーは、そのゼロ仮説主義（代替案の検定の無視）、無意味な二分法病、および有害なモデルと現実の混同によって問題を継続させている。これらはすべてNHSTと帰無仮説スパイク事前確率に神聖化されている。
+「再現性の危機」ヒステリーは、そのゼロ仮説主義(代替案の検定の無視)、無意味な二分法病、および有害なモデルと現実の混同によって問題を継続させている。これらはすべてNHSTと帰無仮説スパイク事前確率に神聖化されている。
 2022年6月1日 グリーンランド – 統計学改革 63
 
 統計学的方法論によって促進されている持続的な実践的誤り：我々は、たった一つの研究、一つの背景仮定のセット、一つの形式的な推論システム、または一つの解釈からの演繹を用いて現実世界の推論を構築したいと思うべきである、ということ。
@@ -1237,7 +1224,7 @@ But most “data analysis” in soft-science research has been about applying de
 
 1 June 2022 Greenland – Reforming Statistics 65
 
-ほとんどの著者は、多様なデザイン（単なる「再現」だけでなく）と多様な仮定（感度分析）の必要性を受け入れているが、多様な方法論と解釈の必要性については unaware of (some even fight) 認識していないようである（一部はそれと戦うことさえある）。
+ほとんどの著者は、多様なデザイン(単なる「再現」だけでなく)と多様な仮定(感度分析)の必要性を受け入れているが、多様な方法論と解釈の必要性については unaware of (some even fight) 認識していないようである(一部はそれと戦うことさえある)。
 2022年6月1日 グリーンランド – 統計学改革 64
 
 統計的な規則は悪い慣行を悪化させる可能性がある。なぜなら、その理論は、誤差コストを明確に把握した上で、注意深く制御された実験の完璧な解釈のみを使用すると仮定しているからである。
@@ -1319,7 +1306,7 @@ That confusion is destructive because P-values can be used instead for many task
 2022年6月1日 グリーンランド – P値は証拠として 67
 改革の一歩：P値を帰無仮説有意性検定の糞の山から救い出す。
 
-有意性検定の批評家も擁護者も、P値をNHSTにおける伝統的な使用法と誤認している。これは、すべてのナイフを「武器」と呼ぶようなものである：それはツールの誤用（NHSTにおけるP値の使用で思考を殺害することなど）との混同である。
+有意性検定の批評家も擁護者も、P値をNHSTにおける伝統的な使用法と誤認している。これは、すべてのナイフを「武器」と呼ぶようなものである：それはツールの誤用(NHSTにおけるP値の使用で思考を殺害することなど)との混同である。
 
 その混同は破壊的である。なぜなら、P値はNHSTから切り離された多くのタスクのために使用できるからである：モデル適合度の測定として、推定ツールとして、そして頻度論統計学とベイズ統計学を結ぶ論理的な橋を構築するために。
 
@@ -1343,11 +1330,11 @@ encourages subtle fallacious verbal descriptions that are equivalent to treating
 二分法病と「有意性」が追放された後にP値の復権が直面する課題。
 
 教員と使用者は、P値が
-検定仮説Hの確率（通常は関連性なしまたは効果なしの帰無仮説）であってほしいと考えている。
+検定仮説Hの確率(通常は関連性なしまたは効果なしの帰無仮説)であってほしいと考えている。
 
 P値は通常、その確率には近くない。
 それでも、教育および研究文献は
-P値を仮説確率であるかのように扱うことと等価な、微妙で誤った言葉による説明（「P値の反転」）を奨励している。
+P値を仮説確率であるかのように扱うことと等価な、微妙で誤った言葉による説明(「P値の反転」)を奨励している。
 
 ---
 
@@ -1383,7 +1370,7 @@ Inversion fallacies include misinterpreting P-values as probabilities that “ra
 95%の「信頼区間」は、通常、5%レベルの検定以上のものとしては扱われない。
 2022年6月1日 グリーンランド – 統計学改革 71
 
-反転の誤謬には、P値を「ランダム性」や「偶然のみ」が関連性を生み出した確率として誤解することが含まれる…例えば、Harris & Taylor Medical Statistics Made Easy* 第2版、2008年、p. 24-25は、P値を「観察されたいかなる差も偶然によって起こった確率」と述べている（のみによって？）。
+反転の誤謬には、P値を「ランダム性」や「偶然のみ」が関連性を生み出した確率として誤解することが含まれる…例えば、Harris & Taylor Medical Statistics Made Easy* 第2版、2008年、p. 24-25は、P値を「観察されたいかなる差も偶然によって起こった確率」と述べている(のみによって？)。
 
 ---
 
@@ -1400,12 +1387,12 @@ Concepts of evidence and uncertainty can only be quantified relative to explicit
 
 1 June 2022 Greenland – Reforming Statistics 72
 
-（「Made Easy」は「Made Wrong」のコードだろうか？） 2022年6月1日 グリーンランド – 統計学改革 71
+(「Made Easy」は「Made Wrong」のコードだろうか？) 2022年6月1日 グリーンランド – 統計学改革 71
 健全な分析では、結果を非常にあいまいなものとして、しばしば非対称的な方法で捉える必要がある。しかし、
 
 証拠と不確実性の概念は、データが関連するとされる明示的なモデルに対してのみ定量化できる。例えば：–データとモデル予測との対比
-（相性の良さの確認 = 「適合度検定」、頻度論的診断法のように）、または
-–データとモデルを統合して予測や賭けを更新する（ベイズ事後計算のように）。
+(相性の良さの確認 = 「適合度検定」、頻度論的診断法のように)、または
+–データとモデルを統合して予測や賭けを更新する(ベイズ事後計算のように)。
 
 ---
 
@@ -1450,7 +1437,7 @@ The test model includes the test hypothesis H
 条件付きの「仮説検定」の解釈から、
 無条件の記述的解釈へと重点を移す。
 
-規範：「P値は、検定仮説Hが正しい場合に、検定統計量が観察されたものと同等かそれ以上に極端になる確率である」というもので、背景の仮定（モデル）は暗黙のままになっている。
+規範：「P値は、検定仮説Hが正しい場合に、検定統計量が観察されたものと同等かそれ以上に極端になる確率である」というもので、背景の仮定(モデル)は暗黙のままになっている。
 
 代わりに、仮定を前面に出す：P値 p は、検定統計量が検定モデルの下で位置するパーセンタイルである。
 検定モデルには、検定仮説Hと
@@ -1483,7 +1470,7 @@ Greenland & Rafi 「統計科学を支援する意味論的および認知的ツ
 
 脱条件付けは、P値を導出するために使用されたいかなる仮定の違反も、検定仮説Hの違反だけでなく、その値の原因となりうることを強調する。
 
-大きなP値は、Hまたは検定モデルを支持または確認するものではない（証拠の不在はモデル違反の不在の証拠ではない）。
+大きなP値は、Hまたは検定モデルを支持または確認するものではない(証拠の不在はモデル違反の不在の証拠ではない)。
 
 ---
 
@@ -1498,9 +1485,9 @@ Replace “significance” (Edgeworth 1885) and
 
 1 June 2022 Greenland – Reforming Statistics 76
 
-統計用語を日常言語と再調整するために、誤解を招く伝統的な専門用語（統計 jargon）を覆す：
-「有意性」（Edgeworth 1885）および
-「信頼性」（Neyman 1934）を、P値pによって測定される相性の良さ*に置き換える。相性の良さ*は、pが0（相性の良さなし）から1（データとpを計算するために使用された検定モデルとの完全な相性の良さ）まで変化するにつれて、検定統計量によって測定される方向において示される。[*「整合性」はほぼ同等であるが、あまりにも多くの他の概念に使用されている。]
+統計用語を日常言語と再調整するために、誤解を招く伝統的な専門用語(統計 jargon)を覆す：
+「有意性」(Edgeworth 1885)および
+「信頼性」(Neyman 1934)を、P値pによって測定される相性の良さ*に置き換える。相性の良さ*は、pが0(相性の良さなし)から1(データとpを計算するために使用された検定モデルとの完全な相性の良さ)まで変化するにつれて、検定統計量によって測定される方向において示される。[*「整合性」はほぼ同等であるが、あまりにも多くの他の概念に使用されている。]
 
 ---
 
@@ -1537,11 +1524,11 @@ hypothesis, and emphasize testing directional, non-null, and interval hypotheses
 1 June 2022 Greenland – Reforming Statistics 78
 
 いかなる検定仮説に対しても「帰無仮説」を使用するというフィッシャーの誤りを繰り返すのをやめなさい。
-（これは露骨にゼロ仮説主義バイアスを招く誤りである） 英語辞書における「Null」：
+(これは露骨にゼロ仮説主義バイアスを招く誤りである) 英語辞書における「Null」：
 
 Oxford: 形容詞 2. 値ゼロを持つ、またはそれに関連する；名詞 1. ゼロ。
 Merriam-Webster: 形容詞 6. ゼロの、ゼロである、またはゼロに関連する；名詞 7. ゼロ。
-代わりに、ネイマンの用語である検定された（または検定）
+代わりに、ネイマンの用語である検定された(または検定)
 仮説を使用し、点帰無仮説ではなく、方向性のある、非帰無仮説、および区間仮説の検定を強調しなさい。
 
 ---
@@ -1567,7 +1554,7 @@ This involves no computational or numeric change! It’s all about perception…
 高い「信頼性」を割り当てることは、高い確率を
 割り当てることと区別できない。
 
-したがって：「信頼区間（CI）」を、何らかの相性の良さの基準（例えばP > 0.03）の下でデータと最も相性が良いと見なされたパラメータ値を示す相性区間として再命名し概念化しなさい（後述するように、これは区間内のいかなるパラメータ値に対しても、約5回のコイン投げの証拠以下に相当する）。
+したがって：「信頼区間(CI)」を、何らかの相性の良さの基準(例えばP > 0.03)の下でデータと最も相性が良いと見なされたパラメータ値を示す相性区間として再命名し概念化しなさい(後述するように、これは区間内のいかなるパラメータ値に対しても、約5回のコイン投げの証拠以下に相当する)。
 
 これには計算上または数値上の変更は一切伴わない！すべては認識の問題である…
 
@@ -1587,9 +1574,9 @@ We should recount the dogmatic denials by “great men” like Kelvin and Jeffre
 
 1 June 2022 Greenland – P-values as evidence 81
 
-「相性が良い」は「信頼性」よりもはるかに慎重であり（そして論理的にはるかに弱い）：
+「相性が良い」は「信頼性」よりもはるかに慎重であり(そして論理的にはるかに弱い)：
 
-常に、我々のデータと相性の良い可能性（モデル）は無限に存在する。ほとんどは想像もされていない、現在の知識では想像すらできないものもある。
+常に、我々のデータと相性の良い可能性(モデル)は無限に存在する。ほとんどは想像もされていない、現在の知識では想像すらできないものもある。
 
 ケルビンやジェフリーズのような「偉大な人物」による、後に受け入れられた事実に対する独断的な否定を、我々は語り直すべきである。
 
@@ -1624,7 +1611,7 @@ But confidence in the story will eventually mislead, e.g., it leads away from us
 例：「マラリアは沼地の近くの地面に溜まる悪い空気によって引き起こされる。」
 
 示唆される効果的な解決策：住居を高くする、
-沼地を排水する – 相性の良い原因（悪い空気）と実際の原因（蚊）は、どちらもこれらの介入によって減少する。
+沼地を排水する – 相性の良い原因(悪い空気)と実際の原因(蚊)は、どちらもこれらの介入によって減少する。
 
 しかし、その話への信頼は最終的に誤解を招く。例えば、それは蚊帳の使用から遠ざかることにつながる。
 
@@ -1646,10 +1633,10 @@ The stated coverage thus refers only to repeated draws from a hypothetical data-
 
 1 June 2022 Greenland – Reforming Statistics 83
 
-問題：CIの示されている（「名目上の」）カバレッジは、純粋に仮説的な頻度プロパティであり、
+問題：CIの示されている(「名目上の」)カバレッジは、純粋に仮説的な頻度プロパティであり、
 それについて我々は信頼を持つべきではない！
 
-「信頼性」は、生成器の「真の値」をアルゴリズム的区間がカバーする実際の相対頻度が、述べられている通りである（例えば95%）と
+「信頼性」は、生成器の「真の値」をアルゴリズム的区間がカバーする実際の相対頻度が、述べられている通りである(例えば95%)と
 我々が確実に知っていることを要求する。
 
 しかし、実際の生成器の頻度は未知であるため、そのような信頼性は正当化されない。
@@ -1672,9 +1659,9 @@ A 95% compatibility interval (or region) shows results for every model having p 
 
 対照的に、相性の良さは、データとモデルの間の単なる観測された関係である。
 
-相性の良さは、データセットが、検討中のモデルから導出されたデータ生成アルゴリズムから来たとした場合に期待される位置から、（検定された方向でのパーセンタイルの観点から）「遠くない」ことを意味するだけである。
+相性の良さは、データセットが、検討中のモデルから導出されたデータ生成アルゴリズムから来たとした場合に期待される位置から、(検定された方向でのパーセンタイルの観点から)「遠くない」ことを意味するだけである。
 
-95%相性区間（または領域）は、検定された方向でp > 0.05となるすべてのモデルの結果を示す。これは、後述する簡単なコイン投げ実験に翻訳すると、「高い相性の良さ」の領域となる。
+95%相性区間(または領域)は、検定された方向でp > 0.05となるすべてのモデルの結果を示す。これは、後述する簡単なコイン投げ実験に翻訳すると、「高い相性の良さ」の領域となる。
 
 ---
 
@@ -1694,7 +1681,7 @@ Conclusion: Under our HDPS model, the data appear most compatible with associati
 Brown et al. JAMA 2017の正直な報告、「妊娠中のセロトニン系抗うつ薬[SSRI]の使用と子供の自閉症スペクトラム障害[ASD]との関連」は以下のようになるだろう：
 
 要旨：Coxモデル調整済みHRは1.59、
-95%相性の良さ限界（CL）は1.17、2.17であった。IPTW HDPSを使用すると、HR推定値ははるかに不正確になった（HR 1.61、95%相性の良さ限界：1.00、2.59）。
+95%相性の良さ限界(CL)は1.17、2.17であった。IPTW HDPSを使用すると、HR推定値ははるかに不正確になった(HR 1.61、95%相性の良さ限界：1.00、2.59)。
 
 結論：我々のHDPSモデルの下では、データは、出生前SSRI曝露のある子供において、関連性がゼロからASDの2.6倍の増加までの範囲と最も相性が良いように見える。
 
@@ -1716,7 +1703,7 @@ Conclusion: The results were too imprecise to determine the size or direction of
 Vallejos et al. 「COVID-19患者の入院を予防するためのイベルメクチン」 BMC ID 2021年7月2日 の正直な報告：
 
 要旨：入院オッズ比は0.65、
-95%相性の良さ限界（CL）は0.32、1.31であった。死亡オッズ比は1.34、95%相性の良さ限界は0.30、6.07であった。
+95%相性の良さ限界(CL)は0.32、1.31であった。死亡オッズ比は1.34、95%相性の良さ限界は0.30、6.07であった。
 
 結論：結果は効果の大きさや方向を決定するにはあまりにも不正確であり、プラセボ群と比較してイベルメクチン群では、入院オッズが68%減から31%増まで、死亡オッズが70%減から500%増までと最も相性が良かった。
 
@@ -1737,12 +1724,12 @@ Visualize P-values and CLs as indicating points on an entire P-graph (P-value fu
 1 June 2022 Greenland – P-values as evidence 87
 
 P値を推定ツールとして扱わないという大きな誤りを繰り返すのをやめなさい。
-（ゼロ仮説主義バイアスを露骨に招くもう一つの誤り） 「有意性検定[意味：P値]と推定の区別は人工的である」 – エドウィン・ジェインズ、ベイズ情報主義者
+(ゼロ仮説主義バイアスを露骨に招くもう一つの誤り) 「有意性検定[意味：P値]と推定の区別は人工的である」 – エドウィン・ジェインズ、ベイズ情報主義者
 
 実際、この区別は、
-テストと決定を、仮説とモデルのスペクトル全体の中のたった一つの仮説（帰無仮説）またはモデルに集中させる点で、全く破壊的であった。
+テストと決定を、仮説とモデルのスペクトル全体の中のたった一つの仮説(帰無仮説)またはモデルに集中させる点で、全く破壊的であった。
 
-P値とCLを、Pグラフ（P値関数）全体上の点を示すものとして視覚化しなさい。
+P値とCLを、Pグラフ(P値関数)全体上の点を示すものとして視覚化しなさい。
 
 ---
 
@@ -1763,11 +1750,11 @@ To express this scale in everyday currency, any P-value can be compared to the p
 
 Rafi & Greenland BMC Med Res Methodol 2020 より
 2022年6月1日 グリーンランド – 統計学改革 88
-P値をS値（意外度）に変換して、検定統計量によって提供される証拠を測定する。
+P値をS値(意外度)に変換して、検定統計量によって提供される証拠を測定する。
 
 フィッシャーによるP値の扱いの中核的な側面は、異なる設定と検定を横断して、仮説またはモデルに対する共通の証拠尺度を提供することである。
 
-この尺度を日常的な通貨で表現するために、いかなるP値も、独立していて「公正な」（表が出る確率 = ½）s回のコイン投げのシーケンスから、すべて表が出る確率 ½s と比較することができる。
+この尺度を日常的な通貨で表現するために、いかなるP値も、独立していて「公正な」(表が出る確率 = ½)s回のコイン投げのシーケンスから、すべて表が出る確率 ½s と比較することができる。
 
 ---
 
@@ -1819,7 +1806,7 @@ of information against a model, the difference between 0.001 and 0.05 is large, 
 ―log2(.005) = 7.6 ≒ 7回の投げで7回または8回の投げで8回の表
 2022年6月1日 グリーンランド – 統計学改革 90
 
-二進数のS値（意外度、logworth）sは、P値 p が p を計算するために使用されたモデルに対して提供する情報を測定する。
+二進数のS値(意外度、logworth)sは、P値 p が p を計算するために使用されたモデルに対して提供する情報を測定する。
 
 sの単位はシャノンまたはビットと呼ばれる。
 P値の尺度は非常に非線形である：モデルに対する
@@ -1843,7 +1830,7 @@ S値は、理論家がP値における証拠や情報を測定し、代替案の
 
 S値は1をはるかに超える範囲を持つため、ベイズ確率と混同しにくい。
 
-S値は事前分布を必要としない。しかし、事前分布をパラメータサンプリング分布（「ランダム効果」モデル）として扱う複合サンプリングモデルの適合度検定からpを計算することで、事前分布を組み込むことができる。尤度比との関係…
+S値は事前分布を必要としない。しかし、事前分布をパラメータサンプリング分布(「ランダム効果」モデル)として扱う複合サンプリングモデルの適合度検定からpを計算することで、事前分布を組み込むことができる。尤度比との関係…
 
 ---
 
@@ -1859,7 +1846,7 @@ Greenland S. For and against methodology: Some perspectives on recent causal and
 
 Rafi & Greenland BMC Med Res Methodol 2020 より
 2022年6月1日 グリーンランド – 統計学改革 94
-私の見解に関する背景情報とさらなる読み物（すべて指定されたリンクでオープンアクセスであるはずです）
+私の見解に関する背景情報とさらなる読み物(すべて指定されたリンクでオープンアクセスであるはずです)
 
 Greenland S. For and against methodology: Some perspectives on recent causal and statistical inference debates. Eur J Epidemiol, 2017;32:3-20. https://link.springer.com/article/10.1007%2Fs10654-017-0230-6 Greenland S. The need for cognitive science in methodology. Am J Epidemiol 2017;186:639-645. https://academic.oup.com/aje/article/186/6/639/3886035 Greenland S. The causal foundations of applied probability and statistics. In Dechter R, Halpern J, Geffner H, eds. Probabilistic and Causal Inference: The Works of Judea Pearl. ACM Books 2022; 36: 605-624, https://arxiv.org/abs/2011.02677 (version with corrections) Greenland S. Analysis goals, error-cost sensitivity, and analysis hacking: essential considerations in hypothesis testing and multiple comparisons. Ped Perinatal Epidemiol 2021;35:8-23. https://doi.org/10.1111/ppe.12711 20-01105-9 Greenland S. Valid P-values behave exactly as they should: some misleading criticisms of P-values and their resolution with S-values. Am Stat 2019; 73: 106-114. http://www.tandfonline.com/doi/pdf/10.1080/00031305.2018.1529625
 
@@ -1911,7 +1898,7 @@ nothing about bias-variance tradeoffs, and so are often dismissed by those limit
 
 1 June 2022 Greenland – Reforming Statistics 97
 
-因果（経路）図と潜在結果モデルは紀元1920年頃にさかのぼるが、紀元1990年頃まで十分に発展し、広く普及し始めることはなかった。
+因果(経路)図と潜在結果モデルは紀元1920年頃にさかのぼるが、紀元1990年頃まで十分に発展し、広く普及し始めることはなかった。
 
 それらは基礎統計学に統合されるべきである！ 2022年6月1日 グリーンランド – 統計学改革 97
 認知的盲点の図解例：観察研究における因果的帰無仮説を擁護するための単純性の誤謬。
@@ -1938,7 +1925,7 @@ with mass concentrations) cannot be effectively distinguished empirically from a
 グラフ内のすべての欠落した矢印は、仮定された因果的帰無仮説である。
 「ソフト」サイエンスでは、重要な効果を含むその周りの区間内にある代替案から、「効果なし」を効果的に区別することはめったにできない。
 
-技術的に：不連続な分布（質量が集中した分布）は、経験的に近くの連続分布と効果的に区別することはできない。そして…
+技術的に：不連続な分布(質量が集中した分布)は、経験的に近くの連続分布と効果的に区別することはできない。そして…
 
 ---
 
@@ -1973,7 +1960,7 @@ a) Simple confounding: X←C→Y
 
 1 June 2022 Greenland – Reforming Statistics 101
 
-因果的な単純性が、観察された（ノンパラメトリックな）データ分布と相性の良い最も単純な因果図を好むこととして定義されると仮定する。そうすれば、
+因果的な単純性が、観察された(ノンパラメトリックな)データ分布と相性の良い最も単純な因果図を好むこととして定義されると仮定する。そうすれば、
 
 関連性を生み出すより複雑なメカニズムのシステムに訴えることなしに、報告された効果を却下する根拠はない：必要な因果図は、より多くの矢印とより大きな効果を必要とする。
 2022年6月1日 グリーンランド – 統計学改革 101
@@ -1996,10 +1983,10 @@ Asserting the null (a-d) requires an extra variable (node) or effect (arrow) rel
 
 b) 単純な選択バイアス：X→[S]←Y
 c) 差動誤差：X→X*←Y または X→Y*←Y
-（XまたはYが誤差を伴ってX*またはY*として観測される）
+(XまたはYが誤差を伴ってX*またはY*として観測される)
 d) 単純なランダム誤差：X Y←ε
 e) 単純な因果関係：X→Y
-因果関係(e)に対して、帰無仮説(a-d)を主張するには、余分な変数（ノード）または効果（矢印）が必要となる。
+因果関係(e)に対して、帰無仮説(a-d)を主張するには、余分な変数(ノード)または効果(矢印)が必要となる。
 
 ---
 
@@ -2012,9 +1999,9 @@ Those alternative explanations are always more complex than the direct causal ex
 
 1 June 2022 Greenland – Reforming Statistics 103
 
-まとめ：いかなる関連性が観察された場合（それが「非有意」と宣言するための境界内にあるかどうかに関わらず）、帰無仮説を維持するためには、その関連性に対する代替の説明が必要となる。
+まとめ：いかなる関連性が観察された場合(それが「非有意」と宣言するための境界内にあるかどうかに関わらず)、帰無仮説を維持するためには、その関連性に対する代替の説明が必要となる。
 
-それらの代替の説明は、説明の因果図（cDAG）に必要な最小限の変数と矢印の数として複雑さを定義する場合、直接的な因果的説明（因果的帰無仮説の棄却）よりも常に複雑である。
+それらの代替の説明は、説明の因果図(cDAG)に必要な最小限の変数と矢印の数として複雑さを定義する場合、直接的な因果的説明(因果的帰無仮説の棄却)よりも常に複雑である。
 
 ---
 
@@ -2030,7 +2017,7 @@ The complex observational reality: Any effect of X on Y is buried within a web o
 
 2022年6月1日 グリーンランド – 統計学改革 103
 2022年6月1日 104
-複雑な観察現実：XがYに与えるいかなる効果も、バイアス源（交絡、選択バイアス、測定誤差）のウェブの中に埋もれている：
+複雑な観察現実：XがYに与えるいかなる効果も、バイアス源(交絡、選択バイアス、測定誤差)のウェブの中に埋もれている：
 (U)
 (X) (Z) X* Z*
 
@@ -2060,7 +2047,7 @@ X*-Y*間の関連性と隠れた変数を持つ最も単純な現実的なDAGは
 (Y) Y* [S=1]
 グリーンランド – 統計学改革
 
-制御されていないバイアスがない（XからYへの開いた非因果的経路がない）という仮説は、XとYの観察された関係に対して提供できる最も単純な説明である。
+制御されていないバイアスがない(XからYへの開いた非因果的経路がない)という仮説は、XとYの観察された関係に対して提供できる最も単純な説明である。
 
 ---
 
@@ -2073,9 +2060,9 @@ This behavior reveals cognitive illusions influenced by hidden value biases towa
 
 1 June 2022 Greenland – Reforming Statistics 106
 
-それでも、帰無仮説を擁護するために単純性を主張する人々は、バイアスをかける（開いた無方向の）経路に単純性を適用せず、より複雑な代替案に極めて自信を持っている。
+それでも、帰無仮説を擁護するために単純性を主張する人々は、バイアスをかける(開いた無方向の)経路に単純性を適用せず、より複雑な代替案に極めて自信を持っている。
 
-この行動は、帰無仮説（特定または一般的）への隠された価値バイアスに影響された認知的な錯覚を示している。
+この行動は、帰無仮説(特定または一般的)への隠された価値バイアスに影響された認知的な錯覚を示している。
 
 ---
 
@@ -2121,13 +2108,13 @@ If all causal paths were random walks, actual effects might cluster near nulls, 
 
 1 June 2022 Greenland – Reforming Statistics 109
 
-因果的に矢印やノードを削除することを正当化するものは何か？答え：因果的デザインによる削除の強制 – 例：コホートマッチング（ブロッキング）、ランダム化。
+因果的に矢印やノードを削除することを正当化するものは何か？答え：因果的デザインによる削除の強制 – 例：コホートマッチング(ブロッキング)、ランダム化。
 Xがランダム化されている場合、Xへの矢印を落とすことができる。
 ランダム選択はSへの矢印を落とすことを可能にする。しかし、観察研究の定義により、
 研究治療Xはランダム化されていない。さらに、健康科学の現実では、
 選択と参加Sはランダムではない。ランダム化なし = 「客観的な」統計量なし、存在するのは「このモデルの下で…」という条件付きの記述のみである。
 
-「ソフトサイエンス」では、帰無仮説近くに密に集中した事前分布が真の証拠に基づいていることはめったにない。一部の設定（例えばゲノミクス）ではある程度の裏付けがあるかもしれない。
+「ソフトサイエンス」では、帰無仮説近くに密に集中した事前分布が真の証拠に基づいていることはめったにない。一部の設定(例えばゲノミクス)ではある程度の裏付けがあるかもしれない。
 
 もしすべての因果経路がランダムウォークであったなら、実際の影響は帰無仮説の近くに集まる可能性があり、ほとんどの効果量を「重要でない」ものにするかもしれない…しかし、
 
@@ -2150,10 +2137,10 @@ Effective pruning algorithms can retain prior continuity, e.g., use absolute-dis
 「重要性」は価値観に満ちている。効果が正確に帰無仮説であると宣言することは、この問題を覆い隠す。
 2022年6月1日 グリーンランド – 統計学改革 109
 
-連続性の下では、「偽陽性」はほとんど存在しない。なぜなら、ほとんどすべての関連性は非ゼロである（「真陽性」）。
+連続性の下では、「偽陽性」はほとんど存在しない。なぜなら、ほとんどすべての関連性は非ゼロである(「真陽性」)。
 
-「偽陽性問題」は、効果をいつ刈り取るか、あるいは無視するかという問題の歪んだ過度の単純化であり、それは損失（ペナルティ）関数を必要とする決定である。
+「偽陽性問題」は、効果をいつ刈り取るか、あるいは無視するかという問題の歪んだ過度の単純化であり、それは損失(ペナルティ)関数を必要とする決定である。
 
-効果的な剪定アルゴリズムは、事前の連続性を維持することができる。例えば、二乗距離（ガウス）ペナルティの代わりに、絶対距離（LASSO、ラプラシアン）ペナルティを使用するなど。
+効果的な剪定アルゴリズムは、事前の連続性を維持することができる。例えば、二乗距離(ガウス)ペナルティの代わりに、絶対距離(LASSO、ラプラシアン)ペナルティを使用するなど。
 
 ---
