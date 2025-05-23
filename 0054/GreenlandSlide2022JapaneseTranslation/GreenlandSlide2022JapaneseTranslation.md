@@ -959,496 +959,470 @@ Systemic problems are major reasons why ‘most published research findings are 
 
 ---
 
-**Slide 45**
-
-The result is groupthink, hidden bias and circularity in arguments given by the most technically skilled proponents!
-
-Typified by common arguments for Neymanian and Bayesian primacy (worse than that seen in writings by Neyman or Bayes).
-
-Examples: Demanding calibration or Bayesian coherency as prime directives for real-world conclusions and decisions. Those are only directives within their representations, and can lead to disaster from uncaptured context.
-
-1 June 2022 Greenland – Reforming Statistics 51
-
-1 June 2022 Greenland – Reforming Statistics 51
-
-結果は、最も技術的に熟練した提唱者による議論における集団思考、隠されたバイアス、循環論法である！
-
-ネイマン流とベイズ流の優位性を主張する一般的な議論(ネイマンやベイズの著作に見られるものよりも悪い)に典型的に表れている。
-
-例：現実世界の結論と決定に対する最優先の指令として、キャリブレーションやベイズ的整合性を要求すること。それらは彼らの表現内での指令にすぎず、捉えられていない文脈からの破滅につながる可能性がある。
-
----
-
-**Slide 46**
-
-STOP treating mathematical justifications as if they are sufficient practical justifications
-
-No matter how complex they look, math results are only thought experiments to test methods in idealized settings far simpler than real practice.
-
-Performance in these simple cases can provide guidance for practice, with warnings about problems and suggesting improvements for methods. But,
-
-Problems seen simple settings can get worse in complex settings, and
-
-1 June 2022 Greenland – Reforming Statistics 52
-
-1 June 2022 Greenland – Reforming Statistics 52
-
-数学的な正当化をあたかも十分な実践的な正当化であるかのように扱うのをやめなさい。
-
-どんなに複雑に見えても、数学的結果は、実際の実践よりもはるかに単純な理想化された設定で手法をテストするための思考実験にすぎない。
-
-これらの単純なケースでの性能は、問題に関する警告と方法の改善提案とともに、実践への指針を提供できる。しかし、
-
-単純な設定で見られる問題は、複雑な設定では悪化する可能性があり、
-
----
-
-**Slide 47**
-
-Neither math “optimality” results nor failure to find problems in math settings guarantee good performance in real applications.
-1 June 2022 Greenland – Reforming Statistics 52
-Value bias pervades statistical methodology, most often in the form of nullism
-(values biased toward “accepting” the null)
-
-Call a methodology value-biased when it
-incorporates cost/benefit assumptions that are not shared by all stakeholders.
-
-These biases are usually obscured from public recognition by adherence to statistical traditions and mathematics that hide the values in the obscure cost/benefit assumptions of NHST and its Bayesian analogs.
-
-1 June 2022 Greenland – Reforming Statistics 53
-
-1 June 2022 Greenland – Reforming Statistics 53
-
-数学的な「最適性」の結果も、数学的な設定で問題が見つからないことも、実際的な応用における良い性能を保証するものではない。
-2022年6月1日 グリーンランド – 統計学改革 52
-価値バイアスは統計学的手法に蔓延しており、最も頻繁にはゼロ仮説主義の形をとる。
-(「帰無仮説を受け入れる」ことに偏った価値観)
-
-すべての利害関係者によって共有されない費用対効果の仮定を
-組み込んでいる場合、その方法論は価値バイアスがかかっていると言う。
-
-これらのバイアスは、NHSTとそのベイズ的類似物の不明瞭な費用対効果の仮定に価値観を隠す統計的伝統と数学への固執によって、通常、一般の認識から覆い隠されている。
-
----
-
-**Slide 48**
-
-Example: Consistent use of the null as the test hypothesis, to the point of failing to distinguish between null and test hypotheses (a mistake traceable to Fisher).
-
-This is an example of nullism, value bias toward the null favoring those with stakes on the null (as found in product surveillance) and those with metaphysical beliefs in nulls (pseudo-skeptics who confuse parsimony heuristics with natural laws).
-
-Many researchers do not realize that any effect size can be given a P-value (“tested”).
-
-1 June 2022 Greenland – Reforming Statistics 54
-
-1 June 2022 Greenland – Reforming Statistics 54
-
-例：帰無仮説と検定仮説の区別をしないほど、帰無仮説を検定仮説として一貫して使用すること(フィッシャーに遡る誤り)。
-
-これはゼロ仮説主義の一例であり、帰無仮説に利害関係を持つ人々(製品監視で見られるように)や、帰無仮説に形而上学的な信念を持つ人々(単純性の発見的手法と自然法則を混同する疑似懐疑論者)を利する帰無仮説への価値バイアスである。
-
-多くの研究者は、いかなる効果量にもP値を与えることができる(「検定される」)ということを認識していない。
-
----
-
-**Slide 49**
-
-Via NHST, nullism has been taught as an integral part of Neyman-Pearson testing – even though it is not! From Neyman, Synthese 1977 p. 104, 106 (emphases added):
-
-“According to circumstances and according to the subjective attitudes of the research worker, one error may appear more important to avoid than the other; the error which is the more important to avoid will be called 'error of the first kind’” [“Type-I” error, alpha error, incorrect rejection of the test hypothesis H]
-
-1 June 2022 Greenland – Reforming Statistics 55
-
-1 June 2022 Greenland – Reforming Statistics 55
-
-NHSTを介して、ゼロ仮説主義はネイマン＝ピアソン検定の不可欠な部分として教えられてきた – そうではないにもかかわらず！ネイマンの Synthese 1977 p. 104, 106 より(強調追加)：
-
-「状況と研究者の主観的な態度に応じて、一方の誤りが他方の誤りよりも避けるべきより重要なものに見えることがある。避けるべきより重要な誤りを「第一種の誤り」と呼ぶだろう。」[「第一種」誤り、アルファ誤り、検定仮説Hの誤った棄却]
-
----
-
-**Slide 50**
-
-“the [hypothesis] the unjust rejection of which constitutes the error of the first kind, will be called 'the hypothesis tested’.”
-
-Note how this description allows that the test hypothesis H may be non-null.
-
-“From the point of view of the manufacturer [of a chemical A] the error in asserting the carcinogenicity of A is (or may be) more important to avoid than the error in asserting that A is harmless. Thus, for the manufacturer, the 'hypothesis tested' may well be: 'A is not carcinogenic'.”
-
-1 June 2022 Greenland – Reforming Statistics 56
-
-1 June 2022 Greenland – Reforming Statistics 56
-
-「その不当な棄却が第一種の誤りを構成する[仮説]は、『検定される仮説』と呼ばれるだろう。」
-
-この記述が、検定仮説Hが非帰無仮説でありうることをどのように許容しているかに注目してほしい。
-
-「[化学物質Aの]製造業者の観点からは、Aの発癌性を主張する際の誤りは、Aが無害であると主張する際の誤りよりも避けるべきより重要なものである(またはそうであるかもしれない)。したがって、製造業者にとって、『検定される仮説』は、『Aは発癌性がない』である可能性が高い。」
-
----
-
 **Slide 51**
 
-“On the other hand, for the prospective user of chemical A the hypothesis tested will be unambiguously: 'A is carcinogenic'. In fact, this user is likely to hope that the probability of error in rejecting this hypothesis be reduced to a very small value!”
-― This means anyone teaching, promoting, and using statistical tests must justify their choice of test hypothesis H as well as the cutoff used (whether that cutoff is for a P-value or a Bayes factor or a likelihood ratio).
+* The result is groupthink, hidden bias and circularity in arguments given by the most technically skilled proponents!
 
-1 June 2022 Greenland – Reforming Statistics 57
+* Typified by common arguments for Neymanian and Bayesian primacy (worse than that seen in writings by Neyman or Bayes).
 
-1 June 2022 Greenland – Reforming Statistics 57
+* Examples: Demanding calibration or Bayesian coherency as prime directives for real-world conclusions and decisions. Those are only directives within their representations, and can lead to disaster from uncaptured context.
 
-「一方、化学物質Aの将来の使用者にとっては、検定される仮説は明確に『Aは発癌性がある』であろう。実際、この使用者は、この仮説を棄却する際の誤りの確率が非常に小さな値に減らされることを望む可能性が高い！」
-― これは、統計的検定を教え、推奨し、使用する者は、検定仮説Hの選択だけでなく、使用されるカットオフ(そのカットオフがP値、ベイズ因子、尤度比のいずれであるかにかかわらず)も正当化しなければならないことを意味する。
+1 June 2022 Greenland – Reforming Statistics 51
+
+* 結果は、最も技術的に熟練した提唱者による議論における集団思考、隠されたバイアス、循環論法である！
+
+* ネイマン流とベイズ流の優位性を主張する一般的な議論(ネイマンやベイズの著作に見られるものよりも悪い)に典型的に表れている。
+
+* 例：現実世界の結論と決定に対する最優先の指令として、キャリブレーションやベイズ的整合性を要求すること。それらは彼らの表現内での指令にすぎず、捉えられていない文脈からの破滅につながる可能性がある。
 
 ---
 
 **Slide 52**
 
-Neyman thus provided a clear description of the role of values in choosing test hypotheses and how those can (and often will) vary within a topic across stakeholders.
+**STOP treating mathematical justifications as if they are sufficient practical justifications**
 
-Yet many “opinion leaders” maintain rigid practices of testing only the null, based on faith in grossly oversimplified biological models, generalizations from selective observation, treating simplicity or parsimony heuristics as if they were metaphysical principles, and of course hidden valuations including service to sponsors or ideologies.
+* No matter how complex they look, math results are only thought experiments to test methods in idealized settings far simpler than real practice.
 
-1 June 2022 Greenland – Reforming Statistics 58
+* Performance in these simple cases can provide guidance for practice, with warnings about problems and suggesting improvements for methods. But,
 
-1 June 2022 Greenland – Reforming Statistics 58
+* Problems seen simple settings can get worse in complex settings, and
 
-したがって、ネイマンは、検定仮説を選択する上での価値観の役割と、それらがどのように利害関係者の間でトピック内で異なりうるか(そしてしばしば異なる)を明確に記述した。
+* Neither math “optimality” results nor failure to find problems in math settings guarantee good performance in real applications.
 
-しかし、多くの「オピニオンリーダー」は、著しく単純化された生物学的モデルへの信仰、選択的な観察からの一般化、単純性や節約の発見的手法を形而上学的な原則であるかのように扱うこと、そしてもちろんスポンサーやイデオロギーへの奉仕を含む隠された価値観に基づいて、帰無仮説のみを検定する厳格な慣行を維持している。
+1 June 2022 Greenland – Reforming Statistics 52
+
+* 数学的な正当化をあたかも十分な実践的な正当化であるかのように扱うのをやめなさい。
+
+* どんなに複雑に見えても、数学的結果は、実際の実践よりもはるかに単純な理想化された設定で手法をテストするための思考実験にすぎない。
+
+* これらの単純なケースでの性能は、問題に関する警告と方法の改善提案とともに、実践への指針を提供できる。しかし、
+
+* 単純な設定で見られる問題は、複雑な設定では悪化する可能性があり、
+
+* 数学的な「最適性」の結果も、数学的な設定で問題が見つからないことも、実際的な応用における良い性能を保証するものではない。
 
 ---
 
 **Slide 53**
 
-We might be confident that any effect present is “small enough” so that the cost of ignoring it is acceptable - but that’s a value judgment!
+**Value bias pervades statistical methodology, most often in the form of nullism**<br>
+(values biased toward “accepting” the null)
 
-Statistical tests can be constructed for superiority, inferiority, non-superiority, non-inferiority, and even equivalence of treatments – but require artificially precise specifications of the effect sizes defining such declarations.
+* Call a methodology value-biased when it
+incorporates cost/benefit assumptions that are not shared by all stakeholders.
 
-P-values for such “boundary” effect sizes should be presented – and a P-value graph can show the P-values for all such choices.
+* These biases are usually obscured from public recognition by adherence to statistical traditions and mathematics that hide the values in the obscure cost/benefit assumptions of NHST and its Bayesian analogs.
 
-1 June 2022 Greenland – Reforming Statistics 59
+1 June 2022 Greenland – Reforming Statistics 53
 
-1 June 2022 Greenland – Reforming Statistics 59
+**価値バイアスは統計学的手法に蔓延しており、最も頻繁にはゼロ仮説主義の形をとる。**<br>
+(「帰無仮説を受け入れる」ことに偏った価値観)
 
-存在するいかなる効果も、「無視しても許容できるほど十分に小さい」と確信しているかもしれない – しかし、それは価値判断である！
+* すべての利害関係者によって共有されない費用対効果の仮定を
+組み込んでいる場合、その方法論は価値バイアスがかかっていると言う。
 
-統計的検定は、治療の優越性、劣等性、非優越性、非劣等性、さらには同等性のために構築できる – しかし、そのような宣言を定義する効果量の人工的に正確な仕様を必要とする。
-
-そのような「境界」効果量に対するP値は提示されるべきである – そしてP値グラフは、すべてのそのような選択に対するP値を示すことができる。
+* これらのバイアスは、NHSTとそのベイズ的類似物の不明瞭な費用対効果の仮定に価値観を隠す統計的伝統と数学への固執によって、通常、一般の認識から覆い隠されている。
 
 ---
 
 **Slide 54**
 
-Multiplicity adjustments worsen value bias
+* Example: Consistent use of the null as the test hypothesis, to the point of failing to distinguish between null and test hypotheses (a mistake traceable to Fisher).
 
-They traditionally take the joint ensemble null
-as the hypothesis most important to not reject incorrectly, and apply the Type-I error rate of 0.05 to the entire ensemble of nulls.
+* This is an example of nullism, value bias toward the null favoring those with stakes on the null (as found in product surveillance) and those with metaphysical beliefs in nulls (pseudo-skeptics who confuse parsimony heuristics with natural laws).
 
-They thus assume false-positive costs are always more than false-negative costs, and that these cost ratios always increase with the number of hypotheses - This valuation applies to drug companies monitoring adverse effects but not to patients!
+* Many researchers do not realize that any effect size can be given a P-value (“tested”).
 
-1 June 2022 Greenland – Reforming Statistics 60
+1 June 2022 Greenland – Reforming Statistics 54
 
-1 June 2022 Greenland – Reforming Statistics 60
+* 例：帰無仮説と検定仮説の区別をしないほど、帰無仮説を検定仮説として一貫して使用すること(フィッシャーに遡る誤り)。
 
-多重性調整は価値バイアスを悪化させる。
+* これはゼロ仮説主義の一例であり、帰無仮説に利害関係を持つ人々(製品監視で見られるように)や、帰無仮説に形而上学的な信念を持つ人々(単純性の発見的手法と自然法則を混同する疑似懐疑論者)を利する帰無仮説への価値バイアスである。
 
-それらは伝統的に、複合的な帰無仮説全体を、誤って棄却しないことが最も重要な仮説とみなし、全体の帰無仮説集合に対して第一種の誤り率0.05を適用する。
-
-したがって、偽陽性のコストは常に偽陰性のコストよりも高く、これらのコスト比率は仮説の数とともに常に増加すると仮定している - この価値判断は、有害事象を監視する製薬会社には当てはまるが、患者には当てはまらない！
+* 多くの研究者は、いかなる効果量にもP値を与えることができる(「検定される」)ということを認識していない。
 
 ---
 
 **Slide 55**
 
-Null bias also afflicts a large portion of the Bayesian literature, where null spikes are used to misrepresent a belief that a parameter “differs negligibly” from the null.
+* Via NHST, nullism has been taught as an integral part of Neyman-Pearson testing – even though it is not! From Neyman, Synthese 1977 p. 104, 106 (emphases added):
 
-In most medical-research settings, concentration of prior probability around the null has no basis in real data. In fact prior spikes usually contradict genuine prior information. For example, potential medications are studied precisely because they are known to affect the targeted physiological system.
+* “According to circumstances and according to the subjective attitudes of the research worker, one error may appear more important to avoid than the other; the error which is the more important to avoid will be called 'error of the first kind’” \[“Type-I” error, alpha error, incorrect rejection of the test hypothesis H\]
 
-1 June 2022 Greenland – Reforming Statistics 61
+1 June 2022 Greenland – Reforming Statistics 55
 
-1 June 2022 Greenland – Reforming Statistics 61
+* NHSTを介して、ゼロ仮説主義はネイマン＝ピアソン検定の不可欠な部分として教えられてきた – そうではないにもかかわらず！ネイマンの Synthese 1977 p. 104, 106 より(強調追加)：
 
-ゼロ仮説バイアスは、ベイズ文献の大部分にも影響を与えており、そこではパラメータが帰無仮説から「無視できるほど異なる」という信念を誤って表現するために帰無仮説スパイクが使用されている。
-
-ほとんどの医学研究の状況では、帰無仮説の周りに事前確率を集中させることは実際のデータに基づいているわけではない。実際、事前確率スパイクは通常、真の事前情報と矛盾する。例えば、潜在的な薬剤は、標的とする生理学的システムに影響を与えることが知られているからこそ研究されている。
+* 「状況と研究者の主観的な態度に応じて、一方の誤りが他方の誤りよりも避けるべきより重要なものに見えることがある。避けるべきより重要な誤りを「第一種の誤り」と呼ぶだろう。」\[「第一種」誤り、アルファ誤り、検定仮説Hの誤った棄却\]
 
 ---
 
 **Slide 56**
 
-Example: Again, fig. 1 of van Zwet & Cator 2021. Some Bayesians would shrink estimates toward 0 despite an imputed curve right-skewed with >75% above 0. Empirical Bayesians would instead use shrinkage toward estimated topic-specific means.
-1 June 2022 Greenland – Reforming Statistics 62
-Part I summary:
+* “the [hypothesis] the unjust rejection of which constitutes the error of the first kind, will be called 'the hypothesis tested’.”
 
-Blind acceptance of mathematical
-frameworks, deification of “great men” and their conceptual errors, and neglect of cognitive problems have rotted the core of statistical training, practice, and the resulting store of public information.
+* Note how this description allows that the test hypothesis H may be non-null.
 
-1 June 2022 Greenland – Reforming Statistics 63
+* “From the point of view of the manufacturer \[of a chemical A\] the error in asserting the carcinogenicity of A is (or may be) more important to avoid than the error in asserting that A is harmless. Thus, for the manufacturer, the 'hypothesis tested' may well be: 'A is not carcinogenic'.”
 
-1 June 2022 Greenland – Reforming Statistics 63
+1 June 2022 Greenland – Reforming Statistics 56
 
-例：再び、van Zwet & Cator 2021の図1。一部のベイズ主義者は、補間曲線が右に歪んでおり、75%以上が0を上回っているにもかかわらず、推定値を0に縮小させるだろう。経験的ベイズ主義者は代わりに、推定されたトピック固有の平均値に向かって縮小を使用するだろう。
-2022年6月1日 グリーンランド – 統計学改革 62
-パートIの要約：
+* 「その不当な棄却が第一種の誤りを構成する[仮説]は、『検定される仮説』と呼ばれるだろう。」
 
-数学的枠組みの盲目的な受け入れ、「偉大な人物」とその概念的誤りの神格化、そして認知的問題の無視が、統計的訓練、実践、そして結果として生じる公の情報貯蔵庫の核心を腐敗させてきた。
+* この記述が、検定仮説Hが非帰無仮説でありうることをどのように許容しているかに注目してほしい。
+
+* 「\[化学物質Aの\]製造業者の観点からは、Aの発癌性を主張する際の誤りは、Aが無害であると主張する際の誤りよりも避けるべきより重要なものである(またはそうであるかもしれない)。したがって、製造業者にとって、『検定される仮説』は、『Aは発癌性がない』である可能性が高い。」
 
 ---
 
 **Slide 57**
 
-The “replication crisis” hysteria continues the problem via its nullism (neglect of testing alternatives), pointless dichotomania, and pernicious model reification, all of which are enshrined in NHST and null-spiked priors.
-1 June 2022 Greenland – Reforming Statistics 63
+* “On the other hand, for the prospective user of chemical A the hypothesis tested will be unambiguously: 'A is carcinogenic'. In fact, this user is likely to hope that the probability of error in rejecting this hypothesis be reduced to a very small value!”
 
-The persistent practical mistake promoted by statistical methodology: That we should want to construct real-world inferences using deductions from only one study, one set of background assumptions, one formal reasoning system, or one interpretation.
+― This means anyone teaching, promoting, and using statistical tests must justify their choice of test hypothesis H as well as the cutoff used (whether that cutoff is for a P-value or a Bayes factor or a likelihood ratio).
 
-1 June 2022 Greenland – Reforming Statistics 64
+1 June 2022 Greenland – Reforming Statistics 57
 
-「再現性の危機」ヒステリーは、そのゼロ仮説主義(代替案の検定の無視)、無意味な二分法病、および有害なモデルと現実の混同によって問題を継続させている。これらはすべてNHSTと帰無仮説スパイク事前確率に神聖化されている。
-2022年6月1日 グリーンランド – 統計学改革 63
+* 「一方、化学物質Aの将来の使用者にとっては、検定される仮説は明確に『Aは発癌性がある』であろう。実際、この使用者は、この仮説を棄却する際の誤りの確率が非常に小さな値に減らされることを望む可能性が高い！」
 
-統計学的方法論によって促進されている持続的な実践的誤り：我々は、たった一つの研究、一つの背景仮定のセット、一つの形式的な推論システム、または一つの解釈からの演繹を用いて現実世界の推論を構築したいと思うべきである、ということ。
+― これは、統計的検定を教え、推奨し、使用する者は、検定仮説Hの選択だけでなく、使用されるカットオフ(そのカットオフがP値、ベイズ因子、尤度比のいずれであるかにかかわらず)も正当化しなければならないことを意味する。
 
 ---
 
 **Slide 58**
 
-Most writers accept the need for varied designs (not just “replications”) and varied assumptions (sensitivity analysis), yet seem unaware of (some even fight) the need for varying methodology and interpretations.
-1 June 2022 Greenland – Reforming Statistics 64
+* Neyman thus provided a clear description of the role of values in choosing test hypotheses and how those can (and often will) vary within a topic across stakeholders.
 
-Statistical rules can worsen bad practices because their theories assume we will use only perfect interpretations of carefully controlled experiments, with a clear view of error costs.
+* Yet many “opinion leaders” maintain rigid practices of testing only the null, based on faith in grossly oversimplified biological models, generalizations from selective observation, treating simplicity or parsimony heuristics as if they were metaphysical principles, and of course hidden valuations including service to sponsors or ideologies.
 
-But most “data analysis” in soft-science research has been about applying decision rules to statistical outputs, based on defaults whose value-laden nature is not seen by most users and readers, e.g., requiring P<0.005 to report “association”, or misinterpreting P>0.05 as “no association.”
+1 June 2022 Greenland – Reforming Statistics 58
 
-1 June 2022 Greenland – Reforming Statistics 65
+* したがって、ネイマンは、検定仮説を選択する上での価値観の役割と、それらがどのように利害関係者の間でトピック内で異なりうるか(そしてしばしば異なる)を明確に記述した。
 
-1 June 2022 Greenland – Reforming Statistics 65
-
-ほとんどの著者は、多様なデザイン(単なる「再現」だけでなく)と多様な仮定(感度分析)の必要性を受け入れているが、多様な方法論と解釈の必要性については unaware of (some even fight) 認識していないようである(一部はそれと戦うことさえある)。
-2022年6月1日 グリーンランド – 統計学改革 64
-
-統計的な規則は悪い慣行を悪化させる可能性がある。なぜなら、その理論は、誤差コストを明確に把握した上で、注意深く制御された実験の完璧な解釈のみを使用すると仮定しているからである。
-
-しかし、ソフトサイエンス研究におけるほとんどの「データ分析」は、ほとんどの使用者や読者にはその価値観に満ちた性質が見えていないデフォルトに基づいて、統計的な出力に決定規則を適用することであった。例えば、「関連性」を報告するためにP<0.005を要求することや、P>0.05を「関連性なし」と誤解することなど。
+* しかし、多くの「オピニオンリーダー」は、著しく単純化された生物学的モデルへの信仰、選択的な観察からの一般化、単純性や節約の発見的手法を形而上学的な原則であるかのように扱うこと、そしてもちろんスポンサーやイデオロギーへの奉仕を含む隠された価値観に基づいて、帰無仮説のみを検定する厳格な慣行を維持している。
 
 ---
 
 **Slide 59**
 
-The bare, psychosocial facts:
+* We might be confident that any effect present is “small enough” so that the cost of ignoring it is acceptable - but that’s a value judgment!
 
-Most “objective” descriptions of statistical
-outputs are subjective interpretations, usually decision rules misrepresented as inference rules – which they are not, especially since decision rules require justified cost functions.
+* Statistical tests can be constructed for superiority, inferiority, non-superiority, non-inferiority, and even equivalence of treatments – but require artificially precise specifications of the effect sizes defining such declarations.
 
-Worse, the verbal definitions and descriptions found in most primers, tutorials, and textbooks are flat-out wrong, e.g. Cassidy et al. “Failing grade: 89% of introduction-to-psychology textbooks that define or explain statistical significance do so incorrectly”, AMPPS 2019
+* P-values for such “boundary” effect sizes should be presented – and a P-value graph can show the P-values for all such choices.
 
-1 June 2022 Greenland – Reforming Statistics 66
+1 June 2022 Greenland – Reforming Statistics 59
 
-1 June 2022 Greenland – Reforming Statistics 66
+* 存在するいかなる効果も、「無視しても許容できるほど十分に小さい」と確信しているかもしれない – しかし、それは価値判断である！
 
-むき出しの、心理社会的な事実：
+* 統計的検定は、治療の優越性、劣等性、非優越性、非劣等性、さらには同等性のために構築できる – しかし、そのような宣言を定義する効果量の人工的に正確な仕様を必要とする。
 
-統計的な出力のほとんどの「客観的な」記述は
-主観的な解釈であり、通常は推論規則として誤って表現された決定規則である – 決定規則は正当化された費用関数を必要とするため、特にそうではない。
-
-さらに悪いことに、ほとんどの入門書、チュートリアル、教科書で見られる言葉による定義と記述は全くもって間違っている。例えば、Cassidy et al. 「落第点：統計的有意性を定義または説明する心理学入門教科書の89%が間違っている」、AMPPS 2019
+* そのような「境界」効果量に対するP値は提示されるべきである ― そしてP値グラフは、すべてのそのような選択に対するP値を示すことができる。
 
 ---
 
 **Slide 60**
 
-An urgent, neglected, yet easy step toward reform:
+**Multiplicity adjustments worsen value bias**
 
-Teach that data transforms are all that
-statistics can supply. Examples: P-values, posterior probabilities, interval estimates.
+* They traditionally take the joint ensemble null
+as the hypothesis most important to not reject incorrectly, and apply the Type-I error rate of 0.05 to the entire ensemble of nulls.
 
-Observers supply meaning for statistics via causal models of the physical research reality.
-Justified “statistical inferences” thus require
+* They thus assume false-positive costs are always more than false-negative costs, and that these cost ratios always increase with the number of hypotheses - This valuation applies to drug companies monitoring adverse effects but not to patients!
 
-showing how statistical assumptions can be
-derived from physical research reality; and
-showing where the data fall relative to what
+1 June 2022 Greenland – Reforming Statistics 60
 
-1 June 2022 Greenland – P-values as evidence 67
+**多重性調整は数値のバイアスを悪化させる。**
 
-1 June 2022 Greenland – P-values as evidence 67
+* それらは伝統的に、複合的な帰無仮説全体を、誤って棄却しないことが最も重要な仮説とみなし、全体の帰無仮説集合に対して第一種の誤り率0.05を適用する。
 
-緊急かつ無視されているが、改革への容易な一歩：
-
-統計学が提供できるのは、データ変換のみであることを
-教える。例：P値、事後確率、区間推定。
-
-観察者は、物理的な研究現実の因果モデルを介して、統計量に意味を与える。
-正当化された「統計的推論」は、したがって、
-
-統計的仮定が物理的な研究現実からどのように
-導き出されるかを示すこと。そして
-仮定が全体として予測するものに対して、データがどこに位置するかを示すこと
-を必要とする – これがP値の役割である！
+* したがって、偽陽性のコストは常に偽陰性のコストよりも高く、これらのコスト比率は仮説の数とともに常に増加すると仮定している ― この価値判断は、有害事象を監視する製薬会社には当てはまるが、患者には当てはまらない！
 
 ---
 
 **Slide 61**
 
-the assumptions taken together predict -which is what P-values do! Leading to…
-1 June 2022 Greenland – P-values as evidence 67
-Reform step: Extricate P-values from the dung-heap of null-hypothesis significance testing
+* Null bias also afflicts a large portion of the Bayesian literature, where null spikes are used to misrepresent a belief that a parameter “differs negligibly” from the null.
 
-Both critics and defenders of significance testing misidentify P-values with their traditional use in NHST. This is like calling all knives “weapons”: It’s confusion of a tool with its misuse (as in use of P-values in NHST to murder thought).
+* In most medical-research settings, concentration of prior probability around the null has no basis in real data. In fact prior spikes usually contradict genuine prior information. For example, potential medications are studied precisely because they are known to affect the targeted physiological system.
 
-That confusion is destructive because P-values can be used instead for many tasks divorced from NHST: as measurements of model fit, as estimation devices, and to build logical bridges connecting frequentist and Bayesian statistics.
+1 June 2022 Greenland – Reforming Statistics 61
 
-1 June 2022 Greenland – Reforming Statistics 68
+* ゼロ仮説バイアスは、ベイズ文献の大部分にも影響を与えており、そこではパラメータが帰無仮説から「無視できるほど異なる」という信念を誤って表現するために帰無仮説スパイクが使用されている。
 
-1 June 2022 Greenland – Reforming Statistics 68
-
-仮定が全体として予測するものに対して、データがどこに位置するかを示すこと – これがP値の役割である！これは…につながる。
-2022年6月1日 グリーンランド – P値は証拠として 67
-改革の一歩：P値を帰無仮説有意性検定の糞の山から救い出す。
-
-有意性検定の批評家も擁護者も、P値をNHSTにおける伝統的な使用法と誤認している。これは、すべてのナイフを「武器」と呼ぶようなものである：それはツールの誤用(NHSTにおけるP値の使用で思考を殺害することなど)との混同である。
-
-その混同は破壊的である。なぜなら、P値はNHSTから切り離された多くのタスクのために使用できるからである：モデル適合度の測定として、推定ツールとして、そして頻度論統計学とベイズ統計学を結ぶ論理的な橋を構築するために。
+* ほとんどの医学研究の状況では、帰無仮説の周りに事前確率を集中させることは実際のデータに基づいているわけではない。実際、事前確率スパイクは通常、真の事前情報と矛盾する。例えば、潜在的な薬剤は、標的とする生理学的システムに影響を与えることが知られているからこそ研究されている。
 
 ---
 
 **Slide 62**
 
-Challenges facing P-value rehabilitation once dichotomania and “significance” are banished
+Example: Again, fig. 1 of van Zwet & Cator 2021. Some Bayesians would shrink estimates toward 0 despite an imputed curve right-skewed with >75% above 0. Empirical Bayesians would instead use shrinkage toward estimated topic-specific means.
 
-Instructors and users want P-values to be the
-probability of a test hypothesis H (usually, a null hypothesis of no association or no effect).
+1 June 2022 Greenland – Reforming Statistics 62
 
-A P-value is usually not near that probability.
-Yet the teaching and research literature
-encourages subtle fallacious verbal descriptions that are equivalent to treating a P-values as if they were hypothesis probabilities (“P-inversion”).
-
-1 June 2022 Greenland – Reforming Statistics 69
-
-1 June 2022 Greenland – Reforming Statistics 69
-
-二分法病と「有意性」が追放された後にP値の復権が直面する課題。
-
-教員と使用者は、P値が
-検定仮説Hの確率(通常は関連性なしまたは効果なしの帰無仮説)であってほしいと考えている。
-
-P値は通常、その確率には近くない。
-それでも、教育および研究文献は
-P値を仮説確率であるかのように扱うことと等価な、微妙で誤った言葉による説明(「P値の反転」)を奨励している。
+例：再び、van Zwet & Cator 2021の図1。一部のベイズ主義者は、補間曲線が右に歪んでおり、75%以上が0を上回っているにもかかわらず、推定値を0に縮小させるだろう。経験的ベイズ主義者は代わりに、推定されたトピック固有の平均値に向かって縮小を使用するだろう。
 
 ---
 
 **Slide 63**
 
-Ugly Fact: Valid interpretations of “inferential statistics” seem beyond most sources
+**Part I summary:**
 
-The literature is filled with botched descriptions of P-values that confuse frequentist and Bayesian interpretations.
+* Blind acceptance of mathematical frameworks, deification of “great men” and their conceptual errors, and neglect of cognitive problems have rotted the core of statistical training, practice, and the resulting store of public information.
 
-Examples: inversions like “P is the probability the results are due to chance”, nonsense like “P is the probability of a chance finding”.
+* The “replication crisis” hysteria continues the problem via its nullism (neglect of testing alternatives), pointless dichotomania, and pernicious model reification, all of which are enshrined in NHST and null-spiked priors.
 
-Many descriptions of confidence intervals are actually defining posterior intervals, yet…
+1 June 2022 Greenland – Reforming Statistics 63
 
-1 June 2022 Greenland – Reforming Statistics 70
 
-95% “confidence” intervals typically get treated as nothing more than 5%-level tests.
-1 June 2022 Greenland – Reforming Statistics 71
+**パートIの要約：**
 
-Inversion fallacies include misinterpreting P-values as probabilities that “randomness” or “chance alone” produced an association…as in Harris & Taylor Medical Statistics Made Easy,* 2nd ed, 2008, p. 24-25 say a P-value is “the probability of any observed differences having happened by chance” (alone?)
+* 数学的枠組みの盲目的な受け入れ、「偉大な人物」とその概念的誤りの神格化、そして認知的問題の無視が、統計的訓練、実践、そして結果として生じる公の情報貯蔵庫の核心を腐敗させてきた。
 
-1 June 2022 Greenland – Reforming Statistics 71
-
-醜い事実：「推測統計学」の有効な解釈は、ほとんどの情報源の能力を超えているようだ。
-
-文献は、頻度論とベイズの解釈を混同するP値のひどい記述で満ちている。
-
-例：「Pは結果が偶然による確率である」というような逆転、あるいは「Pは偶然の発見の確率である」というような無意味なもの。
-
-多くの信頼区間の記述は実際には事後区間を定義しているが、それでも…
-
-2022年6月1日 グリーンランド – 統計学改革 70
-
-95%の「信頼区間」は、通常、5%レベルの検定以上のものとしては扱われない。
-2022年6月1日 グリーンランド – 統計学改革 71
-
-反転の誤謬には、P値を「ランダム性」や「偶然のみ」が関連性を生み出した確率として誤解することが含まれる…例えば、Harris & Taylor Medical Statistics Made Easy* 第2版、2008年、p. 24-25は、P値を「観察されたいかなる差も偶然によって起こった確率」と述べている(のみによって？)。
+* 「再現性の危機」ヒステリーは、そのゼロ仮説主義(代替案の検定の無視)、無意味な二分法病、および有害なモデルと現実の混同によって問題を継続させている。これらはすべてNHSTと帰無仮説スパイク事前確率に神聖化されている。
 
 ---
 
 **Slide 64**
 
-*(is “Made Easy” code for “Made Wrong”?) 1 June 2022 Greenland – Reforming Statistics 71
-Sound analyses need to see results as very fuzzy, often in an asymmetric way. But,
+* The persistent practical mistake promoted by statistical methodology: That we should want to construct real-world inferences using deductions from only one study, one set of background assumptions, one formal reasoning system, or one interpretation.
 
-Concepts of evidence and uncertainty can only be quantified relative to explicit models to which the data supposedly pertain, e.g.: –Data contrasted against model predictions
-(compatibility checking = “tests of fit”, as in frequentist diagnostics), or
-–Data merged with models to update predictions or bets (as in Bayesian posterior computation).
+* Most writers accept the need for varied designs (not just “replications”) and varied assumptions (sensitivity analysis), yet seem unaware of (some even fight) the need for varying methodology and interpretations.
 
-1 June 2022 Greenland – Reforming Statistics 72
+1 June 2022 Greenland – Reforming Statistics 64
 
-1 June 2022 Greenland – Reforming Statistics 72
+* 統計学的方法論によって促進されている持続的な実践的誤り：我々は、たった一つの研究、一つの背景仮定のセット、一つの形式的な推論システム、または一つの解釈からの演繹を用いて現実世界の推論を構築したいと思うべきである、ということ。
 
-(「Made Easy」は「Made Wrong」のコードだろうか？) 2022年6月1日 グリーンランド – 統計学改革 71
-健全な分析では、結果を非常にあいまいなものとして、しばしば非対称的な方法で捉える必要がある。しかし、
-
-証拠と不確実性の概念は、データが関連するとされる明示的なモデルに対してのみ定量化できる。例えば：–データとモデル予測との対比
-(相性の良さの確認 = 「適合度検定」、頻度論的診断法のように)、または
-–データとモデルを統合して予測や賭けを更新する(ベイズ事後計算のように)。
+* ほとんどの著者は、多様なデザイン(単なる「再現」だけでなく)と多様な仮定(感度分析)の必要性を受け入れているが、多様な方法論と解釈の必要性については unaware of (some even fight) 認識していないようである(一部はそれと戦うことさえある)。
 
 ---
 
 **Slide 65**
 
-Reconstruct statistical training: STOP perpetuating the mistakes of “great
-men” of statistics and the cognitive biases they displayed, created, and encouraged
+* Statistical rules can worsen bad practices because their theories assume we will use only perfect interpretations of carefully controlled experiments, with a clear view of error costs.
 
-Statistics texts assume instructors and students understand logic and semantics enough to see through bad terminology and to discriminate mathematical from contextual meanings.
+* But most “data analysis” in soft-science research has been about applying decision rules to statistical outputs, based on defaults whose value-laden nature is not seen by most users and readers, e.g., requiring P<0.005 to report “association”, or misinterpreting P>0.05 as “no association.”
 
-As shown by complaints from before Fisher’s prime, that was never true and only worsened in the mid-20th century research explosion.
+1 June 2022 Greenland – Reforming Statistics 65
 
-1 June 2022 Greenland – Reforming Statistics 73
+* 統計的な規則は悪い慣行を悪化させる可能性がある。なぜなら、その理論は、誤差コストを明確に把握した上で、注意深く制御された実験の完璧な解釈のみを使用すると仮定しているからである。
 
-1 June 2022 Greenland – Reforming Statistics 73
-
-統計的訓練の再構築：「偉大な
-人物」の誤りと、彼らが示し、作り出し、奨励した認知バイアスを永続させるのをやめなさい。
-
-統計学のテキストは、教員や学生が悪質な用語を見抜き、数学的な意味と文脈的な意味を区別できるほど論理と意味論を理解していると仮定している。
-
-フィッシャーの全盛期以前からの苦情によって示されているように、それは決して真実ではなく、20世紀半ばの研究爆発で悪化しただけである。
+* しかし、ソフトサイエンス研究におけるほとんどの「データ分析」は、ほとんどの使用者や読者にはその価値観に満ちた性質が見えていないデフォルトに基づいて、統計的な出力に決定規則を適用することであった。例えば、「関連性」を報告するためにP<0.005を要求することや、P>0.05を「関連性なし」と誤解することなど。
 
 ---
 
 **Slide 66**
 
-Shift emphasis away from conditional “hypothesis-testing” interpretations to
-unconditional descriptive interpretations
+The bare, psychosocial facts:
 
-The norm: “The P-value is the probability of
-getting a test statistic as or more extreme if the test hypothesis H is correct”, which leaves the background assumptions (model) implicit.
+* Most “objective” descriptions of statistical outputs are subjective interpretations, usually decision rules misrepresented as inference rules – which they are not, especially since decision rules require justified cost functions.
 
-Instead bring the assumptions forward, as in A P-value p is the percentile at which the test
-statistic falls under the test model.
-The test model includes the test hypothesis H
+* Worse, the verbal definitions and descriptions found in most primers, tutorials, and textbooks are flat-out wrong, e.g. Cassidy et al. “Failing grade: 89% of introduction-to-psychology textbooks that define or explain statistical significance do so incorrectly”, AMPPS 2019
 
-1 June 2022 Greenland – Reforming Statistics 74
+1 June 2022 Greenland – Reforming Statistics 66
 
-1 June 2022 Greenland – Reforming Statistics 74
+むき出しの、心理社会的な事実：
 
-条件付きの「仮説検定」の解釈から、
-無条件の記述的解釈へと重点を移す。
+* 統計的な出力のほとんどの「客観的な」記述は主観的な解釈であり、通常は推論規則として誤って表現された決定規則である – 決定規則は正当化された費用関数を必要とするため、特にそうではない。
 
-規範：「P値は、検定仮説Hが正しい場合に、検定統計量が観察されたものと同等かそれ以上に極端になる確率である」というもので、背景の仮定(モデル)は暗黙のままになっている。
-
-代わりに、仮定を前面に出す：P値 p は、検定統計量が検定モデルの下で位置するパーセンタイルである。
-検定モデルには、検定仮説Hと
+* さらに悪いことに、ほとんどの入門書、チュートリアル、教科書で見られる言葉による定義と記述は全くもって間違っている。例えば、Cassidy et al. 「落第点：統計的有意性を定義または説明する心理学入門教科書の89%が間違っている」、AMPPS 2019
 
 ---
 
 **Slide 67**
 
-and all other assumptions used to compute p. 1 June 2022 Greenland – Reforming Statistics 74
+An urgent, neglected, yet easy step toward reform:
+
+* Teach that data transforms are all that
+statistics can supply. Examples: P-values, posterior probabilities, interval estimates.
+
+* Observers supply meaning for statistics via causal models of the physical research reality.
+
+Justified “statistical inferences” thus require
+
+* showing how statistical assumptions can be derived from physical research reality; and
+
+* showing where the data fall relative to what the assumptions taken together predict -which is what P-values do! Leading to…
+
+1 June 2022 Greenland – Reforming Statistics 6
+
+緊急かつ無視されているが、改革への容易な一歩：
+
+* 統計学が提供できるのは、データ変換のみであることを教える。例：P値、事後確率、区間推定。
+
+* 観察者は、物理的な研究現実の因果モデルを介して、統計量に意味を与える。
+
+正当な「統計的推論」のためには、次のことが求められる：
+
+* 統計的仮定が、実際の自然科学的な研究現実からどのように導かれるかを示すこと。
+
+* データが、それらの仮定をすべて組み合わせたときの予測と比べてどこに位置するかを示すこと ― それこそがP値の役割である！ そしてこれが導くものは…
+
+---
+
+**Slide 68**
+
+**Reform step: Extricate P-values from the dung-heap of null-hypothesis significance testing**
+
+* Both critics and defenders of significance testing misidentify P-values with their traditional use in NHST. This is like calling all knives “weapons”: It’s confusion of a tool with its misuse (as in use of P-values in NHST to murder thought).
+
+* That confusion is destructive because P-values can be used instead for many tasks divorced from NHST: as measurements of model fit, as estimation devices, and to build logical bridges connecting frequentist and Bayesian statistics.
+
+1 June 2022 Greenland – Reforming Statistics 68
+
+**改革の一歩：P値を帰無仮説有意性検定の糞の山から救い出す。**
+
+* 有意性検定の批評家も擁護者も、P値をNHSTにおける伝統的な使用法と誤認している。これは、すべてのナイフを「武器」と呼ぶようなものである：それはツールの誤用(NHSTにおけるP値の使用で思考を殺害することなど)との混同である。
+
+* その混同は破壊的である。なぜなら、P値はNHSTから切り離された多くのタスクのために使用できるからである：モデル適合度の測定として、推定ツールとして、そして頻度論統計学とベイズ統計学を結ぶ論理的な橋を構築するために。
+
+---
+
+**Slide 69**
+
+**Challenges facing P-value rehabilitation once dichotomania and “significance” are banished**
+
+* Instructors and users want P-values to be the
+probability of a test hypothesis H (usually, a null hypothesis of no association or no effect).
+
+* A P-value is usually not near that probability.
+
+* Yet the teaching and research literature encourages subtle fallacious verbal descriptions that are equivalent to treating a P-values as if they were hypothesis probabilities (“P-inversion”).
+
+1 June 2022 Greenland – Reforming Statistics 69
+
+**二分法病と「有意性」が追放された後にP値の復権が直面する課題。**
+
+* 教員と使用者は、P値が検定仮説Hの確率(通常は関連性なしまたは効果なしの帰無仮説)であってほしいと考えている。
+
+* P値は通常、その確率には近くない。
+
+* それでも、教育および研究文献はP値を仮説確率であるかのように扱うことと等価な、微妙で誤った言葉による説明(「P値の反転」)を奨励している。
+
+---
+
+**Slide 70**
+
+**Ugly Fact: Valid interpretations of “inferential statistics” seem beyond most sources**
+
+* The literature is filled with botched descriptions of P-values that confuse frequentist and Bayesian interpretations.
+
+* Examples: inversions like “P is the probability the results are due to chance”, nonsense like “P is the probability of a chance finding”.
+
+* Many descriptions of confidence intervals are actually defining posterior intervals, yet…
+
+* 95% “confidence” intervals typically get treated as nothing more than 5%-level tests.
+
+1 June 2022 Greenland – Reforming Statistics 70
+
+**不都合な事実：「推論統計」の正しい解釈は、ほとんどの情報源にとって手に負えないように見える**
+
+* 学術文献は、頻度主義的解釈とベイズ的解釈を混同したP値の誤った記述であふれている。
+
+* 例：「P値は結果が偶然による確率である」といった逆転した誤解、「P値は偶然による発見の確率である」といった意味不明な表現など。
+
+* 信頼区間の説明の多くは、実際には事後分布区間（posterior interval）を定義している内容になっているが、しかし……
+
+* 95%信頼区間は、しばしば5%水準の有意性検定と何ら変わらないものとして扱われている。
+
+---
+
+**Slide 71**
+
+**Inversion fallacies** include misinterpreting P-values as probabilities that “randomness” or “chance alone” **produced** an association…as in Harris & Taylor Medical Statistics Made Easy,\* 2nd ed, 2008, p. 24-25 say a P-value is “the probability of any observed differences having happened by chance” (alone?)
+
+* **If the tested (“null”) model (of no effect or bias or mismodeling) is correct, what is the probability that a nonzero difference happened by chance alone?**<br>Answer: 100%
+
+\* (is “Made Easy” code for “Made Wrong”?)
+
+1 June 2022 Greenland – Reforming Statistics 71
+
+**逆転の誤謬(inversion fallacies)** には、P値を「ランダム性」や「偶然のみ」によって関連が**生じた**確率と誤解することが含まれる。
+── たとえば、Harris & Taylor 『Medical Statistics Made Easy\*』(第2版, 2008年, pp.24–25)では、P値を「観察された差が偶然に起こった確率」であると述べている(「偶然のみで」？)
+
+* **「検定された（帰無）モデル」（効果・バイアス・モデル誤指定がないという前提）が正しいとしたら、非ゼロの差が偶然によって生じる確率はいくらか？**<br>解答: 100%
+
+\* (“Made Easy”は“Made Wrong”の婉曲表現？)
+
+---
+
+**Slide 72**
+
+* Sound analyses need to see results as very fuzzy, often in an asymmetric way. But,
+
+* Concepts of evidence and uncertainty can only be quantified relative to explicit models to which the data supposedly pertain, e.g.:<br>
+― Data contrasted against model predictions
+(compatibility checking = “tests of fit”, as in frequentist diagnostics), or<br>
+― Data merged with models to update predictions or bets (as in Bayesian posterior computation).
+
+1 June 2022 Greenland – Reforming Statistics 72
+
+* 健全な分析では、結果を非常にあいまいなものとして、しばしば非対称的な方法で捉える必要がある。しかし、
+
+* 証拠と不確実性の概念は、データが関連するとされる明示的なモデルに対してのみ定量化できる。例えば：<br>
+― データとモデル予測との対比
+(相性の良さの確認 = 「適合度検定」、頻度論的診断法のように)、または<br>
+― データとモデルを統合して予測や賭けを更新する(ベイズ事後計算のように)。
+
+---
+
+**Slide 73**
+
+**Reconstruct statistical training:**<br>
+**STOP perpetuating the mistakes of “great men” of statistics and the cognitive biases they displayed, created, and encouraged**
+
+* Statistics texts assume instructors and students understand logic and semantics enough to see through bad terminology and to discriminate mathematical from contextual meanings.
+
+* As shown by complaints from before Fisher’s prime, that was never true and only worsened in the mid-20th century research explosion.
+
+1 June 2022 Greenland – Reforming Statistics 73
+
+**統計教育の再構築を：**<br>
+**統計学の「偉人」たちの誤りや、彼らが示し・生み・助長した認知バイアスを、これ以上引き継ぐのはやめよう**
+
+* 統計の教科書は、教員も学生も、誤った用語を見抜き、数学的な意味と文脈的な意味を区別できる程度には論理や意味論を理解していることを前提としている。
+
+* しかし、フィッシャーが活躍する以前から寄せられていた批判が示すように、そうした理解は当時から存在しておらず、20世紀中頃の研究ブームで事態はさらに悪化した。
+
+---
+
+**Slide 74**
+
+**Shift emphasis away from conditional “hypothesis-testing” interpretations to unconditional descriptive interpretations**
+
+* The norm: “The P-value is the probability of getting a test statistic as or more extreme if the test hypothesis H is correct”, which leaves the background assumptions (model) implicit.
+
+* Instead bring the assumptions forward, as in A P-value p is the percentile at which the test statistic falls under the test model.
+
+* The test model includes the test hypothesis H and all other assumptions used to compute p.
+
+1 June 2022 Greenland – Reforming Statistics 74
+
+**条件付きの「仮説検定」的解釈から、無条件の記述的解釈へと重点を移す**
+
+* 現在の標準的説明：「P値とは、検定仮説 H が正しいときに、得られた検定統計量と同じかそれ以上に極端な値が出る確率」── しかしこれは背景の仮定（モデル）を暗黙のものとしている。
+
+* 代わりに、仮定を前面に出す説明に切り替える：「P値 p とは、検定モデルのもとで検定統計量が属するパーセンタイルである」
+
+* 検定モデルとは、検定仮説 H に加え、P値 p を算出する際に用いたすべての仮定を含むものである。
+
+---
+
+**Slide 75**
+
 from Greenland & Rafi “Semantic and cognitive tools to aid statistical science” http://arxiv.org/abs/1909.08583
+
+<img src="Greenland--Rafi_1909.08583.jpg" width="90%">
+
 1 June 2022 Greenland – Reforming Statistics 75
+
+Greenland & Rafi 「統計科学を支援する意味論的および認知的ツール」より http://arxiv.org/abs/1909.08583
+
+<img src="Greenland--Rafi_1909.08583_J.jpg" width="90%">
+
+---
+
+**Slide 76**
 
 A test statistic measures discrepancy of data from predictions of a test model that contains both H and background assumptions.
 
@@ -1460,9 +1434,7 @@ A large P-value does not support or confirm H or the test model (absence of evid
 
 1 June 2022 Greenland – Reforming Statistics 75
 
-pを計算するために使用された他のすべての仮定が含まれる。 2022年6月1日 グリーンランド – 統計学改革 74
-Greenland & Rafi 「統計科学を支援する意味論的および認知的ツール」より http://arxiv.org/abs/1909.08583
-2022年6月1日 グリーンランド – 統計学改革 75
+
 
 検定統計量は、Hと背景仮定の両方を含む検定モデルの予測からのデータの不一致を測定する。
 
