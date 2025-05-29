@@ -107,9 +107,9 @@ In the radical Bayesianism of DeFinetti, all probability is “subjective” –
 
 **Slide 6**
 
-* All analyses should be viewed as part of a vastly incomplete sensitivity analysis.
+* **All analyses should be viewed as part of a vastly incomplete sensitivity analysis.**
 
-* The frequentist vs Bayes controversy is a religious dispute that disappears under detailed logical analysis.
+* **The frequentist vs Bayes controversy is a religious dispute that disappears under detailed logical analysis.**
 
 * Boxian view: Bayesian tools are for method and model building, frequentist tools are for their evaluation (many other useful combinations).
 
@@ -117,35 +117,35 @@ In the radical Bayesianism of DeFinetti, all probability is “subjective” –
 
 1 June 2022 Greenland – Reforming Statistics 6
 
-* すべての分析は、著しく不完全な感度分析の一部と見なされるべきである。
+* **すべての分析は、極めて不完全な感度分析の一部として捉えるべきである。**
 
-* 頻度論者とベイズ主義者の論争は、詳細な論理分析の下で消滅する宗教的な論争である。
+* **頻度主義とベイズ主義の対立は、詳細に論理的分析を行えば消えてしまう宗教論争にすぎない。**
 
-* Box的な見方：ベイズツールは手法やモデル構築のため、頻度論ツールはその評価のためである(他の多くの有用な組み合わせがある)。
+* ボックス的な(Boxian)見解：ベイズ的ツールは手法やモデルの構築のために用い、頻度主義的ツールはその評価のために用いる(他にも有用な組み合わせは多数存在する)。
 
-* 最近まで、両方の「学派」は、彼らの手法がそこから導き出されるべき必須の因果的／文脈的側面を網羅していなかった。
+* 最近まで、両方の「学派」は、自らの方法論が導かれるべき本質的な因果的・文脈的次元を捉え損ねていた。
 
 ---
 
 **Slide 7**
 
-**What unifies these inference concepts? - Not probability, but causation:**
+**What unifies these inference concepts?<br>- Not probability, but causation:**
 
-* Past causes: What caused (“explains”) our observations? which is asking about physical mechanisms, not abstractions of their behavior such as probabilities.
+* Past causes: **What caused** (“explains”) **our observations?** which is asking about **physical mechanisms**, *not* abstractions of their behavior such as probabilities.
 
-* Future effects: How will actions affect the future? which is asking how to change the behavior of mechanisms, such as actual event frequencies, not probability distributions.
+* Future effects: **How will actions affect the future?** which is asking how to change the behavior of mechanisms, such as actual event frequencies, **not** probability distributions.
 
 * Example: What will be the effect of reforms?...
 
 1 June 2022 Greenland – Reforming Statistics 7
 
-**これらの推論の概念を統一するものは何か？ - 確率ではなく、因果関係である：**
+**これらの推論の概念を統一するものは何か？<br>――確率ではなく、因果関係である：**
 
-* 過去の原因：我々の観察は何によって引き起こされたのか(「説明される」のか)？これは物理的メカニズムに関する問いであり、その振る舞いの抽象化(確率など)に関するものではない。
+* 過去の原因：我々の観察結果は**何によって引き起こされた**のか(「説明される」のか)？<br>――これは**物理的なメカニズム**に関する問いであり、確率のようなそれらの振る舞いの抽象化に関する問いでは*ない*。
 
-* 将来の影響：行動は将来にどのように影響するか？これは、確率分布ではなく、実際の事象の頻度などのメカニズムの振る舞いをどのように変えるかに関する問いである。
+* 未来への影響：**行動は未来にどのように影響するのか？**<br>――これは、実際の事象の頻度などのメカニズムの振る舞いをどのように変えるかに関する問いであり、確率分布に関する問いでは**ない**。
 
-* 例：改革の効果はどうなるか？... 
+* 例： 改革はどのような効果をもたらすだろうか？…
 
 ---
 
@@ -157,7 +157,7 @@ Answer: **Any** reform that still leads to selective reporting based on study ou
 
 1 June 2022 Greenland – Reforming Statistics 8
 
-答え：研究結果に基づいて選択的な報告を依然として行う改革は、利用可能な結果の分布を全体に対して歪めるだろう。
+解答：研究結果に基づく選択的な報告が引き続き行われるような改革ならば**どのように**改革しても、利用可能な(報告された)結果の分布が実際に生じた結果全体との比較で歪められてしまうことになる。
 
 <img width=80% src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/van_Zwet--Cator_2021_Fig1.jpg">
 
@@ -167,31 +167,24 @@ Answer: **Any** reform that still leads to selective reporting based on study ou
 
 **What is INFERENCE?**
 
-* Dictionary example: “A conclusion reached
-on the basis of evidence and reasoning.”
+* Dictionary example: “**A conclusion reached on the basis of evidence and reasoning**.”
 
-* Scientific inference is a complex but
-narrowly moderated judgement about reality, based on this assumption:<br>
-There is a logically coherent “objective” (observer-external) reality that causes our
-perceptions according to discoverable laws:
+* <u>**Scientific inference**</u> **is a complex but
+narrowly moderated** <font color="red">**judgement**</font> **about reality**, based on this assumption:<br>
+There is a logically coherent “objective” (observer-external) reality that causes our perceptions according to discoverable laws:<br>**My perception ← Reality → Your perception**
 
-My perception ← Reality → Your perception
-
-* This makes inference part of cognitive science
+* **This makes inference part of cognitive science**
 
 1 June 2022 Greenland – Reforming Statistics 9
 
 **推論とは何か？**
 
-* 辞書的な例：「証拠と推論に基づいて到達した結論。」
+* 辞書的な例：「**証拠と論理的思考に基づいて到達した結論**。」
 
-* 科学的推論は複雑ではあるが、
-現実についての狭く調整された判断であり、以下の仮定に基づいている：<br>
-発見可能な法則に従って我々の知覚を引き起こす、論理的に首尾一貫した「客観的」(観察者外部)な現実がある：
+* <u>**科学的推論**</u>**は複雑だが強く制約された現実に関する**<font color="red">**判断**</font>**であり**、以下の仮定に基づいている：<br>
+論理的一貫性をもつ“客観的”(観察者から独立した)現実が存在し、それが発見可能な法則に従って我々の知覚を引き起こしている：<br>**私の知覚 ← 現実 → あなたの知覚**
 
-私の知覚 ← 現実 → あなたの知覚
-
-* これにより、推論は認知科学の一部となる。
+* このことから、推論は認知科学の一分野とみなされる。
 
 ---
 
@@ -199,39 +192,36 @@ My perception ← Reality → Your perception
 
 **Contrast scientific inference to**
 
-* “Statistical inference,” which in all formalisms, “schools” or toolkits, has become taking output from a data-processing program (learning algorithm) and generating “inferences” via decontextualized rules.
+* “**Statistical inference**,” which in all formalisms, “schools” or toolkits, **has become taking output from a data-processing program** (learning algorithm) **and generating “inferences” via decontextualized rules**.
 
-* It converts oversimplified models of the mechanisms generating the data – the causes of the data – into abstract probability distributions.
+* It converts oversimplified models of the mechanisms generating the data – the **causes** of the data – into abstract probability distributions.
 
-* The semantic void it leaves causes inferential errors and facilitates deception (self or other)
+* **The semantic void it leaves causes inferential errors and facilitates deception** (self or other)
 
 1 June 2022 Greenland – Reforming Statistics 10
 
-**科学的推論と対比されるべきは、**
+**科学的推論と「統計的推論」の対比**
 
-* 「統計的推論」である。これは、あらゆる形式主義、学派、ツールキットにおいて、データ処理プログラム(学習アルゴリズム)からの出力を受け取り、文脈から切り離された規則を介して「推論」を生成することになっている。
+* 「**統計的推論**」は、どのような形式的体系・「学派」・ツールキットにおいても、**データ処理プログラム**(学習アルゴリズム)**からの出力を受け取って、文脈無視の規則によって「推論」を生成することになってしまっている。**
 
-* それは、データを生成するメカニズム(データの原因)の過度に単純化されたモデルを、抽象的な確率分布に変換する。
+* それは、データ生成メカニズム(データの**原因**)に関する過度に単純化されたモデルを抽象的な確率分布に変換する。
 
-* それが残す意味論的な空白は、推論の誤りを引き起こし、欺瞞(自己または他者)を助長する。
+* **それによって残された意味論的空白(semantic void)が、推論の誤りと**(自己および他者に対する)**欺瞞を引き起こす**。
 
 ---
 
 **Slide 11**
 
-* Statistics ignored or denigrated semantics and ordinary language, favoring instead deceptive jargon promising “significance” and “confidence” even when studies provide nothing close without huge leaps of faith.
+* **Statistics ignored or denigrated semantics and ordinary language, favoring instead deceptive jargon promising “significance” and “confidence” even when studies provide nothing close without huge leaps of faith.**
 
-* This was done to sell technical products and services based on dense formalisms, notation, and artificial precision whose assumptions and dangers are poorly understood by most users and consumers in “soft sciences”
-
-― note the parallel with medical-product sales!
+* This was done to sell technical products and services based on dense formalisms, notation, and <font color="red">**artificial precision**</font> whose assumptions and dangers are poorly understood by most users and consumers in “soft sciences”<br>
+― **note the parallel with medical-product sales!**
 
 1 June 2022 Greenland – Reforming Statistics 11
 
-* 統計学は意味論や日常言語を無視または軽視し、代わりに、研究が大きな飛躍なしには何もそれに近いものを提供しない場合でさえ、「有意性」や「信頼性」を約束する欺瞞的な専門用語を好んだ。
+* **統計学は意味論や日常言語を無視または軽視し、その代わりに、研究が巨大な信念の飛躍抜きでは何も保証しない場合であっても、「有意性」や「信頼性」を約束する欺瞞的な専門用語(deceptive jargon)を多用してきた。**
 
-* これは、「ソフトサイエンス」のほとんどの使用者や消費者にはその前提と危険性が十分に理解されていない、密度の高い形式主義、記法、人工的な精度に基づいた技術製品やサービスを販売するために行われた。
-
-― 医療製品の販売との類似性に注目！
+* これは高密度の形式的体系・記号法・<font color="red">**見せかけの精度**</font>に基づいた技術的な製品やサービスを売るために行われて来た。それらの前提と危険は「ソフトサイエンス」におけるほとんどのユーザーと消費者達によく理解されていない。<br>― **医療製品の販売との類似に注目！**
 
 ---
 
@@ -248,14 +238,14 @@ Rules that were apparently successful for narrow automated environments induced 
 
 1 June 2022 Greenland – Reforming Statistics 12
 
-**科学界は統計科学の退化に熱心に貢献した。**
+**科学界は、統計科学の堕落に熱心に加担してきた。**
 
-狭い自動化環境で成功したかのように見えた規則は、教育と研究において破壊的なフィードバックループを引き起こした：
+限定的で自動化された環境では一見うまく機能していた規則が、教育と研究において破壊的なフィードバックループを引き起こした：
 
-* 学生は、正しい答えを保証するために、記憶するための明確な実践規則を求めている。
-* 教員は、採点の容易さを求めている。
-* 研究者は、受け入れられる報告書を提出するための規則を求めている。
-* 査読者と編集者は、査読と出版の決定を容易にすることを求めている。
+* 学生は、正解を得るために暗記可能な明確な実践的規則を求める。
+* 教員は、採点の容易さを求める。
+* 研究者は、アクセプトされやすい報告を書くための規則を求める。
+* 査読者や編集者は、査読や掲載の判断の簡便さを求める。
 
 ---
 
