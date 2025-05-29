@@ -558,19 +558,19 @@ __訳注:__
 
 **Slide 29**
 
-* Romantic heroic-fantasy science: Committed to fact-finding and dissemination of valid facts regardless of the social consequences…
+* **Romantic heroic-fantasy science:**<br>**Committed to fact-finding and dissemination of valid facts regardless of the social consequences…**
 
-* but almost no one would disseminate all valid facts regardless of the consequences.
+* <font color="red">**but almost no one would disseminate all valid facts regardless of the consequences.**</font>
 
-* Harsh reality: Much of statistics serves commitments of major social networks to warp portrayal of facts into propaganda to direct society according the network’s valuations and special interests.
+* **Harsh reality: Much of statistics serves commitments of major social networks to warp portrayal of facts into propaganda to direct society according the network’s valuations and special interests.**
 
 1 June 2022 Greenland – Reforming Statistics 29
 
-* ロマンチックな英雄的ファンタジー科学：社会的結果に関係なく、事実発見と有効な事実の普及にコミットしている…
+* **ロマンチックな英雄的ファンタジー科学：**<br>**社会的影響を顧みずに事実の発見と妥当な事実の普及に献身する…**
 
-* しかし、結果に関係なくすべての有効な事実を普及させる人はほとんどいないだろう。
+* <font color="red">**しかし、社会的影響を顧みずにすべての妥当な事実を普及させる人はほとんどいないだろう。**</font>
 
-* 厳しい現実：統計学の大部分は、主要なソーシャルネットワークのコミットメントに奉仕し、事実の描写を歪曲してプロパガンダに変え、ネットワークの価値観と特別な利益に従って社会を方向づける。
+* **厳しい現実：統計学の大部分は、主要な社会的ネットワークの利害や価値観に奉仕し、事実の描写をプロパガンダへと歪め、社会をそれらの価値基準と特別な利益に沿って誘導するために利用されている。**
 
 ---
 
@@ -578,21 +578,23 @@ __訳注:__
 
 Example: The endless expert “EBM” promotion of randomized trials as “gold standards” when they are no such thing due to
 
-* Huge generalization bias due to exclusion of high-risk patients on ethics and liability grounds, and placebo formulas that have real side effects
+* <font color="red">**Huge generalization bias**</font> due to exclusion of high-risk patients on ethics and liability grounds, and placebo formulas that have real side effects
 
-* Numbers too small and follow-up too short to discern adverse effects, resulting non-significance reported as “replication failure”
+* <font color="red">**Numbers too small and follow-up too short to discern adverse effects, resulting non-significance reported as “replication failure”**</font>
 
-* Hidden protocol violations plus selective publication, reporting, and discussion …
+* **Hidden protocol violations plus** <font color="red">**selective publication, reporting, and discussion**</font> **…**
 
 1 June 2022 Greenland – Reforming Statistics 30
 
-例：ランダム化比較試験(RCT)を「ゴールドスタンダード」として専門家が際限なく「EBM」で推進しているが、実際にはそうではない。その理由は以下の通りである。
+例：ランダム化比較試験が「ゴールドスタンダード」であることについて専門家達による終わりなき “EBM” プロモーションが展開されているが、ランダム化比較試験は以下の理由で必ずしも「ゴールドスタンダード」とは言えない。
 
-* 倫理的および法的責任の理由で高リスク患者が除外されることによる大きな一般化バイアス、および実際の副作用があるプラセボ製剤
+* 倫理的・法的責任の関係で高リスク患者が除外されることや、実際に副作用を持つプラセボ製剤による<font color="red">**巨大な一般化バイアス**</font>
 
-* 有害事象を識別するには参加者数が少なすぎ、追跡期間が短すぎるため、結果として有意差がないことが「再現性の失敗」として報告される
+* <font color="red">**有害事象を識別するためには参加者数が少なすぎたり、追跡期間が短すぎるせいで、結果として有意差がないことが「再現の失敗」として報告されること**</font>
 
-* 隠されたプロトコル違反に加えて、選択的な出版、報告、議論…
+* **隠されたプロトコル違反に加えて、**<font color="red">**選択的な出版、報告、議論**</font> **…**
+
+__訳注:__ EBM は evidence-based medicine の略で「根拠に基づく医療」を意味している。
 
 ---
 
