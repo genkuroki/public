@@ -403,13 +403,13 @@ to dismiss undesirable associations; or
 
 **典型例：** 論文 Brown et al., “Association between serotonergic antidepressant use during pregnancy and autism spectrum disorder in children”, JAMA 2017;317:1544-52 の要旨より：
 
-* 「\[Coxモデル\]調整済みHR、1.59 \[95\%信頼区間: 1.17, 2.17\])。IPTW HDPS後、関連性は有意ではなかった(HR、1.61 \[95\%信頼区間: 0.997, 2.59\])。」(p = 0.0505)
+* 「\[Coxモデル\]調整済みHR、1.59 \[95\%信頼区間: 1.17, 2.17\])。IPTW HDPS後、関連性は有意ではなかった(HR、1.61 \[95\%信頼区間: 0.997～2.59\])。」(p = 0.0505)
 
 * 「\[Cox モデルによる\] 調整済みハザード比(HR)は 1.59 \[95\% 信頼区間: 1.17～2.17\]。IPTW と HDPS による補正後は、有意とはならなかった(HR = 1.61 \[95\% 信頼区間: 0.997～2.59\])。」 (p = 0.0505)
 
 * 著者達の結論：「胎内曝露は自閉スペクトラム症とは関連がなかった。」
 
-* 彼らの以前のメタアナリシスでは HR = 1.7 \[95\% 信頼区間: 1.1～2.6\] が得られていた。
+* 著者達の以前のメタアナリシスでは HR = 1.7 \[95\% 信頼区間: 1.1～2.6\] が得られていた。
 
 __訳注:__
 * IPTW (Inverse Probability of Treatment Weighting)：治療割り当ての逆確率で重み付けして交絡を調整する方法。
@@ -450,7 +450,7 @@ Is it mere ignorance? No, I posit **it’s forced on authors to protect industry
 
 1 June 2022 Greenland – Reforming Statistics 22
 
-「…**統計的有意性と社会的重要性の区別は、すべての研究者にとって明白であるべきである**… 我々には、現実の違いが存在するかどうかを判断し、その社会的重要性と**コスト**を示す責任が課せられている。<font color="red">**統計的に有意な差を見つけられなかった場合、現実の違いが全く存在しないとすぐに結論づける正当な理由はない**</font>。」<br>― J.W.タイラー, Educational Research Bulletin, 1931年3月4日号, p. 118
+「…**統計的有意性と社会的重要性の区別は、すべての研究者にとって明白であるべきである**… 我々には、現実に違いが存在するかどうかを判断し、その社会的重要性と**コスト**を示す責任が課せられている。<font color="red">**統計的に有意な差を見つけられなかった場合、現実の違いが全く存在しないとすぐに結論づける正当な理由はない**</font>。」<br>― J.W.タイラー, Educational Research Bulletin, 1931年3月4日号, p. 118
 
 ---
 
@@ -461,28 +461,30 @@ Is it mere ignorance? No, I posit **it’s forced on authors to protect industry
 
 1 June 2022 Greenland – Reforming Statistics 23
 
-「自動化された意思決定の最も悪質な乱用の一つは、観測された差の非有意なP値に基づいて、臨床治療が同等であると断言されるときに発生する…我々は、形式的な仮説検定のように、意思決定を自動化しようとするいかなる試みにも抵抗し続けるべきである。」<br>
-― Claire Weinberg, 「**P値を立て直す時が来た**」, Epidemiology 2001; 12: 288-290。
+「自動化された意思決定の最も悪質な乱用の一つは、観測された差に関する有意でないP値に基づいて、臨床的治療が同等であると断言されるときに生ジル… 我々は、形式的な仮説検定のように、意思決定を自動化しようとするいかなる試みに対しても抵抗し続けるべきである。」<br>
+― クレア・ワインバーグ, 「**P値を見直すときが来た**」, Epidemiology 2001; 12: 288-290。
 
 ---
 
 **Slice 24**
 
-Brown et al. cited their own report of the same increased risk in their own meta-analysis of 4 earlier cohorts with HR 1.7 \[1.1, 2.6\] but…
+Brown et al. cited their own report of the same increased risk in their own meta-analysis of 4 earlier cohorts with **HR** <font color="red">**1.7**</font> **\[**<font color="red">**1.1**</font>, <font color="red">**2.6**</font>**\]** <font color="red">**but**</font>**…**
 
-* They did not attempt to combine their new study with those studies and
+* **They did not attempt to combine their new study with those studies and**
 
-* They did not cite a 2016 meta-analysis by Healy et al. of 16 cohort studies with HR 1.74 \[1.19, 2.54\] and 5 case-control studies with HR 1.95 \[1.63, 2.34\]
+* **They did** <font color="red">**not**</font> **cite a 2016 meta-analysis by Healy et al. of** <font color="red">**16**</font> **cohort studies with HR** <font color="red">**1.74**</font> **\[**<font color="red">**1.19**</font>, <font color="red">**2.54**</font>**\]** **and** <font color="red">**5**</font> **case-control studies with HR** <font color="red">**1.95**</font> **\[**<font color="red">**1.63**</font>, <font color="red">**2.34**</font>**\]**
 
-Why no discussion of the consistent association of 60-70% higher risk among the exposed?
+**Why no discussion of the consistent** <font color="red">**association**</font> **of 60-70% higher risk among the exposed?**
 
 1 June 2022 Greenland – Reforming Statistics 24
 
-Brown et al. は、以前の4つのコホートの彼ら自身のメタアナリシスにおける同じリスク増加(HR 1.7 [1.1, 2.6])の報告を引用したが…
+Brown et al. は、自ら実施した<font color="red">**4つ**</font>の先行コホート研究を対象としたメタアナリシスにおいて、同様のリスク上昇 (<font color="red">**HR = 1.7 \[95\%信頼区間: 1.1～2.6\]**</font>) を報告していた。<font color="red">**しかし**</font>…
 
-* 彼らは新しい研究をそれらの研究と結合しようとしなかった。そして Healy et al. による2016年のメタアナリシス(コホート研究16件でHR 1.74 \[1.19, 2.54\]、ケースコントロール研究5件でHR 1.95 \[1.63, 2.34\])を引用しなかった。
+* **彼らは、今回の新たな研究結果とそれらの研究を統合しようとしなかった。そして、**
 
-* なぜ曝露群における60-70%高いリスクの一貫した関連性について議論しなかったのか？
+* **彼らは、Healy et al. による2016年のメタアナリシス (コホート研究**<font color="red">**16件で HR = 1.74 \[95\%信頼区間: 1.19～2.54\]**</font>**、ケースコントロール研究**<font color="red">**5件で HR = 1.95 \[95\%信頼区間: 1.63～2.34\]**</font>**) も引用**<font color="red">**しなかった**</font>**。**
+
+* **曝露群においてリスクが60〜70％程度一貫して高くなるという**<font color="red">**関連性**</font>**について、なぜ議論が行われなかったのか？**
 
 ---
 
@@ -490,13 +492,13 @@ Brown et al. は、以前の4つのコホートの彼ら自身のメタアナリ
 
 That’s because most were certain this highly replicated association was pure confounding:
 
-* Medscape 2017: “Use of antidepressants before and during pregnancy does not cause autism or ADHD new research shows. Three studies demonstrate that antidepressant use in pregnant women is likely not responsible for autistic spectrum disorders (ASDs) in children and that the association found in previous studies was likely due to confounding factors.”
+* *Medscape* 2017: **“Use of antidepressants before and during pregnancy does not cause autism or ADHD new research shows. Three studies** <font color="red">**demonstrate**</font> **that antidepressant use in pregnant women is** <font color="red">**likely not responsible**</font> **for autistic spectrum disorders (ASDs) in children and that the association found in previous studies was** <font color="red">**likely due to confounding factors**</font>**.”**
 
 1 June 2022 Greenland – Reforming Statistics 24
 
-それは、ほとんどの人が、この高度に再現された関連性が純粋な交絡であると確信していたからである。
+それは、ほとんどの人がこの繰り返し確認された関連が完全に交絡の産物であると確信していたからである：
 
-* Medscape 2017：「抗うつ薬の使用は妊娠前および妊娠中の期間中に、自閉症やADHDを引き起こすものではないことが新しい研究で示されている。3つの研究は、妊婦における抗うつ薬の使用が子供の自閉症スペクトラム障害(ASDs)の原因である可能性は低く、以前の研究で見られた関連性は交絡因子による可能性が高いことを示している。」
+* *Medscape* 2017：**「妊娠前および妊娠中の抗うつ薬使用は、自閉症やADHDを引き起こさないことが新たな研究で示された。3件の研究は、妊婦による抗うつ薬の使用が子どもの自閉症スペクトラム障害(ASD)の**<font color="red">**原因である可能性は低く**</font>、**以前の研究で観察された関連は**<font color="red">**交絡因子によるものである可能性が高い**</font>**ことを**<font color="red">**実証**</font>**している。」**
 
 ---
 
