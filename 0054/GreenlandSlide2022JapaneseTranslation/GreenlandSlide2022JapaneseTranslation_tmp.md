@@ -338,7 +338,7 @@ Millstone et al. Nature 1994: 8 trials, 19% average increase in somatic cell cou
 
 1 June 2022 Greenland – Reforming Statistics 17
 
-Millstone et al. Nature 1994: rBST (遺伝子組換えウシ成長ホルモン)を投与された牛の乳に関する8件の試験の結果、体細胞数(膿)の平均増加率は19% に達した(メタ解析によるP値 = 0.004):
+Millstone et al. Nature 1994: rBST (遺伝子組換えウシ成長ホルモン)を投与された牛の乳に関する8件の試験の結果、体細胞数(膿)の平均増加率は19% に達した(メタアナリシスによるP値 = 0.004):
 
 <img width=80% src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/Milstone_et_al_1994_8trials.jpg">
 
@@ -401,35 +401,46 @@ to dismiss undesirable associations; or
 
 1 June 2022 Greenland – Reforming Statistics 20
 
-**典型的な例**(Brown et al., “Association between serotonergic antidepressant use during pregnancy and autism spectrum disorder in children”, JAMA 2017;317:1544-52)、要旨：
+**典型例：** 論文 Brown et al., “Association between serotonergic antidepressant use during pregnancy and autism spectrum disorder in children”, JAMA 2017;317:1544-52 の要旨より：
 
-* 「\[Coxモデル\]調整済みHR、1.59 \[95%信頼区間、1.17, 2.17\])。IPTW HDPS後、関連性は有意ではなかった(HR、1.61 \[95%信頼区間：0.997, 2.59\])。」(p = 0.0505)
+* 「\[Coxモデル\]調整済みHR、1.59 \[95\%信頼区間: 1.17, 2.17\])。IPTW HDPS後、関連性は有意ではなかった(HR、1.61 \[95\%信頼区間: 0.997, 2.59\])。」(p = 0.0505)
 
-* 彼らの結論：「出生前曝露は自閉症スペクトラム障害とは関連がなかった。」
+* 「\[Cox モデルによる\] 調整済みハザード比(HR)は 1.59 \[95\% 信頼区間: 1.17～2.17\]。IPTW と HDPS による補正後は、有意とはならなかった(HR = 1.61 \[95\% 信頼区間: 0.997～2.59\])。」 (p = 0.0505)
 
-* 彼らの以前のメタ分析ではHR 1.7 \[1.1, 2.6\]が得られていた。
+* 著者達の結論：「胎内曝露は自閉スペクトラム症とは関連がなかった。」
+
+* 彼らの以前のメタアナリシスでは HR = 1.7 \[95\% 信頼区間: 1.1～2.6\] が得られていた。
+
+__訳注:__
+* IPTW (Inverse Probability of Treatment Weighting)：治療割り当ての逆確率で重み付けして交絡を調整する方法。
+* HDPS (High-Dimensional Propensity Score)：高次元の交絡因子を用いた傾向スコア補正。
+* HR (Hazard Ratio)：ハザード比。1より大きければ曝露がリスク上昇に関連することを示唆。
+* p = 0.0505：有意差とみなすことが多い閾値 α = 0.05 をわずかに超えている。
 
 ---
 
 **Slide 21**
 
-Articles decrying this sort of misreporting date at least back to Karl Pearson 1906:
+Articles decrying this sort of misreporting date at least back to Karl Pearson **1906**:
 
 * “The absence of significance relative to the size of the samples is too often interpreted by the casual reader as a denial of all differentiation, and this may be disastrous.”
 
 Innumerable others have repeated this caution for over a century since…
 
-Why does it continue in such naked forms? Is it mere ignorance? No, I posit it’s forced on authors to protect industry against litigation.
+Why does it continue in such naked forms?<br>
+Is it mere ignorance? No, I posit **it’s forced on authors to protect industry against litigation**.
 
 1 June 2022 Greenland – Reforming Statistics 21
 
-このような誤った報告を非難する記事は、少なくとも1906年のカール・ピアソンまで遡る：
+このような誤った報告を非難する論文は、少なくとも1906年のカール・ピアソンまで遡る：
 
-* 「サンプルサイズに対して有意性が欠如していることは、一般読者によって、すべての分化の否定として解釈されることが多すぎるが、これは悲惨なことになる可能性がある。」
+* 「サンプルのサイズに対する有意性の欠如は、一般読者によってあらゆる差異の否定と解釈されがちであり、これは破滅的な結果をもたらす可能性がある。」
 
 それ以来1世紀以上にわたり、無数の人々がこの警告を繰り返してきた… 
 
-なぜこのような露骨な形でこれが続くのだろうか？単なる無知だろうか？いや、私はこれが産業を訴訟から守るために著者に強制されているのだと仮定する。
+なぜこのような露骨な形でこれが続くのだろうか？<br>
+単なる無知のせいなのだろうか？<br>
+―否、私はこう考える。それは訴訟から産業を守るために著者達に強制されているのだ。
 
 ---
 
@@ -439,7 +450,7 @@ Why does it continue in such naked forms? Is it mere ignorance? No, I posit it�
 
 1 June 2022 Greenland – Reforming Statistics 22
 
-「…**統計的有意性と社会的重要性の区別は、すべての研究者に明らかであるべきだ**… 我々には、現実の違いが存在するかどうかを判断し、その社会的重要性と**コスト**を示す責任が課せられている。<font color="red">**統計的に有意な差を見つけられなかった場合、現実の違いが全く存在しないとすぐに結論づける正当な理由はない**</font>。」 – JW Tyler, Educational Research Bulletin, 1931年3月4日号, p. 118
+「…**統計的有意性と社会的重要性の区別は、すべての研究者にとって明白であるべきである**… 我々には、現実の違いが存在するかどうかを判断し、その社会的重要性と**コスト**を示す責任が課せられている。<font color="red">**統計的に有意な差を見つけられなかった場合、現実の違いが全く存在しないとすぐに結論づける正当な理由はない**</font>。」<br>― J.W.タイラー, Educational Research Bulletin, 1931年3月4日号, p. 118
 
 ---
 
@@ -467,9 +478,9 @@ Why no discussion of the consistent association of 60-70% higher risk among the 
 
 1 June 2022 Greenland – Reforming Statistics 24
 
-Brown et al. は、以前の4つのコホートの彼ら自身のメタ分析における同じリスク増加(HR 1.7 [1.1, 2.6])の報告を引用したが…
+Brown et al. は、以前の4つのコホートの彼ら自身のメタアナリシスにおける同じリスク増加(HR 1.7 [1.1, 2.6])の報告を引用したが…
 
-* 彼らは新しい研究をそれらの研究と結合しようとしなかった。そして Healy et al. による2016年のメタ分析(コホート研究16件でHR 1.74 \[1.19, 2.54\]、ケースコントロール研究5件でHR 1.95 \[1.63, 2.34\])を引用しなかった。
+* 彼らは新しい研究をそれらの研究と結合しようとしなかった。そして Healy et al. による2016年のメタアナリシス(コホート研究16件でHR 1.74 \[1.19, 2.54\]、ケースコントロール研究5件でHR 1.95 \[1.63, 2.34\])を引用しなかった。
 
 * なぜ曝露群における60-70%高いリスクの一貫した関連性について議論しなかったのか？
 
