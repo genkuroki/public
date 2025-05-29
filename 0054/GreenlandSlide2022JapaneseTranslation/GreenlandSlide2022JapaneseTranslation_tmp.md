@@ -504,16 +504,15 @@ That’s because most were certain this highly replicated association was pure c
 
 **Slide 26**
 
-The dominant social bias talks as if all incentives are to “discover” rather than to refute effects. This meta-bias is rampant in the “replication crisis” literature, which uncritically ignores differences in incentives across topics and authors.
+**The dominant social bias talks as if all incentives are to “discover” rather than to refute effects. This meta-bias is rampant in the “replication crisis” literature, which uncritically ignores differences in incentives across topics and authors.**
 
-* The Brown et al. example has the appearance of CI-hacking to increase width by adjusting until the CI finally includes 1 (even though adjustments beyond the initial Cox model have the appearance of overadjustments, inflating variance without removing bias).
+* The Brown et al. example has the appearance of **CI-hacking to increase width** by adjusting until the CI finally includes 1 (even though adjustments beyond the initial Cox model have the appearance of overadjustments, inflating variance without removing bias).
 
 1 June 2022 Greenland – Reforming Statistics 26
 
+**支配的な社会的バイアスは、すべてのインセンティブが効果の否定ではなく、「発見」にあるかのように語る。このメタバイアスは、「再現性の危機」に関する文献に蔓延しており、トピックや著者達によるインセンティブの違いを無批判に無視している。**
 
-支配的な社会的バイアスは、すべてのインセンティブが効果を反駁することではなく、「発見する」ことにあるかのように語る。このメタバイアスは、「再現性の危機」に関する文献に蔓延しており、トピックや著者によるインセンティブの違いを無批判に無視している。
-
-* Brown et al. の例は、CIが最終的に1を含むまで調整して幅を広げるという、信頼区間操作(CI-hacking)のように見える(ただし、最初のCoxモデルを超えた調整は、バイアスを除去せずに分散を膨張させる過剰調整のように見える)。
+* Brown et al. の事例は、最初のCoxモデルを超えた調整がバイアスを除去せずに分散を膨張させる過剰調整のように見えるにもかかわらず、信頼区間(CI)が最終的に1を含むまで調節を続けることによって**幅を広げる方向の信頼区間操作 (CI-hacking to increase width)** をやっているように見える。
 
 ---
 
