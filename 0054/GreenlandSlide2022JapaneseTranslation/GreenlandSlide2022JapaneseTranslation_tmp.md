@@ -498,7 +498,7 @@ That’s because most were certain this highly replicated association was pure c
 
 それは、ほとんどの人がこの繰り返し確認された関連が完全に交絡の産物であると確信していたからである：
 
-* *Medscape* 2017：**「妊娠前および妊娠中の抗うつ薬使用は、自閉症やADHDを引き起こさないことが新たな研究で示された。3件の研究は、妊婦による抗うつ薬の使用が子どもの自閉症スペクトラム障害(ASD)の**<font color="red">**原因である可能性は低く**</font>、**以前の研究で観察された関連は**<font color="red">**交絡因子によるものである可能性が高い**</font>**ことを**<font color="red">**実証**</font>**している。」**
+* *Medscape* 2017：**「妊娠前および妊娠中の抗うつ薬使用は、自閉症やADHDを引き起こさないことが新たな研究で示された。3件の研究は、妊婦による抗うつ薬の使用が子どもの自閉スペクトラム症(ASD)の**<font color="red">**原因である可能性は低く**</font>、**以前の研究で観察された関連は**<font color="red">**交絡因子によるものである可能性が高い**</font>**ことを**<font color="red">**実証**</font>**している。」**
 
 ---
 
@@ -518,38 +518,41 @@ That’s because most were certain this highly replicated association was pure c
 
 **Slide 27**
 
-The point is not to argue that prenatal SSRIs cause ASD (massive topic!), but rather that
+The point is <font color="red">**not**</font> to argue that prenatal SSRIs cause ASD (massive topic!), but rather that
 
-* “Spin” is the driver through The Garden of
-Forking Paths: “objective” statistics are perceived, selected, and reported based on preferred causal stories and, in high-stakes settings, political and litigation concerns.
+* **“**<font color="red">**Spin**</font>**” is the driver through The Garden of Forking Paths: “objective” statistics are perceived, selected, and reported based on preferred causal stories and, in high-stakes settings,** <font color="red">**political and litigation concerns**</font>**.**
 
-* Examples abound throughout health and medical sciences – which should scare you!
+* **Examples abound throughout health and medical sciences** ― which should scare you!
 
 * Statistical training that pretends otherwise obscures and fosters this manipulation.
 
 1 June 2022 Greenland – Reforming Statistics 27
 
-重要な点は、出生前のSSRIがASDを引き起こすかどうかを議論することではない(これは巨大なテーマである！)が、むしろ
+重要な点は出生前のSSRIが自閉スペクトラム症(ASD)を引き起こすと主張すること(これは巨大な案件！)では<font color="red">**ない**</font>。むしろ言いたいのは、
 
-* 「スピン」(有利なように見せかけること)が、フォークする道の庭(Garden of Forking Paths)を通る推進力であるということである：「客観的な」統計量は、好ましい因果関係の物語に基づいて、そして高リスクの状況では、政治的および訴訟上の懸念に基づいて認識され、選択され、報告される。
+* **「**<font color="red">**偏った解釈 (spin)**</font>**」が“分岐する小道の庭” (The Garden of Forking Paths) を進む原動力になっているということである。「客観的」な統計ですら、好ましい因果ストーリーに基いて、重要な利害が関わる場面では**<font color="red">**政治や訴訟に関する懸念**</font>**に基づいて認識され、選択され、報告される。**
 
-* 例は健康科学や医学科学全体に豊富に存在する – これはあなたを恐れさせるべきだ！
+* **このような例は、医療・健康科学分野全体に数多く存在する**<br>― このことはあなたを震え上がらせるべきである！
 
-* そうではないと装う統計教育は、この操作を曖昧にし、助長する。
+* こうした現実を無視した統計教育は、そのような操作を覆い隠し、助長している。
+
+__訳注:__
+
+“分岐する小道の庭”：この語句はホルヘ・ルイス・ボルヘスの1941年の短編小説 <a href="https://en.wikipedia.org/wiki/The_Garden_of_Forking_Paths">The Garden of Forking Paths</a> に由来し、「無数の可能性が分岐し続ける状況」や「過去・未来が何通りにも展開しうる世界」を象徴している。
 
 ---
 
 **Slide 28**
 
-* The causal stories that “we” (researchers, reviewers, and editors) want believed causally affects analysis choices and output interpretation. The result is that reports often function as lawyering for those stories.
+* **The causal stories that “we” (researchers, reviewers, and editors) want believed causally affects analysis choices and output interpretation. The result is that reports often function as** <font color="red">**lawyering**</font> **for those stories.**
 
-* A major source of blindness to the problem is pundits in statistics and “meta-research” neglecting their own cognitive and political biases and training deficiencies, as well as the deficiencies of developers, instructors, users, and consumers of statistics.
+* **A major** <font color="red">**source**</font> **of blindness to the problem is pundits in statistics and “meta-research” neglecting their own cognitive and political biases and training deficiencies, as well as the deficiencies of** <font color="red">**developers**</font>**, instructors, users, and consumers of statistics.**
 
 1 June 2022 Greenland – Reforming Statistics 28
 
-* 「我々」(研究者、査読者、編集者)が信じさせたい因果関係の物語は、分析の選択と出力の解釈に因果的に影響する。その結果、報告書はしばしばそれらの物語のための弁護士業務として機能する。
+* **「我々」(研究者、査読者、編集者)が信じさせたい因果ストーリーは分析の選択と出力の解釈に因果的に影響を及ぼす。その結果、報告はしばしばそういうストーリーの **<font color="red">**弁護活動 (lawyering)**</font>** として機能する。**
 
-* この問題に対する盲点の主要な原因は、統計学や「メタ研究」の専門家が、自分自身の認知バイアスや政治的バイアス、訓練の欠陥、さらには統計学の開発者、教員、使用者、消費者の欠陥を無視していることである。
+* **この問題に関する盲目性の主な**<font color="red">**供給源**</font>**は、統計学や「メタ研究」の専門家が、自分自身の認知的・政治的バイアスや訓練の欠陥や、統計学の**<font color="red">**開発者**</font>**・教育者・ユーザー・消費者の欠陥を無視していることである。**
 
 ---
 
