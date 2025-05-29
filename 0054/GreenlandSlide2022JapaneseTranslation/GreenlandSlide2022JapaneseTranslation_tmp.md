@@ -291,19 +291,20 @@ The degeneration of statistical science into a collection of mathematical skelet
 
 **Slide 15**
 
-* Ugly fact: The main problems of P-values will extend to any statistic, because they stem from truth-subverting (perverse) incentives and cognitive biases, not P-values
+* **Ugly fact:** <font color="red">**The main problems of P-values will extend to any statistic**</font>**, because they stem from truth-subverting (perverse) incentives and cognitive biases, not P-values**
 
-* Perverse incentives create cognitive biases (wishful thinking, mind projection) to see what the incentives dictate. These biases pervade reports in fields like medicine.
+* **Perverse incentives create cognitive biases (wishful thinking, mind projection) to see what the incentives dictate. These biases pervade reports in fields like medicine.**
 
-* Perceptions are currently manipulated to see incentives for positive reporting while ignoring incentives for negative reporting…
+* **Perceptions are currently manipulated to see incentives for positive reporting while ignoring incentives for negative reporting…**
 
 1 June 2022 Greenland – Reforming Statistics 15
 
-* 醜い事実：P値の主な問題はあらゆる統計量に拡大するだろう。なぜなら、それらはP値からではなく、真実を覆すような(倒錯した)インセンティブと認知バイアスに起因するからである。
+* **不都合な真実：** <font color="red">**P値の主な問題は他の統計量にも及ぶ。**</font> **なぜならば、問題の根本は、P値そのものではなく、真理をゆがめる(倒錯した)インセンティブや認知バイアスにあるからである。**
 
-* 倒錯したインセンティブは、インセンティブが命じるものを見るために認知バイアス(希望的観測、心の投影)を生み出す。これらのバイアスは医学のような分野の報告に蔓延している。
 
-* 現在、認識は、否定的な報告に対するインセンティブを無視しながら、肯定的な報告に対するインセンティブを見るように操作されている…
+* **倒錯したインセンティブは、認知バイアス(希望的観測や心の投影)を生み出し、そのインセンティブに合致するものを見ようとする傾向を助長する。こうしたバイアスは、医学のような分野の報告に広く浸透している。**
+
+* **知覚は、ポジティブな報告へのインセンティブを強調する方向に操作されており、ネガティブな報告へのインセンティブは無視されがちである…**
 
 ---
 
