@@ -310,21 +310,23 @@ The degeneration of statistical science into a collection of mathematical skelet
 
 **Slide 16**
 
-* Reasoning motivated by commitment to past teaching, past practice, and financial stakes drives resistance to serious reform
+* <font color="red">**Reasoning motivated by commitment to past teaching, past practice, and financial stakes drives resistance to serious reform**</font>
 
-Example – a common label on dairy products:<br>
-“*MILK from cows not treated with rBST. *No significant difference has been shown between milk derived from cows treated with rBST and those not treated with rBST”
-
-― Here, a special-interest group forced a statement of fact to be accompanied by a misleading technical claim to benefit sales.
+Example ― a common label on dairy products:<br>
+“\* MILK from cows not treated with rBST.<br>\* **No significant difference** has been shown between milk derived from cows treated with rBST and those not treated with rBST”<br>
+― **Here, a special-interest group forced a statement of fact to be accompanied by a misleading technical claim to benefit sales.**
 
 1 June 2022 Greenland – Reforming Statistics 16
 
-* 過去の教え、過去の慣行、および経済的な利害へのコミットメントによって動機づけられた推論は、深刻な改革への抵抗を推進する。
+* <font color="red">**過去の教育・過去の慣習・金銭的利害への執着によって動機づけられた推論は、真の改革への抵抗を生む**</font>
 
-例 – 乳製品によくある表示：<br>
-「*rBST未処理の牛からの牛乳。*rBST処理された牛由来の牛乳と処理されていない牛由来の牛乳との間に有意な差は示されていない。」
+例：乳製品によくあるラベル表示：
+* この牛乳はrBSTを投与されていない牛から得られたものである。
+* rBSTを投与された牛からの牛乳と投与されていない牛からの牛乳との間に<font color="red">**有意差**</font>は得られていない。」
 
-― ここでは、特定の利益団体が、売上を有利にするために、事実表明に誤解を招く技術的な主張を付随させるよう強制した。
+― この事例では、特定の利益団体が事実の表明に誤解を招く技術的な主張を添えることを強要し、販売促進のために利用している。
+
+__訳注:__ rbSTは遺伝子組換えウシ成長ホルモンのこと。rbSTの投与の有無についての「<font color="red">**有意差**</font>は得られていない」という但し書きの強制によって特定の利益団体が利益を得た。
 
 ---
 
@@ -336,7 +338,7 @@ Millstone et al. Nature 1994: 8 trials, 19% average increase in somatic cell cou
 
 1 June 2022 Greenland – Reforming Statistics 17
 
-Millstone et al. Nature 1994: 8件の試験、rBST処理された牛の牛乳の体細胞数(膿)が平均19%増加(メタ分析 p=0.004)：
+Millstone et al. Nature 1994: rBST (遺伝子組換えウシ成長ホルモン)を投与された牛の乳に関する8件の試験の結果、体細胞数(膿)の平均増加率は19% に達した(メタ解析によるP値 = 0.004):
 
 <img width=80% src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/Milstone_et_al_1994_8trials.jpg">
 
@@ -346,28 +348,27 @@ Millstone et al. Nature 1994: 8件の試験、rBST処理された牛の牛乳の
 
 * The “replication crisis” is constantly portrayed as one of perverse incentives to make discoveries by searching out “statistical significance”, producing publication bias.
 
-* Lowering significance thresholds only
-increases the bias.
+* **Lowering significance thresholds only increases the bias.**
 
-* Any selective publication based on outcomes damages goals of building complete, unbiased public data repositories.
+* **Any** selective publication based on outcomes damages goals of building complete, unbiased public data repositories.
 
-* Yet defense and promotion of significance selection continues unabated…
+* **Yet defense and promotion of significance selection continues unabated…**
 
 1 June 2022 Greenland – Reforming Statistics 18
 
-* 「再現性の危機」は、「統計的有意性」を探し求めることで発見をしようとする倒錯したインセンティブの一つとして常に描かれ、出版バイアスを生み出している。
+* 「再現性の危機」は「統計的有意性」を探し求めることで発見を得ようとする倒錯したインセンティブの一つとして描かれ続け、出版バイアスを生み出している。
 
-* 有意水準を引き下げても、偏りはむしろ増すだけである。
+* **有意性に関する閾値を引き下げても、バイアスを強めるだけである。**
 
-* 結果に基づく選択的な出版は、完全で偏りのない公共データベースを構築するという目的を損なう。
+* 結果に基づく選択的な出版は**どのようなものであろうと**、完全で偏りのない公開されたデータリポジトリ―の構築という目的を損なう。
 
-* それにもかかわらず、有意性による選択の擁護と推進は今なお止むことがない……
+* **それにもかかわらず、有意性による選択の擁護と推進は今なお止むことがない…**
 
 ---
 
 **Slide 19**
 
-More subtly, the standard “replication crisis” story ignores instances of perverse incentives to find and report negative results (e.g., by upward P-hacking or by misreporting ambiguous results as negative), for example
+More subtly, the standard “replication crisis” story ignores instances of perverse incentives to find and report **negative** results (e.g., by <font color="red">**upward**</font> **P-hacking or by misreporting ambiguous results as negative**), for example
 
 * When researchers, sponsors, and editors want
 to dismiss undesirable associations; or
@@ -378,11 +379,13 @@ to dismiss undesirable associations; or
 
 1 June 2022 Greenland – Reforming Statistics 19
 
-* より巧妙には、標準的な「再現性の危機」の物語は、否定的な結果を見つけて報告するための倒錯したインセンティブの事例(例えば、上方P値操作や、曖昧な結果を否定的な結果として誤って報告することなど)を無視している。例えば
+より巧妙なことに、「再現性の危機」に関する標準的な話では、否定的な結果を見つけて報告するための倒錯したインセンティブの事例(例えば、<font color="red">**上方**</font>**P値操作(**<font color="red">**upward**</font> **P-hacking)や曖昧な結果を否定的な結果として誤って報告することなど**)を無視している。例えば、
 
-* 研究者、スポンサー、編集者が望ましくない関連性を却下したい場合、または「再現性の失敗」やその他の関連性への異議申し立てが、単なる再現よりも出版されやすい場合。
+* 研究者・スポンサー・編集者が望ましくない関連性を却下したい場合、もしくは
 
-* またはその両方…
+* 「再現性の失敗」やその他の関連性への異議申し立ての方が、単なる再現研究よりも出版されやすい場合。
+
+* もしくは、その両方…
 
 ---
 
