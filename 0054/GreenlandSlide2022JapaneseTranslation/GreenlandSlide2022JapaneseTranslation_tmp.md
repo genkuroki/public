@@ -11,7 +11,8 @@ evolved from: <br>
 **‘How to not lie with statistics:**
 <font color="red">**use descriptive imagery, not inference**</font>’<br> 
 **‘The need for <font color="red">cognitive science and causality</font> in statistics
-teaching and practice’ ‘Statistics as a condemned building: plans for
+teaching and practice’**<br>
+**‘Statistics as a condemned building: plans for
 demolition and reconstruction’**
 
 Sander Greenland, Dept of Epidemiology and Dept of Statistics, UCLA<br>
@@ -19,22 +20,22 @@ Please report errors and send comments to Sander Greenland at lesdomes@ucla.edu
 
 1 June 2022 Greenland – Reforming Statistics 1
 
-統計学改革の推進：抵抗に直面した思考と実践の改善策
-元となったもの：
-「合理的な認知に対する統計的専制を打ち破る」
-「確率と推論の前の認知と因果関係」
-「統計で嘘をつかない方法：推論ではなく記述的なイメージを用いる」
-「統計教育と実践における認知科学と因果関係理論の必要性」
-「統計学は取り壊し予定の建物：解体と再建の計画」
-サンダー・グリーンランド、UCLA疫学部門および統計学部門
+**統計学改革の推進：抵抗に直面しても思考と実践を改善するための方法**<br>
+以下の構想の発展：<br>
+「**合理的認知に対する統計的専制の打破**」<br>
+「<font color="red">**確率と推論よりも認知と因果関係を優先する**</font>」<br>
+「**統計で嘘をつかないために**、<font color="red">**推論ではなく記述的なイメージを用いる**</font>」<br>
+「**統計教育と実践における**<font color="red">**認知科学と因果**</font>**の必要性**」<br>
+「**統計学は取り壊し予定の建物：解体と再建の計画**」
+
+Sander Greenland, Dept of Epidemiology and Dept of Statistics, UCLA<br>
 誤りの報告やコメントは Sander Greenland (lesdomes@ucla.edu) までお寄せください。
 
 ---
 
 **Slide 2**
 
-**Science progresses funeral by funeral,
-but in statistics authority is immortal**
+**Science progresses funeral by funeral,<br>but in statistics authority is immortal**
 
 * **Heroic narrative:** Science progresses by each generation challenging the ideas of its predecessors, discarding those that fail stringent **empirical** tests.
 
@@ -42,23 +43,27 @@ but in statistics authority is immortal**
 
 1 June 2022 Greenland – Reforming Statistics 2
 
-科学は葬式ごとに進歩するが、統計学では権威は不死身である
+**科学は葬式ごとに進歩するが、<br>統計学では権威は不死身である**
 
-英雄的な物語：科学は各世代が先人の考えに挑戦し、厳格な経験的テストに失敗したものを捨てることで進歩する。
+* 英雄的な物語：各世代が前の世代の考えに挑戦し、厳密な**実証的な**検証に耐えられなかったものを捨てることによって進歩する。
 
-対照的に、統計学は伝統的な方法論を神聖化し、それを学術的な数学的および哲学的訴えで擁護し、公の情報への害を過小評価することで退廃してきた。
+* それとは対照的に、**統計学は伝統的な手法達を神聖化することによって堕落して来た**。そして、伝統的な手法達を数学的・哲学的な学術的議論によって擁護し、公的情報への害を過小評価してきた。
 
 ---
 
 **Slide 3**
 
-Consequence: Fig. 1 van Zwet & Cator 2021 Over a million z-values from Medline 1976-2019. Imputed curve right-skewed with >75% above 0:
+Consequence: Fig. 1 van Zwet & Cator 2021<br>
+Over a million z-values from Medline 1976-2019.<br>
+Imputed curve right-skewed with >75% above 0:
 
 <img width=80% src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/van_Zwet--Cator_2021_Fig1.jpg">
 
 1 June 2022 Greenland – Reforming Statistics 3
 
-結果：図1 van Zwet & Cator 2021 Medline 1976-2019から抽出された100万以上のZ値。補間曲線は右に歪んでおり、75%以上が0を上回る：
+その帰結：図1 van Zwet & Cator 2021<br>
+Medline 1976-2019から抽出された100万個以上のz値。<br>
+推定された分布曲線は右に歪んでおり、75%超が0より大きい：
 
 <img width=80% src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/van_Zwet--Cator_2021_Fig1.jpg">
 
@@ -66,15 +71,15 @@ Consequence: Fig. 1 van Zwet & Cator 2021 Over a million z-values from Medline 1
 
 **Slide 4**
 
-* Sanktification of cognitive biases (like nullism and dichotomania) as “scientific principles”, treatment of mathematical frameworks as if physical realities (reification), and neglect of human biases (such as craving certainty and finality) have rotted the core of statistics.
+* **Sanktification of** <font color="red">**cognitive biases**</font> **(like nullism and dichotomania) as “scientific principles”, treatment of mathematical frameworks as if physical realities (reification), and neglect of human biases (such as craving certainty and finality) have rotted the core of statistics.**
 
-* A solution: Reconstruct statistics as an information science, not as a branch of probability theory, with cognitive science and causality theory as core components.
+* **A solution: Reconstruct statistics as an** <font color="red">**information science**</font>, <u>**not**</u> **as a branch of probability theory, with cognitive science and causality theory as core components.**
 
 1 June 2022 Greenland – Reforming Statistics 4
 
-* 認知バイアス(ゼロ仮説主義や二分法病など)を「科学的原則」として神聖化すること、数学的枠組みを物理的現実であるかのように扱うこと(モデルと現実の混同)、そして人間のバイアス(確実性や最終性を切望するなど)を無視することが、統計学の核心を腐敗させてきた。
+* <font color="red">**認知バイアス**</font>**(ゼロ仮説主義(nullism)や二分法病(dichotomania)など)を「科学的原則」として神聖化すること、数学的枠組みを物理的現実であるかのように扱うこと(モデルと現実の混同(reification))、そして人間のバイアス(確実性や最終性を切望するなど)を無視することが、統計学の核心を腐敗させてきた。**
 
-* 解決策：統計学を確率論の一分野としてではなく、認知科学と因果関係理論を中核要素とする情報科学として再構築する。
+* **解決策：統計学を確率論の一分野としてでは**<u>**なく**</u>**、**<font color="red">**情報科学**</font>**として再構築し、その中心に認知科学と因果論をすえるべきである。**
 
 ---
 
@@ -82,24 +87,21 @@ Consequence: Fig. 1 van Zwet & Cator 2021 Over a million z-values from Medline 1
 
 In the radical Bayesianism of DeFinetti, all probability is “subjective” – describing only properties of observer’s minds. In that view
 
-* The idea that patterns are “caused by chance” is
-absurd as a causal statement about the world;
+* The idea that patterns are “caused by chance” is absurd as a causal statement about the world;
 
-* Rather, we seek causal explanations for a
-recognized pattern by considering a highly nonrandom (biased) selection of the few causal possibilities that are put forth as plausible;
+* Rather, we seek **causal explanations** for a recognized pattern by considering a highly nonrandom (biased) selection of the few causal possibilities that are put forth as plausible;
 
 * We then reify the residual infinitude of unconsidered causal explanations as forming a metaphysical cause called “chance”.
 
 1 June 2022 Greenland – Reforming Statistics 5
 
-DeFinettiのラディカル・ベイズ主義では、すべての確率は「主観的」であり、観察者の心の性質のみを記述する。その見方では
+デフィネッティ(de Finetti)の急進的なベイズ主義では、すべての確率は「主観的」であり、観測者の心の性質のみを記述する。その見方では、
 
-* パターンが「偶然によって引き起こされる」という考えは、
-世界に関する因果的な言明としては不合理である。
+* パターンが「偶然によって引き起こされる」という考えは、世界に関する因果的な主張としては全く不合理である。
 
-* むしろ、我々は認識されたパターンに対する因果的説明を、妥当であると提唱される少数の因果的可能性から、極めて非ランダムな(偏りのある)選択を考慮することによって探求する。
+* むしろ、我々は認識されたパターンに関する**因果的説明**の探索を、妥当であると考えられる少数の因果的可能性から、高度に非ランダムな(偏りのある)選択を考えることによって行う。
 
-* 我々は次に、考慮されなかった残りの無限の因果的説明を、「偶然」と呼ばれる形而上学的な原因を形成するものとして、モデルと現実の混同を行う。
+* 我々は次に、考慮されなかった残りの無限の因果的説明を、「偶然」と呼ばれる形而上学的な原因を形成するものとして、実在するものであるかのように扱う(reify)。
 
 ---
 
