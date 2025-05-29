@@ -269,23 +269,23 @@ Rules that were apparently successful for narrow automated environments induced 
 
 **Slide 14**
 
-The degeneration of statistical science into a collection of mathematical skeletons left behind explication of and training in essential components of scientific inference:
+The degeneration of statistical science into a collection of mathematical skeletons left behind explication of and training in essential components of **scientific inference**:
 
-* How causal networks (not probabilities) produce data, inferences, and decisions.
+* How **causal networks (not probabilities) produce data, inferences, and decisions**.
 
-* How cognitive biases as well as procedural problems enter those causal networks.
+* How **cognitive biases as well as procedural problems enter those causal networks**.
 
-* How valuations (motivations, goals, real costs and benefits) affect cognition and are implicit in all methodologies.
+* <font color="red">How **valuations** (motivations, goals, real costs and benefits) **affect cognition and are implicit in all methodologies**.</font>
 
 1 June 2022 Greenland – Reforming Statistics 14
 
-統計科学が数学的な骨組みの集まりに退化し、科学的推論の本質的な構成要素の説明と訓練が置き去りにされた：
+統計科学の数学的な骨組みの集まりへの退化が、**科学的推論**に不可欠な要素に関する明確な説明と訓練が置き去りにされた：
 
-* 因果ネットワーク(確率ではない)がデータ、推論、決定をどのように生成するか。
+* **因果ネットワーク(確率ではない)がデータ・推論・決定をどのように生成するか**。
 
-* 認知バイアスや手続き上の問題がそれらの因果ネットワークにどのように入り込むか。
+* **認知バイアスや手続き上の問題がそうした因果ネットワークにどのように入り込むか**。
 
-* 評価(動機、目標、実際のコストと利益)が認知にどのように影響し、すべての方法論に暗黙的に含まれているか。
+* <font color="red">**評価(動機・目標・実際のコスト・利益)が認知にどのように影響し、すべての方法論に暗黙のうちに含まれているか**。</font>
 
 ---
 
