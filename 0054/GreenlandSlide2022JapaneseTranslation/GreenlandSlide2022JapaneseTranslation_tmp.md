@@ -626,62 +626,68 @@ __訳注:__ EBM は evidence-based medicine の略で「根拠に基づく医療
 
 **Slide 32**
 
-Survey from MedPage Today May 21, 2021: “Bait and Switch in IBD Trials? Primary outcomes often go unreported or changed midstream”
+Survey from *MedPage Today* May 21, 2021:<br>
+“Bait and Switch in IBD Trials? Primary outcomes often go unreported or changed midstream”
 
-* “Analysis of 57 phase III trials with published
-results indicated that half \[~50%\] either never reported at least one of the prespecified primary outcomes (17.5%) or at least one was changed without explanation (33.3%).”
+* “Analysis of 57 phase III trials with published results indicated that **half \[~50%\] either never reported at least one of the prespecified primary outcomes (17.5%) or at least one was changed without explanation (33.3%)**.”
 
-Other studies found many registered trials are never published despite stated intent to do so.
+**Other studies found many registered trials are never published despite stated intent to do so.**
 
 1 June 2022 Greenland – Reforming Statistics 32
 
-MedPage Today 2021年5月21日からの調査：「IBD試験におけるベイトアンドスイッチ(おとり商法)？主要評価項目はしばしば報告されないか、途中で変更される」
+*MedPage Today* (2021年5月21日)による調査：<br>
+「炎症性腸疾患(IBD)に関する治験での『ごまかし (Bait and Switch)』？<br>
+主要アウトカムは報告されなかったり、途中で変更されたりすることが多い」
 
-* 「公開された結果を持つ57件の第III相試験の分析は、半数\[約50%\]が事前に指定された主要評価項目の少なくとも一つを全く報告しなかった(17.5%)、または少なくとも一つが説明なく変更された(33.3%)ことを示した。」
+* 「結果が出版されている57件の第Ⅲ相試験の分析は、半数 (約50%) が事前に指定された主要アウトカムの少なくとも一つを全く報告しなかったり(17.5%)、少なくとも一つが説明なく変更されていたり(33.3%)していることを示した。」
 
-他の研究では、多くの登録された試験が、その旨を明記しているにもかかわらず、決して出版されないことがわかった。
+**他の研究では、多くの**<u>**登録された**</u>**治験が、発表することを明記しているにもかかわらず、結局出版されていないことを示している。**
 
 ---
 
 **Slide 33**
 
-Empirical fact: We are all stupid (if not corrupt)
+Empirical fact: <font color="red">**We are all stupid**</font> (if not corrupt)
 
-Amos Tversky: “My colleagues they study artificial intelligence; me, I study natural stupidity.”
+Amos Tversky: “**My colleagues they study artificial intelligence; me, I study natural stupidity**.”
 
-“Whenever there is a simple error that most laymen fall for, there is always a slightly more sophisticated version of the same problem that experts fall for.”
+“<font color="red">**Whenever there is a simple error that most laymen fall for, there is always a slightly more sophisticated version of the same problem that experts fall for**</font>.”
 
-Example: P-value = “probability of the null” vs. P-value = “probability chance alone produced the association” – but “chance alone” is the null!
+Example: P-value = “probability of the null” vs. P-value = “probability chance alone produced the association” – but “chance alone” **is** the null!
 
 1 June 2022 Greenland – Reforming Statistics 33
 
-経験的事実：我々は皆愚かである(腐敗していないとしても)
+経験的事実：<font color="red">**我々はみんな馬鹿である**</font> (もしも堕落していなければ)
 
-Amos Tversky：「私の同僚は人工知能を研究している。私は自然な愚かさを研究している。」
+エイモス・トベルスキー：「私の同僚は人工知能を研究している。私は自然な愚かさを研究している。」
 
-「ほとんどの素人が陥る単純な誤りがあるとき、専門家が陥る同じ問題の少し洗練されたバージョンが必ず存在する。」
+「ほとんどの素人が陥る単純な誤りがあるときには、専門家も陥る同じ問題の少しだけ洗練されたバージョンが常に存在する。」
 
-例：P値 = 「帰無仮説の確率」対 P値 = 「偶然のみが関連性を生み出した確率」 – しかし、「偶然のみ」こそが帰無仮説である！
+例：P値=「帰無仮説が正しい確率」 vs. P値=「偶然だけでその関連性が生じた確率」<br>
+― “偶然だけ”は帰無仮説**そのものである**！
+
+__訳注:__ <a href="https://ja.wikipedia.org/wiki/%E3%82%A8%E3%82%A4%E3%83%A2%E3%82%B9%E3%83%BB%E3%83%88%E3%83%99%E3%83%AB%E3%82%B9%E3%82%AD%E3%83%BC">エイモス・トベルスキー</a> (<a href="https://en.wikipedia.org/wiki/Amos_Tversky">Amos Tversky</a>) はイスラエル出身の心理学者。スタンフォード大学教授。ダニエル・カーネマンとともに行動経済学を作った。
 
 ---
 
 **Slide 34**
 
-**Empirical fact:** Incompetence among the exalted is the norm
+**Empirical fact:**<br>
+<font color="red">**Incompetence among the exalted is the** <u>**norm**</u></font>
 
-Tversky: “It's frightening to think that you might not know something, but more frightening to think that, by and large, the world is run by people who have faith that they know exactly what is going on.”<br>
-― Equally true in research and methodology!
+Tversky: “It's frightening to think that you might not know something, but more frightening to think that, by and large, the world is run by **people who have faith that they know exactly what is going on**.”<br>
+― Equally true in research **and** methodology!
 
-* The Covid-19 pandemic has supplied us with vivid real-world examples – but no agreement about who those examples are.
+* **The Covid-19 pandemic has supplied us with vivid real-world examples – but no agreement about who those examples are.**
 
 1 June 2022 Greenland – Reforming Statistics 34
 
-**経験的事実：** 高く評価されている人々の中に無能がいるのは、むしろ当たり前のこと。
+**経験的事実：** **権威者達の無能は**<u>**当たり前**</u>
 
-ツヴェルスキー：「自分が何かを知らないかもしれないと考えるのは怖い。しかしもっと怖いのは、世界の大半が“自分は何が起きているかを正確に理解している”と信じている人々によって動かされているという事実だ。」<br>
-― これは研究や方法論の世界でも、まったく同じことが言える！
+エイモス・トベルスキー：「自分が何かを知らないかもしれないと考えるのは恐ろしいことだが、それ以上に恐ろしいのは、世の中が、**自分は何が起こっているかを完全に理解していると信じている人たち**によって動かされているという現実だ。」<br>
+― これは研究**と**方法論にも当てはまる！
 
-* 新型コロナウイルスのパンデミックは、このことを如実に示す現実世界の例を私たちに与えた —— ただし、それが誰を指すのかについては、まったく合意が得られていない。
+* **新型コロナウイルス (Covid-19) のパンデミックは、このことを示す生々しい実例を我々に提供した。**<br>**― しかし、誰がその実例かについては合意が得られていない。**
 
 ---
 
