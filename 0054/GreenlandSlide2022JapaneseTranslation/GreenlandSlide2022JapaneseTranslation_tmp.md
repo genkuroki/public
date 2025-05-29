@@ -600,24 +600,27 @@ __訳注:__ EBM は evidence-based medicine の略で「根拠に基づく医療
 
 **Slide 31**
 
-**A typical example**: RCT by Vallejos et al. ‘Ivermectin to prevent hospitalizations in patients with COVID-19’ BMC ID 2 July 2021…
+**A typical example**: RCT by Vallejos et al.<br>
+‘Ivermectin to prevent hospitalizations in patients with COVID-19’ BMC ID 2 July 2021…
 
-* Abstract: OR = 0.65; 95% CI 0.32, 1.31; p = .23 reported as “Ivermectin had no significant effect on preventing hospitalization”.
+* Abstract: OR = **0.65**; 95% CI <font color="red">**0.32**</font>, <font color="red">**1.31**</font>; p = .23 reported as “Ivermectin had no significant effect on preventing hospitalization”.
 
-* Gideon M-K “Health Nerd” (Medium 16 July 2021) wrote that the trial “found no benefit for ivermectin on death” – BUT p. 5 of Vallejos et al.: OR = 1.34, 95% CI 0.30, 6.07 from 4 ivermectin + 3 placebo deaths.
+* Gideon M-K “Health Nerd” (Medium 16 July 2021) wrote that the trial “found no benefit for ivermectin on death” – **BUT** p. 5 of Vallejos et al.: OR = **1.34**, 95% CI <font color="red">**0.30**</font>, <font color="red">**6.07**</font> **from** <font color="red">**4**</font> **ivermectin +** <font color="red">**3**</font> **placebo deaths**.
 
-* The trial was too small to show anything! 1 June 2022 Greenland – Reforming Statistics 31
+* **The trial was too small to show** <font color="red">**anything!**</font>
 
 1 June 2022 Greenland – Reforming Statistics 31
 
-典型的な例：Vallejos et al. によるRCT「COVID-19患者の入院を予防するためのイベルメクチン」 BMC ID 2021年7月2日…
+典型例：Vallejos et al. によるランダム化比較試験(RCT)<br>
+「COVID-19患者の入院を予防するためのイベルメクチン」 BMC ID 2021年7月2日…
 
-* 要旨：OR = 0.65; 95%信頼区間 0.32, 1.31; p = .23
-と報告され、「イベルメクチンは入院予防に有意な効果はなかった」。
+* 要旨： OR = **0.65**; 95\%信頼区間 <font color="red">**0.32**</font>～<font color="red">**1.31**</font>; p = 0.23 という結果が、「イベルメクチンは入院予防に有意な効果はなかった」と報告された。
 
-* Gideon M-K「ヘルスナード」(Medium 2021年7月16日)は、この試験が「イベルメクチンの死亡に対する効果は認められなかった」と書いた – しかし、Vallejos et al. のp. 5には：イベルメクチン群4名+プラセボ群3名の死亡からのOR = 1.34, 95%信頼区間 0.30, 6.07。
+* Gideon M-K (通称 “Health Nerd”, Medium 2021年7月16日)は、この試験が「イベルメクチンの死亡に対する効果は認められなかった」と書いた – しかし、Vallejos et al. のp. 5には：イベルメクチン群4名+プラセボ群3名の死亡からのOR = 1.34, 95%信頼区間 0.30, 6.07。
 
-* この試験は何かを示すには小さすぎた！
+* Gideon Meyerowitz-Katz (通称 “Health Nerd”)は2021年7月16日のMediumで、この試験によって「イベルメクチンは死亡率に関して効果がないことがわかった」と書いた。<br>― しかし Vallejos et al. の論文の5ページ目には OR = **1.34**；95\%信頼区間 <font color="red">**0.30**</font>～<font color="red">**6.07**</font> (**イベルメクチン群**<font color="red">**4例**</font>**の脂肪、プラセボ群**<font color="red">**3例**</font>**の死亡**)とある。
+
+* この試験は<font color="red">**何か**</font>を示すには小さすぎた！
 
 ---
 
