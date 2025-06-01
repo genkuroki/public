@@ -1,4 +1,8 @@
-https://biostatistics.ucdavis.edu/sites/g/files/dgvnsk4966/files/inline-files/Greenland.Advancing%20statistics%20reform%2C%20part%204.Slides%201-110%2C%2001%20June%202022.pdf の翻訳
+# 統計学改革の推進
+
+* Sander Greenland
+* 1 June 2022
+* https://biostatistics.ucdavis.edu/sites/g/files/dgvnsk4966/files/inline-files/Greenland.Advancing%20statistics%20reform%2C%20part%204.Slides%201-110%2C%2001%20June%202022.pdf の翻訳
 
 ---
 
@@ -466,7 +470,7 @@ Is it mere ignorance? No, I posit **it’s forced on authors to protect industry
 
 ---
 
-**Slice 24**
+**Slide 24**
 
 Brown et al. cited their own report of the same increased risk in their own meta-analysis of 4 earlier cohorts with **HR** <font color="red">**1.7**</font> **\[**<font color="red">**1.1**</font>, <font color="red">**2.6**</font>**\]** <font color="red">**but**</font>**…**
 
@@ -1501,7 +1505,7 @@ Greenland & Rafi 「統計科学を支援する意味論的および認知的ツ
 
 ---
 
-**Slide 68**
+**Slide 77**
 
 **Overthrow misleading traditional jargon (Statspeak) to realign statistical terminology with ordinary language:**
 
@@ -1745,7 +1749,7 @@ Rafi & Greenland BMC Med Res Methodol 2020 より
 
 ---
 
-** Slide 89**
+**Slide 89**
 
 **TRANSLATE P-values to S-values (surprisals) to gauge the evidence supplied by test statistics**
 
