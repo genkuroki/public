@@ -6,7 +6,7 @@
 
 ---
 
-**Slide 1**
+## Slide 1
 
 **Advancing statistics reform: Ways to improve thinking and practice in the face of resistance,**<br>
 evolved from: <br>
@@ -37,7 +37,7 @@ Sander Greenland, Dept of Epidemiology and Dept of Statistics, UCLA<br>
 
 ---
 
-**Slide 2**
+## Slide 2
 
 **Science progresses funeral by funeral,<br>but in statistics authority is immortal**
 
@@ -55,7 +55,7 @@ Sander Greenland, Dept of Epidemiology and Dept of Statistics, UCLA<br>
 
 ---
 
-**Slide 3**
+## Slide 3
 
 Consequence: Fig. 1 van Zwet & Cator 2021<br>
 Over a million z-values from Medline 1976-2019.<br>
@@ -73,7 +73,7 @@ Medline 1976-2019から抽出された100万個以上のz値。<br>
 
 ---
 
-**Slide 4**
+## Slide 4
 
 * **Sanktification of** <font color="red">**cognitive biases**</font> **(like nullism and dichotomania) as “scientific principles”, treatment of mathematical frameworks as if physical realities (reification), and neglect of human biases (such as craving certainty and finality) have rotted the core of statistics.**
 
@@ -87,7 +87,7 @@ Medline 1976-2019から抽出された100万個以上のz値。<br>
 
 ---
 
-**Slide 5**
+## Slide 5
 
 In the radical Bayesianism of DeFinetti, all probability is “subjective” – describing only properties of observer’s minds. In that view
 
@@ -109,7 +109,7 @@ In the radical Bayesianism of DeFinetti, all probability is “subjective” –
 
 ---
 
-**Slide 6**
+## Slide 6
 
 * **All analyses should be viewed as part of a vastly incomplete sensitivity analysis.**
 
@@ -131,7 +131,7 @@ In the radical Bayesianism of DeFinetti, all probability is “subjective” –
 
 ---
 
-**Slide 7**
+## Slide 7
 
 **What unifies these inference concepts?<br>- Not probability, but causation:**
 
@@ -153,7 +153,7 @@ In the radical Bayesianism of DeFinetti, all probability is “subjective” –
 
 ---
 
-**Slide 8**
+## Slide 8
 
 Answer: **Any** reform that still leads to selective reporting based on study outcomes will distort the distribution of available outcomes relative to the total
 
@@ -167,7 +167,7 @@ Answer: **Any** reform that still leads to selective reporting based on study ou
 
 ---
 
-**Slide 9**
+## Slide 9
 
 **What is INFERENCE?**
 
@@ -192,7 +192,7 @@ There is a logically coherent “objective” (observer-external) reality that c
 
 ---
 
-**Slide 10**
+## Slide 10
 
 **Contrast scientific inference to**
 
@@ -214,7 +214,7 @@ There is a logically coherent “objective” (observer-external) reality that c
 
 ---
 
-**Slide 11**
+## Slide 11
 
 * **Statistics ignored or denigrated semantics and ordinary language, favoring instead deceptive jargon promising “significance” and “confidence” even when studies provide nothing close without huge leaps of faith.**
 
@@ -229,7 +229,7 @@ There is a logically coherent “objective” (observer-external) reality that c
 
 ---
 
-**Slide 12**
+## Slide 12
 
 **The scientific community eagerly contributed to the degeneration of statistical science**
 
@@ -253,7 +253,7 @@ Rules that were apparently successful for narrow automated environments induced 
 
 ---
 
-**Slide 13**
+## Slide 13
 
 **The prevailing rules became especially popular and destructive via enforced dichotomies**
 
@@ -271,7 +271,7 @@ Rules that were apparently successful for narrow automated environments induced 
 
 ---
 
-**Slide 14**
+## Slide 14
 
 The degeneration of statistical science into a collection of mathematical skeletons left behind explication of and training in essential components of **scientific inference**:
 
@@ -293,7 +293,7 @@ The degeneration of statistical science into a collection of mathematical skelet
 
 ---
 
-**Slide 15**
+## Slide 15
 
 * **Ugly fact:** <font color="red">**The main problems of P-values will extend to any statistic**</font>**, because they stem from truth-subverting (perverse) incentives and cognitive biases, not P-values**
 
@@ -312,7 +312,7 @@ The degeneration of statistical science into a collection of mathematical skelet
 
 ---
 
-**Slide 16**
+## Slide 16
 
 * <font color="red">**Reasoning motivated by commitment to past teaching, past practice, and financial stakes drives resistance to serious reform**</font>
 
@@ -334,7 +334,7 @@ __訳注:__ rbSTは遺伝子組換えウシ成長ホルモンのこと。rbSTの
 
 ---
 
-**Slide 17**
+## Slide 17
 
 Millstone et al. Nature 1994: 8 trials, 19% average increase in somatic cell count (pus) in milk from cows treated with rBST (meta p=0.004):
 
@@ -348,7 +348,7 @@ Millstone et al. Nature 1994: rBST (遺伝子組換えウシ成長ホルモン)�
 
 ---
 
-**Slide 18**
+## Slide 18
 
 * The “replication crisis” is constantly portrayed as one of perverse incentives to make discoveries by searching out “statistical significance”, producing publication bias.
 
@@ -370,7 +370,7 @@ Millstone et al. Nature 1994: rBST (遺伝子組換えウシ成長ホルモン)�
 
 ---
 
-**Slide 19**
+## Slide 19
 
 More subtly, the standard “replication crisis” story ignores instances of perverse incentives to find and report **negative** results (e.g., by <font color="red">**upward**</font> **P-hacking or by misreporting ambiguous results as negative**), for example
 
@@ -393,7 +393,7 @@ to dismiss undesirable associations; or
 
 ---
 
-**Slide 20**
+## Slide 20
 
 **A typical example** (Brown et al., “Association between serotonergic antidepressant use during pregnancy and autism spectrum disorder in children”, JAMA 2017;317:1544-52), abstract:
 
@@ -423,7 +423,7 @@ __訳注:__
 
 ---
 
-**Slide 21**
+## Slide 21
 
 Articles decrying this sort of misreporting date at least back to Karl Pearson **1906**:
 
@@ -448,7 +448,7 @@ Is it mere ignorance? No, I posit **it’s forced on authors to protect industry
 
 ---
 
-**Slide 22**
+## Slide 22
 
 “…**the distinction between statistical significance and social importance should be apparent to all research workers**… upon us is placed the responsibility of determining whether real differences exist and then of indicating their social importance **and their cost**. <font color="red">**When we fail to find any statistically significant differences, we are not justified in concluding at once that no real differences exist**</font>.” – P. 118 of JW Tyler, Educational Research Bulletin, Mar. 4, 1931
 
@@ -458,7 +458,7 @@ Is it mere ignorance? No, I posit **it’s forced on authors to protect industry
 
 ---
 
-**Slide 23**
+## Slide 23
 
 “One of the most pernicious abuses of automated decision making occurs when clinical treatments are asserted to be equivalent, based on a nonsignificant P-value for the observed difference…we should continue to resist any attempts to automate our decisions, as in formal hypothesis testing.”<br>
 ― Claire Weinberg, “**It’s Time to Rehabilitate the P-value**”, Epidemiology 2001; 12: 288-290.
@@ -470,7 +470,7 @@ Is it mere ignorance? No, I posit **it’s forced on authors to protect industry
 
 ---
 
-**Slide 24**
+## Slide 24
 
 Brown et al. cited their own report of the same increased risk in their own meta-analysis of 4 earlier cohorts with **HR** <font color="red">**1.7**</font> **\[**<font color="red">**1.1**</font>, <font color="red">**2.6**</font>**\]** <font color="red">**but**</font>**…**
 
@@ -492,7 +492,7 @@ Brown et al. は、自ら実施した<font color="red">**4つ**</font>の先行�
 
 ---
 
-**Slide 25**
+## Slide 25
 
 That’s because most were certain this highly replicated association was pure confounding:
 
@@ -506,7 +506,7 @@ That’s because most were certain this highly replicated association was pure c
 
 ---
 
-**Slide 26**
+## Slide 26
 
 **The dominant social bias talks as if all incentives are to “discover” rather than to refute effects. This meta-bias is rampant in the “replication crisis” literature, which uncritically ignores differences in incentives across topics and authors.**
 
@@ -520,7 +520,7 @@ That’s because most were certain this highly replicated association was pure c
 
 ---
 
-**Slide 27**
+## Slide 27
 
 The point is <font color="red">**not**</font> to argue that prenatal SSRIs cause ASD (massive topic!), but rather that
 
@@ -546,7 +546,7 @@ __訳注:__
 
 ---
 
-**Slide 28**
+## Slide 28
 
 * **The causal stories that “we” (researchers, reviewers, and editors) want believed causally affects analysis choices and output interpretation. The result is that reports often function as** <font color="red">**lawyering**</font> **for those stories.**
 
@@ -560,7 +560,7 @@ __訳注:__
 
 ---
 
-**Slide 29**
+## Slide 29
 
 * **Romantic heroic-fantasy science:**<br>**Committed to fact-finding and dissemination of valid facts regardless of the social consequences…**
 
@@ -578,7 +578,7 @@ __訳注:__
 
 ---
 
-**Slide 30**
+## Slide 30
 
 Example: The endless expert “EBM” promotion of randomized trials as “gold standards” when they are no such thing due to
 
@@ -602,7 +602,7 @@ __訳注:__ EBM は evidence-based medicine の略で「根拠に基づく医療
 
 ---
 
-**Slide 31**
+## Slide 31
 
 **A typical example**: RCT by Vallejos et al.<br>
 ‘Ivermectin to prevent hospitalizations in patients with COVID-19’ BMC ID 2 July 2021…
@@ -628,7 +628,7 @@ __訳注:__ EBM は evidence-based medicine の略で「根拠に基づく医療
 
 ---
 
-**Slide 32**
+## Slide 32
 
 Survey from *MedPage Today* May 21, 2021:<br>
 “Bait and Switch in IBD Trials? Primary outcomes often go unreported or changed midstream”
@@ -649,7 +649,7 @@ Survey from *MedPage Today* May 21, 2021:<br>
 
 ---
 
-**Slide 33**
+## Slide 33
 
 Empirical fact: <font color="red">**We are all stupid**</font> (if not corrupt)
 
@@ -674,7 +674,7 @@ __訳注:__ <a href="https://ja.wikipedia.org/wiki/%E3%82%A8%E3%82%A4%E3%83%A2%E
 
 ---
 
-**Slide 34**
+## Slide 34
 
 **Empirical fact:**<br>
 <font color="red">**Incompetence among the exalted is the** <u>**norm**</u></font>
@@ -695,7 +695,7 @@ Tversky: “It's frightening to think that you might not know something, but mor
 
 ---
 
-**Slide 35**
+## Slide 35
 
 * Kahneman: “**People assign much higher probability to the truth of their opinions than is warranted**.”
 
@@ -715,7 +715,7 @@ __訳注:__ 事前分布のスパイク(prior spike)は差を表すパラメー�
 
 ---
 
-**Slide 36**
+## Slide 36
 
 Yet more Kahnemann:
 
@@ -741,7 +741,7 @@ And most relevant to statistics in soft sciences:
 
 ---
 
-**Slide 37**
+## Slide 37
 
 <font color="red">**Example**</font>: “**if the p-value for the effect is greater than the journal’s threshold p-value, then the editor can immediately reject the paper**, which saves the journal from spending any more time on the (unconvincing) paper…if a result is statistically significant, this means no more than that there is enough weight of evidence for the studied effect to make the paper reporting the effect **worth considering for publication**.”<br>
 ― Fisher 1920s? No, Statistics 2021:<br>
@@ -755,7 +755,7 @@ Mcnaughton, *The War on Statistical Significance*.
 
 ---
 
-**Slide 38**
+## Slide 38
 
 Ignores a fact noted by the 1950s: **Any** selective reporting based on study outcomes will distort the distribution of available outcomes relative to the total
 
@@ -769,7 +769,7 @@ Ignores a fact noted by the 1950s: **Any** selective reporting based on study ou
 
 ---
 
-**Slide 39**
+## Slide 39
 
 **Any instruction purporting to cover the basics of inference needs to include cognitive science to deal with social delusions and biases such a**s
 
@@ -791,7 +791,7 @@ Ignores a fact noted by the 1950s: **Any** selective reporting based on study ou
 
 ---
 
-**Slide 40**
+## Slide 40
 
 **Nullism has a long and glorious history among physics idolaters as** <font color="red">**pseudo-skepticism**</font> (empirically indefensible certainty about nulls):
 
@@ -815,7 +815,7 @@ __訳注:__ pseudo-skepticismを「擬似懐疑主義」と直訳せずに、よ
 
 ---
 
-**Slide 41**
+## Slide 41
 
 * **Against Nullism**: Reality is under no obligation to be simple or decisive.
 
@@ -833,7 +833,7 @@ __訳注:__ pseudo-skepticismを「擬似懐疑主義」と直訳せずに、よ
 
 ---
 
-**Slide 42**
+## Slide 42
 
 **Many other cognitive biases contribute to design, analysis, reporting, publication biases**<br>
 https://en.wikipedia.org/wiki/List_of_cognitive_biases
@@ -865,7 +865,7 @@ __訳注:__ Anchoring to ... の項目に「固着バイアス」(anchoring bias
 
 ---
 
-**Slide 43**
+## Slide 43
 
 * <font color="red">**Failure to test alternatives**</font> (“congruence bias”)
 
@@ -895,7 +895,7 @@ __訳注:__ congruence biasを「代替仮説軽視バイアス」と訳した�
 
 ---
 
-**Slide 44**
+## Slide 44
 
 * <font color="red">**Familiarity bias**</font> – over-reliance on familiar methods, ignoring alternative approaches (“gets me grants and papers, so no need to change”).
 
@@ -915,7 +915,7 @@ __訳注:__ 「ストリクトリー・ボールルーム」(“Strictly Ballroo
 
 ---
 
-**Slide 45**
+## Slide 45
 
 * <font color="red">**Mind-projection fallacies**</font>: Imbuing inert quantities with attitudes, opinions, values, inferences, judgments, and decisions.<br>
 ― Rampant in statistical discussions, thanks to using **value descriptors** like “significance”, “confidence” and “severity” for narrow math concepts that cannot capture the word meanings.
@@ -931,7 +931,7 @@ __訳注:__ 「ストリクトリー・ボールルーム」(“Strictly Ballroo
 
 ---
 
-**Slide 46**
+## Slide 46
 
 These are not absolute or sharp categories, but rather are heuristic triggers to avoid getting lulled or suckered by colleagues (however well-meaning), “experts,” and most of all **ourselves**. 
 
@@ -949,7 +949,7 @@ Example:
 
 ---
 
-**Slide 47**
+## Slide 47
 
 **Systemic problems are major reasons why ‘most published research findings are false’:**
 
@@ -961,13 +961,13 @@ Example:
 
 **システムに内包された全体的な問題群が「出版された研究結果の大半が誤りである」ことの主な理由である。**
 
-* 誰もがそうであるように、統計学講師・ユーザー・消費者達は<font color="red">**二分法病(dichotomania)**</font>**</font>、<font color="red">**ゼロ仮説主義(nulliam)**</font>、<font color="red">**モデルと現実の混同(reification)**</font>という病気に罹ってしまっている。彼らはゼロ仮説に関する真か偽かの結論を切望し、過度に単純化されたモデルからそういう結論を受け入れてしまう。
+* 誰もがそうであるように、統計学講師・ユーザー・消費者達は<font color="red">**二分法病(dichotomania)**</font>、<font color="red">**ゼロ仮説主義(nulliam)**</font>、<font color="red">**モデルと現実の混同(reification)**</font>という病気に罹ってしまっている。彼らはゼロ仮説に関する真か偽かの結論を切望し、過度に単純化されたモデルからそういう結論を受け入れてしまう。
 
 * しかし、「ソフトサイエンス」の応用においては、観察(<font color="red">**たとえランダム化比較試験(RCT)からであっても**</font>)はそのような絶対的確実性を決して提供できないし、<font color="red">**不確実性の正確な評価さえも提供できない**</font>。
 
 ---
 
-**Slide 48**
+## Slide 48
 
 * Statistics caters to our cravings by providing sophisticated decision theories which make it appear to users that observations can provide definitive risk and uncertainty assessments.
 
@@ -985,7 +985,7 @@ Example:
 
 ---
 
-**Slide 49**
+## Slide 49
 
 * Statistics also freely indulges in the ludic fallacy of treating all uncertainty as if from games of chance (random draws from a distribution of known form) instead of addressing our deep uncertainties about the form and causes of variation and bias.
 
@@ -999,7 +999,7 @@ Example:
 
 ---
 
-**Slide 50**
+## Slide 50
 
 * Mathematizations amplify overconfidence in these fallacies, making statistical theory a fountain of real-world misinformation:
 
@@ -1017,7 +1017,7 @@ Example:
 
 ---
 
-**Slide 51**
+## Slide 51
 
 * The result is groupthink, hidden bias and circularity in arguments given by the most technically skilled proponents!
 
@@ -1035,7 +1035,7 @@ Example:
 
 ---
 
-**Slide 52**
+## Slide 52
 
 **STOP treating mathematical justifications as if they are sufficient practical justifications**
 
@@ -1061,7 +1061,7 @@ Example:
 
 ---
 
-**Slide 53**
+## Slide 53
 
 **Value bias pervades statistical methodology, most often in the form of nullism**<br>
 (values biased toward “accepting” the null)
@@ -1083,7 +1083,7 @@ incorporates cost/benefit assumptions that are not shared by all stakeholders.
 
 ---
 
-**Slide 54**
+## Slide 54
 
 * Example: Consistent use of the null as the test hypothesis, to the point of failing to distinguish between null and test hypotheses (a mistake traceable to Fisher).
 
@@ -1101,7 +1101,7 @@ incorporates cost/benefit assumptions that are not shared by all stakeholders.
 
 ---
 
-**Slide 55**
+## Slide 55
 
 * Via NHST, nullism has been taught as an integral part of Neyman-Pearson testing – even though it is not! From Neyman, Synthese 1977 p. 104, 106 (emphases added):
 
@@ -1115,7 +1115,7 @@ incorporates cost/benefit assumptions that are not shared by all stakeholders.
 
 ---
 
-**Slide 56**
+## Slide 56
 
 * “the [hypothesis] the unjust rejection of which constitutes the error of the first kind, will be called 'the hypothesis tested’.”
 
@@ -1133,7 +1133,7 @@ incorporates cost/benefit assumptions that are not shared by all stakeholders.
 
 ---
 
-**Slide 57**
+## Slide 57
 
 * “On the other hand, for the prospective user of chemical A the hypothesis tested will be unambiguously: 'A is carcinogenic'. In fact, this user is likely to hope that the probability of error in rejecting this hypothesis be reduced to a very small value!”
 
@@ -1147,7 +1147,7 @@ incorporates cost/benefit assumptions that are not shared by all stakeholders.
 
 ---
 
-**Slide 58**
+## Slide 58
 
 * Neyman thus provided a clear description of the role of values in choosing test hypotheses and how those can (and often will) vary within a topic across stakeholders.
 
@@ -1161,7 +1161,7 @@ incorporates cost/benefit assumptions that are not shared by all stakeholders.
 
 ---
 
-**Slide 59**
+## Slide 59
 
 * We might be confident that any effect present is “small enough” so that the cost of ignoring it is acceptable - but that’s a value judgment!
 
@@ -1179,7 +1179,7 @@ incorporates cost/benefit assumptions that are not shared by all stakeholders.
 
 ---
 
-**Slide 60**
+## Slide 60
 
 **Multiplicity adjustments worsen value bias**
 
@@ -1198,7 +1198,7 @@ as the hypothesis most important to not reject incorrectly, and apply the Type-I
 
 ---
 
-**Slide 61**
+## Slide 61
 
 * Null bias also afflicts a large portion of the Bayesian literature, where null spikes are used to misrepresent a belief that a parameter “differs negligibly” from the null.
 
@@ -1212,7 +1212,7 @@ as the hypothesis most important to not reject incorrectly, and apply the Type-I
 
 ---
 
-**Slide 62**
+## Slide 62
 
 Example: Again, fig. 1 of van Zwet & Cator 2021. Some Bayesians would shrink estimates toward 0 despite an imputed curve right-skewed with >75% above 0. Empirical Bayesians would instead use shrinkage toward estimated topic-specific means.
 
@@ -1226,7 +1226,7 @@ Example: Again, fig. 1 of van Zwet & Cator 2021. Some Bayesians would shrink est
 
 ---
 
-**Slide 63**
+## Slide 63
 
 **Part I summary:**
 
@@ -1245,7 +1245,7 @@ Example: Again, fig. 1 of van Zwet & Cator 2021. Some Bayesians would shrink est
 
 ---
 
-**Slide 64**
+## Slide 64
 
 * The persistent practical mistake promoted by statistical methodology: That we should want to construct real-world inferences using deductions from only one study, one set of background assumptions, one formal reasoning system, or one interpretation.
 
@@ -1259,7 +1259,7 @@ Example: Again, fig. 1 of van Zwet & Cator 2021. Some Bayesians would shrink est
 
 ---
 
-**Slide 65**
+## Slide 65
 
 * Statistical rules can worsen bad practices because their theories assume we will use only perfect interpretations of carefully controlled experiments, with a clear view of error costs.
 
@@ -1273,7 +1273,7 @@ Example: Again, fig. 1 of van Zwet & Cator 2021. Some Bayesians would shrink est
 
 ---
 
-**Slide 66**
+## Slide 66
 
 The bare, psychosocial facts:
 
@@ -1291,7 +1291,7 @@ The bare, psychosocial facts:
 
 ---
 
-**Slide 67**
+## Slide 67
 
 An urgent, neglected, yet easy step toward reform:
 
@@ -1322,7 +1322,7 @@ Justified “statistical inferences” thus require
 
 ---
 
-**Slide 68**
+## Slide 68
 
 **Reform step: Extricate P-values from the dung-heap of null-hypothesis significance testing**
 
@@ -1340,7 +1340,7 @@ Justified “statistical inferences” thus require
 
 ---
 
-**Slide 69**
+## Slide 69
 
 **Challenges facing P-value rehabilitation once dichotomania and “significance” are banished**
 
@@ -1363,7 +1363,7 @@ probability of a test hypothesis H (usually, a null hypothesis of no association
 
 ---
 
-**Slide 70**
+## Slide 70
 
 **Ugly Fact: Valid interpretations of “inferential statistics” seem beyond most sources**
 
@@ -1389,7 +1389,7 @@ probability of a test hypothesis H (usually, a null hypothesis of no association
 
 ---
 
-**Slide 71**
+## Slide 71
 
 **Inversion fallacies** include misinterpreting P-values as probabilities that “randomness” or “chance alone” **produced** an association…as in Harris & Taylor Medical Statistics Made Easy,\* 2nd ed, 2008, p. 24-25 say a P-value is “the probability of any observed differences having happened by chance” (alone?)
 
@@ -1408,7 +1408,7 @@ probability of a test hypothesis H (usually, a null hypothesis of no association
 
 ---
 
-**Slide 72**
+## Slide 72
 
 * Sound analyses need to see results as very fuzzy, often in an asymmetric way. But,
 
@@ -1428,7 +1428,7 @@ probability of a test hypothesis H (usually, a null hypothesis of no association
 
 ---
 
-**Slide 73**
+## Slide 73
 
 **Reconstruct statistical training:**<br>
 **STOP perpetuating the mistakes of “great men” of statistics and the cognitive biases they displayed, created, and encouraged**
@@ -1448,7 +1448,7 @@ probability of a test hypothesis H (usually, a null hypothesis of no association
 
 ---
 
-**Slide 74**
+## Slide 74
 
 **Shift emphasis away from conditional “hypothesis-testing” interpretations to unconditional descriptive interpretations**
 
@@ -1470,7 +1470,7 @@ probability of a test hypothesis H (usually, a null hypothesis of no association
 
 ---
 
-**Slide 75**
+## Slide 75
 
 from Greenland & Rafi “Semantic and cognitive tools to aid statistical science” http://arxiv.org/abs/1909.08583
 
@@ -1483,7 +1483,7 @@ Greenland & Rafi 「統計科学を支援する意味論的および認知的ツ
 <img width=400 src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/Greenland--Rafi_1909.08583_J.jpg">
 ---
 
-**Slide 76**
+## Slide 76
 
 * A test statistic measures discrepancy of data from predictions of a test model that contains both H and background assumptions.
 
@@ -1505,7 +1505,7 @@ Greenland & Rafi 「統計科学を支援する意味論的および認知的ツ
 
 ---
 
-**Slide 77**
+## Slide 77
 
 **Overthrow misleading traditional jargon (Statspeak) to realign statistical terminology with ordinary language:**
 
@@ -1523,7 +1523,7 @@ Greenland & Rafi 「統計科学を支援する意味論的および認知的ツ
 
 ---
 
-**Slide 78**
+## Slide 78
 
 * Why? Because typical modern users depend on words – for them the maths are simply symbolic incantations they must take on faith to get funded and published.
 
@@ -1537,7 +1537,7 @@ Greenland & Rafi 「統計科学を支援する意味論的および認知的ツ
 
 ---
 
-**Slide 79**
+## Slide 79
 
 **Stop repeating Fisher’s error of using “null hypothesis” for any test hypothesis**<br>
 (an error which openly invites nullistic bias)
@@ -1561,7 +1561,7 @@ Greenland & Rafi 「統計科学を支援する意味論的および認知的ツ
 
 ---
 
-**Slide 80**
+## Slide 80
 
 **Get rid of Neyman’s “confidence trick”**
 
@@ -1583,7 +1583,7 @@ Greenland & Rafi 「統計科学を支援する意味論的および認知的ツ
 
 ---
 
-**Slide 81**
+## Slide 81
 
 **“Compatible” is far more cautious (and logically much weaker) than “confidence”:**
 
@@ -1605,7 +1605,7 @@ Greenland & Rafi 「統計科学を支援する意味論的および認知的ツ
 
 ---
 
-**Slide 82**
+## Slide 82
 
 **Compatibility is no basis for confidence:**
 
@@ -1632,7 +1632,7 @@ and lead to effective interventions.
 
 ---
 
-**Slide 83**
+## Slide 83
 
 **Problem: The stated (“nominal”) coverage of a CI is a purely hypothetical frequency property in which we should have no confidence!**
 
@@ -1655,7 +1655,7 @@ that the actual relative frequency with which the algorithmic interval covers th
 
 ---
 
-**Slide 84**
+## Slide 84
 
 **In contrast, compatibility is merely an observed relation between data and models**
 
@@ -1673,7 +1673,7 @@ that the actual relative frequency with which the algorithmic interval covers th
 
 ---
 
-**Slide 85**
+## Slide 85
 
 An honest report of Brown et al. JAMA 2017, “Association between serotonergic antidepressant [SSRI] use during pregnancy and autism spectrum disorder [ASD] in children”, could be:
 
@@ -1692,7 +1692,7 @@ Brown et al. JAMA 2017の正直な報告、「妊娠中のセロトニン系抗�
 
 ---
 
-**Slide 86**
+## Slide 86
 
 An honest report of Vallejos et al. ‘Ivermectin to prevent hospitalizations in patients with COVID-19’ BMC ID 2 July 2021:
 
@@ -1711,7 +1711,7 @@ Vallejos et al. 「COVID-19患者の入院を予防するためのイベルメ�
 
 ---
 
-**Slide 87**
+## Slide 87
 
 **STOP repeating the massive error of NOT treating P-values as estimation tools**<br>
 (another error openly inviting nullistic bias) 
@@ -1735,7 +1735,7 @@ Vallejos et al. 「COVID-19患者の入院を予防するためのイベルメ�
 
 ---
 
-**Slide 88**
+## Slide 88
 
 from Rafi & Greenland BMC Med Res Methodol 2020
 
@@ -1749,7 +1749,7 @@ Rafi & Greenland BMC Med Res Methodol 2020 より
 
 ---
 
-**Slide 89**
+## Slide 89
 
 **TRANSLATE P-values to S-values (surprisals) to gauge the evidence supplied by test statistics**
 
@@ -1772,7 +1772,7 @@ values is their provision of a shared scale of evidence against hypotheses or mo
 
 ---
 
-**Slide 90**
+## Slide 90
 
 * All heads in $s$ tosses would give $p = 1/2^s$
 
@@ -1806,7 +1806,7 @@ Thus $p = 0.04 = 1/2^{4.6}$ provides the same evidence against the model used to
 
 ---
 
-**Slide 91**
+## Slide 91
 
 * The binary S-value (surprisal, logworth) s measures the information the P-value p supplies against the model used to compute p.
 
@@ -1832,7 +1832,7 @@ $−\log_2(.95) = .07$, $−\log_2(.999) = .01$, $\Delta = .06$  bits
 
 ---
 
-**Slide 92**
+## Slide 92
 
 from Rafi&Greenland http://arxiv.org/abs/1909.08579
 
@@ -1846,7 +1846,7 @@ Rafi&Greenland http://arxiv.org/abs/1909.08579 より
 
 ---
 
-**Slide 93**
+## Slide 93
 
 * S-values have resurfaced repeatedly since the 1950s when theorists needed to gauge the evidence or information in P-values, and examine test behavior under alternatives.
 
@@ -1864,7 +1864,7 @@ Rafi&Greenland http://arxiv.org/abs/1909.08579 より
 
 ---
 
-**Slide 94**
+## Slide 94
 
 from Rafi & Greenland BMC Med Res Methodol 2020
 
@@ -1878,7 +1878,7 @@ Rafi & Greenland BMC Med Res Methodol 2020 より
 
 ---
 
-**Slide 95**
+## Slide 95
 
 **Some background and further readings on my views**<br>
 (all should be open access at the links given)
@@ -1902,7 +1902,7 @@ Rafi & Greenland BMC Med Res Methodol 2020 より
 
 ---
 
-**Slide 96**
+## Slide 96
 
 **Educational readings for students, authors, editors and instructors**
 
@@ -1924,7 +1924,7 @@ Rafi & Greenland BMC Med Res Methodol 2020 より
 
 ---
 
-**Slide 97**
+## Slide 97
 
 * ‘Pearl’s thesis’: Around 1900 science and statistics took a serious misstep in dismissing, even attempting to ban causation from theory.
 
@@ -1950,7 +1950,7 @@ Rafi & Greenland BMC Med Res Methodol 2020 より
 
 ---
 
-**Slide 98**
+## Slide 98
 
 Graphical example of a cognitive blindness: **The parsimony fallacy** to defend causal nulls in observational research
 
@@ -1968,7 +1968,7 @@ Graphical example of a cognitive blindness: **The parsimony fallacy** to defend 
 
 ---
 
-**Slide 99**
+## Slide 99
 
 **Every missing arrow in a graph is an assumed causal null hypothesis**
 
@@ -1990,7 +1990,7 @@ In “soft” sciences, we can rarely distinguish ‘no effect’ from alternati
 
 ---
 
-**Slide 100**
+## Slide 100
 
 Ironically for those who deny specific effects are present on the grounds of parsimony, a null hypothesis is rarely the most parsimonious *causal* explanation for nonexperimental observations. In fact
 
@@ -2004,7 +2004,7 @@ Ironically for those who deny specific effects are present on the grounds of par
 
 ---
 
-**Slide 101**
+## Slide 101
 
 Suppose *causal parsimony* is defined as preferring the simplest causal diagram compatible with the observed (nonparametric) data distribution. 
 
@@ -2022,7 +2022,7 @@ Then
 
 ---
 
-**Slide 102**
+## Slide 102
 
 Consider: If an X-Y association is observed, what is the simplest single explanation?:
 
@@ -2059,7 +2059,7 @@ e) 単純な因果関係：X→Y
 
 ---
 
-**Slide 103**
+## Slide 103
 
 * In sum: If any association is observed (regardless of whether it falls within bounds for declaring it “nonsignificant”), maintaining the null requires alternative explanations for the association.
 
@@ -2073,7 +2073,7 @@ e) 単純な因果関係：X→Y
 
 ---
 
-**Slide 104**
+## Slide 104
 
 The complex observational reality: Any effect of X on Y is buried within a web of bias sources (confounding, selection bias, measurement error):
 
@@ -2087,7 +2087,7 @@ The complex observational reality: Any effect of X on Y is buried within a web o
 
 ---
 
-**Slide 105**
+## Slide 105
 
 The simplest realistic DAGs with X*-Y* associations and hidden variables include those with X* and Y* d-connected only through X→Y, for example as in
 
@@ -2101,7 +2101,7 @@ X*-Y*間の関連性と隠れた変数を持つ最も単純な現実的なDAGは
 
 ---
 
-**Slide 106**
+## Slide 106
 
 * The hypothesis that there is no uncontrolled bias (no open noncausal path from X to Y) is the most parsimonious explanation one can provide for an observed relation of X to Y.
 
@@ -2119,7 +2119,7 @@ X*-Y*間の関連性と隠れた変数を持つ最も単純な現実的なDAGは
 
 ---
 
-**Slide 107**
+## Slide 107
 
 **Valid counterpoint: Parsimony is misleading when it fails to reflect essential complexity**
 
@@ -2147,7 +2147,7 @@ represents a set of null hypotheses, one for every arrow from that variable to a
 
 ---
 
-**Slide 108**
+## Slide 108
 
 What causally warrants deleting arrows or nodes?
 
@@ -2177,7 +2177,7 @@ Answer: Forcing deletion by causal design – e.g., cohort matching (blocking), 
 
 ---
 
-**Slide 109**
+## Slide 109
 
 * In “soft sciences”, prior distributions tightly concentrated near the null rarely have a basis in genuine evidence. They may have some support in some settings (e.g., genomics).
 
@@ -2195,7 +2195,7 @@ Answer: Forcing deletion by causal design – e.g., cohort matching (blocking), 
 
 ---
 
-**Slide 110**
+## Slide 110
 
 * Under continuity, there are almost no “false positives”, because almost all associations are nonzero (“true positives”).
 
