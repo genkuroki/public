@@ -57,7 +57,7 @@ Consequence: Fig. 1 van Zwet & Cator 2021<br>
 Over a million z-values from Medline 1976-2019.<br>
 Imputed curve right-skewed with >75% above 0:
 
-<img width=80% src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/van_Zwet--Cator_2021_Fig1.jpg">
+<img width=400 src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/van_Zwet--Cator_2021_Fig1.jpg">
 
 1 June 2022 Greenland – Reforming Statistics 3
 
@@ -65,7 +65,7 @@ Imputed curve right-skewed with >75% above 0:
 Medline 1976-2019から抽出された100万個以上のz値。<br>
 推定された分布曲線は右に歪んでおり、75%超が0より大きい：
 
-<img width=80% src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/van_Zwet--Cator_2021_Fig1.jpg">
+<img width=400 src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/van_Zwet--Cator_2021_Fig1.jpg">
 
 ---
 
@@ -153,13 +153,13 @@ In the radical Bayesianism of DeFinetti, all probability is “subjective” –
 
 Answer: **Any** reform that still leads to selective reporting based on study outcomes will distort the distribution of available outcomes relative to the total
 
-<img width=80% src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/van_Zwet--Cator_2021_Fig1.jpg">
+<img width=400 src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/van_Zwet--Cator_2021_Fig1.jpg">
 
 1 June 2022 Greenland – Reforming Statistics 8
 
 解答：研究結果に基づく選択的な報告が引き続き行われるような改革ならば**どのように**改革しても、利用可能な(報告された)結果の分布が実際に生じた結果全体との比較で歪められてしまうことになる。
 
-<img width=80% src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/van_Zwet--Cator_2021_Fig1.jpg">
+<img width=400 src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/van_Zwet--Cator_2021_Fig1.jpg">
 
 ---
 
@@ -334,13 +334,13 @@ __訳注:__ rbSTは遺伝子組換えウシ成長ホルモンのこと。rbSTの
 
 Millstone et al. Nature 1994: 8 trials, 19% average increase in somatic cell count (pus) in milk from cows treated with rBST (meta p=0.004):
 
-<img width=80% src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/Milstone_et_al_1994_8trials.jpg">
+<img width=400 src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/Milstone_et_al_1994_8trials.jpg">
 
 1 June 2022 Greenland – Reforming Statistics 17
 
 Millstone et al. Nature 1994: rBST (遺伝子組換えウシ成長ホルモン)を投与された牛の乳に関する8件の試験の結果、体細胞数(膿)の平均増加率は19% に達した(メタアナリシスによるP値 = 0.004):
 
-<img width=80% src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/Milstone_et_al_1994_8trials.jpg">
+<img width=400 src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/Milstone_et_al_1994_8trials.jpg">
 
 ---
 
@@ -693,19 +693,21 @@ Tversky: “It's frightening to think that you might not know something, but mor
 
 **Slide 35**
 
-* Kahneman: “People assign much higher probability to the truth of their opinions than is warranted.”
+* Kahneman: “**People assign much higher probability to the truth of their opinions than is warranted**.”
 
-* By sanctifying pure opinion, Bayesian methods open statistics to even more abuse via prior spikes and “elicited priors” (summary expressions of biases, literature misreadings, and personal prejudices).
+* **By sanctifying pure opinion, Bayesian methods open statistics to even more abuse via prior spikes and** “**elicited priors**” (<font color="red">**summary expressions of biases, literature misreadings, and personal prejudices**</font>).
 
-* ― Example: Claiming Pr(null)=0.5 is “indifference” is massive null bias, not indifference.
+* ― Example: **Claiming Pr(null)=0.5 is “indifference” is massive null bias, <u>not</u> indifference.**
 
 1 June 2022 Greenland – Reforming Statistics 35
 
-* Kahneman：「人々は、保証されている以上に、自分たちの意見の真実性に遥かに高い確率を割り当てる。」
+* Kahneman：「**人々は自分の意見が正しい確率を正当化される範囲をはるかに超えて高く見積もる。**」
 
-* 純粋な意見を神聖化することにより、ベイズ法は事前確率スパイクや「引き出された事前確率」(バイアス、文献の誤読、個人的偏見の要約表現)を介して、統計学をさらに多くの乱用に対して開く。
+* **ただの意見を神聖化することによって、ベイズ法は事前分布のスパイクや「専門家の判断に基づく事前分布」**(<font color="red">**バイアス、文献の誤読、個人的偏見の要約表現**</font>)**を通して、統計学のさらなる濫用を可能にしてしまう。**
 
-* ― 例：Pr(null)=0.5が「無関心」であると主張することは、無関心ではなく、重大なゼロ仮説バイアスである。
+* ― 例：**Pr(ゼロ仮説)=0.5という事前分布が「中立的」であると主張することは、中立的では<u>なく</u>、巨大なゼロ仮説バイアスである。**
+
+__訳注:__ 事前分布のスパイク(prior spike)は差を表すパラメータ $\theta$ に関するゼロ仮説 $\theta = 0$ に台を持つ事前分布の形状を表している. そのような事前分布はデルタ関数 $\delta(\theta)$ で表される.
 
 ---
 
@@ -717,70 +719,71 @@ Yet more Kahnemann:
 
 And most relevant to statistics in soft sciences:
 
-* “…illusions of validity and skill are
-supported by a powerful professional culture. We know that people can maintain an unshakeable faith in any proposition, however absurd, when they are sustained by a community of like-minded believers.”
+* “…<font color="red">**illusions of validity and skill are supported by a powerful professional culture. We know that people can maintain an unshakeable faith in any proposition, however absurd, when they are sustained by a community of like-minded believers.**</font>”
 
-― See: Any defense of significance testing…
+― **See: Any defense of significance testing**…
 
 1 June 2022 Greenland – Reforming Statistics 36
 
-さらにKahnemann：
+さらにカーネマンの言葉：
 
-* 「我々は明白なことに対して盲目であり、そして我々は我々の盲目さに対しても盲目である。」
+* 「我々は明らかなことに対して盲目であり、自分自身の盲目さに対しても盲目である。」
 
-そしてソフトサイエンスにおける統計学に最も関連することとして：
+そして、ソフトサイエンスの統計学に最も関連する部分：
 
-* 「…妥当性とスキルの錯覚は強力な専門文化によって支えられている。我々は、人々が、たとえどんなに不合理な提案に対しても、同意見の信者のコミュニティによって支えられるとき、揺るぎない信仰を維持できることを知っている。」
+* 「…<font color="red">**妥当性と能力に関する錯覚は、強力な専門文化によって支えられている。我々は知っている。人々は、似た考えを持つ信者たちのコミュニティーに支えられているとき、どのように馬鹿げた命題についても揺るぎない信念を維持できるのだと**</font>。」
 
-― 参照：有意性検定のいかなる擁護も…
+― **有意性検定の任意の擁護を参照せよ**…
 
 ---
 
 **Slide 37**
 
-Example: “if the p-value for the effect is greater than the journal’s threshold p-value, then the editor can immediately reject the paper, which saves the journal from spending any more time on the (unconvincing) paper…if a result is statistically significant, this means no more than that there is enough weight of evidence for the studied effect to make the paper reporting the effect worth considering for publication.”<br>
-― Fisher 1920s? No, Statistics 2021: Mcnaughton, The War on Statistical Significance.
+<font color="red">**Example**</font>: “**if the p-value for the effect is greater than the journal’s threshold p-value, then the editor can immediately reject the paper**, which saves the journal from spending any more time on the (unconvincing) paper…if a result is statistically significant, this means no more than that there is enough weight of evidence for the studied effect to make the paper reporting the effect **worth considering for publication**.”<br>
+― Fisher 1920s? No, Statistics 2021:<br>
+Mcnaughton, *The War on Statistical Significance*.
 
 1 June 2022 Greenland – Reforming Statistics 37
 
-例：「効果のp値がジャーナルの閾値p値より大きい場合、編集者はその論文を直ちに却下でき、それによってジャーナルはその(説得力のない)論文にそれ以上の時間を費やすことを避けることができる…結果が統計的に有意である場合、これは、研究された効果に対する証拠の十分な重みがあり、その効果を報告する論文が出版を検討する価値があるという以上の意味はない。」<br> 
-― これは1920年代のFisherですか？ いいえ2021年の統計学です：Mcnaughton, *The War on Statistical Significance*.。
+<font color="red">**例**</font>：「**もしも効果に関するp値がその学術誌の設定する閾値より大きければ、編集者は即座に論文を却下できる**。これによって学術誌は(説得力に欠けた)その論文にこれ以上時間を費やす必要がなくなる。… もしも結果が統計的に有意ならば、それは単に、研究された効果に関する証拠の重みが十分にあるので、その効果を報告した論文に**出版を検討する価値がある**ことを意味するに過ぎない。」<br>
+― これは1920年代のフィッシャーですか？ いいえ2021年の統計学である：<br>
+マクノートン著『統計的有意性に関する争い』(*The War on Statistical Significance*).
 
 ---
 
 **Slide 38**
 
-Ignores a fact noted by the 1950s: Any selective reporting based on study outcomes will distort the distribution of available outcomes relative to the total
+Ignores a fact noted by the 1950s: **Any** selective reporting based on study outcomes will distort the distribution of available outcomes relative to the total
 
-<img width=80% src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/van_Zwet--Cator_2021_Fig1.jpg">
+<img width=400 src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/van_Zwet--Cator_2021_Fig1.jpg">
 
 1 June 2022 Greenland – Reforming Statistics 38
 
-1950年代には指摘されていた事実を無視している：研究結果に基づくいかなる選択的報告も、利用可能な結果の分布を全体に対して歪めるだろう。
+1950年代に指摘されていた事実を無視している：研究結果に基づく選択的な報告ならば**どのような報告であろうと**、利用可能な(報告された)結果の分布を結果全体の真の分布との比較で歪めてしまうだろう。
 
-<img width=80% src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/van_Zwet--Cator_2021_Fig1.jpg">
+<img width=400 src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/van_Zwet--Cator_2021_Fig1.jpg">
 
 ---
 
 **Slide 39**
 
-Any instruction purporting to cover the basics of inference needs to include cognitive science to deal with social delusions and biases such as
+**Any instruction purporting to cover the basics of inference needs to include cognitive science to deal with social delusions and biases such a**s
 
-* Nullism: Confusion of our need for parsimony (or shrinkage to zero) with reality.
+* **Nullism**: Confusion of our need for parsimony (or shrinkage to zero) with reality.
 
-* Dichotomania: Confusion of our need for summarization (simplification) and decision with our preference for black-or-white thinking.
+* **Dichotomania**: Confusion of our need for summarization (simplification) and decision with our preference for black-or-white thinking.
 
-* Reification: Faith that formal methods for reasoning, inference, and decision suffice for real-world reasoning, inference, and decision.
+* **Reification**: Faith that **formal methods** for reasoning, inference, and decision suffice for real-world reasoning, inference, and decision.
 
 1 June 2022 Greenland – Reforming Statistics 39
 
-推論の基礎を網羅すると称するいかなる指導も、社会的妄想やバイアスに対処するために認知科学を含める必要がある。例えば、
+推論の基礎を網羅すると称するいかなる指導も、社会的な思い込みやバイアスに対処するために認知科学を含める必要がある。例えば、
 
-* ゼロ仮説主義()：我々の単純性の必要性(またはゼロへの収縮)を現実と混同すること。
+* **ゼロ仮説主義(nullism)**: 簡潔性への我々の要求(ゼロ仮説への縮小)を現実と混同すること。
 
-* 二分法病(dichotomania)：要約(単純化)と決定の必要性を、白黒思考への我々の好みと混同すること。
+* **二分法病(dichotomania)**: 要約(単純化)と決定への我々の要求を白黒つけたがる我々の傾向と混同すること。
 
-* モデルと現実の混同(Reification)：形式的な推論・推測・意思決定の手法だけで、現実世界における推論・推測・意思決定も十分に行えると信じること。
+* **モデルと現実の混同(Reification)**: 推論・推測・意思決定に関する**形式的な方法**だけで、現実世界における推論・推測・意思決定を十分に行えると信じてしまうこと。
 
 ---
 
@@ -1197,13 +1200,13 @@ as the hypothesis most important to not reject incorrectly, and apply the Type-I
 
 Example: Again, fig. 1 of van Zwet & Cator 2021. Some Bayesians would shrink estimates toward 0 despite an imputed curve right-skewed with >75% above 0. Empirical Bayesians would instead use shrinkage toward estimated topic-specific means.
 
-<img width=80% src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/van_Zwet--Cator_2021_Fig1.jpg">
+<img width=400 src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/van_Zwet--Cator_2021_Fig1.jpg">
 
 1 June 2022 Greenland – Reforming Statistics 62
 
 例：再び、van Zwet & Cator 2021の図1。一部のベイズ主義者は、補間曲線が右に歪んでおり、75%以上が0を上回っているにもかかわらず、推定値を0に縮小させるだろう。経験的ベイズ主義者は代わりに、推定されたトピック固有の平均値に向かって縮小を使用するだろう。
 
-<img width=80% src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/van_Zwet--Cator_2021_Fig1.jpg">
+<img width=400 src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/van_Zwet--Cator_2021_Fig1.jpg">
 
 ---
 
@@ -1455,13 +1458,13 @@ probability of a test hypothesis H (usually, a null hypothesis of no association
 
 from Greenland & Rafi “Semantic and cognitive tools to aid statistical science” http://arxiv.org/abs/1909.08583
 
-<img width=80% src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/Greenland--Rafi_1909.08583.jpg">
+<img width=400 src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/Greenland--Rafi_1909.08583.jpg">
 
 1 June 2022 Greenland – Reforming Statistics 75
 
 Greenland & Rafi 「統計科学を支援する意味論的および認知的ツール」より http://arxiv.org/abs/1909.08583
 
-<img width=80% src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/Greenland--Rafi_1909.08583_J.jpg">
+<img width=400 src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/Greenland--Rafi_1909.08583_J.jpg">
 ---
 
 **Slide 76**
@@ -1720,13 +1723,13 @@ Vallejos et al. 「COVID-19患者の入院を予防するためのイベルメ�
 
 from Rafi & Greenland BMC Med Res Methodol 2020
 
-<img width=80% src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/Rafi--Greenland_2020a.jpg">
+<img width=400 src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/Rafi--Greenland_2020a.jpg">
 
 1 June 2022 Greenland – Reforming Statistics 88
 
 Rafi & Greenland BMC Med Res Methodol 2020 より
 
-<img width=80% src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/Rafi--Greenland_2020a.jpg">
+<img width=400 src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/Rafi--Greenland_2020a.jpg">
 
 ---
 
@@ -1817,13 +1820,13 @@ $−\log_2(.95) = .07$, $−\log_2(.999) = .01$, $\Delta = .06$  bits
 
 from Rafi&Greenland http://arxiv.org/abs/1909.08579
 
-<img width=80% src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/Rafi--Greenland_1909.08579.jpg">
+<img width=400 src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/Rafi--Greenland_1909.08579.jpg">
 
 1 June 2022 Greenland – Reforming Statistics 92
 
 Rafi&Greenland http://arxiv.org/abs/1909.08579 より
 
-<img width=80% src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/Rafi--Greenland_1909.08579.jpg">
+<img width=400 src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/Rafi--Greenland_1909.08579.jpg">
 
 ---
 
@@ -1849,13 +1852,13 @@ Rafi&Greenland http://arxiv.org/abs/1909.08579 より
 
 from Rafi & Greenland BMC Med Res Methodol 2020
 
-<img width=80% src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/Refi--Greenland_2020b.jpg">
+<img width=400 src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/Refi--Greenland_2020b.jpg">
 
 1 June 2022 Greenland – Reforming Statistics 94
 
 Rafi & Greenland BMC Med Res Methodol 2020 より
 
-<img width=80% src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/Refi--Greenland_2020b.jpg">
+<img width=400 src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/Refi--Greenland_2020b.jpg">
 
 ---
 
@@ -2058,13 +2061,13 @@ e) 単純な因果関係：X→Y
 
 The complex observational reality: Any effect of X on Y is buried within a web of bias sources (confounding, selection bias, measurement error):
 
-<img width=80% src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/DAG1.jpg">
+<img width=400 src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/DAG1.jpg">
 
 1 June 2022 Greenland – Reforming Statistics 104
 
 複雑な観察現実：XがYに与えるいかなる効果も、バイアス源(交絡、選択バイアス、測定誤差)のウェブの中に埋もれている：
 
-<img width=80% src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/DAG1.jpg">
+<img width=400 src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/DAG1.jpg">
 
 ---
 
@@ -2072,13 +2075,13 @@ The complex observational reality: Any effect of X on Y is buried within a web o
 
 The simplest realistic DAGs with X*-Y* associations and hidden variables include those with X* and Y* d-connected only through X→Y, for example as in
 
-<img width=80% src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/DAG2.jpg">
+<img width=400 src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/DAG2.jpg">
 
 1 June 2022 Greenland – Reforming Statistics 105
 
 X*-Y*間の関連性と隠れた変数を持つ最も単純な現実的なDAGは、X*とY*がX→Yのみを介してd連結されているものを含む。例えば以下の通りである。
 
-<img width=80% src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/DAG2.jpg">
+<img width=400 src="https://github.com/genkuroki/public/raw/main/0054/GreenlandSlide2022JapaneseTranslation/DAG2.jpg">
 
 ---
 
