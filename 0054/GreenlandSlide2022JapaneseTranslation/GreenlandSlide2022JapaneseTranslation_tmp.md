@@ -903,7 +903,7 @@ __訳注:__ congruence biasを「代替仮説軽視バイアス」と訳した�
 
 * <font color="red">**親近性バイアス**</font>: 慣れ親しんだ方法への過度に依存、代替的な手法の無視 (「これで研究費も論文も得られるのだから、変える必要はない」)。
 
-* <font color="red">**縄張り(排他的)バイアス**</font>: 慣れた方法を唯一の正しい方法として持ち上げ、自身の権威を守り、競合相手の台頭を防ぐこと(「ストリクトリー・ボールルーム」効果：十分に学んでいなくて、実践経験もないものについては、権威として認められない)。
+* <font color="red">**縄張り(排他的)バイアス**</font>: 慣れた方法を唯一の正しい方法として持ち上げ、自身の権威を守り、競合相手の台頭を防ぐこと(「ストリクトリー・ボールルーム」効果：十分に学んでいなくて実践経験もないことについては権威になれない)。
 
 * <font color="red">**集団思考と群集行動バイアス**例えば**反復バイアス**</font>: エコーチャンバー効果、集団内での相互強化によって証拠が沢山あるかのように見えてしまうこと。
 
@@ -913,51 +913,53 @@ __訳注:__ 「ストリクトリー・ボールルーム」(“Strictly Ballroo
 
 **Slide 45**
 
-* <font color="red">**Mind-projection fallacies**</font>: Imbuing inert quantities with attitudes, opinions, values, inferences, judgments, and decisions.
+* <font color="red">**Mind-projection fallacies**</font>: Imbuing inert quantities with attitudes, opinions, values, inferences, judgments, and decisions.<br>
+― Rampant in statistical discussions, thanks to using **value descriptors** like “significance”, “confidence” and “severity” for narrow math concepts that cannot capture the word meanings.
 
-― Rampant in statistical discussions, thanks to using value descriptors like “significance”, “confidence” and “severity” for narrow math concepts that cannot capture the word meanings.
-
-* Top example of nonsense: <font color="red">**“P-values overstate evidence.”**</font> P-values only provide the position of a statistic in a reference distribution (e.g., chi-squared) derived from a model. <font color="red">**Any evidence overstatement is by the viewer**</font>.
+* **Top example of nonsense:** <font color="red">**“P-values overstate evidence.”**</font> **P-values only provide the position of a statistic in a reference distribution (e.g., chi-squared) derived from a model.** <font color="red">**Any evidence overstatement is by the viewer**</font>.
 
 1 June 2022 Greenland – Reforming Statistics 45
 
-*心の投影の誤謬：不活性な量に態度、意見、価値、推論、判断、および決定を吹き込むこと。
+* <font color="red">**心の投影の誤謬(mind-projection fallacies)**</font>: 本来意味を持たない数量に、態度・意見・価値・推論・判定・意思決定を染み込まさせること。<br>
+― 「有意性(significance)」「信頼性(confidence)」「厳密性(severity)」のような**価値識別子**を言葉の本来の意味を表せない反映できない狭義の数学的概念に用いることで、この誤謬は統計的議論において蔓延している。
 
-― 言葉の意味を捉えることができない狭い数学的概念に対して、「有意性」、「信頼性」、「厳しさ」のような価値記述子を使用しているため、統計的議論で蔓延している。
-
-* ナンセンスの最たる例：「P値は証拠を過大に表現している。」P値は、モデルから導出された参照分布(例えばカイ二乗分布)における統計量の位置を提供するだけである。証拠の過大表現は観察者によるものである。
+* ナンセンスの最たる例：「<font color="red">**P値は証拠を過大評価している。**</font>」 P値はモデルから導出された参照分布(例えばカイ二乗分布)における検定統計量の値の位置を表しているだけである。<font color="red">**証拠の過大評価はどれもそれを見る側によるものである。**</font>
 
 ---
 
 **Slide 46**
 
-These are not absolute or sharp categories, but rather are heuristic triggers to avoid getting lulled or suckered by colleagues (however well-meaning), “experts,” and most of all ourselves. Example:
+These are not absolute or sharp categories, but rather are heuristic triggers to avoid getting lulled or suckered by colleagues (however well-meaning), “experts,” and most of all **ourselves**. 
 
-* A Dunning-Kruger form of overconfidence bias that is rampant among medical pundits (and not only when they comment on statistical methods): We may know our specialty superbly, but not realize how that expertise doesn't instantly generalize to other topics. True even for topics we think are close to our specialty, but actually have a lot more literature than we are aware of.
+Example:
+
+* A Dunning-Kruger form of **overconfidence bias that is rampant among medical pundits** (and not only when they comment on statistical methods): We may know our specialty superbly, but not realize how that expertise doesn't instantly generalize to other topics. **True even for topics we think are close to our specialty, but actually have a lot more literature than we are aware of.**
 
 1 June 2022 Greenland – Reforming Statistics 46
 
-これらは絶対的または明確なカテゴリーではなく、むしろ同僚(どんなに善意であっても)、「専門家」、そして何よりも自分自身に騙されたり欺かれたりしないようにするためのヒューリスティックなトリガーである。例：
+これらはは絶対的または明確な類型群(categories)ではなくむしろ、同僚(どんなに善意であっても)や「専門家」や何よりも**自分自身**に油断させられたり騙されたりしないための経験則的な警告群(heuristic triggers)である。
 
-* 医学専門家の間で蔓延しているダニング＝クルーガー型の過信バイアス(統計的手法についてコメントする場合に限らない)：我々は自分の専門分野を素晴らしく知っているかもしれないが、その専門知識が他のトピックにすぐには一般化しないことを理解していない。自分たちの専門分野に近いと思っているトピックでさえも、実際には我々が知っているよりもはるかに多くの文献が存在する場合でも、これは当てはまる。
+例：
+
+* ダニング＝クルーガー効果という(統計的手法についてコメントするときだけとは限らない)**医療評論家の間で蔓延している過信バイアスの一形態**：  我々は自分の専門分野については非常によく理解しているかもしれないが、その専門知識をすぐに他の分野に一般化できないことには気づいていない。これは、自分の専門分野に近いと思っている話題であっても、実際には自分が認識しているよりもはるかに多くの文献が存在する場合に当てはまる。
 
 ---
 
 **Slide 47**
 
-Systemic problems are major reasons why ‘most published research findings are false’:
+**Systemic problems are major reasons why ‘most published research findings are false’:**
 
-* Like everyone, stat instructors, users, and consumers suffer from dichotomania, nullism, and reification: They crave true-or-false conclusions for null hypotheses and so will accept them from oversimplified models.
+* Like everyone, stat instructors, users, and consumers suffer from <font color="red">**dichotomania**</font>, <font color="red">**nullism**</font>, and <font color="red">**reification**</font>: They crave true-or-false conclusions for null hypotheses and so will accept them from oversimplified models.
 
-* But in “soft-science” applications, observations (even from RCTs) can never provide such absolute certainties, and can’t even provide accurate assessments of uncertainties.
+* But in “soft-science” applications, observations (<font color="red">**even from RCTs**</font>) can never provide such absolute certainties, <font color="red">**and can’t even provide accurate assessments of uncertainties**</font>.
 
 1 June 2022 Greenland – Reforming Statistics 47
 
-「発表された研究成果の大半が誤りである」とされる主な理由の一つは、体系的な問題にある：
+**システムに内包された全体的な問題群が「出版された研究結果の大半が誤りである」ことの主な理由である。**
 
-* 誰もがそうであるように、統計学の教員、使用者、消費者は二分法病、ゼロ仮説主義、モデルと現実の混同に苦しんでいる。彼らは帰無仮説に対する真偽の結論を切望し、過度に単純化されたモデルからそれらを受け入れてしまう。
+* 誰もがそうであるように、統計学講師・ユーザー・消費者達は<font color="red">**二分法病(dichotomania)**</font>**</font>、<font color="red">**ゼロ仮説主義(nulliam)**</font>、<font color="red">**モデルと現実の混同(reification)**</font>という病気に罹ってしまっている。彼らはゼロ仮説に関する真か偽かの結論を切望し、過度に単純化されたモデルからそういう結論を受け入れてしまう。
 
-* しかし、「ソフトサイエンス」の応用においては、観察(RCTからであっても)は決してそのような絶対的な確実性を提供できず、不確実性の正確な評価さえも提供できない。
+* しかし、「ソフトサイエンス」の応用においては、観察(<font color="red">**たとえランダム化比較試験(RCT)からであっても**</font>)はそのような絶対的確実性を決して提供できないし、<font color="red">**不確実性の正確な評価さえも提供できない**</font>。
 
 ---
 
