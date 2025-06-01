@@ -779,7 +779,7 @@ Ignores a fact noted by the 1950s: **Any** selective reporting based on study ou
 
 推論の基礎を網羅すると称するいかなる指導も、社会的な思い込みやバイアスに対処するために認知科学を含める必要がある。例えば、
 
-* **ゼロ仮説主義(nullism)**: 簡潔性への我々の要求(ゼロ仮説への縮小)を現実と混同すること。
+* **ゼロ仮説主義(nullism)**: 簡潔性への我々の要求(ゼロ仮説への収縮)を現実と混同すること。
 
 * **二分法病(dichotomania)**: 要約(単純化)と決定への我々の要求を白黒つけたがる我々の傾向と混同すること。
 
@@ -789,69 +789,71 @@ Ignores a fact noted by the 1950s: **Any** selective reporting based on study ou
 
 **Slide 40**
 
-Nullism has a long and glorious history among physics idolaters as pseudo-skepticism (empirically indefensible certainty about nulls):
+**Nullism has a long and glorious history among physics idolaters as** <font color="red">**pseudo-skepticism**</font> (empirically indefensible certainty about nulls):
 
-* “Heavier than air flying machines are impossible” – Lord Kelvin 1895, repeated 1902
+* “**Heavier than air flying machines are impossible**” ― Lord Kelvin 1895, repeated 1902
 
-* “Continental drift is out of the question” because no mechanism is strong enough – Sir Harold Jeffreys, geophysicist originator of spiked priors = formalized overconfidence.
+* “**Continental drift is out of the question**” because no mechanism is strong enough – **Sir Harold Jeffreys**, geophysicist originator of **spiked priors = formalized overconfidence**.
 
 * See also Fisher arguing against cigarettes causing lung cancer, despite extensive evidence.
 
 1 June 2022 Greenland – Reforming Statistics 40
 
-ゼロ仮説主義は、物理学偶像崇拝者の間で疑似懐疑論として長く輝かしい歴史を持っている(経験的に擁護できない帰無仮説に関する確実性)：
+ゼロ仮説主義(nullism)は、物理崇拝者の間での<font color="red">**ニセ懐疑主義**</font>(ゼロ仮説への実証的に擁護不可能な確信)として長く輝かしい歴史を持っている：
 
-* 「空気より重い飛行機械は不可能である」 ― ケルビン卿 1895年、1902年に繰り返される
+* 「**空気より重い飛行機械は不可能である**」<br>― ケルビン卿 1895年、1902年に繰り返される
 
-* 「大陸移動は論外である」<br>なぜなら十分な強さを持つメカニズムが存在しないからだ ― ハロルド・ジェフリーズ卿、スパイク事前確率の創始者である地球物理学者 = 形式化された過信。
+* 「**大陸移動説は論外である**」<br>なぜならば十分な強さを持つメカニズムが存在しないからだ<br>― **ハロルド・ジェフリーズ卿**、**スパイク事前分布＝形式化された過信**の創始者である地球物理学者。
 
-* また、広範な証拠があるにもかかわらず、タバコが肺がんを引き起こすことに反対するフィッシャーも参照。
+* 膨大な証拠があったにもかかわらず、タバコが肺癌を引き起こすことに反対し続けたフィッシャーも参照せよ。
+
+__訳注:__ pseudo-skepticismを「擬似懐疑主義」と直訳せずに、より否定的に聞こえる「ニセ懐疑主義」と訳した。意味的には「健全な科学的懐疑主義ではない、不健全な懐疑主義」というような意味だと思われる。
 
 ---
 
 **Slide 41**
 
-* Against Nullism: Reality is under no obligation to be simple or decisive.
+* **Against Nullism**: Reality is under no obligation to be simple or decisive.
 
-* Against Dichotomania: Many if not most important decisions are not or should not be binary: Where do you set your oven? Your thermostat? Your medication level?
+* **Against Dichotomania**: Many if not most important decisions are not or **should not be** binary: Where do you set your oven? Your thermostat? **Your medication level?**
 
-* Hidden Reification: Researchers routinely publish “inferences” that ignore vast model uncertainties – they don’t know a rationale for neglecting all the simplifications in their models, and they just don’t think about them.
+* **Hidden Reification**: Researchers routinely publish “inferences” that ignore vast model uncertainties – they don’t know a rationale for neglecting all the simplifications in their models, and they just don’t think about them.
 
 1 June 2022 Greenland – Reforming Statistics 41
 
-* ゼロ仮説主義(nullism)に反対する：現実は単純であるか決定的である義務はない。
+* **ゼロ仮説主義(nullism)への反対**: 現実は単純だったり明確な結論を出せたりするとは限らない。
 
-* 二分法病(dichotomania)に反対する：多くの、もしそうでなければ最も重要な決定は、二元的ではない、またはそうであるべきではない：オーブンはどこに設定しますか？サーモスタットは？薬のレベルは？
+* **二分法病(dichotomania)への反対**: 重要な意思決定の多くもしくは大部分は、二値的ではない、もしくは二値的**であるべきではない**。例：オーブンの温度を何度に設定するか？ エアコンの温度設定は？ **あなたへの薬の投与量は？**
 
-* 隠されたモデルと現実の混同(hidden reification)に反対する：研究者は日常的に、広範なモデルの不確実性を無視した「推論」を発表している – 彼らはモデルにおけるすべての単純化を無視する理由を知らず、それについて考えてすらいない。
+* **隠れたモデルと現実の混同(hidden reification)への反対**: 研究者達はモデルに含まれる膨大な不確実性を無視した「推論」を当たり前のように発表し続けている ― 研究者達はモデルによる単純化を無視する正当な理由を知らないし、考えてすらいない。
 
 ---
 
 **Slide 42**
 
-Many other cognitive biases contribute to design, analysis, reporting, publication biases<br>
+**Many other cognitive biases contribute to design, analysis, reporting, publication biases**<br>
 https://en.wikipedia.org/wiki/List_of_cognitive_biases
 
-All of the following and more should form part of basic training for moderating inferences:
+**<u>All</u> of the following and more should form part of basic training for moderating inferences**:
 
-* Anchoring to perceived consensus and desired yet erroneous belief even after correction.
+* <font color="red">**Anchoring**</font> to perceived consensus and desired yet erroneous belief **even after correction**.
 
-* Confirmation bias: selective focus on desirable evidence and neglect of undesirable evidence.
+* <font color="red">**Confirmation bias**</font>: selective focus on desirable evidence and neglect of undesirable evidence.
 
-* Courtesy bias: Tendency to be obscure about criticisms that will cause offense.
+* <font color="red">**Courtesy bias**</font>: Tendency to be obscure about criticisms that will cause offense.
 
 1 June 2022 Greenland – Reforming Statistics 42
 
-他の多くの認知バイアスが、デザイン、分析、報告、出版のバイアスに寄与している。<br>
-https://en.wikipedia.org/wiki/List_of_cognitive_biases
+他の多くの認知バイアスが、研究デザイン、分析、報告、出版バイアスに寄与している。<br>
+[List of cognitive biases - Wikipedia](https://en.wikipedia.org/wiki/List_of_cognitive_biases)
 
-以下のすべてとそれ以上が、推論を調整するための基本訓練の一部を形成すべきである：
+**少なくとも以下の<u>すべて</u>を推論を節度あるものにする(moderate)ための基本訓練の一部とするべきである**：
 
-* 認識されたコンセンサスと望ましい、しかし誤った信念への固着(修正後であっても)。
+* **たとえ修正後であっても**合意されているようにみえる見解や好ましいが実際には誤っている信念に<font color="red">**引きづられる傾向**</font>
 
-* 確証バイアス：好ましい証拠に選択的に焦点を当て、望ましくない証拠を無視すること。
+* <font color="red">**確証バイアス**</font>: 好ましい証拠にだけ選択的に注目し、好ましくない証拠を無視すること。
 
-* 配慮バイアス：不快感を与える批判について不明瞭にする傾向。
+* <font color="red">**礼儀バイアス**</font>: 不快感を与えそうな批判を曖昧にぼかす傾向。
 
 ---
 
