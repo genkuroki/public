@@ -849,25 +849,29 @@ https://en.wikipedia.org/wiki/List_of_cognitive_biases
 
 **少なくとも以下の<u>すべて</u>を推論を節度あるものにする(moderate)ための基本訓練の一部とするべきである**：
 
-* **たとえ修正後であっても**合意されているようにみえる見解や好ましいが実際には誤っている信念に<font color="red">**引きづられる傾向**</font>
+* <font color="red">**固着バイアス**</font>: たとえ修正後であっても**合意されているようにみえる見解や好ましいが実際には誤っている信念に引きづられる傾向
 
 * <font color="red">**確証バイアス**</font>: 好ましい証拠にだけ選択的に注目し、好ましくない証拠を無視すること。
 
 * <font color="red">**礼儀バイアス**</font>: 不快感を与えそうな批判を曖昧にぼかす傾向。
 
+続く
+
+__訳注:__ Anchoring to ... の項目に「固着バイアス」(anchoring bias)という名前を付けた。
+
 ---
 
 **Slide 43**
 
-* Failure to test alternatives (“congruence bias”)
+* <font color="red">**Failure to test alternatives**</font> (“congruence bias”)
 
-* Selective criticism of undesirable evidence.
+* <font color="red">**Selective criticism**</font> of undesirable evidence.
 
-* Selective reasoning to desired conclusions via selective assumptions, explanations, and data.
+* <font color="red">**Selective reasoning**</font> to desired conclusions via selective assumptions, explanations, and data.
 
-* Dunning–Kruger effects: The less expertise, the more the overestimation of one’s competence (as in researchers’ overestimation of their statistical expertise, e.g., statistical editors of med journals).
+* <font color="red">**Dunning–Kruger effects**</font>: The less expertise, the more the overestimation of one’s competence (as in researchers’ overestimation of their statistical expertise, e.g., statistical editors of med journals).
 
-* Overconfidence, validity illusions: The tendency to think methods or judgments are as accurate about the world as they are in the math (thought experiments) used to derive them.
+* <font color="red">**Overconfidence, validity illusions**</font>: The tendency to think methods or judgments are as accurate about the world as they are in the math (thought experiments) used to derive them.
 
 1 June 2022 Greenland – Reforming Statistics 43
 
@@ -883,15 +887,17 @@ https://en.wikipedia.org/wiki/List_of_cognitive_biases
 
 * 過信、妥当性の錯覚：方法や判断が、それらを導き出すために使用される数学(思考実験)において正確であるのと同様に、世界についても正確であると考える傾向。
 
+続く
+
 ---
 
 **Slide 44**
 
-* Familiarity bias – over-reliance on familiar methods, ignoring alternative approaches (“gets me grants and papers, so no need to change”).
+* <font color="red">**Familiarity bias**</font> – over-reliance on familiar methods, ignoring alternative approaches (“gets me grants and papers, so no need to change”).
 
-* Territorial (exclusionary) bias – promoting familiar methods as exclusively correct approaches, thus protecting self-authority and preventing competition from gaining ground (“Strictly Ballroom” effect: You can’t be an authority about what you haven’t studied and used extensively).
+* <font color="red">**Territorial (exclusionary) bias**</font> – promoting familiar methods as exclusively correct approaches, thus protecting self-authority and preventing competition from gaining ground (“Strictly Ballroom” effect: You can’t be an authority about what you haven’t studied and used extensively).
 
-* Groupthink and herd-behavior biases such as repetition bias (echo-chamber effect, group reinforcement causing overcount of evidence).
+* <font color="red">**Groupthink and herd-behavior biases** such as **repetition bias**</font> (echo-chamber effect, group reinforcement causing overcount of evidence).
 
 1 June 2022 Greenland – Reforming Statistics 44
 
@@ -901,15 +907,17 @@ https://en.wikipedia.org/wiki/List_of_cognitive_biases
 
 * 集団思考と群集行動バイアス、例えば反復バイアス(エコーチャンバー効果、証拠の過剰計数を引き起こす集団強化)。
 
+続く
+
 ---
 
 **Slide 45**
 
-* Mind-projection fallacies: Imbuing inert quantities with attitudes, opinions, values, inferences, judgments, and decisions.
+* <font color="red">**Mind-projection fallacies**</font>: Imbuing inert quantities with attitudes, opinions, values, inferences, judgments, and decisions.
 
 ― Rampant in statistical discussions, thanks to using value descriptors like “significance”, “confidence” and “severity” for narrow math concepts that cannot capture the word meanings.
 
-* Top example of nonsense: “P-values overstate evidence.” P-values only provide the position of a statistic in a reference distribution (e.g., chi-squared) derived from a model. Any evidence overstatement is by the viewer.
+* Top example of nonsense: <font color="red">**“P-values overstate evidence.”**</font> P-values only provide the position of a statistic in a reference distribution (e.g., chi-squared) derived from a model. <font color="red">**Any evidence overstatement is by the viewer**</font>.
 
 1 June 2022 Greenland – Reforming Statistics 45
 
