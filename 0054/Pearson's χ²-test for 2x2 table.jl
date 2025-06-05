@@ -19,6 +19,7 @@
 #
 # * 黒木玄
 # * 2025-06-05
+# * [Google Colabで実行](https://colab.research.google.com/github/genkuroki/public/blob/main/0054/Pearson's%20%CF%87%C2%B2-test%20for%202x2%20table.ipynb)
 
 # %%
 # Google Colabと自分のパソコンの両方で使えるようにするための工夫
@@ -78,15 +79,18 @@ pearson_chisq(a, b, c, d) =
 # ## Pearsonのカイ二乗統計量に関するシミュレーション
 
 # %%
-M = vec(([16, 24] * [0.3, 0.7]')')
-poissons = product_distribution(Poisson.(M))
+expectval = [16, 24] * [0.3, 0.7]'
+
+# %%
+M = (expectval'...,)
+poissons = Poisson.(M)
 MM = rd.(M)
 modelname = "Poi($(MM[1]))×Poi($(MM[2]))×Poi($(MM[3]))×Poi($(MM[4]))"
 
 niters = 10^6
 chisq = zeros(niters)
 for i in 1:niters
-    a, b, c, d = rand(poissons)
+    a, b, c, d = rand.(poissons)
     chisq[i] = pearson_chisq(a, b, c, d)
 end
 
@@ -97,7 +101,7 @@ title!("model: $modelname")
 
 # %%
 N = round(Int, sum(M))
-ps = M/N
+ps = collect(M)/N
 mult = Multinomial(N, ps)
 modelname = "Mult($N, $(rd.(ps)))"
 
