@@ -159,21 +159,64 @@ title!("model: $modelname")
 plot(P0, P1, P2, P3; size=(1000, 700), layout=(2, 2))
 
 # %% [markdown]
+# ### 累積分布関数で比較せずに、ヒストグラムで比較しようとすると失敗する(1)
+#
+# __理由:__
+# * ヒストグラムの形状はビン(帯の幅)の取り方によって大きく変わる。
+# * 離散分布(カイ二乗統計量の分布)と連続分布(カイ二乗分布)の比較にヒストグラムは向かない。
+# * 離散分布と連続分布を比較したい場合には、累積分布関数で比較するとよい。
+
+# %%
+m, n = round(Int, M[1]+M[2]), round(Int, M[3]+M[4])
+p, q = M[1]/m, M[3]/n
+bin1, bin0 = Binomial(m, p), Binomial(n, q)
+modelname = "Bin($m, $p)×Bin($n, $q)"
+
+niters = 10^5
+chisq = zeros(niters)
+for i in 1:niters
+    a, c = rand(bin1), rand(bin0)
+    b, d = m-a, n-c
+    chisq[i] = pearson_chisq(a, b, c, d)
+end
+
+histogram(chisq; norm=true, alpha=0.3, label="histogram of Pearson's χ²-statistic")
+plot!(x -> pdf(Chisq(1), x); label="pdf of χ²-distribution for df=1")
+plot!(xlim=(-0.5, 10.5), ylim=(0, 2.8))
+title!("model: $modelname")
+
+# %%
+histogram(chisq; norm=true, alpha=0.3, label="histogram of Pearson's χ²-statistic", bin=0:0.2:10)
+plot!(x -> pdf(Chisq(1), x); label="pdf of χ²-distribution for df=1")
+plot!(xlim=(-0.5, 10.5), ylim=(0, 2.8))
+title!("model: $modelname")
+
+# %%
+plot(x -> _ecdf(chisq, x), 0, 6; label="ecdf of Pearson's χ²-statistic")
+plot!(x -> cdf(Chisq(1), x); label="cdf of χ²-distribution for df=1")
+plot!(ytick=0:0.05:1)
+title!("model: $modelname")
+
+# %% [markdown]
 # ## Pearsonのカイ二乗検定のP値に関するシミュレーション
 
 # %%
-M = vec(([16, 24] * [0.3, 0.7]')')
-poissons = product_distribution(Poisson.(M))
+expectval = [16, 24] * [0.3, 0.7]'
+
+# %%
+M = (expectval'...,)
+poissons = Poisson.(M)
 MM = rd.(M)
 modelname = "Poi($(MM[1]))×Poi($(MM[2]))×Poi($(MM[3]))×Poi($(MM[4]))"
 
 niters = 10^6
 pval = zeros(niters)
 for i in 1:niters
-    a, b, c, d = rand(poissons)
+    a, b, c, d = rand.(poissons)
     chisq = pearson_chisq(a, b, c, d)
     pval[i] = ccdf(Chisq(1), chisq)
 end
+
 
 P0 = plot(x -> _ecdf(pval, x), 0, 1; label="Pearson's χ²-test")
 plot!(identity; label="", ls=:dash)
@@ -184,9 +227,9 @@ plot!(size=(400, 400))
 
 # %%
 N = round(Int, sum(M))
-ps = M/N
+ps = collect(M)/N
 mult = Multinomial(N, ps)
-modelname = "Mult($N, $(rd.(ps))))"
+modelname = "Mult($N, $(rd.(ps)))"
 
 niters = 10^6
 pval = zeros(niters)
@@ -252,6 +295,56 @@ plot(P0, P1, P2, P3; size=(800, 800), layout=(2, 2))
 
 # %% [markdown]
 # 以上のグラフを見れば、4種類のモデルにおける独立性の帰無仮説の下で、Pearsonのカイ二乗検定のP値は一様分布(累積分布関数が45度線)に近似的に従うことがわかる。
+
+# %% [markdown]
+# ### 累積分布関数で比較せずに、ヒストグラムで比較しようとすると失敗する(2)
+#
+# 帰無仮説の下でのモデルの確率分布において、P値の分布は一様分布で近似されていて欲しい。
+#
+# そのことを確認するためにはヒストグラムを描くよりも、経験累積分布関数のグラフを描いて、一様分布の確率密度関数の45度線のグラフと比較する方が分かり易い.
+#
+# ヒストグラムを描いて、一様分布の確率密度関数と比較しようとすると、以下のように分かり難くなる。
+
+# %%
+m, n = round(Int, M[1]+M[2]), round(Int, M[3]+M[4])
+p, q = M[1]/m, M[3]/n
+bin1, bin0 = Binomial(m, p), Binomial(n, q)
+modelname = "Bin($m, $p)×Bin($n, $q)"
+
+niters = 10^5
+pval = zeros(niters)
+for i in 1:niters
+    a, c = rand(bin1), rand(bin0)
+    b, d = m-a, n-c
+    chisq = pearson_chisq(a, b, c, d)
+    pval[i] = ccdf(Chisq(1), chisq)
+end
+
+histogram(pval; norm=true, alpha=0.3, label="Pearson's χ²-test", bin=eps():0.02:1.02)
+plot!(x -> pdf(Uniform(0, 1), x), 0, 1; label="", ls=:dash)
+plot!(xtick=0:0.1:1)
+plot!(xguide="α", yguide="probability density of P-value ≤ α")
+title!("model: $modelname")
+plot!(size=(400, 400))
+
+# %%
+histogram(pval; norm=true, alpha=0.3, label="Pearson's χ²-test", bin=eps():0.05:1.05)
+plot!(x -> pdf(Uniform(0, 1), x), 0, 1; label="", ls=:dash)
+plot!(xtick=0:0.1:1)
+plot!(xguide="α", yguide="probability density of P-value ≤ α")
+title!("model: $modelname")
+plot!(size=(400, 400))
+
+# %% [markdown]
+# 帰無仮説の下でのモデルの確率分布について、P値の経験累積分布関数のグラフを描くと、一様分布の確率密度関数のグラフ(45度線)で近似される。
+
+# %%
+plot(x -> _ecdf(pval, x), 0, 1; label="Pearson's χ²-test")
+plot!(identity; label="", ls=:dash)
+plot!(xtick=0:0.1:1, ytick=0:0.1:1)
+plot!(xguide="α", yguide="probability of P-value ≤ α")
+title!("model: $modelname")
+plot!(size=(400, 400))
 
 # %% [markdown]
 # ## リスク比のカイ二乗検定のP値関数
