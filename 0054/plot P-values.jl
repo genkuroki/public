@@ -15,7 +15,7 @@
 # ---
 
 # %% [markdown]
-# [Google Colabで実行]()
+# [Google Colabで実行](https://colab.research.google.com/github/genkuroki/public/blob/main/0054/plot%20P-values.ipynb)
 
 # %%
 # Google Colabと自分のパソコンの両方で使えるようにするための工夫
