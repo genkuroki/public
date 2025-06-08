@@ -20,7 +20,7 @@
 # * https://journals.sagepub.com/doi/10.1177/25152459251323480
 
 # %% [markdown]
-# [Google Colabで実行](https://colab.research.google.com/github/genkuroki/public/blob/main/0054/LLN%20for%20Bin(30%2C%200.5).ipynb?hl=ja#scrollTo=270b2ad2-9f25-462b-a54a-97c3a52ca946)
+# [Google Colabで実行](https://colab.research.google.com/github/genkuroki/public/blob/main/0054/LLN%20for%20Bin(30%2C%200.5).ipynb?hl=ja)
 
 # %%
 # Google Colabと自分のパソコンの両方で使えるようにするための工夫
