@@ -73,14 +73,31 @@ function pvalue_bin_score(k, n, p)
     2ccdf(Normal(), abs(z))
 end
 
-function plot_pvalue_bin(; k=11, n=20, xann=0.49, yann=0, kwargs...)
+svalue_bin_score(k, n, p) = -log2(pvalue_bin_score(k, n, p))
+
+function plot_pvalue_bin(; k=6, n=20, xann=0.49, yann=0,
+        shownullpval=true, kwargs...)
     nullpval = pvalue_bin_score(k, n, 0.5)
     plot(p -> pvalue_bin_score(k, n, p), 0, 1; label="")
-    vline!([0.5]; ls=:dot, lw=0.5, c=:black, label="")
-    scatter!([0.5], [nullpval]; label="", msc=:auto, c=:black)
-    annotate!(xann, nullpval+yann, text("P-value of p=0.5: $(rd(100nullpval))%", :right, :black, 12))
+    if shownullpval
+        vline!([0.5]; ls=:dot, lw=0.5, c=:black, label="")
+        scatter!([0.5], [nullpval]; label="", msc=:auto, c=:black)
+        annotate!(xann, nullpval+yann,
+            text("P-value of p=0.5: $(rd(100nullpval))%", :right, :black, 11))
+    end
     plot!(xtick=0:0.1:1, ytick=0:0.05:1)
-    plot!(xguide="p = c", yguide="P-value")
+    plot!(xguide="p = c", yguide="P-value = compatibility")
+    title!("data: heads k=$k times in n=$n coin tosses")
+    plot!(; kwargs...)
+end
+
+function plot_svalue_bin(; k=6, n=20, kwargs...)
+    nullsval = svalue_bin_score(k, n, 0.5)
+    ps = range(0, 1, 1001)
+    plot(ps, p -> svalue_bin_score(k, n, p); label="", c=2)
+    plot!(ylim=(-0.3, 10.3))
+    plot!(xtick=0:0.1:1, ytick=0:0.5:10)
+    plot!(xguide="p = c", yguide="S-value = surprise")
     title!("data: heads k=$k times in n=$n coin tosses")
     plot!(; kwargs...)
 end
@@ -96,5 +113,25 @@ plot_pvalue_bin(; k=50100, n=100000, xlim=(0.45, 0.55), xann=0.498, xtick=0:0.01
 
 # %%
 plot_pvalue_bin(; k=501000, n=10^6, xlim=(0.45, 0.55), xann=0.498, xtick=0:0.01:1)
+
+# %%
+function plot_pval_sval(; k=14, n=20, yann=0.04, kwargs...)
+    P = plot_pvalue_bin(; k, n, yann, kwargs...)
+    Q = plot_pvalue_bin(; k, n, yann, shownullpval=false, kwargs...)
+    R = plot_svalue_bin(; k, n, kwargs...)
+    plot(P, Q, R; size=(700, 1000), layout=(3, 1), leftmargin=10Plots.mm)
+end
+
+# %%
+plot_pval_sval(; k=14, n=20)
+
+# %%
+plot_pval_sval(; k=15, n=20)
+
+# %%
+plot_pval_sval(; k=70, n=100)
+
+# %%
+plot_pval_sval(; k=10160, n=20000)
 
 # %%
