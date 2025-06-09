@@ -58,11 +58,11 @@ macro autoadd(expr)
     :(add_pkg_if_not_added_yet.($(pkgs)); $expr)
 end
 
-# %%
 @autoadd using Distributions
 @autoadd using Plots
 default(fmt=:png, legendfontsize=12, guidefontsize=12, titlefontsize=12)
 
+# %%
 rd(x) = round(x; sigdigits=3)
 safediv(x, y) = x == 0 ? zero(x/y) : x/y
 
@@ -75,10 +75,10 @@ end
 
 svalue_bin_score(k, n, p) = -log2(pvalue_bin_score(k, n, p))
 
-function plot_pvalue_bin(; k=6, n=20, xann=0.49, yann=0,
-        shownullpval=true, kwargs...)
+function plot_pvalue_bin!(; k=14, n=20, xann=0.49, yann=0,
+        label="", c=:auto, ls=:solid, lw=1, shownullpval=false, kwargs...)
     nullpval = pvalue_bin_score(k, n, 0.5)
-    plot(p -> pvalue_bin_score(k, n, p), 0, 1; label="")
+    plot!(p -> pvalue_bin_score(k, n, p), 0, 1; label, c, ls, lw)
     if shownullpval
         vline!([0.5]; ls=:dot, lw=0.5, c=:black, label="")
         scatter!([0.5], [nullpval]; label="", msc=:auto, c=:black)
@@ -91,47 +91,77 @@ function plot_pvalue_bin(; k=6, n=20, xann=0.49, yann=0,
     plot!(; kwargs...)
 end
 
-function plot_svalue_bin(; k=6, n=20, kwargs...)
+function plot_pvalue_bin(; k=14, n=20, xann=0.495, yann=0.02,
+        label="", c=:auto, ls=:solid, lw=1, shownullpval=false, kwargs...)
+    plot()
+    plot_pvalue_bin!(; k, n, xann, yann, label, c, ls, lw, shownullpval, kwargs...)
+end
+
+function plot_svalue_bin!(; k=14, n=20, label="", c=:auto, ls=:solid, lw=1, kwargs...)
     nullsval = svalue_bin_score(k, n, 0.5)
     ps = range(0, 1, 1001)
-    plot(ps, p -> svalue_bin_score(k, n, p); label="", c=2)
+    plot!(ps, p -> svalue_bin_score(k, n, p); label, c, ls, lw)
     plot!(ylim=(-0.3, 10.3))
     plot!(xtick=0:0.1:1, ytick=0:0.5:10)
-    plot!(xguide="p = c", yguide="S-value = surprise")
+    plot!(xguide="p = c", yguide="S-value = surprise\n  = −log₂ P-value")
     title!("data: heads k=$k times in n=$n coin tosses")
     plot!(; kwargs...)
 end
 
-# %%
-plot_pvalue_bin(; k=501, n=1000, xlim=(0.45, 0.55), xann=0.498, xtick=0:0.01:1)
+function plot_svalue_bin(; k=14, n=20, label="", c=:auto, ls=:solid, lw=1, kwargs...)
+    plot()
+    plot_svalue_bin!(; k, n, label, c, ls, lw, kwargs...)
+end
 
-# %%
-plot_pvalue_bin(; k=5010, n=10000, xlim=(0.45, 0.55), xann=0.498, xtick=0:0.01:1)
-
-# %%
-plot_pvalue_bin(; k=50100, n=100000, xlim=(0.45, 0.55), xann=0.498, xtick=0:0.01:1)
-
-# %%
-plot_pvalue_bin(; k=501000, n=10^6, xlim=(0.45, 0.55), xann=0.498, xtick=0:0.01:1)
-
-# %%
 function plot_pval_sval(; k=14, n=20, yann=0.04, kwargs...)
-    P = plot_pvalue_bin(; k, n, yann, kwargs...)
+    P = plot_pvalue_bin(; k, n, yann, shownullpval=true, kwargs...)
     Q = plot_pvalue_bin(; k, n, yann, shownullpval=false, kwargs...)
     R = plot_svalue_bin(; k, n, kwargs...)
     plot(P, Q, R; size=(700, 1000), layout=(3, 1), leftmargin=10Plots.mm)
 end
 
 # %%
-plot_pval_sval(; k=14, n=20)
+plot_pvalue_bin(; k=501, n=1000, xlim=(0.45, 0.55), xann=0.498, xtick=0:0.01:1, shownullpval=true)
+
+# %%
+plot_pvalue_bin(; k=5010, n=10000, xlim=(0.45, 0.55), xann=0.498, xtick=0:0.01:1, shownullpval=true)
+
+# %%
+plot_pvalue_bin(; k=50100, n=100000, xlim=(0.45, 0.55), xann=0.498, xtick=0:0.01:1, shownullpval=true)
+
+# %%
+plot_pvalue_bin(; k=501000, n=10^6, xlim=(0.45, 0.55), xann=0.498, xtick=0:0.01:1, shownullpval=true)
 
 # %%
 plot_pval_sval(; k=15, n=20)
+
+# %%
+plot_pval_sval(; k=14, n=20, c=2, ls=:dash)
+
+# %%
+P = plot_pvalue_bin(; k=15, n=20, title="", label="k=15, n=20")
+plot_pvalue_bin!(; k=14, n=20, title="", ls=:dash, label="k=14, n=20", legend=:topleft)
+Q = plot_svalue_bin(; k=15, n=20, title="", label="k=15, n=20")
+plot_svalue_bin!(; k=14, n=20, title="", ls=:dash, label="k=14, n=20", legend=:topleft)
+plot(P, Q; size=(600, 660), layout=(2, 1))
 
 # %%
 plot_pval_sval(; k=70, n=100)
 
 # %%
 plot_pval_sval(; k=10160, n=20000)
+
+# %%
+plot_pval_sval(; k=60, n=100)
+
+# %%
+plot_pval_sval(; k=60, n=101, c=2, ls=:dash)
+
+# %%
+P = plot_pvalue_bin(; k=60, n=100, title="", label="k=60, n=100")
+plot_pvalue_bin!(; k=60, n=101, title="", ls=:dash, label="k=59, n=100", legend=:topleft)
+Q = plot_svalue_bin(; k=60, n=100, title="", label="k=60, n=100")
+plot_svalue_bin!(; k=60, n=101, title="", ls=:dash, label="k=59, n=100", legend=:topleft)
+plot(P, Q; size=(600, 660), layout=(2, 1))
 
 # %%
