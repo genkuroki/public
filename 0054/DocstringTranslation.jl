@@ -19,12 +19,12 @@
 
 using Pkg
 
-"""すでにPkg.add済みのパッケージのリスト (高速化のために用意)"""
+"""すでにPkg.add済みのパッケージのリスト"""
 _packages_added = [sort!(readdir(Sys.STDLIB));
-    [info.name for (uuid, info) in Pkg.dependencies() if info.is_direct_dep]]
+    sort!([info.name for (uuid, info) in Pkg.dependencies() if info.is_direct_dep])]
 
 """_packages_added内にないパッケージをPkg.addする"""
-add_pkg_if_not_added_yet(pkg) = if !(pkg in _packages_added)
+add_pkg_if_not_added_yet(pkg) = if isnothing(Base.find_package(pkg))
     println(stderr, "# $(pkg).jl is not added yet, so let's add it.")
     Pkg.add(pkg)
 end
