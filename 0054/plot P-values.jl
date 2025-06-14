@@ -158,10 +158,16 @@ plot_pval_sval(; k=60, n=100)
 plot_pval_sval(; k=60, n=101, c=2, ls=:dash)
 
 # %%
+@show pvalue_bin_score(60, 100, 0.5)
+@show pvalue_bin_score(60, 101, 0.5)
+println()
+@show svalue_bin_score(60, 100, 0.5)
+@show svalue_bin_score(60, 101, 0.5)
+println()
 P = plot_pvalue_bin(; k=60, n=100, title="", label="k=60, n=100")
 plot_pvalue_bin!(; k=60, n=101, title="", ls=:dash, label="k=60, n=101", legend=:topleft)
 Q = plot_svalue_bin(; k=60, n=100, title="", label="k=60, n=100")
-plot_svalue_bin!(; k=60, n=101, title="", ls=:dash, label="k=69, n=101", legend=:topleft)
+plot_svalue_bin!(; k=60, n=101, title="", ls=:dash, label="k=60, n=101", legend=:topleft)
 plot(P, Q; size=(600, 660), layout=(2, 1))
 
 # %%
