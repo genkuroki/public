@@ -14,9 +14,6 @@
 #     name: julia
 # ---
 
-# %% [markdown]
-#
-
 # %%
 # Google Colabと自分のパソコンの両方で使えるようにするための工夫
 
