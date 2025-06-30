@@ -924,8 +924,8 @@ __訳注:__ 「ストリクトリー・ボールルーム」(“Strictly Ballroo
 
 1 June 2022 Greenland – Reforming Statistics 45
 
-* <font color="red">**心の投影の誤謬(mind-projection fallacies)**</font>: 本来意味を持たない数量に、態度・意見・価値・推論・判定・意思決定を染み込まさせること。<br>
-― 「有意性(significance)」「信頼性(confidence)」「厳密性(severity)」のような**価値識別子**を言葉の本来の意味を表せない反映できない狭義の数学的概念に用いることで、この誤謬は統計的議論において蔓延している。
+* <font color="red">**心の投影の誤謬(mind-projection fallacies)**</font>: 本来意味を持たない数量に、態度・意見・価値・推論・判定・意思決定を浸透させること。<br>
+― 「有意性(significance)」「信頼性(confidence)」「厳密性(severity)」のような**価値識別子**を言葉の本来の意味を表せない狭義の数学的概念に用いることで、この誤謬は統計学的議論において蔓延している。
 
 * ナンセンスの最たる例：「<font color="red">**P値は証拠を過大評価している。**</font>」 P値はモデルから導出された参照分布(例えばカイ二乗分布)における検定統計量の値の位置を表しているだけである。<font color="red">**証拠の過大評価はどれもそれを見る側によるものである。**</font>
 
@@ -963,57 +963,57 @@ Example:
 
 * 誰もがそうであるように、統計学の講師・ユーザー・消費者達は<font color="red">**二分化への執着(dichotomania)**</font>、<font color="red">**ゼロ仮説優先主義(nulliam)**</font>、<font color="red">**モデルと現実の混同(reification)**</font>という病気に罹ってしまっている。彼らはゼロ仮説に関する真か偽かの結論を切望し、過度に単純化されたモデルからそういう結論を受け入れてしまう。
 
-* しかし、「ソフトサイエンス」の応用においては、観察(<font color="red">**たとえランダム化比較試験(RCT)からであっても**</font>)はそのような絶対的確実性を決して提供できないし、<font color="red">**不確実性の正確な評価さえも提供できない**</font>。
+* しかし、「ソフトサイエンス」の応用においては、観察は(<font color="red">**たとえランダム化比較試験(RCT)からであっても**</font>)そのような絶対的確実性を決して提供できないし、<font color="red">**不確実性の正確な評価さえも提供できない**</font>。
 
 ---
 
 ## Slide 48
 
-* Statistics caters to our cravings by providing sophisticated decision theories which make it appear to users that observations can provide definitive risk and uncertainty assessments.
+* Statistics caters to our cravings by providing sophisticated **decision theories** which make it **appear** to users that observations can provide definitive risk and uncertainty assessments.
 
-* “Confidence intervals” perpetuate these illusions by deceptively appearing to capture all the uncertainty sources in applications, when the only uncertainty they capture is that given the model used to compute them.
+* <font color="red">**“Confidence intervals” perpetuate these illusions by deceptively appearing to capture all the uncertainty sources in applications, when the only uncertainty they capture is that given the model used to compute them.**</font>
 
-* Worse, standard presentations rarely mention their neglect of model uncertainty!
+* <font color="red">**Worse, standard presentations rarely mention their neglect of model uncertainty!**</font>
 
 1 June 2022 Greenland – Reforming Statistics 48
 
-* 統計学は、洗練された決定理論を提供することで、ユーザーに観察が決定的なリスクと不確実性の評価を提供できるように見せかけ、我々の切望に応える。
+* 統計学は、洗練された**意思決定論**を提供することで、利用者達に観察結果からリスクや不確実性を確定的に評価できる**かのように見せること**によって、我々の欲求に応えている。
 
-* 「信頼区間」は、応用においてすべての不確実性の源を捉えているかのように欺瞞的に見えることで、これらの錯覚を永続させるが、それらが捉える不確実性は、計算に使用されたモデルを前提としたものだけである。
+* <font color="red">**「信頼区間」は、応用場面におけるすべての不確実性の原因を捉えているかのように見せることによって、これらの錯覚を永続化している。しかし「信頼区間」が捉える不確実性は「信頼区間」の計算に使われたモデルを前提としたものだけである。**</font>
 
-* さらに悪いことに、標準的なプレゼンテーションでは、モデルの不確実性の無視についてほとんど言及されない！
+* <font color="red">**さらに悪いことに、標準的なプレゼンテーションでは、モデルの不確実性の無視についてほとんど言及されない！**</font>
 
 ---
 
 ## Slide 49
 
-* Statistics also freely indulges in the ludic fallacy of treating all uncertainty as if from games of chance (random draws from a distribution of known form) instead of addressing our deep uncertainties about the form and causes of variation and bias.
+* Statistics also freely indulges in the <font color="red">**ludic fallacy**</font> of treating all uncertainty as if from games of chance (random draws from a distribution of **known** form) instead of addressing our deep uncertainties about **the form** <font color="red">**and causes**</font> **of variation and bias**.
 
-* These problems underscore the need for coverage of causal reasoning errors and cognitive biases as an essential component of any specialty claiming to promote sound scientific inference from data.
+* **These problems underscore the need for coverage of causal reasoning errors <u>and</u> cognitive biases as an essential component of any specialty claiming to promote sound <u>scientific</u> inference from data.**
 
 1 June 2022 Greenland – Reforming Statistics 49
 
-* 統計学はまた、すべての不確実性を偶然のゲーム(既知の形式の分布からのランダムな抽出)から来たかのように扱うという遊戯の誤謬に自由にふけり、変動とバイアスの形式と原因に関する我々の深い不確実性に対処しない。
+* 統計学は、**変動やバイアスの形態や**<font color="red">**原因**</font>に関する深い不確実性に正面から向き合わずに、すべての不確実性を偶然のゲーム(**既知の**形の確率分布からの無作為抽出)から来たかのように扱うという<font color="red">**遊戯の誤謬**</font>にもあっさり陥っている。
 
-* これらの問題は、データからの健全な科学的推論を促進すると主張するあらゆる専門分野の必須要素として、因果推論の誤りや認知バイアスを網羅する必要性を強調している。
+* **これらの問題は、因果的思考の誤り<u>と</u>認知バイアスに関する教育・理解が、データからの健全な<u>科学的</u>推論を促進すると主張するあらゆる専門分野において不可欠であることを強調している。**
 
 ---
 
 ## Slide 50
 
-* Mathematizations amplify overconfidence in these fallacies, making statistical theory a fountain of real-world misinformation:
+* <font color="red">**Mathematizations <u>amplify</u> overconfidence in these fallacies, making statistical theory a fountain of real-world misinformation**</font>:
 
-* Math derivations only warrant certainty in conclusions (such as “optimality”) given their assumptions (e.g., that a small class of model candidates can approximate reality well).
+* **Math derivations only warrant certainty in conclusions (such as “optimality”) <font color="red">given</font> their assumptions (e.g., that a small class of model candidates can approximate reality well)**.
 
-* Yet the conclusions are then treated as self-evident truths, a feeling reinforced by commitment to previous training, teaching, and practice. The resulting shared cognitive biases are then reinforced by social feedback loops.
+* Yet the conclusions are then treated as self-evident truths, a feeling reinforced by commitment to previous training, teaching, and practice. **The resulting shared cognitive biases are then reinforced by social feedback loops**.
 
 1 June 2022 Greenland – Reforming Statistics 50
 
-* 数学化はこれらの誤謬に対する過信を増幅させ、統計理論を現実世界の誤った情報の源泉にしている：
+* <font color="red">**数学化はこれらの誤謬における過信を<u>増幅</u>し、統計理論を現実世界に関する誤情報の供給源(fountain)にしてしまう**</font>:
 
-* 数学的導出は、その仮定(例えば、少数の候補モデルクラスが現実をうまく近似できるという仮定など)が与えられている場合にのみ、結論(「最適性」など)の確実性を保証する。
+* **数学的導出は、その前提(例えば少数のモデル候補群が現実をうまく近似できるという仮定)が成り立っている場合<font color="red">に限って</font>、「最適性」のような結論に関する確実性を保証するにすぎない。**
 
-* しかし、その結論は自明の真理として扱われ、これは以前の訓練、教育、実践へのコミットメントによって強化される感覚である。結果として生じる共有された認知バイアスは、社会的フィードバックループによってさらに強化される。
+* それにもかかわらず、数学的導出の結論はあたかも自明の真理であるかのように扱われ、従来の訓練・教育・実践に関する思い込みによってその感覚は強化される。**その結果生じる共有された認知バイアスは、社会的なフィードバックループによってさらに強化されていく。**
 
 ---
 
