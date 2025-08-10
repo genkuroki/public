@@ -9,10 +9,43 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.10.3
 #   kernelspec:
-#     display_name: Julia 1.11.3
+#     display_name: Julia 1.11.6
 #     language: julia
 #     name: julia-1.11
 # ---
+
+# %% [markdown]
+# # Agresti-Coullの信頼区間
+#
+# * 黒木玄
+# * Created at 2025-02-21, Updated at 2025-08-10
+#
+# 有名なAgresti-Coullの信頼区間は論文
+#
+# * A. Agresti and B.A. Coull, Approximate is better than “exact” for interval estimation of binomial proportions, The American Statistician, 1998.  https://scholar.google.co.jp/scholar?cluster=5129299358902170657
+#
+# で提案された。Agresti-Coullの信頼区間両端の値は次の公式で計算される:
+#
+# $$
+# p^{\text{AC}}_\pm = \tilde{p} + z \sqrt{\frac{\tilde{p}(1-\tilde{p})}{\tilde{n}}}, \quad
+# z = \operatorname{cquantile}\left(\operatorname{Normal}(0,1), \frac{\alpha}{2}\right), \quad
+# \tilde{k}=k+\frac{z^2}{2}, \quad
+# \tilde{n}=n+z^2, \quad
+# \tilde{p}=\frac{\tilde{k}}{\tilde{n}}.
+# $$
+#
+# Agresti-Coullの信頼区間はデータの値 $(k, n-k)$ を $\left(k+\frac{z^2}{2}, n-k+\frac{z^2}{2}\right)$ に修正した後のWaldの信頼区間に等しい.
+#
+# このノートでは以下の2つを実行する:
+#
+# * Agresti-Coullの信頼区間がWilsonのスコア信頼区間をよく近似していることの確認
+# * Agresti-Coullの信頼区間を与えるP値関数の実装
+
+# %% [markdown]
+# <img src="https://raw.githubusercontent.com/genkuroki/public/refs/heads/main/0053/Agresti-Coull-1.png">
+
+# %% [markdown]
+# <img src="https://raw.githubusercontent.com/genkuroki/public/refs/heads/main/0053/Agresti-Coull-2.png">
 
 # %%
 using Distributions
@@ -76,7 +109,7 @@ function z²_agresti_coull(k, n, p)
     f(t) = _eq_agresti_coull(exp(t), k, n, p)
     (1 - p ≈ 1 || p ≈ 1) && return oftype(p, Inf)
     k ≈ n*p && return zero(p)
-    z² = exp(find_zero(f, (-1e2, 1e2)))
+    z² = exp(find_zero(f, (-1e2, 1e2))) # 手抜き
 end
 
 function pvalue_agresti_coull(k, n, p)
