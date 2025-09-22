@@ -1481,6 +1481,7 @@ from Greenland & Rafi “Semantic and cognitive tools to aid statistical science
 Greenland & Rafi 「統計科学を支援する意味論的および認知的ツール」より http://arxiv.org/abs/1909.08583
 
 <img width=400 src="https://github.com/genkuroki/public/raw/main/0055/GreenlandSlide2022JapaneseTranslation/Greenland--Rafi_1909.08583_J.jpg">
+
 ---
 
 ## Slide 76
