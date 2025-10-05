@@ -39,7 +39,7 @@
 
 # %% [markdown] toc=true
 # <h1>Table of Contents<span class="tocSkip"></span></h1>
-# <div class="toc"><ul class="toc-item"><li><span><a href="#荒いプロット" data-toc-modified-id="荒いプロット-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>荒いプロット</a></span><ul class="toc-item"><li><span><a href="#左右の山の分散がともに1の場合" data-toc-modified-id="左右の山の分散がともに1の場合-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>左右の山の分散がともに1の場合</a></span></li><li><span><a href="#左の山の分散が1で右の山の分散が0.5^2の場合" data-toc-modified-id="左の山の分散が1で右の山の分散が0.5^2の場合-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>左の山の分散が1で右の山の分散が0.5^2の場合</a></span></li></ul></li><li><span><a href="#倍の細かさでプロット" data-toc-modified-id="倍の細かさでプロット-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>倍の細かさでプロット</a></span></li><li><span><a href="#データの保存" data-toc-modified-id="データの保存-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>データの保存</a></span></li><li><span><a href="#解説" data-toc-modified-id="解説-4"><span class="toc-item-num">4&nbsp;&nbsp;</span>解説</a></span></li></ul></div>
+# <div class="toc"><ul class="toc-item"><li><span><a href="#荒いプロット" data-toc-modified-id="荒いプロット-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>荒いプロット</a></span><ul class="toc-item"><li><span><a href="#左右の山の分散がともに1の場合" data-toc-modified-id="左右の山の分散がともに1の場合-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>左右の山の分散がともに1の場合</a></span></li></ul></li><li><span><a href="#倍の細かさでプロット" data-toc-modified-id="倍の細かさでプロット-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>倍の細かさでプロット</a></span></li><li><span><a href="#データの保存" data-toc-modified-id="データの保存-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>データの保存</a></span></li><li><span><a href="#解説" data-toc-modified-id="解説-4"><span class="toc-item-num">4&nbsp;&nbsp;</span>解説</a></span></li></ul></div>
 
 # %%
 # Google Colabと自分のパソコンの両方で使えるようにするための工夫
@@ -110,11 +110,12 @@ function simKL(;
     kl = zeros(La,Lb,Lμ,Lσ)
     f(a, b, μ, σ) = KullbackLeibler(Normal(μ,σ), MixtureModel([Normal(0.0,1.0), Normal(b,c)], [a, 1-a]))
     for i in 1:La
+        print("$i ")
         for j in 1:Lb
-            print("($i,$j)")
             kl[i,j,:,:] .= f.(as[i], bs[j], μs, σs')
         end
     end
+    println()
     
     fm(i,j) = findmin(@view kl[i,j,:,:])
     mc = minimizer_coordinate = [fm(i,j)[2] for i in 1:La, j in 1:Lb]
@@ -202,81 +203,6 @@ plot(p1, p2, size=(800,300))
 i, j = 18, 35
 @show as4[i], bs4[j]
 heatmap(μs4, σs4, exp.(-kl4[i,j,:,:]'), colorbar=true)
-
-# %% [markdown]
-# ## データの保存
-
-# %%
-# @autoadd using JLD2
-# @autoadd using FileIO
-
-# %%
-#=
-data1 = Dict(
-    "as1" => as1, 
-    "bs1" => bs1, 
-    "c1" => c1, 
-    "μs1" => μs1, 
-    "σs1" => σs1, 
-    "σs1" => σs1, 
-    "minimizer_coordinate1" => minimizer_coordinate1, 
-    "minimizer_μ1" => minimizer_μ1, 
-    "minimizer_σ1" => minimizer_σ1, 
-    "minval1" => minval1 
-)
-save("data1.jld2", data1)
-=#
-
-# %%
-#=
-data2 = Dict(
-    "as2" => as2, 
-    "bs2" => bs2, 
-    "c2" => c2, 
-    "μs2" => μs2, 
-    "σs2" => σs2, 
-    "σs2" => σs2, 
-    "minimizer_coordinate2" => minimizer_coordinate2, 
-    "minimizer_μ2" => minimizer_μ2, 
-    "minimizer_σ2" => minimizer_σ2, 
-    "minval2" => minval2 
-)
-save("data2.jld2", data2)
-=#
-
-# %%
-#=
-data3 = Dict(
-    "as3" => as3, 
-    "bs3" => bs3, 
-    "c3" => c3, 
-    "μs3" => μs3, 
-    "σs3" => σs3, 
-    "σs3" => σs3, 
-    "minimizer_coordinate3" => minimizer_coordinate3, 
-    "minimizer_μ3" => minimizer_μ3, 
-    "minimizer_σ3" => minimizer_σ3, 
-    "minval3" => minval3 
-)
-save("data3.jld2", data3)
-=#
-
-# %%
-#=
-data4 = Dict(
-    "as4" => as4, 
-    "bs4" => bs4, 
-    "c4" => c4, 
-    "μs4" => μs4, 
-    "σs4" => σs4, 
-    "σs4" => σs4, 
-    "minimizer_coordinate4" => minimizer_coordinate4, 
-    "minimizer_μ4" => minimizer_μ4, 
-    "minimizer_σ4" => minimizer_σ4, 
-    "minval4" => minval4 
-)
-save("data4.jld2", data4)
-=#
 
 # %% [markdown]
 # ## 解説
