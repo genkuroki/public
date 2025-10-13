@@ -178,4 +178,34 @@ a, b, c, d = 35, 15, 30, 30
 α = 0.05
 show(ScoreTest2x2RR(a, b, c, d; ρ, α));
 
+# %% [markdown]
+# ## 関数はメソッドの集まり
+
+# %%
+double(x) = x + x
+double(123)
+
+# %%
+double("hoge") # error
+
+# %%
+double(x::AbstractString) = x^2
+double("hoge")
+
+# %%
+double('げ')
+
+# %%
+double(x::AbstractChar) = double(string(x))
+double('げ')
+
+# %%
+abstract type AbstractFoo end
+struct Foo{T} <: AbstractFoo a::T end
+double(Foo(123))
+
+# %%
+double(x::AbstractFoo) = double(x.a)
+double(Foo(123))
+
 # %%
