@@ -193,7 +193,7 @@ double(x::AbstractString) = x^2
 double("hoge")
 
 # %%
-double('げ')
+double('げ') # error
 
 # %%
 double(x::AbstractChar) = double(string(x))
@@ -202,10 +202,30 @@ double('げ')
 # %%
 abstract type AbstractFoo end
 struct Foo{T} <: AbstractFoo a::T end
+double(Foo(123)) # error
+
+# %%
+double(x::AbstractFoo) = Foo(double(x.a))
 double(Foo(123))
 
 # %%
-double(x::AbstractFoo) = double(x.a)
-double(Foo(123))
+Foo("hoge")
+
+# %%
+string(Foo("hoge"))
+
+# %%
+function Base.show(io::IO, x::AbstractFoo)
+    print(io, '⟨')
+    show(io, x.a)
+    print(io, '⟩')
+end
+Foo("hoge")
+
+# %%
+double(Foo("hoge"))
+
+# %%
+string(Foo("hoge"))
 
 # %%
