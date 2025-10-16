@@ -9,9 +9,9 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.10.3
 #   kernelspec:
-#     display_name: Julia 1.9.3
+#     display_name: Julia
 #     language: julia
-#     name: julia-1.9
+#     name: julia
 # ---
 
 # %% [markdown]
@@ -556,7 +556,7 @@ end
 @time print_sim(; m=25, n=100, shifttype=:median)
 
 # %% [markdown]
-# 上の結果は論文 Fagerland-Sandvik (2009) のテーブルⅢの党中央値の場合を再現できて__いない.__
+# 上の結果は論文 Fagerland-Sandvik (2009) のテーブルⅢの等中央値の場合を再現できて__いない.__
 #
 # それは当然である. 標準偏差と歪度が等しい2つのガンマ分布は一致し, 2つの同じ分布の標本にWilcoxon-Mann-Whitney検定を適用すると帰無仮説が棄却される確率は名目有意水準に一致する
 
