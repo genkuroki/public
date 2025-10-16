@@ -18,11 +18,11 @@
 # # Fagerland-Sandvik (2009) の再現
 #
 # * 黒木 玄
-# * 2023-11-10
+# * 2023-11-10, 2025-10-16
 
 # %% [markdown] toc=true
 # <h1>目次<span class="tocSkip"></span></h1>
-# <div class="toc"><ul class="toc-item"><li><span><a href="#再現用の函数達の定義" data-toc-modified-id="再現用の函数達の定義-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>再現用の函数達の定義</a></span></li><li><span><a href="#再現" data-toc-modified-id="再現-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>再現</a></span><ul class="toc-item"><li><span><a href="#訂正の必要性" data-toc-modified-id="訂正の必要性-2.1"><span class="toc-item-num">2.1&nbsp;&nbsp;</span>訂正の必要性</a></span></li><li><span><a href="#訂正版1" data-toc-modified-id="訂正版1-2.2"><span class="toc-item-num">2.2&nbsp;&nbsp;</span>訂正版1</a></span></li><li><span><a href="#訂正版2-(ガンマ分布を逆ガンマ分布で置き換えた場合)" data-toc-modified-id="訂正版2-(ガンマ分布を逆ガンマ分布で置き換えた場合)-2.3"><span class="toc-item-num">2.3&nbsp;&nbsp;</span>訂正版2 (ガンマ分布を逆ガンマ分布で置き換えた場合)</a></span></li><li><span><a href="#原論文の方法をそのまま再現" data-toc-modified-id="原論文の方法をそのまま再現-2.4"><span class="toc-item-num">2.4&nbsp;&nbsp;</span>原論文の方法をそのまま再現</a></span></li></ul></li></ul></div>
+# <div class="toc"><ul class="toc-item"><li><span><a href="#再現用の函数達の定義" data-toc-modified-id="再現用の函数達の定義-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>再現用の函数達の定義</a></span></li><li><span><a href="#再現" data-toc-modified-id="再現-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>再現</a></span><ul class="toc-item"><li><span><a href="#訂正の必要性" data-toc-modified-id="訂正の必要性-2.1"><span class="toc-item-num">2.1&nbsp;&nbsp;</span>訂正の必要性</a></span></li><li><span><a href="#訂正版1" data-toc-modified-id="訂正版1-2.2"><span class="toc-item-num">2.2&nbsp;&nbsp;</span>訂正版1</a></span></li><li><span><a href="#訂正版2-(ガンマ分布を逆ガンマ分布で置き換えた場合)" data-toc-modified-id="訂正版2-(ガンマ分布を逆ガンマ分布で置き換えた場合)-2.3"><span class="toc-item-num">2.3&nbsp;&nbsp;</span>訂正版2 (ガンマ分布を逆ガンマ分布で置き換えた場合)</a></span></li><li><span><a href="#原論文の方法をそのまま再現" data-toc-modified-id="原論文の方法をそのまま再現-2.4"><span class="toc-item-num">2.4&nbsp;&nbsp;</span>原論文の方法をそのまま再現</a></span></li></ul></li><li><span><a href="#その他の計算" data-toc-modified-id="その他の計算-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>その他の計算</a></span></li></ul></div>
 
 # %% [markdown]
 # 論文 Fagerland-Sandvik (2009) https://onlinelibrary.wiley.com/doi/10.1002/sim.3561 の再現をやってみた. 結果は
@@ -405,10 +405,10 @@ function sim(distx, disty, m, n; shifttype=:mean, correct=true, L=10^5)
     pval_bm = undefarray(L)
     pval_st = undefarray(L)
     pval_we = undefarray(L)
-    nth = Threads.nthreads()
+    nth = Threads.nthreads() + Threads.nthreads(:interactive)
     Xtmp = [undefarray(m) for _ in 1:nth]
     Ytmp = [undefarray(n) for _ in 1:nth]
-    Threads.@threads for i in 1:L
+    Threads.@threads :static for i in 1:L
         tid = Threads.threadid()
         X = rand!(distx_sh, Xtmp[tid])
         Y = rand!(disty, Ytmp[tid])
@@ -558,7 +558,9 @@ end
 # %% [markdown]
 # 上の結果は論文 Fagerland-Sandvik (2009) のテーブルⅢの等中央値の場合を再現できて__いない.__
 #
-# それは当然である. 標準偏差と歪度が等しい2つのガンマ分布は一致し, 2つの同じ分布の標本にWilcoxon-Mann-Whitney検定を適用すると帰無仮説が棄却される確率は名目有意水準に一致する
+# それは当然である. 標準偏差と歪度が等しい2つのガンマ分布は一致し, 2つの同じ分布の標本にWilcoxon-Mann-Whitney検定を適用すると帰無仮説が棄却される確率は名目有意水準に一致する.
+#
+# 論文 Fagerland-Sandvik (2009)では等中央値の場合には「Aの歪度 = Bの歪度 + 0.5」(このノートブックでA,BはそれぞれX,Yに対応している)という設定でシミュレーションを行っている. 以下の計算を見よ.
 
 # %%
 @time print_sim(; m=25, n=100, shifttype=:median, list_skewness=list_skewness2)
