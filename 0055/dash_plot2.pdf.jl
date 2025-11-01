@@ -60,3 +60,20 @@ Plots.savefig("dash_plot2_Plots_gr.pdf")
 P
 
 # %%
+using Plots: Plots
+Plots.pgfplotsx()
+
+x = 0:0.0001:10
+y1 = sin.(x)
+y2 = sin.(x .+ 0.2)
+y3 = sin.(x .+ 0.4)
+
+P = Plots.plot(title="Multiple Dash Patterns by Plots pgfplotsx()")
+Plots.plot!(x, y1; ls=:dash, label="dash")
+Plots.plot!(x, y2; ls=:dash, label="dash")
+Plots.plot!(x, y3; ls=:dash, label="dash")
+Plots.savefig("dash_plot2_Plots_pgfplotsx.png")
+Plots.savefig("dash_plot2_Plots_pgfplotsx.pdf")
+P
+
+# %%
