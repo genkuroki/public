@@ -27,7 +27,7 @@ y3 = sin.(x .+ 0.4)
 fig = Figure(size=(600, 400))
 
 # サブプロット2: 複数の破線パターン
-ax2 = Axis(fig[1,1], title="Multiple Dash Patterns")
+ax2 = Axis(fig[1,1], title="Multiple Dash Patterns CairoMakie x=0:0.0001:10")
 lines!(ax2, x, y1, label="dash", linewidth=2, linestyle=:dash)
 lines!(ax2, x, y2, label="dash", linewidth=2, linestyle=:dash)
 lines!(ax2, x, y3, label="dash", linewidth=2, linestyle=:dash)
@@ -51,7 +51,7 @@ y1 = sin.(x)
 y2 = sin.(x .+ 0.2)
 y3 = sin.(x .+ 0.4)
 
-P = Plots.plot(title="Multiple Dash Patterns by Plots gr()")
+P = Plots.plot(title="Multiple Dash Patterns by Plots gr() x=0:0.0001:10")
 Plots.plot!(x, y1; ls=:dash, label="dash")
 Plots.plot!(x, y2; ls=:dash, label="dash")
 Plots.plot!(x, y3; ls=:dash, label="dash")
@@ -68,12 +68,31 @@ y1 = sin.(x)
 y2 = sin.(x .+ 0.2)
 y3 = sin.(x .+ 0.4)
 
-P = Plots.plot(title="Multiple Dash Patterns by Plots pgfplotsx()")
+# x = 0:0.0001:10 としたせいで以下の処理には非常に時間がかかってしまう。
+# その意味でも x = 0:0.0001:10 とするのは止めた方が良い。
+P = Plots.plot(title="Multiple Dash Patterns by Plots pgfplotsx() x=0:0.0001:10")
 Plots.plot!(x, y1; ls=:dash, label="dash")
 Plots.plot!(x, y2; ls=:dash, label="dash")
 Plots.plot!(x, y3; ls=:dash, label="dash")
 Plots.savefig("dash_plot2_Plots_pgfplotsx.png")
 Plots.savefig("dash_plot2_Plots_pgfplotsx.pdf")
+P
+
+# %%
+using Plots: Plots
+Plots.pgfplotsx()
+
+x = 0:0.01:10
+y1 = sin.(x)
+y2 = sin.(x .+ 0.2)
+y3 = sin.(x .+ 0.4)
+
+P = Plots.plot(title="Multiple Dash Patterns by Plots pgfplotsx() x=0:0.01:10")
+Plots.plot!(x, y1; ls=:dash, label="dash")
+Plots.plot!(x, y2; ls=:dash, label="dash")
+Plots.plot!(x, y3; ls=:dash, label="dash")
+Plots.savefig("dash_plot2_Plots_pgfplotsx_0.01.png")
+Plots.savefig("dash_plot2_Plots_pgfplotsx_0.01.pdf")
 P
 
 # %%
