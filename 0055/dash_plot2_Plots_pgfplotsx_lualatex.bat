@@ -1,0 +1,6 @@
+lualatex dash_plot2_Plots_pgfplotsx_0.01_.tex
+lualatex dash_plot2_Plots_pgfplotsx_0.005_.tex
+lualatex dash_plot2_Plots_pgfplotsx_0.001_.tex
+lualatex dash_plot2_Plots_pgfplotsx_0.0005_.tex
+lualatex dash_plot2_Plots_pgfplotsx_0.0001_.tex
+pause

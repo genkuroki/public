@@ -18,7 +18,8 @@
 using Makie, CairoMakie
 
 # データの準備
-x = 0:0.0001:10
+xstep = 0.0001
+x = 0:xstep:10
 y1 = sin.(x)
 y2 = sin.(x .+ 0.2)
 y3 = sin.(x .+ 0.4)
@@ -27,7 +28,7 @@ y3 = sin.(x .+ 0.4)
 fig = Figure(size=(600, 400))
 
 # サブプロット2: 複数の破線パターン
-ax2 = Axis(fig[1,1], title="Multiple Dash Patterns CairoMakie x=0:0.0001:10")
+ax2 = Axis(fig[1,1], title="Multiple Dash Patterns CairoMakie x=$x")
 lines!(ax2, x, y1, label="dash", linewidth=2, linestyle=:dash)
 lines!(ax2, x, y2, label="dash", linewidth=2, linestyle=:dash)
 lines!(ax2, x, y3, label="dash", linewidth=2, linestyle=:dash)
@@ -35,98 +36,139 @@ axislegend(ax2)
 xlims!(ax2, 0, 10)
 
 # PDF形式で保存（この際にApple製品での表示問題が発生する可能性あり）
-save("dash_plot2.pdf", fig)
+save("dash_plot2_CairoMakie_$(xstep).pdf", fig)
 
 # PNG形式でも保存（こちらは問題なく表示される）
-save("dash_plot2.png", fig)
+save("dash_plot2_CairoMakie_$(xstep).png", fig)
 
 fig
 
 # %%
 using Plots: Plots
-Plots.gr()
+Plots.gr(titlefontsize=12)
 
-x = 0:0.0001:10
+xstep = 0.0001
+x = 0:xstep:10
 y1 = sin.(x)
 y2 = sin.(x .+ 0.2)
 y3 = sin.(x .+ 0.4)
 
-P = Plots.plot(title="Multiple Dash Patterns by Plots gr() x=0:0.0001:10")
+P = Plots.plot(title="Multiple Dash Patterns by Plots gr() x=$x")
 Plots.plot!(x, y1; ls=:dash, label="dash")
 Plots.plot!(x, y2; ls=:dash, label="dash")
 Plots.plot!(x, y3; ls=:dash, label="dash")
-Plots.savefig("dash_plot2_Plots_gr.png")
-Plots.savefig("dash_plot2_Plots_gr.pdf")
+Plots.savefig("dash_plot2_Plots_gr_$xstep.png")
+Plots.savefig("dash_plot2_Plots_gr_$xstep.pdf")
 P
 
 # %%
 using Plots: Plots
-Plots.pgfplotsx()
+Plots.pgfplotsx(titlefontsize=14)
 
-x = 0:0.0001:10
-y1 = sin.(x)
-y2 = sin.(x .+ 0.2)
-y3 = sin.(x .+ 0.4)
-
-# x = 0:0.0001:10 としたせいで以下の処理には非常に時間がかかってしまう。
+# x = 0:0.0001:10 とすると以下の処理には非常に時間がかかってしまう。
 # その意味でも x = 0:0.0001:10 とするのは止めた方が良い。
-P = Plots.plot(title="Multiple Dash Patterns by Plots pgfplotsx() x=0:0.0001:10")
-Plots.plot!(x, y1; ls=:dash, label="dash")
-Plots.plot!(x, y2; ls=:dash, label="dash")
-Plots.plot!(x, y3; ls=:dash, label="dash")
-Plots.savefig("dash_plot2_Plots_pgfplotsx.png")
-Plots.savefig("dash_plot2_Plots_pgfplotsx.pdf")
-P
-
-# %%
-using Plots: Plots
-Plots.pgfplotsx()
-
-x = 0:0.01:10
+xstep = 0.01
+x = 0:xstep:10
 y1 = sin.(x)
 y2 = sin.(x .+ 0.2)
 y3 = sin.(x .+ 0.4)
 
-P = Plots.plot(title="Multiple Dash Patterns by Plots pgfplotsx() x=0:0.01:10")
+P = Plots.plot(title="Multiple Dash Patterns by Plots pgfplotsx() x=$x")
 Plots.plot!(x, y1; ls=:dash, label="dash")
 Plots.plot!(x, y2; ls=:dash, label="dash")
 Plots.plot!(x, y3; ls=:dash, label="dash")
-Plots.savefig("dash_plot2_Plots_pgfplotsx_0.01.png")
-Plots.savefig("dash_plot2_Plots_pgfplotsx_0.01.pdf")
+Plots.plot!(tex_output_standalone=true)
+Plots.savefig("dash_plot2_Plots_pgfplotsx_$(xstep)_.tex")
+Plots.savefig("dash_plot2_Plots_pgfplotsx_$(xstep).png")
+Plots.savefig("dash_plot2_Plots_pgfplotsx_$(xstep).pdf")
 P
 
 # %%
 using Plots: Plots
-Plots.pgfplotsx()
+Plots.pgfplotsx(titlefontsize=14)
 
-x = 0:0.001:10
+# x = 0:0.0001:10 とすると以下の処理には非常に時間がかかってしまう。
+# その意味でも x = 0:0.0001:10 とするのは止めた方が良い。
+xstep = 0.005
+x = 0:xstep:10
 y1 = sin.(x)
 y2 = sin.(x .+ 0.2)
 y3 = sin.(x .+ 0.4)
 
-P = Plots.plot(title="Multiple Dash Patterns by Plots pgfplotsx() x=0:0.001:10")
+P = Plots.plot(title="Multiple Dash Patterns by Plots pgfplotsx() x=$x")
 Plots.plot!(x, y1; ls=:dash, label="dash")
 Plots.plot!(x, y2; ls=:dash, label="dash")
 Plots.plot!(x, y3; ls=:dash, label="dash")
-Plots.savefig("dash_plot2_Plots_pgfplotsx_0.001.png")
-Plots.savefig("dash_plot2_Plots_pgfplotsx_0.001.pdf")
+Plots.plot!(tex_output_standalone=true)
+Plots.savefig("dash_plot2_Plots_pgfplotsx_$(xstep)_.tex")
+Plots.savefig("dash_plot2_Plots_pgfplotsx_$(xstep).png")
+Plots.savefig("dash_plot2_Plots_pgfplotsx_$(xstep).pdf")
 P
 
 # %%
 using Plots: Plots
-Plots.pgfplotsx()
+Plots.pgfplotsx(titlefontsize=14)
 
-x = 0:0.005:10
+# x = 0:0.0001:10 とすると以下の処理には非常に時間がかかってしまう。
+# その意味でも x = 0:0.0001:10 とするのは止めた方が良い。
+xstep = 0.001
+x = 0:xstep:10
 y1 = sin.(x)
 y2 = sin.(x .+ 0.2)
 y3 = sin.(x .+ 0.4)
 
-P = Plots.plot(title="Multiple Dash Patterns by Plots pgfplotsx() x=0:0.005:10")
+P = Plots.plot(title="Multiple Dash Patterns by Plots pgfplotsx() x=$x")
 Plots.plot!(x, y1; ls=:dash, label="dash")
 Plots.plot!(x, y2; ls=:dash, label="dash")
 Plots.plot!(x, y3; ls=:dash, label="dash")
-Plots.savefig("dash_plot2_Plots_pgfplotsx_0.005.png")
-Plots.savefig("dash_plot2_Plots_pgfplotsx_0.005.pdf")
+Plots.plot!(tex_output_standalone=true)
+Plots.savefig("dash_plot2_Plots_pgfplotsx_$(xstep)_.tex")
+Plots.savefig("dash_plot2_Plots_pgfplotsx_$(xstep).png")
+Plots.savefig("dash_plot2_Plots_pgfplotsx_$(xstep).pdf")
+P
+
+# %%
+using Plots: Plots
+Plots.pgfplotsx(titlefontsize=14)
+
+# x = 0:0.0001:10 とすると以下の処理には非常に時間がかかってしまう。
+# その意味でも x = 0:0.0001:10 とするのは止めた方が良い。
+xstep = 0.0005
+x = 0:xstep:10
+y1 = sin.(x)
+y2 = sin.(x .+ 0.2)
+y3 = sin.(x .+ 0.4)
+
+P = Plots.plot(title="Multiple Dash Patterns by Plots pgfplotsx() x=$x")
+Plots.plot!(x, y1; ls=:dash, label="dash")
+Plots.plot!(x, y2; ls=:dash, label="dash")
+Plots.plot!(x, y3; ls=:dash, label="dash")
+Plots.plot!(tex_output_standalone=true)
+Plots.savefig("dash_plot2_Plots_pgfplotsx_$(xstep)_.tex")
+Plots.savefig("dash_plot2_Plots_pgfplotsx_$(xstep).png")
+Plots.savefig("dash_plot2_Plots_pgfplotsx_$(xstep).pdf")
+P
+
+# %%
+using Plots: Plots
+Plots.pgfplotsx(titlefontsize=14)
+
+# x = 0:0.0001:10 とすると以下の処理には非常に時間がかかってしまう。
+# その意味でも x = 0:0.0001:10 とするのは止めた方が良い。
+xstep = 0.0001
+x = 0:xstep:10
+y1 = sin.(x)
+y2 = sin.(x .+ 0.2)
+y3 = sin.(x .+ 0.4)
+
+P = Plots.plot(title="Multiple Dash Patterns by Plots pgfplotsx() x=$x")
+Plots.plot!(x, y1; ls=:dash, label="dash")
+Plots.plot!(x, y2; ls=:dash, label="dash")
+Plots.plot!(x, y3; ls=:dash, label="dash")
+Plots.plot!(tex_output_standalone=true)
+Plots.savefig("dash_plot2_Plots_pgfplotsx_$(xstep)_.tex")
+Plots.savefig("dash_plot2_Plots_pgfplotsx_$(xstep).png")
+Plots.savefig("dash_plot2_Plots_pgfplotsx_$(xstep).pdf")
 P
 
 # %%
