@@ -21,8 +21,6 @@ using Distributions
 using DataFrames
 using HypothesisTests
 using RCall
-@rimport base as R
-@rlibrary stats
 
 r(x) = round(x; sigdigits=2)
 
@@ -38,7 +36,7 @@ print(data_pvals)
 #
 # 以下の表は中原治『基礎から学ぶ統計学』p.169より
 #
-# <img width=500 src="IMG_1453.jpeg">
+# <img width=350 src="IMG_1453.jpeg">
 
 # %%
 x_A = [118, 132, 120, 115, 113]
@@ -61,16 +59,50 @@ n_B = length(x_B)
 #
 # 以下は表を使わない計算。
 
+# %% [markdown]
+# 次のセルはRのptによる計算
+
+# %%
+@rput df t
+@show rcopy(R"""2*pt(abs(t), df, lower.tail=F)""");
+
+# %% [markdown]
+# 次のセルはRのt.testによる計算
+
+# %%
+@rput x_A x_B
+R"""
+t.test(x_A, x_B, var.equal=T)
+"""
+
+# %%
+@rput x_A x_B
+R"""
+t.test(x_A, x_B)
+"""
+
+# %% [markdown]
+# 以下はJuliaでの計算
+
 # %%
 @show 2ccdf(TDist(df), abs(t));
 
 # %%
 EqualVarianceTTest(x_A, x_B)
 
-# %% [markdown]
-# 次のセルはRのt.testによる計算
+# %%
+xxA = copy(x_A)
+xxA[3] = 130
+@show x_A xxA x_B
+EqualVarianceTTest(xxA, x_B)
 
 # %%
-t_test(x_A, x_B, var"var.equal"=true)
+UnequalVarianceTTest(x_A, x_B)
+
+# %%
+xxA = copy(x_A)
+xxA[3] = 130
+@show x_A xxA x_B
+UnequalVarianceTTest(xxA, x_B)
 
 # %%
