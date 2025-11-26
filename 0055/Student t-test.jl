@@ -22,11 +22,11 @@ using DataFrames
 using HypothesisTests
 using RCall
 
-r(x) = round(x; sigdigits=2)
+rd(x) = round(x; sigdigits=2)
 
 dfs = 4:13
 ts = 0:0.1:6
-tbl_pvals = @. r(2ccdf(TDist(dfs'), ts))
+tbl_pvals = @. rd(2ccdf(TDist(dfs'), ts))
 names = ["t-value", ("df=$k" for k in dfs)...]
 data_pvals = DataFrame([ts tbl_pvals], names)
 print(data_pvals)
