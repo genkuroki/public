@@ -22,6 +22,12 @@
 # $
 # \newcommand\op{\operatorname}
 # $
+#
+# このファイルは以下の場所で閲覧できる:
+#
+# * https://github.com/genkuroki/public/blob/main/0055/binomial%20P-values.ipynb
+# * https://nbviewer.org/github/genkuroki/public/blob/main/0055/binomial%20P-values.ipynb
+# * https://raw.githubusercontent.com/genkuroki/public/refs/heads/main/0055/binomial%20P-values.pdf
 
 # %% [markdown] toc=true
 # <h1>目次<span class="tocSkip"></span></h1>
