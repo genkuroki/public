@@ -47,6 +47,9 @@ haskey(ENV, "COLAB_GPU") && run(`apt-get -y install fonts-ipafont-gothic`)
 # %%
 # Google Colabと自分のパソコンの両方で使えるようにするための工夫
 
+# https://docs.julialang.org/en/v1/manual/environment-variables/#JULIA_PKG_PRECOMPILE_AUTO
+haskey(ENV, "COLAB_GPU") && (ENV["JULIA_PKG_PRECOMPILE_AUTO"] = "0")
+
 using Pkg
 
 """すでにPkg.add済みのパッケージのリスト"""
@@ -86,15 +89,13 @@ macro autoadd(expr)
 end
 
 # %%
-ENV["LINES"] = 200
-ENV["COLUMNS"] = 200
-
+ENV["LINES"], ENV["COLUMNS"] = 200, 200
 const mincho = "ipamp"
 const gothic = "ipagp"
 
 @autoadd begin
 using Distributions
-using StatsPlots
+using Plots
 end
 
 default(fmt=:png, fontfamily=gothic,
