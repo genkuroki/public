@@ -46,10 +46,8 @@ haskey(ENV, "COLAB_GPU") && run(`apt-get -y install fonts-ipafont-gothic`)
 
 # %%
 # Google Colabと自分のパソコンの両方で使えるようにするための工夫
-
 # https://docs.julialang.org/en/v1/manual/environment-variables/#JULIA_PKG_PRECOMPILE_AUTO
 haskey(ENV, "COLAB_GPU") && (ENV["JULIA_PKG_PRECOMPILE_AUTO"] = "0")
-
 using Pkg
 
 """すでにPkg.add済みのパッケージのリスト"""
@@ -111,14 +109,14 @@ x ⪆ y = x > y || x ≈ y
     central法による二項分布の両側P値
 二項分布binにおける「k以下になる確率の2倍」と「k以上になる確率の2倍」の小さい方の値
 
-このP値からClopper-Pearsonの信頼区間が得られる。
+このP値からClopper-Pearsonの相性区間(信頼区間)が得られる。
 """
 pvalue_central(bin, k) = min(2cdf(bin, k), 2ccdf(bin, k-1))
+pvalue_central(n, k, p) = pvalue_central(Binomial(n, p), k)
 
-"""
-Clopper-Pearsonの信頼区間
-"""
-function confint_clopper_pearson(n, k; α = 0.05)
+
+"""Clopper-Pearsonの相性区間"""
+function ci_clopper_pearson(n, k; α = 0.05)
     p_L = k > 0 ? quantile(Beta(k, n-k+1), α/2) : zero(α)
     p_U = k < n ? quantile(Beta(k+1, n-k), 1-α/2) : one(α)
     [p_L, p_U]
@@ -127,19 +125,22 @@ end
 # %%
 """
     minimum likelihood法による二項分布の両側P値
-このP値からSterneの信頼区間が得られる。
+このP値からSterneの相性区間(信頼区間)が得られる。
 """
 function pvalue_minlike(bin, k)
     supp = support(bin)
     sum(pdf(bin, i) for i in supp if pdf(bin, i) ⪅ pdf(bin, k))
 end
+pvalue_minlike(n, k, p) = pvalue_minlike(Binomial(n, p), k)
+
+"""Sterneの相性区間は実装せず"""
 
 # %%
 """
     score法による二項分布の両側P値
 このP値は二項分布の正規分布近似で定義された両側P値と同じ。
 
-このP値はWilsonのscore信頼区間を与える。
+このP値はWilsonのスコア相性区間(信頼区間)を与える。
 """
 function pvalue_score(bin, k)
     (; n, p) = bin
@@ -148,13 +149,26 @@ function pvalue_score(bin, k)
     z = (phat - p) / se
     2ccdf(Normal(), abs(z))
 end
+pvalue_score(n, k, p) = pvalue_score(Binomial(n, p), k)
+
+"""Wilsonのスコア相性区間"""
+function ci_score(n, k; α = 0.05)
+    p̂ = k/n
+    z = quantile(Normal(), 1-α/2)
+    a, b, c = 1+z^2/n, p̂+z^2/(2n), p̂^2
+    # ap² - 2bp + c = 0 を解く.
+    sqrtD = √(b^2 - a*c)
+    p_L = (b - sqrtD)/a
+    p_U = (b + sqrtD)/a
+    [p_L, p_U]
+end
 
 # %%
 """
     Wald法による二項分布の両側P値
 このP値も二項分布の正規分布近似で定義された両側P値だが、データ \$n, k\$ から推定する必要がない \$\\hat{p}=k/n\$ の標準偏差を推定してしまっているので、score法の両側P値よりも精度が低い。
 
-このP値は教科書によく書いてある母比率に関するWaldの信頼区間を与える。
+このP値は教科書によく書いてある母比率に関するWaldの相性区間(信頼区間)を与える。
 """
 function pvalue_wald(bin, k)
     (; n, p) = bin
@@ -163,21 +177,17 @@ function pvalue_wald(bin, k)
     z = (phat - p) / sehat
     2ccdf(Normal(), abs(z))
 end
+pvalue_wald(n, k, p) = pvalue_wald(Binomial(n, p), k)
 
-# %%
-bin = Binomial(20, 0.6)
-ks = (7, 8, 16, 17)
-@show pvalue_central.(bin, ks)
-@show pvalue_minlike.(bin, ks)
-@show pvalue_score.(bin, ks)
-@show pvalue_wald.(bin, ks)
-;
-
-# %%
-ccdf(Binomial(20, 0.6), 18-1), 2ccdf(Binomial(20, 0.6), 18-1)
-
-# %%
-cdf(Binomial(20, 0.6), 6), 2cdf(Binomial(20, 0.6), 6)
+"""Waldの相性区間"""
+function ci_wald(n, k; α = 0.05)
+    p̂ = k/n
+    SEhat = √(p̂*(1-p̂)/n)
+    z = quantile(Normal(), 1-α/2)
+    p_L = p̂ - z*SEhat
+    p_U = p̂ + z*SEhat
+    [p_L, p_U]
+end
 
 # %% [markdown]
 # ## 二項検定のP値に関する解説の例
@@ -681,7 +691,7 @@ vline!([0.303]; label="点推定値 p≈0.3", ls=:dash)
 # %%
 @show α = 0.5^5
 @show 1 - α
-@show confint_clopper_pearson(n, k; α);
+@show ci_clopper_pearson(n, k; α);
 
 # %% [markdown]
 # ### 相性区間 (＝信頼区間)
@@ -711,7 +721,7 @@ vline!([0.303]; label="点推定値 p≈0.3", ls=:dash)
 #
 # ```julia
 # using Distributions
-# function confint_clopper_pearson(n, k; α = 0.05)
+# function ci_clopper_pearson(n, k; α = 0.05)
 #     p_L = k > 0 ? quantile(Beta(k, n-k+1), α/2) : zero(α)
 #     p_U = k < n ? quantile(Beta(k+1, n-k), 1-α/2) : one(α)
 #     [p_L, p_U]
@@ -722,7 +732,7 @@ vline!([0.303]; label="点推定値 p≈0.3", ls=:dash)
 # このコードを用いて、「無作為に選んだ患者 n=20 人中 k=6 人に薬Aが効いた」というデータの値が得られたときの、相性水準 $5\%$ のClopper-Pearsonの相性区間(＝信頼水準 $95\%$ のClopper-Pearson信頼区間)を求めて見ましょう。
 
 # %%
-@show confint_clopper_pearson(20, 6; α = 0.05);
+@show ci_clopper_pearson(20, 6; α = 0.05);
 
 # %% [markdown]
 # 「無作為に選んだ患者 n=20 人中 k=6 人に薬Aが効いた」というデータの値が得られたときの、相性水準 $5\%$ の相性区間(＝信頼水準 $95\%$ のClopper-Pearson信頼区間)はおおよそ $[0.119, 0.543]$ になることが分かりました。
@@ -733,7 +743,7 @@ vline!([0.303]; label="点推定値 p≈0.3", ls=:dash)
 
 # %%
 n, k, α = 20, 6, 0.05
-ci = confint_clopper_pearson(n, k; α);
+ci = ci_clopper_pearson(n, k; α);
 plot(p -> pvalue_central(Binomial(n, p), k), 0, 1; label="P値関数")
 plot!(xtick=0:0.1:1, ytick=0:0.05:1.5, yguide="P値＝相性の良さ(compatibility)")
 title!("データの値「無作為に選んだ患者 n=$n 人中 k=$k 人に薬Aが効いた」")
