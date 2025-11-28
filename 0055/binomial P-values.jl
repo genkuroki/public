@@ -23,7 +23,7 @@
 # \newcommand\op{\operatorname}
 # $
 #
-# このファイルは以下の場所で閲覧できる:
+# このファイルは以下の場所で閲覧できます。
 #
 # * https://github.com/genkuroki/public/blob/main/0055/binomial%20P-values.ipynb
 # * https://nbviewer.org/github/genkuroki/public/blob/main/0055/binomial%20P-values.ipynb
@@ -33,11 +33,13 @@
 #
 # * https://colab.research.google.com/github/genkuroki/public/blob/main/0055/binomial%20P-values.ipynb
 #
+# <!--
 # <span style="color:red;font-weight:bold">参照文献の記述がひどく未完成なので取り扱い注意!</span>
+# -->
 
 # %% [markdown] toc=true
 # <h1>目次<span class="tocSkip"></span></h1>
-# <div class="toc"><ul class="toc-item"><li><span><a href="#二項検定のP値に関する解説の例" data-toc-modified-id="二項検定のP値に関する解説の例-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>二項検定のP値に関する解説の例</a></span><ul class="toc-item"><li><span><a href="#P値" data-toc-modified-id="P値-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>P値</a></span><ul class="toc-item"><li><span><a href="#片側P値" data-toc-modified-id="片側P値-1.1.1"><span class="toc-item-num">1.1.1&nbsp;&nbsp;</span>片側P値</a></span></li><li><span><a href="#両側P値-(単にP値と呼ぶことが多い)" data-toc-modified-id="両側P値-(単にP値と呼ぶことが多い)-1.1.2"><span class="toc-item-num">1.1.2&nbsp;&nbsp;</span>両側P値 (単にP値と呼ぶことが多い)</a></span></li></ul></li><li><span><a href="#P値の計算の仕方" data-toc-modified-id="P値の計算の仕方-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>P値の計算の仕方</a></span></li><li><span><a href="#両側P値の計算練習問題" data-toc-modified-id="両側P値の計算練習問題-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>両側P値の計算練習問題</a></span></li><li><span><a href="#S値" data-toc-modified-id="S値-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>S値</a></span></li><li><span><a href="#広く通用するP値に関する閾値は存在しない" data-toc-modified-id="広く通用するP値に関する閾値は存在しない-1.5"><span class="toc-item-num">1.5&nbsp;&nbsp;</span>広く通用するP値に関する閾値は存在しない</a></span></li><li><span><a href="#相性の良さ/悪さという解釈の仕方" data-toc-modified-id="相性の良さ/悪さという解釈の仕方-1.6"><span class="toc-item-num">1.6&nbsp;&nbsp;</span>相性の良さ/悪さという解釈の仕方</a></span></li><li><span><a href="#P値関数とS値関数" data-toc-modified-id="P値関数とS値関数-1.7"><span class="toc-item-num">1.7&nbsp;&nbsp;</span>P値関数とS値関数</a></span></li><li><span><a href="#相性区間-(＝信頼区間)" data-toc-modified-id="相性区間-(＝信頼区間)-1.8"><span class="toc-item-num">1.8&nbsp;&nbsp;</span>相性区間 (＝信頼区間)</a></span></li><li><span><a href="#報告の仕方について" data-toc-modified-id="報告の仕方について-1.9"><span class="toc-item-num">1.9&nbsp;&nbsp;</span>報告の仕方について</a></span></li></ul></li><li><span><a href="#二項検定の複数のP値のグラフ" data-toc-modified-id="二項検定の複数のP値のグラフ-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>二項検定の複数のP値のグラフ</a></span></li><li><span><a href="#参照文献" data-toc-modified-id="参照文献-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>参照文献</a></span></li></ul></div>
+# <div class="toc"><ul class="toc-item"><li><span><a href="#二項検定のP値に関する解説の例" data-toc-modified-id="二項検定のP値に関する解説の例-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>二項検定のP値に関する解説の例</a></span><ul class="toc-item"><li><span><a href="#P値の導入" data-toc-modified-id="P値の導入-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>P値の導入</a></span><ul class="toc-item"><li><span><a href="#片側P値" data-toc-modified-id="片側P値-1.1.1"><span class="toc-item-num">1.1.1&nbsp;&nbsp;</span>片側P値</a></span></li><li><span><a href="#両側P値-(単にP値と呼ぶことが多い)" data-toc-modified-id="両側P値-(単にP値と呼ぶことが多い)-1.1.2"><span class="toc-item-num">1.1.2&nbsp;&nbsp;</span>両側P値 (単にP値と呼ぶことが多い)</a></span></li><li><span><a href="#P値の報告の仕方" data-toc-modified-id="P値の報告の仕方-1.1.3"><span class="toc-item-num">1.1.3&nbsp;&nbsp;</span>P値の報告の仕方</a></span></li><li><span><a href="#細かな注意" data-toc-modified-id="細かな注意-1.1.4"><span class="toc-item-num">1.1.4&nbsp;&nbsp;</span>細かな注意</a></span></li><li><span><a href="#一般に統計分析は何をやっているとみなされるか" data-toc-modified-id="一般に統計分析は何をやっているとみなされるか-1.1.5"><span class="toc-item-num">1.1.5&nbsp;&nbsp;</span>一般に統計分析は何をやっているとみなされるか</a></span></li><li><span><a href="#P値の計算の仕方の詳しい説明" data-toc-modified-id="P値の計算の仕方の詳しい説明-1.1.6"><span class="toc-item-num">1.1.6&nbsp;&nbsp;</span>P値の計算の仕方の詳しい説明</a></span></li></ul></li><li><span><a href="#両側P値の計算練習問題" data-toc-modified-id="両側P値の計算練習問題-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>両側P値の計算練習問題</a></span></li><li><span><a href="#二項分布の確率の表の作成" data-toc-modified-id="二項分布の確率の表の作成-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>二項分布の確率の表の作成</a></span></li><li><span><a href="#無作為抽出された患者20人中6人に効いた場合の両側P値" data-toc-modified-id="無作為抽出された患者20人中6人に効いた場合の両側P値-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>無作為抽出された患者20人中6人に効いた場合の両側P値</a></span></li><li><span><a href="#無作為抽出された患者20人中15人に効いた場合の両側P値" data-toc-modified-id="無作為抽出された患者20人中15人に効いた場合の両側P値-1.5"><span class="toc-item-num">1.5&nbsp;&nbsp;</span>無作為抽出された患者20人中15人に効いた場合の両側P値</a></span></li><li><span><a href="#S値(＝意外度)のコイン投げによる定義" data-toc-modified-id="S値(＝意外度)のコイン投げによる定義-1.6"><span class="toc-item-num">1.6&nbsp;&nbsp;</span>S値(＝意外度)のコイン投げによる定義</a></span></li><li><span><a href="#P値に関する広く通用する閾値は存在しない" data-toc-modified-id="P値に関する広く通用する閾値は存在しない-1.7"><span class="toc-item-num">1.7&nbsp;&nbsp;</span>P値に関する広く通用する閾値は存在しない</a></span></li><li><span><a href="#相性の良さ/悪さという解釈の仕方" data-toc-modified-id="相性の良さ/悪さという解釈の仕方-1.8"><span class="toc-item-num">1.8&nbsp;&nbsp;</span>相性の良さ/悪さという解釈の仕方</a></span></li><li><span><a href="#P値関数とS値関数" data-toc-modified-id="P値関数とS値関数-1.9"><span class="toc-item-num">1.9&nbsp;&nbsp;</span>P値関数とS値関数</a></span></li><li><span><a href="#相性区間-＝CI＝信頼区間" data-toc-modified-id="相性区間-＝CI＝信頼区間-1.10"><span class="toc-item-num">1.10&nbsp;&nbsp;</span>相性区間 ＝CI＝信頼区間</a></span></li><li><span><a href="#報告の仕方について" data-toc-modified-id="報告の仕方について-1.11"><span class="toc-item-num">1.11&nbsp;&nbsp;</span>報告の仕方について</a></span></li></ul></li><li><span><a href="#二項検定の複数種類のP値関数のグラフ" data-toc-modified-id="二項検定の複数種類のP値関数のグラフ-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>二項検定の複数種類のP値関数のグラフ</a></span></li><li><span><a href="#参照文献" data-toc-modified-id="参照文献-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>参照文献</a></span></li></ul></div>
 
 # %%
 # IPAフォントを手動でインストール ⇒ https://moji.or.jp/ipafont/ipa00303/
@@ -46,7 +48,7 @@ haskey(ENV, "COLAB_GPU") && run(`apt-get -y install fonts-ipafont-gothic`)
 
 # %%
 # Google Colabと自分のパソコンの両方で使えるようにするための工夫
-# https://docs.julialang.org/en/v1/manual/environment-variables/#JULIA_PKG_PRECOMPILE_AUTO
+
 haskey(ENV, "COLAB_GPU") && (ENV["JULIA_PKG_PRECOMPILE_AUTO"] = "0")
 using Pkg
 
@@ -54,12 +56,14 @@ using Pkg
 _packages_added = [sort!(readdir(Sys.STDLIB));
     sort!([info.name for (uuid, info) in Pkg.dependencies() if info.is_direct_dep])]
 
+# %%
 """_packages_added内にないパッケージをPkg.addする"""
-add_pkg_if_not_added_yet(pkg; preserve=PRESERVE_ALL) = if isnothing(Base.find_package(pkg))
+add_pkg_if_not_added_yet(pkg) = if isnothing(Base.find_package(pkg))
     println(stderr, "# $(pkg).jl is not added yet, so let's add it.")
-    Pkg.add(pkg; preserve)
+    Pkg.add(pkg)
 end
 
+# %%
 """expr::Exprからusing内の`.`を含まないモジュール名を抽出"""
 function find_using_pkgs(expr::Expr)
     pkgs = String[]
@@ -80,6 +84,7 @@ function find_using_pkgs(expr::Expr)
     pkgs
 end
 
+# %%
 """必要そうなPkg.addを追加するマクロ"""
 macro autoadd(expr)
     pkgs = find_using_pkgs(expr)
@@ -166,7 +171,9 @@ end
 # %%
 """
     Wald法による二項分布の両側P値
-このP値も二項分布の正規分布近似で定義された両側P値だが、データ \$n, k\$ から推定する必要がない \$\\hat{p}=k/n\$ の標準偏差を推定してしまっているので、score法の両側P値よりも精度が低い。
+このP値も二項分布の正規分布近似で定義された両側P値だが、
+データ \$n, k\$ から推定する必要がない \$\\hat{p}=k/n\$ の標準偏差
+を推定してしまっているので、score法の両側P値よりも精度が低い。
 
 このP値は教科書によく書いてある母比率に関するWaldの相性区間(信頼区間)を与える。
 """
@@ -192,26 +199,39 @@ end
 # %% [markdown]
 # ## 二項検定のP値に関する解説の例
 #
-# 以下の例は中原治著『基礎から学ぶ統計学』の「1-5 二項検定」の節の「5⃣ STEP 4: 棄却域と有意水準」以降の説明をP値に関する説明で置き換えることを意識して書かれたものです。
+# 以下の例は中原治著『基礎から学ぶ統計学』(\[[中原治2022](#中原治2022)\])の「1-5 二項検定」の節の「5⃣ STEP 4: 棄却域と有意水準」以降の説明をP値に関する説明で置き換えることを意識して書かれたものです。経緯については
+#
+# * https://x.com/genkuroki/status/1993698819541004669?s=20
+#
+# にある𝕏 (旧twitter)におけるスレッドを参照して下さい。
 #
 # その本の例題1.1では、B薬は60%の患者に効果があることが分かっていると仮定されており、薬Aについては無作為に選んだ患者20人中18人に効果があったというデータの値が得られていると仮定されています。以下の説明でもこの設定を使います。
 
 # %% [markdown]
-# ### P値
+# ### P値の導入
 #
-# 例題1.1の文脈では、特別な数値でその値の __小ささ__ が次のように解釈できるようなものをデータの値から計算できると便利です:
+# 例題1.1の文脈では、特別な数値でその値の __小ささ__ を次のように解釈できるものをデータの値から計算できると便利です:
 #
 # >薬Aが無作為に選んだ患者20人中18人に効いたというデータの値が得られたとき、薬Aが効く患者の割合がB薬と同じ60%だと信じている人は確率的にどれだけ意外だと感じるか。
 #
-# 以下では、この目的のために使えるP値という数値の構成の仕方について、例題1.1の場合を例に説明します。
+# 以下では、この目的のために使える __P値 (P-value)__ という数値の構成の仕方について、例題1.1の場合を例に説明します。
+#
+# __例題1.1の状況:__
+#
+# * 薬Bは患者の60%に効くことがわかっている。
+# * 薬Aについては患者の何%に効くかはわかっていない。
+# * 「無作為に選んだ患者20人中18人に薬Aに効果があった」というデータの値が得られた。
+# * 以上の状況で薬Aと薬Bが効く患者の割合を比較したい。
 #
 # #### 片側P値
 #
-# 例題1.1の状況では、上の目的のために使える __片側P値__ を
+# 例題1.1の状況では、上の目的のために使える __片側P値 (one-sided P-value)__ を
 #
 # >効果がある患者の割合が60%だと仮定したとき、無作為に選んだ患者20人中18人 __以上__ に効果がある確率
 #
-# と定義できます。この確率の値(片側P値の値)は0.36%とかなり小さくなります(計算の仕方は後で説明します)。そのことは、「薬AとB薬が効く患者の割合が等しい」と信じている人にとって、「薬Aが無作為に選んだ患者20人中18人に効いた」というデータの値はかなり意外だと感じられることを意味しています。
+# と定義できます。この確率の値(片側P値の値)は0.36%とかなり小さくなります(計算の仕方は後で説明します)。そのことは、
+#
+# 「薬AとB薬が効く患者の割合が等しい」と信じている人にとって、「薬Aが無作為に選んだ患者20人中18人に効いた」というデータの値はかなり意外に感じられることを意味しています。
 
 # %%
 n, k, p = 20, 18, 0.6
@@ -220,26 +240,36 @@ bar(0:k-1, k -> pdf(bin, k); label="", c=1, lc=:match)
 bar!(k:n, k -> pdf(bin, k); label="", c=:red, lc=:match)
 plot!(xtick=0:n, xlim=(-0.7, n+0.7), ylim=(-0.03, 1.3).*pdf(bin, mode(bin)))
 plot!(xguide="その20人中での薬Aが効く患者の仮想的人数 k", yguide="確率")
-title!("検定仮説が「薬Aが効く患者の割合は60%」で無作為に20人の患者を選んだ場合の二項確率")
+title!("検定仮説が「薬Aが効く患者の割合は60%」で\
+    無作為に20人の患者を選んだ場合の二項確率")
 for j in 0:n
     c = j < k ? :black : :red
     annotate!(j, pdf(bin, j)+0.05pdf(bin, mode(bin)), 
         text(string(round(100pdf(bin, j); sigdigits=3))*"%", :left, 90.0, 10, c))
 end
 annotate!(18.8, -0.04, text("データの値\n「18人に効いた」", gothic, 11, :red))
-plot!(legend=:topleft, size=(800, 350), bottommargin=8Plots.mm, leftmargin=4Plots.mm)
+plot!(legend=:topleft, size=(800, 350), 
+    bottommargin=8Plots.mm, leftmargin=4Plots.mm)
 
 # %% [markdown]
-# このようにP値は「モデルの確率分布でデータの値以上に極端な値が生成される確率」として構成されることが多い。この片側P値の場合には「データの値以上に極端な値が生成される確率」の意味は「データの値の18人以上に効く確率」に設定されている。
+# このようにP値は「モデルの確率分布でデータの値以上に極端な値が生成される確率」として構成されることが多い。
+#
+# 上の片側P値の場合には「データの値以上に極端な値が生成される確率」の意味は「データの値の18人以上に効く確率」に設定されている。
 
 # %% [markdown]
 # #### 両側P値 (単にP値と呼ぶことが多い)
 #
-# さらに __両側P値__ が上の片側P値の2倍で定義されます。この場合の両側P値は0.72%でやはりかなり小さい。より詳しくは、この両側P値を
+# さらに __両側P値 (two-sided P-value)__ が上の片側P値の2倍で定義されます。より詳しくは、この両側P値を
 #
 # >「薬Aが無作為に選んだ患者20人中18人に効いた」というデータの値に関する「薬Aが効く患者の割合が60%である」という検定仮説の両側P値
 #
 # と呼びます。単にP値と言えば両側P値を意味することが多いです。
+#
+# 以上の場合の両側P値は0.72%でやはりかなり小さいので、
+#
+# >「薬Aが効く患者の割合が薬Bと同じ60%である」という検定仮説を信じている人にとって、「薬Aが無作為に選んだ患者20人中18人に効いた」というデータの値はかなり意外だと感じられるだろう
+#
+# といえます。
 
 # %%
 n, k, p = 20, 18, 0.6
@@ -248,31 +278,50 @@ bar(0:k-1, k -> pdf(bin, k); label="", c=1, lc=:match)
 bar!(k:n, k -> pdf(bin, k); label="", c=:red, lc=:match)
 plot!(xtick=0:n, xlim=(-0.7, n+0.7), ylim=(-0.03, 1.3).*pdf(bin, mode(bin)))
 plot!(xguide="その20人中での薬Aが効く患者の仮想的人数 k", yguide="確率")
-title!("検定仮説が「薬Aが効く患者の割合は60%」で無作為に20人の患者を選んだ場合の二項確率")
+title!("検定仮説が「薬Aが効く患者の割合は60%」で\
+    無作為に20人の患者を選んだ場合の二項確率")
 for j in 0:n
     c = j < k ? :black : :red
     annotate!(j, pdf(bin, j)+0.05pdf(bin, mode(bin)), 
         text(string(round(100pdf(bin, j); sigdigits=3))*"%", :left, 90.0, 10, c))
 end
-annotate!(19, 0.12, text("これらの和\nの２倍\nの0.72%\nが両側P値", gothic, 12, :red))
+annotate!(19, 0.12, text("これらの和\nの２倍\nの0.72%\nが両側P値", 
+        gothic, 12, :red))
 annotate!(18.8, -0.04, text("データの値\n「18人に効いた」", gothic, 11, :red))
-plot!(legend=:topleft, size=(800, 350), bottommargin=8Plots.mm, leftmargin=4Plots.mm)
+plot!(legend=:topleft, size=(800, 350), 
+    bottommargin=8Plots.mm, leftmargin=4Plots.mm)
 
 # %% [markdown]
-# 両側P値の小ささは
+# 一般に
 #
-# >「薬Aが効く患者の割合が60%である」と信じている人が、「薬Aが無作為に選んだ患者20人中18人に効いた」ことに感じる意外さ
+# >「無作為に選んだ患者n人中k人に薬Aは効いた」というデータの値に関する「薬Aが効く患者の割合はpである」という検定仮説の両側P値
+#
+# の小ささは
+#
+# >「薬Aが効く患者の割合はpである」という検定仮説を信じている人が、「無作為に選んだ患者n人中k人に薬Aは効いた」というデータの値に感じる意外さ
 #
 # を表しています。
 #
 # 以下では単にP値と言ったら、両側P値を意味するものとします。
 #
-# P値は小さいほど、モデルと検定仮説の組み合わせの下でデータの値の意外さが大きいことを意味します。
+# P値は小さければ小さいほど、統計モデル(例えば二項分布)とそのパラメータに関する検定仮説の組み合わせの下でデータの値の意外さが大きいことを意味します。
 
 # %% [markdown]
-# __P値の報告の仕方:__ P値を $P$ と書くとき、$P < 0.05$ のようにP値の具体的な値が不明になるような報告の仕方をしてはいけません。Ｐ値を報告する場合には $P = 3.2\%$ のように具体的な値がわかるように報告するようにしましょう。ただし、例外的にP値が $P=0.000023=2.3\mathrm{e-}5$ のように非常に小さな値になり、近似計算の精度を超えている場合には $P < 0.0001$ のように報告しても良いでしょう。$P=0.04205785495554228$ のように無意味に高過ぎる精度でP値を報告してもいけません。複雑な現実における統計分析では、理想的なデータの取得は不可能だったり、統計分析のために採用する統計モデルの妥当性自体が不明だったりするので、高精度なP値の値には意味がないと考えられます。一般に、統計分析の結果を報告するときには、P値などの統計分析で得られる数値では測ることができないバイアスや不確実性があることを謙虚に認めることが必要になります。この解説ではP値(P-value)のPを大文字で書くことにしたのですが、小文字の$p$と書いても問題ありません。どちらでもよいです。
+# #### P値の報告の仕方
+#
+# P値を $P$ と書くとき、$P < 0.05$ のようにP値の具体的な値が不明になるような報告の仕方をしてはいけません。
+#
+# Ｐ値を報告する場合には $P = 3.2\%$ のように具体的な値がわかるように報告するようにしましょう。ただし、例外的にP値が $P=0.000023=2.3\mathrm{e-}5$ のように非常に小さな値になり、近似計算の精度を超えている場合には $P < 0.0001$ のように報告しても良いでしょう。
+#
+# $P=0.04205785495554228$ のように無意味に高過ぎる精度でP値を報告してもいけません。複雑な現実における統計分析では、理想的なデータの取得は不可能だったり、統計分析のために採用する統計モデルの妥当性自体が不明だったりするので、高精度なP値の値には意味がないと考えられます。
+#
+# 一般に、統計分析の結果を報告するときには、P値などの統計分析で得られる数値では測ることができないバイアスや不確実性があることを謙虚に認めることが必要になります。
+#
+# この解説ではP値(P-value)のPを大文字で書くことにしたのですが、小文字の$p$と書いても問題ありません。どちらでもよいです。
 
 # %% [markdown]
+# #### 細かな注意
+#
 # 以下の注意は最初に読むときにはとばしても構いません。
 
 # %% [markdown]
@@ -304,7 +353,9 @@ plot!(legend=:topleft, size=(800, 350), bottommargin=8Plots.mm, leftmargin=4Plot
 # __尤度についてさらに補足:__ 「効果がある患者の割合が60%である」という仮説を信じている人が「無作為に選んだ患者20人中18人に効果があった」というデータの値を見たときには、シンプルに「効果がある患者の割合が60%であると仮定したとき、無作為に選んだ患者20人中18人に効果がある確率」(=尤度(ゆうど))を __モデルとデータの値を比較するための尺度__ として使いたくなると思います。そのアイデアは極めて正しく、尤度は __モデルがどれだけデータの値に適合しているか__ を表していると解釈でき、 __最尤法 (maximum likelihood method)__ の基礎になります。そして尤度をさらに有効利用するための __ベイズ統計__ の方法に発展する考え方にもなっています。非常に残念なのですが、この解説では詳しく触れないことにします。
 
 # %% [markdown]
-# __統計分析は何をやっているか:__ 現代ではコンピュータにデータの値を入力するだけで統計分析の結果を出力してくれる便利な統計ソフトが普及しています。統計ソフトのユーザーは、それが出力してくれる統計分析の結果が
+# #### 一般に統計分析は何をやっているとみなされるか
+#
+# 現代ではコンピュータにデータの値を入力するだけで統計分析の結果を出力してくれる便利な統計ソフトが普及しています。統計ソフトのユーザーは、それが出力してくれる統計分析の結果が
 #
 # >モデル(仮説の集まり)とデータの値の間の関係を定量的に記述した結果
 #
@@ -321,7 +372,7 @@ plot!(legend=:topleft, size=(800, 350), bottommargin=8Plots.mm, leftmargin=4Plot
 # の3つを理解しておく必要があります。これは実はかなり厳しい要請で、この3つのどれについても十分に理解せずに統計ソフトを使っている人達も結構いるように思われます。この解説の読者はそうならないようにして欲しいと思います。
 
 # %% [markdown]
-# ### P値の計算の仕方
+# #### P値の計算の仕方の詳しい説明
 
 # %% [markdown]
 # 以下では二項係数を
@@ -361,12 +412,12 @@ plot!(legend=:topleft, size=(800, 350), bottommargin=8Plots.mm, leftmargin=4Plot
 # なので、関数電卓その他を使って計算すると、
 #
 # * (20人中20人に効果がある確率) $= \binom{20}{20}0.6^{20}(1-0.6)^0 = 0.6^{20} \approx 3.6561584400629733\mathrm{e-}5$
-# * (20人中19人に効果がある確率) $= \binom{20}{19}0.6^{19}(1-0.6)^1 = 20\cdot 0.6^{19}\cdot 0.4 \approx 0.003087422682719845$
-# * (20人中18人に効果がある確率) $= \binom{20}{18}0.6^{18}(1-0.6)^2 = 190\cdot 0.6^{18}\cdot 0.4^2 \approx 0.00048748779200839646$
+# * (20人中19人に効果がある確率) $= \binom{20}{19}0.6^{19}(1-0.6)^1 = 20\cdot 0.6^{19}\cdot 0.4 \approx 0.00048748779200839646$
+# * (20人中18人に効果がある確率) $= \binom{20}{18}0.6^{18}(1-0.6)^2 = 190\cdot 0.6^{18}\cdot 0.4^2 \approx 0.003087422682719845$
 #
 # ここで $3.6561584400629733\mathrm{e-}5$ は $3.6561584400629733\times 10^5$ を意味する。
 #
-# 上の3つの値の和を計算ことによって次を得る:
+# 上の3つの値の和を計算することによって次を得る:
 #
 # * (片側P値)＝(20人中18人以上に効果がある確率) $\approx 0.003611472059128871$
 #
@@ -377,9 +428,12 @@ plot!(legend=:topleft, size=(800, 350), bottommargin=8Plots.mm, leftmargin=4Plot
 # 以上によって片側P値は約0.36%で両側P値は約0.72%になることが分かった.
 
 # %%
-@show p20 = binomial(20, 20) * 0.6^20 * 0.4^0
-@show p19 = binomial(20, 19) * 0.6^19 * 0.4^1
-@show p18 = binomial(20, 18) * 0.6^18 * 0.4^2
+@show binomial(20, 20)
+@show binomial(20, 19)
+@show binomial(20, 18)
+@show p20 = 1 * 0.6^20 * 0.4^0
+@show p19 = 20 * 0.6^19 * 0.4^1
+@show p18 = 190 * 0.6^18 * 0.4^2
 @show pval_one_sided = p20 + p19 + p18
 @show pval_both_sided = 2pval_one_sided;
 
@@ -387,6 +441,8 @@ plot!(legend=:topleft, size=(800, 350), bottommargin=8Plots.mm, leftmargin=4Plot
 # ### 両側P値の計算練習問題
 
 # %% [markdown]
+# ### 二項分布の確率の表の作成
+#
 # __問題:__ 「薬Aが効く患者の割合は60%である」という仮定の下で「薬Aは無作為抽出された20人中$k$人に効いた」というデータの値が得られる確率$P(k)$を0以上20以下のすべての整数$k$について求め、確率の数表を作成せよ。
 
 # %% [markdown]
@@ -410,7 +466,7 @@ plot!(legend=:topleft, size=(800, 350), bottommargin=8Plots.mm, leftmargin=4Plot
 # ただし、1.09951e-8は1.09951×10⁻⁸を意味する。以上の結果はWolframAlphaに
 #
 # ```mathematica
-# Table[k, {k, 0, 20}], Table[Binomial[20, k]*0.6^k*0.4^(20-k), {k, 0, 20}] *2
+# Table[k, {k, 0, 20}], Table[Binomial[20, k]*0.6^k*0.4^(20-k), {k, 0, 20}]
 # ```
 #
 # と入力することによって得られる([WolframAlphaで実行](https://www.wolframalpha.com/input?i=Table%5Bk%2C+%7Bk%2C+0%2C+20%7D%5D%2C+Table%5BBinomial%5B20%2C+k%5D*0.6%5Ek*0.4%5E%2820-k%29%2C+%7Bk%2C+0%2C+20%7D%5D+&lang=ja)).
@@ -427,14 +483,18 @@ bin = Binomial(n, p)
 bar(0:n, k -> pdf(bin, k); label="", c=1, lc=:match)
 plot!(xtick=0:n, xlim=(-0.7, n+0.7), ylim=(-0.03, 1.3).*pdf(bin, mode(bin)))
 plot!(xguide="その20人中での薬Aが効く患者の仮想的人数 k", yguide="確率")
-title!("検定仮説が「薬Aが効く患者の割合は60%」で無作為に20人の患者を選んだ場合の二項確率")
+title!("検定仮説が「薬Aが効く患者の割合は60%」で\
+    無作為に20人の患者を選んだ場合の二項確率")
 for j in 0:n
     annotate!(j, pdf(bin, j)+0.05pdf(bin, mode(bin)), 
         text(string(round(100pdf(bin, j); sigdigits=3))*"%", :left, 90.0, 10))
 end
-plot!(legend=:topleft, size=(800, 350), bottommargin=8Plots.mm, leftmargin=4Plots.mm)
+plot!(legend=:topleft, size=(800, 350), 
+    bottommargin=8Plots.mm, leftmargin=4Plots.mm)
 
 # %% [markdown]
+# ### 無作為抽出された患者20人中6人に効いた場合の両側P値
+#
 # __問題:__ 「薬Aは無作為に抽出された患者20人中6人に効いた」というデータの値に関する「薬Aが効く患者の割合は60%である」という仮説の両側P値を求めよ。ただし、その両側P値は片側確率の2倍で定義されたものとする。その計算で上の問題で作成した確率の数表を用いて良い。
 
 # %% [markdown]
@@ -464,21 +524,26 @@ bar(k+1:n, k -> pdf(bin, k); label="", c=1, lc=:match)
 bar!(0:k, k -> pdf(bin, k); label="", c=:red, lc=:match)
 plot!(xtick=0:n, xlim=(-0.7, n+0.7), ylim=(-0.03, 1.3).*pdf(bin, mode(bin)))
 plot!(xguide="その20人中での薬Aが効く患者の仮想的人数 k", yguide="確率")
-title!("検定仮説が「薬Aが効く患者の割合は60%」で無作為に20人の患者を選んだ場合の二項確率")
+title!("検定仮説が「薬Aが効く患者の割合は60%」で\
+    無作為に20人の患者を選んだ場合の二項確率")
 for j in 0:n
     c = j > k ? :black : :red
     annotate!(j, pdf(bin, j)+0.05pdf(bin, mode(bin)), 
         text(string(round(100pdf(bin, j); sigdigits=3))*"%", :left, 90.0, 10, c))
 end
 annotate!(3.5, 0.1, 
-    text("データの値が「6人に効いた」のとき\nこれらの和の２倍の1.3%が両側P値", gothic, 11, :red))
-plot!(legend=:topleft, size=(800, 350), bottommargin=8Plots.mm, leftmargin=4Plots.mm)
+    text("データの値が「6人に効いた」のとき\n\
+        これらの和の２倍の1.3%が両側P値", gothic, 11, :red))
+plot!(legend=:topleft, size=(800, 350),
+    bottommargin=8Plots.mm, leftmargin=4Plots.mm)
 
 # %% [markdown]
+# ### 無作為抽出された患者20人中15人に効いた場合の両側P値
+#
 # __問題:__ 「薬Aは無作為に抽出された患者20人中15人に効いた」というデータの値に関する「薬Aが効く患者の割合は60%である」という仮説の両側P値を求めよ。ただし、その両側P値は片側確率の2倍で定義されたものとする。その計算で上の問題で作成した確率の数表を用いて良い。
 
 # %% [markdown]
-# 解答例: $P(k)$ の $k=15,16,17,18,19,20$ に関する和の2倍を計算すれば良い.
+# __解答例:__ $P(k)$ の $k=15,16,17,18,19,20$ に関する和の2倍を計算すれば良い.
 
 # %%
 (0.074647 +
@@ -503,24 +568,27 @@ bar(0:k-1, k -> pdf(bin, k); label="", c=1, lc=:match)
 bar!(k:n, k -> pdf(bin, k); label="", c=:red, lc=:match)
 plot!(xtick=0:n, xlim=(-0.7, n+0.7), ylim=(-0.03, 1.3).*pdf(bin, mode(bin)))
 plot!(xguide="その20人中での薬Aが効く患者の仮想的人数 k", yguide="確率")
-title!("検定仮説が「薬Aが効く患者の割合は60%」で無作為に20人の患者を選んだ場合の二項確率")
+title!("検定仮説が「薬Aが効く患者の割合は60%」で\
+    無作為に20人の患者を選んだ場合の二項確率")
 for j in 0:n
     c = j < k ? :black : :red
     annotate!(j, pdf(bin, j)+0.05pdf(bin, mode(bin)), 
         text(string(round(100pdf(bin, j); sigdigits=3))*"%", :left, 90.0, 10, c))
 end
 annotate!(18, 0.12, 
-    text("データの値が\n「15人に効いた」のとき\nこれらの和の２倍の\n25%が両側P値", gothic, 11, :red))
-plot!(legend=:topleft, size=(800, 350), bottommargin=8Plots.mm, leftmargin=4Plots.mm)
+    text("データの値が\n「15人に効いた」のとき\n\
+        これらの和の２倍の\n25%が両側P値", gothic, 11, :red))
+plot!(legend=:topleft, size=(800, 350),
+    bottommargin=8Plots.mm, leftmargin=4Plots.mm)
 
 # %% [markdown]
-# ### S値
+# ### S値(＝意外度)のコイン投げによる定義
 #
 # 以下では、「無作為に選んだ患者$n$人中$k$人に薬Aが効いた」というデータの値に関する「薬Aが効く患者の割合は$p$である」という仮説の(両側)P値を以下では $P$ と書くことにします。
 #
-# P値 $P$ の値が小ささは、「薬Aが効く患者の割合は$p$である」という仮説を信じている人が「無作為に選んだ患者$n$人中$k$人に薬Aが効いた」というデータの値を意外だと感じる程度を表すのでした。
+# P値 $P$ の値が小ささは、「薬Aが効く患者の割合は$p$である」という仮説を信じている人が「無作為に選んだ患者$n$人中$k$人に薬Aが効いた」というデータの値をどれだけ意外だと感じるかを表すのでした。
 #
-# 意外さの程度は偏りがないコイン投げに例えると分かり易くなります。
+# __意外さの程度は偏りがないコイン投げに例えると分かり易くなります。__
 #
 # 例えば、偏りのないコイン投げで4回続けて表が出る確率は $6.25\%\approx 6\%$ である。だから、$P\approx 6\%$ であることは、
 #
@@ -556,11 +624,11 @@ plot!(legend=:topleft, size=(800, 350), bottommargin=8Plots.mm, leftmargin=4Plot
 # (1/2)^S = P \quad\text{すなわち}\quad S = -\log_2 P.
 # $$
 #
-# この $S$ をP値 $P$ に対応する __S値 (意外度、surprisal value)__ と呼ばれています。
+# この $S$ はP値 $P$ に対応する __S値 (意外度、surprisal value)__ と呼ばれています(\[[Rafi-Greenland 2020](#Rafi-Greenland-2020)\])。
 #
-# S値は曖昧な「P値の小ささ」=「意外さ」という言い方で語られる概念の定量化だと考えられます。つまり、S値が大きさは「意外さ」の大きさそのものだと解釈されます。
+# S値は曖昧な「P値の小ささ」=「意外さ」という言い方で語られる概念の定量化だと考えられます。つまり、S値の大きさは「意外さ」の大きさそのものだと解釈されます。
 #
-# P値とS値の対応は以下の通り。
+# P値とS値の対応は以下の通りです。
 #
 # <!--
 # |P値|S値(意外度)|
@@ -580,26 +648,40 @@ plot!(legend=:topleft, size=(800, 350), bottommargin=8Plots.mm, leftmargin=4Plot
 #
 # |S値＝意外度|0|1|2|3|4|5|6|7|8|9|10|
 # |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-# |P値＝相性の良さ|100%|50%|約25%|約12%|約6%|約3%|約1.5%|約0.8%|約0.4%|約0.2%|約0.1%|
+# |P値|100%|50%|約25%|約12%|約6%|約3%|約1.5%|約0.8%|約0.4%|約0.2%|約0.1%|
 #
-# 情報理論的にS値の単位は __ビット__ だと考えらます。
+# 情報理論的にS値の単位は __ビット__ だと考えらます。例えば、P値が6%程度になった場合には、S値は約4ビットになるので、
+#
+# >データの値によってモデルと検定仮説の組み合わせの否定について4ビット程度の情報が得られた。
+#
+# のように考えることになります。
 #
 # P値の違いの大きさの違いは、対応するS値の側で何ビット違うかを見ると誤解し難くなります。
 #
-# 例えば、$6\%$ と $3\%$ のP値はそれぞれ約 $4$ と $5$ のS値に対応し、1ビットの違いしかありません。伝統的にP値については $5\%$ の閾値が採用されていて、$P < 5\%$ であるか否かによって正反対の結論を出す悪しき慣習があるのですが、$6\%$ と $3\%$ のP値はS値で見たら1ビットの違いしかないので、$P < 5\%$ であるか否かによって正反対の結論を出すことの不合理さもS値を理解すれば分かります。
+# 例えば、$6\%$ と $3\%$ のP値はそれぞれ約 $4$ と $5$ のS値に対応し、1ビットの違いしかありません。
+#
+# P値については伝統的に $5\%$ の閾値が採用されることが多く、$P < 5\%$ であるか否かによって正反対の結論を出す悪しき慣習があるのですが、$6\%$ と $3\%$ のP値はS値で見たら1ビットの違いしかありません。
+#
+# $P < 5\%$ であるか否かによって正反対の結論を出すことの不合理さもS値を理解すれば分かります。
 
 # %% [markdown]
-# ### 広く通用するP値に関する閾値は存在しない
+# ### P値に関する広く通用する閾値は存在しない
 #
 # $P < 5\%$ であるか否かによる「有意差あり/なし」の二分法に強く執着している人達は、P値に閾値をどうしても設けたいと感じるかもしれません。
 #
-# しかし、仮に閾値の設定が有効な道具として機能するとしても、ケースバイケースで適切な閾値は異なると考えられます。検定仮説が諸々の理由で非常に確からしい場合には、その否定のためのP値の閾値は非常に小さくすることが妥当だと考えられます。逆に検定仮説が非常に疑わしい場合にはその否定のためのP値の閾値は10%のような大きめの値にしても十分に合理的になることがあり得ます。さらに統計分析の結果を用いた意思判断においても、場合ごとに許容できるリスクの大きさと種類は異なります。そういう諸々の事情を全部無視して慣用的な閾値の機械的使用で押し通そうとすることは不合理な行為だと考えられます。
+# しかし、仮に閾値の設定が有効な道具として機能するとしても、ケースバイケースで適切な閾値は異なると考えられます。
+#
+# 検定仮説が諸々の理由で非常に確からしい場合には、その否定のためのP値の閾値は非常に小さくすることが妥当だと考えられます。逆に検定仮説が非常に疑わしい場合にはその否定のためのP値の閾値は10%のような大きめの値にしても十分に合理的になることがあり得ます。
+#
+# さらに統計分析の結果を用いた意思判断においても、場合ごとに許容できるリスクの大きさと種類は異なります。
+#
+# 以上のような諸々の事情をすべて無視して慣用的な閾値を機械的に採用して押し通そうとすることは不合理な行為だと考えられます。
 #
 # つまり、誰にでもP値に関する閾値を設ける権利はあるが、5%や1%のような慣用的な閾値を機械的に使うことは不合理であるということです。あなたが閾値を設定した場合にはその責任をあなたが負う必要が出て来る。
 #
 # 統計分析の結果を参考にしながら現実における意思決定を行う主体(例えば臨床医や政策決定責任者など)と統計分析を行うあなたが異なる人物であるならば、閾値の設定は意思決定を行う人にまかせて、意思決定者に責任を取ってもらうのが良いとも考えられます。
 #
-# 実際にそれが正しい場合にあなたは、データの取得法の詳細と有力なモデル(仮説の集まり)の概略とそれらの関係の定量化(P値や点推定や区間推定はその典型例)を意思決定の現場にいる人達にとって分かり易い形式で報告すれば良いでしょう。
+# 実際にそれが正しい場合にあなたは、データの取得法の詳細と有力なモデル(仮説の集まり)の概略とそれらの関係の定量化(P値や点推定や区間推定はその典型例)を意思決定の現場にいる人達にとって分かり易い形式で報告すれば良いでしょう(より詳しくは \[[McShane et al. 2024](#McShane-et-al-2024)\] のガイドラインを参照)。
 
 # %% [markdown]
 # ### 相性の良さ/悪さという解釈の仕方
@@ -619,6 +701,16 @@ plot!(legend=:topleft, size=(800, 350), bottommargin=8Plots.mm, leftmargin=4Plot
 # と解釈されるということを意味しています。
 #
 # 以上の「相性の良さ/悪さ」という言い方も便利なのでこれから使って行くことにします。
+#
+# __Compatibility (相性の良さ)は最重要キーワード:__ "compatibility" (相性の良さ)は "significance" (有意性)や "confidence" (信頼)のような伝統的だがミスリーディングな用語の置き換え先として有力視されている単語です
+# (\[[ASA声明2016](#ASA声明2016)\], 
+# \[[Greenland et al. 2016](#Greenland-et-al-2016)\], 
+# \[[Gelman-Greenland 2019](#Gelman-Greenland-2019)\], 
+# \[[Amrhein-Greenland-McShane 2019](#Amrhein-Greenland-McShane-2019)\], 
+# \[[Rafi-Greenland 2020](#Rafi-Greenland-2020)\], 
+# \[[Amrhein-Greenland 2022](#Amrhein-Greenland-2022)\], 
+# \[[Greenland-slide 2022](#Greenland-slide-2022)\], 
+# \[[McShane et al. 2024](#McShane-et-al-2024)\])
 
 # %% [markdown]
 # ### P値関数とS値関数
@@ -633,7 +725,10 @@ plot!(legend=:topleft, size=(800, 350), bottommargin=8Plots.mm, leftmargin=4Plot
 #
 # > $p \mapsto \op{pvalue}(k|n,p)$
 #
-# は __P値関数 (P-value function)__ と呼ばれています。
+# は __P値関数 (P-value function)__ と呼ばれています(日本語の文献では例えば
+# \[[ロスマンの疫学](#ロスマンの疫学2013)\], 
+# \[[佐藤俊哉2024](#佐藤俊哉2024)\]
+# にP値関数の説明がある)。
 #
 # 例題1.1の状況では、検定仮説が「薬Aが効く患者の割合は $p=0.6$ である」に固定されていました。パラメータ $p$ の仮説値を固定せずに動かしながらP値を計算して、P値関数のグラフを描けば、パラメータ $p$ のすべての仮説値と「無作為に選んだ患者 $n$ 人中 $k$ 人に薬Aが効いた」というデータの値の相性の良さ(compatibility)の様子が分かることになります。
 #
@@ -651,7 +746,7 @@ plot!(xguide="薬Aが効く患者の割合の仮説値 p")
 vline!([0.303]; label="点推定値 p≈0.3", ls=:dash)
 
 # %% [markdown]
-# このP値の大きさは、薬Aが効く患者の割合のすべての仮説値 $p$ と「無作為に選んだ患者 $n=20$ 人中 $k=6$ 人に薬Aが効いた」というデータの値の相性の良さが分かります。
+# このP値の大きさを見れば、薬Aが効く患者の割合のすべての仮説値 $p$ と「無作為に選んだ患者 $n=20$ 人中 $k=6$ 人に薬Aが効いた」というデータの値の相性の良さが分かります。
 #
 # 例えば、このP値関数の最大値は $p\approx 0.3$ で与えられるので、「無作為に選んだ患者 $n=20$ 人中 $k=6$ 人に薬Aが効いた」というデータの値と最も相性が良い検定仮説は「薬Aが効く患者の割合は $p\approx 0.3$ である」であることが分かります。
 #
@@ -694,7 +789,7 @@ vline!([0.303]; label="点推定値 p≈0.3", ls=:dash)
 @show ci_clopper_pearson(n, k; α);
 
 # %% [markdown]
-# ### 相性区間 (＝信頼区間)
+# ### 相性区間 ＝CI＝信頼区間
 
 # %% [markdown]
 # 前節でP値関数から点推定値がP値関数を最大化するパラメータ $p$ の値として得られることを説明しました。
@@ -703,11 +798,19 @@ vline!([0.303]; label="点推定値 p≈0.3", ls=:dash)
 #
 # そのためにはP値に関する閾値 $\alpha$ を用意して、$\op{pvalue}(k|n,p) \ge \alpha$ か否かで、パラメータ $p$ の値はデータの値 $n,k$ と相性が良い/悪いとみなすことにします。
 #
-# 伝統的な用語法で閾値 $\alpha$ は有意水準と呼ばれ、$1-\alpha$ は信頼水準(信頼度、信頼係数)と呼ばています。しかし、それらの伝統的用語法はP値がモデルとパラメータの値に関する仮説の組み合わせとデータの値の相性の良さ(compatibility)の尺度であるという見方と整合的ではないので、$\alpha$ を __相性水準 (compatibility level)__ と呼ぶことにします。
+# 伝統的な用語法で閾値 $\alpha$ は有意水準と呼ばれ、$1-\alpha$ は信頼水準(信頼度、信頼係数)と呼ばれています。しかし、それらの伝統的用語法はP値がモデルとパラメータの値に関する仮説の組み合わせとデータの値の相性の良さ(compatibility)の尺度であるという見方と整合的ではないので、$\alpha$ を __相性水準 (compatibility level)__ と呼ぶことにします。
 #
-# 相性水準と呼ぶことにした閾値 $\alpha$ によってデータの値と相性が良いとみなされるパラメータ $p$ の値全体の集合をパラメータ $p$ の __相性区間 (compatibility interval)__ と呼ぶことにします。伝統的な用語法でこれは信頼水準 $1-\alpha$ の信頼区間(もしくは $100(1-\alpha)\%$ 信頼区間)と呼ばれるものと同じものになります。
+# 相性水準と呼ぶことにした閾値 $\alpha$ によってデータの値と相性が良いとみなされるパラメータ $p$ の値全体の集合をパラメータ $p$ の __相性区間 (compatibility interval)__ と呼ぶことにします。すなわち、相性区間を $\op{ci}(k|n,\alpha)$ と書くことにすると、
 #
-# 我々が現在扱っているP値関数から得られる相性区間は __Clopper-Pearsonの信頼区間__ と呼ばれる非常に有名な信頼区間と同じものになります。以下ではそれを __Clopper-Pearsonの相性区間__ と呼ぶことにします。
+# >$\op{ci}(k|n,\alpha)= \{\, p \mid \op{pvalue}(k|n,p)\ge\alpha\,\}$.
+#
+# 一般にP値関数から相性区間(＝信頼区間)をこのようにして定義できます。
+#
+# 伝統的な用語法でこれは信頼水準 $1-\alpha$ の信頼区間(もしくは $100(1-\alpha)\%$ 信頼区間)と呼ばれるものと同じものになります。信頼区間は英語では confidence interval というので、相性区間も信頼区間も英語で略すと同じ CI になります。
+#
+# > 相性区間 ＝ (compatibility interval) ＝ CI ＝ (confidence interval) ＝ 信頼区間
+#
+# 我々が現在扱っているP値関数から得られる相性区間は __Clopper-Pearsonの信頼区間__ と呼ばれる非常に有名な信頼区間と同じものになります(\[[](#Clopper-Pearson-1934)\])。以下ではそれを __Clopper-Pearsonの相性区間__ と呼ぶことにします。
 
 # %% [markdown]
 # __用語法に関する注意:__ 2025年現在、compatibility interval (相性区間)という用語はある程度以上のレベルの研究者達にはよく知られていますが、まだ十分に普及しているとは言えません。まだ十分に普及していない用語を使いたくない人は、confidence interval (信頼区間)という伝統的な用語を使い続けても構いません。しかし、"confidence" という英単語と「信頼」という日本語の持つ語感が原因で、「95%信頼区間には95%という高い信頼度で真の値が含まれている」と安易に信じても良いかのような誤解が蔓延しています。例えば使っているモデルの妥当性を保証できない場合にはそのように信じることは誤りになります。だから、confidence interval や信頼区間という用語を使う場合には、蔓延している誤解に自分自身や報告の読者が陥らないように十分な注意を払うべきです。
@@ -729,7 +832,7 @@ vline!([0.303]; label="点推定値 p≈0.3", ls=:dash)
 # ```
 
 # %% [markdown]
-# このコードを用いて、「無作為に選んだ患者 n=20 人中 k=6 人に薬Aが効いた」というデータの値が得られたときの、相性水準 $5\%$ のClopper-Pearsonの相性区間(＝信頼水準 $95\%$ のClopper-Pearson信頼区間)を求めて見ましょう。
+# このコードを用いて、「無作為に選んだ患者 n=20 人中 k=6 人に薬Aが効いた」というデータの値が得られたときの、相性水準 $5\%$ のClopper-Pearsonの相性区間(＝信頼水準 $95\%$ のClopper-Pearson信頼区間)を求めてみましょう。
 
 # %%
 @show ci_clopper_pearson(20, 6; α = 0.05);
@@ -780,16 +883,18 @@ plot!(ci, fill(-log(2, α), 2); label="相性水準5%の相性区間", lw=3)
 # 統計学ユーザー界には「差はゼロ」や「効果はゼロ」を意味する特殊な検定仮説(それを __ゼロ仮説__ と呼ぶことにする)のP値のみを報告する悪しき伝統があります。その悪しき伝統は上で示したようにP値が推定の道具としても使えることを見逃す原因になっています。そういう悪習にも従う必要はありません。
 #
 # 例えば、「効果はゼロ」を意味するゼロ仮説のP値だけではなく、事前に予想していた効果の大きさやそれまでの定説の値 $a$ について「効果は $a$ である」という検定仮説のP値も計算して報告するのは良いスタイルです。
+#
+# より詳しいガイドラインが論文 \[[McShane et al. 2024](#McShane-et-al-2024)\] にあります。
 
 # %% [markdown]
-# ## 二項検定の複数のP値のグラフ
+# ## 二項検定の複数種類のP値関数のグラフ
 #
 # このノートブックのずっと上の方で以下の4種類のP値関数を定義している。
 #
-# * Clopper-Pearsonの相性区間を与える片側確率の2倍版のP値関数 (central法)
-# * Sterneの相性区間を与えるP値関数 (minlike法)
-# * Wilsonのスコア相性区間を与える二項分布の正規分布を使うP値関数 (スコア法)
-# * Waldの相性区間を与えるP値関数 (Wald法)
+# * Clopper-Pearsonの相性区間(\[[Clopper-Pearson 1934](#Clopper-Pearson-1934)\])を与える片側確率の2倍版のP値関数 (central法)
+# * Sterneの相性区間(\[[Sterne 1954](#Sterne-1954)\])を与えるP値関数 (minlike法)
+# * Wilsonのスコア相性区間(\[[Wilson 1927](#Wilson-1927)\])を与える二項分布の正規分布を使うP値関数 (スコア法)
+# * Waldの相性区間を与えるP値関数 (Wald法 \[[Wald 1939](#Wald-1939)\])
 #
 # それぞれ以下のような特徴を持ち、それらは互いに異なる利点と欠点を持っています。
 #
@@ -812,7 +917,8 @@ P4 = plot(p -> pvalue_wald(Binomial(n, p), k); label="Wald", c=4)
 plot(P1, P2, P3, P4; size=(800, 500), layout=(2, 2))
 plot!(xtick=0:0.1:1, ytick=0:0.1:1.2, ylim=(-0.03, 1.23))
 plot!(xguide="p", yguide="P値")
-plot!(plot_title="「無作為に選んだ患者n=$(n)人中k=$(k)人に薬Aが効いた」というデータの値に関するP値関数達")
+plot!(plot_title="「無作為に選んだ患者n=$(n)人中k=$(k)人に薬Aが効いた」\
+    というデータの値に関するP値関数達")
 plot!(leftmargin=4Plots.mm, bottommargin=4Plots.mm)
 
 # %% [markdown]
@@ -829,7 +935,8 @@ P4 = plot(p -> pvalue_wald(Binomial(n, p), k); label="Wald", c=4)
 plot(P1, P2, P3, P4; size=(800, 500), layout=(2, 2))
 plot!(xtick=0:0.1:1, ytick=0:0.1:1.5, ylim=(-0.03, 1.05))
 plot!(xguide="p", yguide="P値")
-plot!(plot_title="「無作為に選んだ患者n=$(n)人中k=$(k)人に薬Aが効いた」というデータの値に関するP値関数達")
+plot!(plot_title="「無作為に選んだ患者n=$(n)人中k=$(k)人に薬Aが効いた」\
+    というデータの値に関するP値関数達")
 plot!(leftmargin=4Plots.mm, bottommargin=4Plots.mm)
 
 # %% [markdown]
@@ -838,6 +945,23 @@ plot!(leftmargin=4Plots.mm, bottommargin=4Plots.mm)
 # %% [markdown]
 # ## 参照文献
 #
+# * <a href="Amrhein-Greenland-2022"></a>\[Amrhein-Greenland 2022\] https://scholar.google.co.jp/scholar?cluster=3720622034719550328
+# * <a href="Amrhein-Greenland-McShane-2019"></a>\[Amrhein-Greenland-McShane 2019\](https://scholar.google.co.jp/scholar?cluster=10149294426414499676)
+# * <a name="ASA声明2016"></a>\[ASA声明2016\] https://scholar.google.co.jp/scholar?cluster=9276800766809907647 \[[日本語訳](https://www.biometrics.gr.jp/news/all/ASA.pdf)\]
 # * <a name="Agresti-Coull-1998"></a>\[Agresti-Coull 1998\] https://scholar.google.co.jp/scholar?cluster=5129299358902170657
+# * <a name="Clopper-Pearson-1934"></a>\[Clopper-Pearson 1934\] https://scholar.google.co.jp/scholar?cluster=14961616766983395623
+# * <a name="Gelman-Greenland-2019"></a> \[Gelman-Greenland 2019\] https://scholar.google.co.jp/scholar?cluster=9083230676635824516
+# * <a name="Greenland-slide-2022"></a>\[Greenland slide 2022\] [PDF](https://biostatistics.ucdavis.edu/sites/g/files/dgvnsk4966/files/media/documents/Greenland.Advancing%20statistics%20reform%2C%20part%204.Slides%201-110%2C%2001%20June%202022.pdf) \[[日本語版](https://github.com/genkuroki/public/blob/main/0055/GreenlandSlide2022JapaneseTranslation/%E7%B5%B1%E8%A8%88%E5%AD%A6%E6%94%B9%E9%9D%A9%E3%81%AE%E6%8E%A8%E9%80%B2%EF%BC%9A%E6%8A%B5%E6%8A%97%E3%81%AB%E7%9B%B4%E9%9D%A2%E3%81%97%E3%81%9F%E9%9A%9B%E3%81%AE%E6%80%9D%E8%80%83%E3%81%A8%E5%AE%9F%E8%B7%B5%E3%82%92%E6%94%B9%E5%96%84%E3%81%99%E3%82%8B%E6%96%B9%E6%B3%95.ipynb)\]
+# * <a name="Greenland-et-al-2016"></a>\[Greenland et al. 2016\] https://scholar.google.co.jp/scholar?cluster=3941075655195102850
+# * <a name="McShane-et-al-2024"></a>\[McShane et al. 2024\] https://scholar.google.co.jp/scholar?cluster=17720116793246961868 \[[動画解説](https://x.com/genkuroki/status/1964230840197759108)\] \[[統計分析の報告に関するガイドラインの日本語版](https://gist.github.com/genkuroki/a7fa24c7b446b3eb267b03b1dc7959c1)\]
+# * <a href="McShane-Gelman-2022"></a>\[McShane-Gelman 2022\] https://scholar.google.co.jp/scholar?cluster=9139328184649122630
+# * <a name="中原治2022"></a>\[中原治2022\] https://www.yodosha.co.jp/yodobook/book/9784758121217/
+# * <a name="Rafi-Greenland-2020"></a>\[Rafi-Greenland 2020\] https://scholar.google.co.jp/scholar?cluster=591718439647960929
+# * <a name="ロスマンの疫学2013"></a>\[ロスマンの疫学2013\] https://shinoharashinsha.co.jp/?page_id=3534
+# * <a name="佐藤俊哉2024"></a>\[佐藤俊哉2024\] https://www.asakura.co.jp/detail.php?book_code=12297
+# * <a name="Sterne-1954"></a>\[Sterne 1954\] https://scholar.google.co.jp/scholar?cluster=18420119515180283098
+# * <a name="Wald-1939"></a>\[Wald 1939\] https://scholar.google.co.jp/scholar?cluster=1375947589172221492
+# * <a name="Wilson-1927"></a>\[Wilson 1927\] https://scholar.google.co.jp/scholar?cluster=9907942007440998358
+#
 
 # %%
