@@ -31,7 +31,7 @@
 #
 # [Google Colab](https://colab.research.google.com/)でも実行できます。
 #
-# * 
+# * https://colab.research.google.com/github/genkuroki/public/blob/main/0055/binomial%20P-values.ipynb
 #
 # <span style="color:red;font-weight:bold">参照文献の記述がひどく未完成なので取り扱い注意!</span>
 
@@ -93,6 +93,7 @@ ENV["LINES"], ENV["COLUMNS"] = 200, 200
 const mincho = "ipamp"
 const gothic = "ipagp"
 
+# Google Colab では6分程度かかる
 @autoadd begin
 using Distributions
 using Plots
