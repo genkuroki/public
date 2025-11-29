@@ -1178,17 +1178,25 @@ plot!(leftmargin=4Plots.mm, bottommargin=4Plots.mm)
 #
 # 🔴 <a name="video-Lusinchi-2012"></a>\[[Lusinchi 2012](#Lusinchi-2012)\]の動画解説
 #
+# * https://github.com/genkuroki/public/raw/refs/heads/main/0055/Lusinchi-2012.mp4
+#
 # <video width=500 controls src="https://github.com/genkuroki/public/raw/refs/heads/main/0055/Lusinchi-2012.mp4"></video>
 #
 # 🔴 <a name="video-Lohr-Brick-2017"></a>\[[Lohr-Brick 2017](#Lohr-Brick-2017)\]の動画解説
+#
+# * https://github.com/genkuroki/public/raw/refs/heads/main/0055/Lohr-Brick-2017.mp4
 #
 # <video width=500 controls src="https://github.com/genkuroki/public/raw/refs/heads/main/0055/Lohr-Brick-2017.mp4"></video>
 #
 # 🔴 <a name="video-McShane-et-al-2024-1"></a>\[[McShane et al. 2024](#McShane-et-al-2024)\]の動画解説1
 #
+# * https://github.com/genkuroki/public/raw/refs/heads/main/0055/McShane-et-al-2024-1.mp4
+#
 # <video width=500 controls src="https://github.com/genkuroki/public/raw/refs/heads/main/0055/McShane-et-al-2024-1.mp4"></video>
 #
 # 🔴 <a name="video-McShane-et-al-2024-1"></a>\[[McShane et al. 2024](#McShane-et-al-2024)\]の動画解説2
+#
+# * https://github.com/genkuroki/public/raw/refs/heads/main/0055/McShane-et-al-2024-2.mp4
 #
 # <video width=500 controls src="https://github.com/genkuroki/public/raw/refs/heads/main/0055/McShane-et-al-2024-2.mp4"></video>
 
