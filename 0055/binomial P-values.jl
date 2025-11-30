@@ -39,7 +39,7 @@
 
 # %% [markdown] toc=true
 # <h1>目次<span class="tocSkip"></span></h1>
-# <div class="toc"><ul class="toc-item"><li><span><a href="#二項検定のP値に関する解説の例" data-toc-modified-id="二項検定のP値に関する解説の例-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>二項検定のP値に関する解説の例</a></span><ul class="toc-item"><li><span><a href="#P値の導入" data-toc-modified-id="P値の導入-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>P値の導入</a></span><ul class="toc-item"><li><span><a href="#片側P値の定義" data-toc-modified-id="片側P値の定義-1.1.1"><span class="toc-item-num">1.1.1&nbsp;&nbsp;</span>片側P値の定義</a></span></li><li><span><a href="#両側P値-(単にP値と呼ぶことが多い)-の定義" data-toc-modified-id="両側P値-(単にP値と呼ぶことが多い)-の定義-1.1.2"><span class="toc-item-num">1.1.2&nbsp;&nbsp;</span>両側P値 (単にP値と呼ぶことが多い) の定義</a></span></li></ul></li><li><span><a href="#P値の報告の仕方" data-toc-modified-id="P値の報告の仕方-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>P値の報告の仕方</a></span></li><li><span><a href="#認知バイアスに注意せよ！" data-toc-modified-id="認知バイアスに注意せよ！-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>認知バイアスに注意せよ！</a></span><ul class="toc-item"><li><span><a href="#ゼロ主義-(nullism)" data-toc-modified-id="ゼロ主義-(nullism)-1.3.1"><span class="toc-item-num">1.3.1&nbsp;&nbsp;</span>ゼロ主義 (nullism)</a></span></li><li><span><a href="#二分法への執着-(dichotomania)" data-toc-modified-id="二分法への執着-(dichotomania)-1.3.2"><span class="toc-item-num">1.3.2&nbsp;&nbsp;</span>二分法への執着 (dichotomania)</a></span></li><li><span><a href="#モデルと現実の混合-(model-reification)" data-toc-modified-id="モデルと現実の混合-(model-reification)-1.3.3"><span class="toc-item-num">1.3.3&nbsp;&nbsp;</span>モデルと現実の混合 (model reification)</a></span></li></ul></li><li><span><a href="#細かな注意" data-toc-modified-id="細かな注意-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>細かな注意</a></span><ul class="toc-item"><li><span><a href="#「検定仮説」という用語を使う理由" data-toc-modified-id="「検定仮説」という用語を使う理由-1.4.1"><span class="toc-item-num">1.4.1&nbsp;&nbsp;</span>「検定仮説」という用語を使う理由</a></span></li><li><span><a href="#片側確率の2倍の両側P値の正確な定義と欠点" data-toc-modified-id="片側確率の2倍の両側P値の正確な定義と欠点-1.4.2"><span class="toc-item-num">1.4.2&nbsp;&nbsp;</span>片側確率の2倍の両側P値の正確な定義と欠点</a></span></li><li><span><a href="#片側P値だけではなく、両側P値を考えたくなる理由" data-toc-modified-id="片側P値だけではなく、両側P値を考えたくなる理由-1.4.3"><span class="toc-item-num">1.4.3&nbsp;&nbsp;</span>片側P値だけではなく、両側P値を考えたくなる理由</a></span></li><li><span><a href="#尤度とP値の違いに注意せよ" data-toc-modified-id="尤度とP値の違いに注意せよ-1.4.4"><span class="toc-item-num">1.4.4&nbsp;&nbsp;</span>尤度とP値の違いに注意せよ</a></span></li><li><span><a href="#尤度についてさらに補足" data-toc-modified-id="尤度についてさらに補足-1.4.5"><span class="toc-item-num">1.4.5&nbsp;&nbsp;</span>尤度についてさらに補足</a></span></li></ul></li><li><span><a href="#P値の計算の仕方の詳しい説明" data-toc-modified-id="P値の計算の仕方の詳しい説明-1.5"><span class="toc-item-num">1.5&nbsp;&nbsp;</span>P値の計算の仕方の詳しい説明</a></span><ul class="toc-item"><li><span><a href="#二項係数の記号法" data-toc-modified-id="二項係数の記号法-1.5.1"><span class="toc-item-num">1.5.1&nbsp;&nbsp;</span>二項係数の記号法</a></span></li><li><span><a href="#片側P値の計算" data-toc-modified-id="片側P値の計算-1.5.2"><span class="toc-item-num">1.5.2&nbsp;&nbsp;</span>片側P値の計算</a></span></li><li><span><a href="#両側P値の計算" data-toc-modified-id="両側P値の計算-1.5.3"><span class="toc-item-num">1.5.3&nbsp;&nbsp;</span>両側P値の計算</a></span></li></ul></li><li><span><a href="#両側P値の計算練習問題" data-toc-modified-id="両側P値の計算練習問題-1.6"><span class="toc-item-num">1.6&nbsp;&nbsp;</span>両側P値の計算練習問題</a></span><ul class="toc-item"><li><span><a href="#二項分布の確率の表の作成" data-toc-modified-id="二項分布の確率の表の作成-1.6.1"><span class="toc-item-num">1.6.1&nbsp;&nbsp;</span>二項分布の確率の表の作成</a></span></li><li><span><a href="#無作為抽出された患者20人中6人に効いた場合の両側P値" data-toc-modified-id="無作為抽出された患者20人中6人に効いた場合の両側P値-1.6.2"><span class="toc-item-num">1.6.2&nbsp;&nbsp;</span>無作為抽出された患者20人中6人に効いた場合の両側P値</a></span></li><li><span><a href="#無作為抽出された患者20人中15人に効いた場合の両側P値" data-toc-modified-id="無作為抽出された患者20人中15人に効いた場合の両側P値-1.6.3"><span class="toc-item-num">1.6.3&nbsp;&nbsp;</span>無作為抽出された患者20人中15人に効いた場合の両側P値</a></span></li></ul></li><li><span><a href="#S値(＝意外度)のコイン投げによる定義" data-toc-modified-id="S値(＝意外度)のコイン投げによる定義-1.7"><span class="toc-item-num">1.7&nbsp;&nbsp;</span>S値(＝意外度)のコイン投げによる定義</a></span></li><li><span><a href="#P値に関する広く通用する閾値は存在しない" data-toc-modified-id="P値に関する広く通用する閾値は存在しない-1.8"><span class="toc-item-num">1.8&nbsp;&nbsp;</span>P値に関する広く通用する閾値は存在しない</a></span></li><li><span><a href="#相性の良さ/悪さ-(compatibility/incompatibility)-という解釈の仕方" data-toc-modified-id="相性の良さ/悪さ-(compatibility/incompatibility)-という解釈の仕方-1.9"><span class="toc-item-num">1.9&nbsp;&nbsp;</span>相性の良さ/悪さ (compatibility/incompatibility) という解釈の仕方</a></span></li><li><span><a href="#P値関数と点推定値" data-toc-modified-id="P値関数と点推定値-1.10"><span class="toc-item-num">1.10&nbsp;&nbsp;</span>P値関数と点推定値</a></span></li><li><span><a href="#S値関数" data-toc-modified-id="S値関数-1.11"><span class="toc-item-num">1.11&nbsp;&nbsp;</span>S値関数</a></span></li><li><span><a href="#相性区間-＝CI＝信頼区間" data-toc-modified-id="相性区間-＝CI＝信頼区間-1.12"><span class="toc-item-num">1.12&nbsp;&nbsp;</span>相性区間 ＝CI＝信頼区間</a></span></li><li><span><a href="#報告の仕方について" data-toc-modified-id="報告の仕方について-1.13"><span class="toc-item-num">1.13&nbsp;&nbsp;</span>報告の仕方について</a></span></li><li><span><a href="#一般に統計分析は何をやっているとみなされるか" data-toc-modified-id="一般に統計分析は何をやっているとみなされるか-1.14"><span class="toc-item-num">1.14&nbsp;&nbsp;</span>一般に統計分析は何をやっているとみなされるか</a></span></li></ul></li><li><span><a href="#二項検定の様々な種類のP値関数のグラフ" data-toc-modified-id="二項検定の様々な種類のP値関数のグラフ-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>二項検定の様々な種類のP値関数のグラフ</a></span></li><li><span><a href="#参照文献" data-toc-modified-id="参照文献-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>参照文献</a></span></li><li><span><a href="#動画解説" data-toc-modified-id="動画解説-4"><span class="toc-item-num">4&nbsp;&nbsp;</span>動画解説</a></span></li></ul></div>
+# <div class="toc"><ul class="toc-item"><li><span><a href="#二項検定のP値に関する解説の例" data-toc-modified-id="二項検定のP値に関する解説の例-1"><span class="toc-item-num">1&nbsp;&nbsp;</span>二項検定のP値に関する解説の例</a></span><ul class="toc-item"><li><span><a href="#P値の導入" data-toc-modified-id="P値の導入-1.1"><span class="toc-item-num">1.1&nbsp;&nbsp;</span>P値の導入</a></span><ul class="toc-item"><li><span><a href="#片側P値の定義" data-toc-modified-id="片側P値の定義-1.1.1"><span class="toc-item-num">1.1.1&nbsp;&nbsp;</span>片側P値の定義</a></span></li><li><span><a href="#両側P値-(単にP値と呼ぶことが多い)-の定義" data-toc-modified-id="両側P値-(単にP値と呼ぶことが多い)-の定義-1.1.2"><span class="toc-item-num">1.1.2&nbsp;&nbsp;</span>両側P値 (単にP値と呼ぶことが多い) の定義</a></span></li></ul></li><li><span><a href="#P値の報告の仕方" data-toc-modified-id="P値の報告の仕方-1.2"><span class="toc-item-num">1.2&nbsp;&nbsp;</span>P値の報告の仕方</a></span></li><li><span><a href="#認知バイアスに注意せよ！" data-toc-modified-id="認知バイアスに注意せよ！-1.3"><span class="toc-item-num">1.3&nbsp;&nbsp;</span>認知バイアスに注意せよ！</a></span><ul class="toc-item"><li><span><a href="#ゼロ主義-(nullism)" data-toc-modified-id="ゼロ主義-(nullism)-1.3.1"><span class="toc-item-num">1.3.1&nbsp;&nbsp;</span>ゼロ主義 (nullism)</a></span></li><li><span><a href="#二分法への執着-(dichotomania)" data-toc-modified-id="二分法への執着-(dichotomania)-1.3.2"><span class="toc-item-num">1.3.2&nbsp;&nbsp;</span>二分法への執着 (dichotomania)</a></span></li><li><span><a href="#モデルと現実の混合-(model-reification)" data-toc-modified-id="モデルと現実の混合-(model-reification)-1.3.3"><span class="toc-item-num">1.3.3&nbsp;&nbsp;</span>モデルと現実の混合 (model reification)</a></span></li></ul></li><li><span><a href="#細かな注意" data-toc-modified-id="細かな注意-1.4"><span class="toc-item-num">1.4&nbsp;&nbsp;</span>細かな注意</a></span><ul class="toc-item"><li><span><a href="#「検定仮説」という用語を使う理由" data-toc-modified-id="「検定仮説」という用語を使う理由-1.4.1"><span class="toc-item-num">1.4.1&nbsp;&nbsp;</span>「検定仮説」という用語を使う理由</a></span></li><li><span><a href="#片側確率の2倍の両側P値の正確な定義と欠点" data-toc-modified-id="片側確率の2倍の両側P値の正確な定義と欠点-1.4.2"><span class="toc-item-num">1.4.2&nbsp;&nbsp;</span>片側確率の2倍の両側P値の正確な定義と欠点</a></span></li><li><span><a href="#片側P値だけではなく、両側P値を考えたくなる理由" data-toc-modified-id="片側P値だけではなく、両側P値を考えたくなる理由-1.4.3"><span class="toc-item-num">1.4.3&nbsp;&nbsp;</span>片側P値だけではなく、両側P値を考えたくなる理由</a></span></li><li><span><a href="#尤度とP値の違いに注意せよ" data-toc-modified-id="尤度とP値の違いに注意せよ-1.4.4"><span class="toc-item-num">1.4.4&nbsp;&nbsp;</span>尤度とP値の違いに注意せよ</a></span></li><li><span><a href="#尤度についてさらに補足" data-toc-modified-id="尤度についてさらに補足-1.4.5"><span class="toc-item-num">1.4.5&nbsp;&nbsp;</span>尤度についてさらに補足</a></span></li></ul></li><li><span><a href="#P値の計算の仕方の詳しい説明" data-toc-modified-id="P値の計算の仕方の詳しい説明-1.5"><span class="toc-item-num">1.5&nbsp;&nbsp;</span>P値の計算の仕方の詳しい説明</a></span><ul class="toc-item"><li><span><a href="#二項係数の記号法" data-toc-modified-id="二項係数の記号法-1.5.1"><span class="toc-item-num">1.5.1&nbsp;&nbsp;</span>二項係数の記号法</a></span></li><li><span><a href="#片側P値の計算" data-toc-modified-id="片側P値の計算-1.5.2"><span class="toc-item-num">1.5.2&nbsp;&nbsp;</span>片側P値の計算</a></span></li><li><span><a href="#両側P値の計算" data-toc-modified-id="両側P値の計算-1.5.3"><span class="toc-item-num">1.5.3&nbsp;&nbsp;</span>両側P値の計算</a></span></li></ul></li><li><span><a href="#両側P値の計算練習問題" data-toc-modified-id="両側P値の計算練習問題-1.6"><span class="toc-item-num">1.6&nbsp;&nbsp;</span>両側P値の計算練習問題</a></span><ul class="toc-item"><li><span><a href="#二項分布の確率の表の作成" data-toc-modified-id="二項分布の確率の表の作成-1.6.1"><span class="toc-item-num">1.6.1&nbsp;&nbsp;</span>二項分布の確率の表の作成</a></span></li><li><span><a href="#無作為抽出された患者20人中6人に効いた場合の両側P値" data-toc-modified-id="無作為抽出された患者20人中6人に効いた場合の両側P値-1.6.2"><span class="toc-item-num">1.6.2&nbsp;&nbsp;</span>無作為抽出された患者20人中6人に効いた場合の両側P値</a></span></li><li><span><a href="#無作為抽出された患者20人中15人に効いた場合の両側P値" data-toc-modified-id="無作為抽出された患者20人中15人に効いた場合の両側P値-1.6.3"><span class="toc-item-num">1.6.3&nbsp;&nbsp;</span>無作為抽出された患者20人中15人に効いた場合の両側P値</a></span></li></ul></li><li><span><a href="#S値(＝意外度)のコイン投げによる定義" data-toc-modified-id="S値(＝意外度)のコイン投げによる定義-1.7"><span class="toc-item-num">1.7&nbsp;&nbsp;</span>S値(＝意外度)のコイン投げによる定義</a></span></li><li><span><a href="#P値に関する広く通用する閾値は存在しない" data-toc-modified-id="P値に関する広く通用する閾値は存在しない-1.8"><span class="toc-item-num">1.8&nbsp;&nbsp;</span>P値に関する広く通用する閾値は存在しない</a></span></li><li><span><a href="#相性の良さ/悪さ-(compatibility/incompatibility)-という解釈の仕方" data-toc-modified-id="相性の良さ/悪さ-(compatibility/incompatibility)-という解釈の仕方-1.9"><span class="toc-item-num">1.9&nbsp;&nbsp;</span>相性の良さ/悪さ (compatibility/incompatibility) という解釈の仕方</a></span></li><li><span><a href="#P値関数と点推定値" data-toc-modified-id="P値関数と点推定値-1.10"><span class="toc-item-num">1.10&nbsp;&nbsp;</span>P値関数と点推定値</a></span></li><li><span><a href="#S値関数" data-toc-modified-id="S値関数-1.11"><span class="toc-item-num">1.11&nbsp;&nbsp;</span>S値関数</a></span></li><li><span><a href="#相性区間-＝CI＝信頼区間" data-toc-modified-id="相性区間-＝CI＝信頼区間-1.12"><span class="toc-item-num">1.12&nbsp;&nbsp;</span>相性区間 ＝CI＝信頼区間</a></span></li><li><span><a href="#報告の仕方について" data-toc-modified-id="報告の仕方について-1.13"><span class="toc-item-num">1.13&nbsp;&nbsp;</span>報告の仕方について</a></span></li><li><span><a href="#一般に統計分析は何をやっているとみなされるか" data-toc-modified-id="一般に統計分析は何をやっているとみなされるか-1.14"><span class="toc-item-num">1.14&nbsp;&nbsp;</span>一般に統計分析は何をやっているとみなされるか</a></span></li></ul></li><li><span><a href="#二項検定の様々な種類のP値関数のグラフ" data-toc-modified-id="二項検定の様々な種類のP値関数のグラフ-2"><span class="toc-item-num">2&nbsp;&nbsp;</span>二項検定の様々な種類のP値関数のグラフ</a></span></li><li><span><a href="#尤度関数や事後分布とP値関数の比較" data-toc-modified-id="尤度関数や事後分布とP値関数の比較-3"><span class="toc-item-num">3&nbsp;&nbsp;</span>尤度関数や事後分布とP値関数の比較</a></span><ul class="toc-item"><li><span><a href="#データの値が「無作為に選んだ患者-n=20-人中-k=6-人に薬Aが効いた」で、平坦事前分布の場合" data-toc-modified-id="データの値が「無作為に選んだ患者-n=20-人中-k=6-人に薬Aが効いた」で、平坦事前分布の場合-3.1"><span class="toc-item-num">3.1&nbsp;&nbsp;</span>データの値が「無作為に選んだ患者 n=20 人中 k=6 人に薬Aが効いた」で、平坦事前分布の場合</a></span></li><li><span><a href="#データの値が「無作為に選んだ患者-n=20-人中-k=6-人に薬Aが効いた」で、偏った事前分布の場合" data-toc-modified-id="データの値が「無作為に選んだ患者-n=20-人中-k=6-人に薬Aが効いた」で、偏った事前分布の場合-3.2"><span class="toc-item-num">3.2&nbsp;&nbsp;</span>データの値が「無作為に選んだ患者 n=20 人中 k=6 人に薬Aが効いた」で、偏った事前分布の場合</a></span></li><li><span><a href="#データの値が「無作為に選んだ患者-n=200-人中-k=60-人に薬Aが効いた」で、上と同じ偏った事前分布の場合" data-toc-modified-id="データの値が「無作為に選んだ患者-n=200-人中-k=60-人に薬Aが効いた」で、上と同じ偏った事前分布の場合-3.3"><span class="toc-item-num">3.3&nbsp;&nbsp;</span>データの値が「無作為に選んだ患者 n=200 人中 k=60 人に薬Aが効いた」で、上と同じ偏った事前分布の場合</a></span></li><li><span><a href="#比較の結論" data-toc-modified-id="比較の結論-3.4"><span class="toc-item-num">3.4&nbsp;&nbsp;</span>比較の結論</a></span></li></ul></li><li><span><a href="#参照文献" data-toc-modified-id="参照文献-4"><span class="toc-item-num">4&nbsp;&nbsp;</span>参照文献</a></span></li><li><span><a href="#動画解説" data-toc-modified-id="動画解説-5"><span class="toc-item-num">5&nbsp;&nbsp;</span>動画解説</a></span></li><li><span><a href="#Wasserman-2014の11.9の例の簡単な紹介" data-toc-modified-id="Wasserman-2014の11.9の例の簡単な紹介-6"><span class="toc-item-num">6&nbsp;&nbsp;</span>Wasserman 2014の11.9の例の簡単な紹介</a></span></li></ul></div>
 
 # %%
 # IPAフォントを手動でインストール ⇒ https://moji.or.jp/ipafont/ipa00303/
@@ -179,7 +179,7 @@ plot!(legend=:topleft, size=(800, 350),
 # * 以上の状況で薬Aと薬Bが効く患者の割合を比較したい。
 #
 # __警告:__ 以下では薬Aを試してみる患者達が患者達全体の集団から理想的な形で無作為に抽出されていると仮定します。これは非現実的な仮定です。現実の研究では、倫理的問題や予算制約など諸々の都合によって、患者達全体ではなく、その一部分の偏った集団からの抽出にならざるを得なくなります。この点は統計学の実践では最重要の問題になります。初学者の段階を脱して、現実の問題に統計学を応用する場合にはこの警告を必ず思い出すようにしてください。
-#
+# <br><br>
 
 # %% [markdown]
 # ### P値の導入
@@ -227,7 +227,6 @@ var"one-sided P for n,k,p=20,18,0.6"
 # >「薬Aが効く患者の割合が薬Bと同じ60%である」と信じている人にとって、「無作為に選んだ患者20人中18人に薬Aが効いた」というデータの値はかなり意外に感じられるだろう
 #
 # と解釈できます。
-# <br><br><br>
 
 # %%
 var"two-sided P for n,k,p=20,18,0.6"
@@ -243,9 +242,11 @@ var"two-sided P for n,k,p=20,18,0.6"
 #
 # を表しています。
 #
-# 以下では単にP値と言ったら、両側P値を意味するものとします。
-#
 # P値は小さければ小さいほど、統計モデル(例えば二項分布)とそのパラメータに関する検定仮説の組み合わせの下でデータの値の意外さが大きいことを意味します。
+#
+# __警告:__ P値を検定仮説の正しさの尺度だと解釈することは誤りです。
+#
+# 以下では単にP値と言ったら、両側P値を意味するものとします。
 
 # %% [markdown]
 # ### P値の報告の仕方
@@ -258,7 +259,7 @@ var"two-sided P for n,k,p=20,18,0.6"
 #
 # 一般に、統計分析の結果を報告するときには、P値などの統計分析で得られる数値では測ることができないバイアスや不確実性があることを謙虚に認めることが必要になります。
 #
-# この解説ではP値 (P-value) のPを大文字で書くことにしたのですが、小文字のpと書いても問題ありません。どちらでもよいです。<br><br>
+# この解説ではP値 (P-value) のPを大文字で書くことにしたのですが、小文字のpと書いても問題ありません。どちらでもよいです。
 
 # %% [markdown]
 # ### 認知バイアスに注意せよ！
@@ -360,7 +361,7 @@ var"two-sided P for n,k,p=20,18,0.6"
 #
 # 読者の中には太字になっている「以上」を削除して、「効果がある患者の割合が60%であると仮定したとき、無作為に選んだ患者20人中18人に効果がある確率」を考えたくなる人がいると思います。その人は鋭い！
 #
-# 「以上」の語を取り去ってできる確率は __尤度(ゆうど)__ と呼ばれており、統計分析における最も基本的かつ重要な量になっています。尤度とP値を混同しないように注意して下さい。<br><br><br>
+# 「以上」の語を取り去ってできる確率は __尤度(ゆうど)__ と呼ばれており、統計分析における最も基本的かつ重要な量になっています。尤度とP値を混同しないように注意して下さい。
 
 # %% [markdown]
 # #### 尤度についてさらに補足
@@ -368,6 +369,8 @@ var"two-sided P for n,k,p=20,18,0.6"
 # 「効果がある患者の割合が60%である」という仮説を信じている人が「無作為に選んだ患者20人中18人に効果があった」というデータの値を見たときには、シンプルに「効果がある患者の割合が60%であると仮定したとき、無作為に選んだ患者20人中18人に効果がある確率」(=尤度(ゆうど))を __モデルとデータの値を比較するための尺度__ として使いたくなると思います。
 #
 # そのアイデアは極めて正しく、尤度は __モデルがどれだけデータの値に適合しているか__ を表していると解釈でき、 __最尤法 (maximum likelihood method)__ の基礎になります。
+#
+# __警告:__ 尤度(ゆうど)は英語で likelihood と言います。しかし、モデルがデータに過剰適合している場合にモデルはもっともらしくなくなるので、尤度をもっともらしさの尺度だと解釈することは誤りになります。教科書の多くがこの点において間違っているので注意してください。この誤りはP値を検定仮説の正しさの尺度とみなす誤りに類似しています。
 #
 # 最尤法は nuisance parameters がある場合のP値関数の構成における最も基本的なテクニックになっています。このあたりのことも初学者向けの解説では触れることは難しいです。
 #
@@ -1108,6 +1111,148 @@ plot!(leftmargin=4Plots.mm, bottommargin=4Plots.mm)
 # このグラフを見れば、異なる方法を使っていても、標本サイズが十分に大きいならば、どれを使っても大差ないことが分かります。
 
 # %% [markdown]
+# ## 尤度関数や事後分布とP値関数の比較
+#
+# この節の内容は self-contained な説明になっていません。しかし、目を通しておけば、後でより進んだ勉強をするときに役に立つと思います。ポイントはP値関数と尤度関数と事後分布の類似性です。たとえ事前分布が偏っていたとしても、それに合わせてP値関数と尤度関数を補正すれば事後分布とほぼ同じ傾向を示すことになります。主義に基く統計学に騙さないように注意して下さい。
+
+# %%
+"""
+「n回中k回成功」というデータの数値が得られたときの
+事前分布Beta(a, b)に関する二項分布モデルの事後分布
+"""
+posterior(n, k; a=1, b=1) = Beta(k+a, n-k+b)
+
+"""
+「n回中k回成功」というデータの数値が得られたときの
+事前分布Beta(a, b)に関する二項分布モデルの事後分布の密度関数
+"""
+pdf_posterior(n, k, p; a=1, b=1) = pdf(posterior(n, k; a, b), p)
+
+
+"""
+「n回中k回成功」というデータの数値が得られたときの
+二項分布モデルの尤度関数を全積分＝1となるように正規化したもの
+"""
+likelihood_regularized(n, k, p) = pdf(posterior(n, k; a=1, b=1), p)
+
+# %% [markdown]
+# この節では以下の4つをグラフで比較する。
+#
+# * __central P:__ Clopper-Pearsonの相性区間を与えるcentral法のP値関数
+# * __score P:__ Wilsonのスコア信頼区間を与えるスコア法のP値関数
+# * __likelihood:__ 全積分＝1で正規化規化された尤度関数
+# * __posterior:__ ベイズ統計における事後分布の確率密度関数
+#
+# 事前分布が平坦事前分布 $\op{Beta}(a, b)$ の場合の事後分布の確率密度関数は、全積分＝1で正規化された尤度関数は同じものになります。(ただし、パラメータ空間の座標系を変えると座標系に依存して決まる平坦事前分布も変わることに注意して下さい。ある座標系での平坦事前分布が実践的には酷く偏った事前分布になることがあります。)
+
+# %% [markdown]
+# ### データの値が「無作為に選んだ患者 n=20 人中 k=6 人に薬Aが効いた」で、平坦事前分布の場合
+
+# %%
+n, k = 20, 6
+P1 = plot(p -> pvalue_central(n, k, p), 0, 1; label="central P", c=1)
+P2 = plot(p -> pvalue_score(n, k, p), 0, 1; label="score P", c=2)
+P3 = plot(p -> likelihood_regularized(n, k, p), 0, 1; label="likelihood", c=3)
+P4 = plot(p -> pdf_posterior(n, k, p), 0, 1; label="posterior", c=4)
+plot(P1, P2, P3, P4; size=(800, 500), layout=(2, 2))
+plot!(xtick=0:0.1:1, xguide="p")
+plot!(plot_title="無作為に選んだ患者n=$(n)人中k=$(k)人に薬Aが効いた、平坦事前分布")
+plot!(leftmargin=4Plots.mm, bottommargin=4Plots.mm)
+
+# %% [markdown]
+# 平坦事前分布の場合には、正規化された尤度関数と事後分布の密度関数は同じものになり、2種類のP値関数と同じような傾向を示している。
+#
+# つまり、平坦事前分布の場合には、尤度関数や事後分布はP値関数とほぼ同じ使い方をできる。
+
+# %% [markdown]
+# ### データの値が「無作為に選んだ患者 n=20 人中 k=6 人に薬Aが効いた」で、偏った事前分布の場合
+
+# %% [markdown]
+# 事前分布は $\op{Beta}(5, 2)$ だと仮定する。この事前分布は「事前研究で無作為に選んだ患者 $(5-1)+(2-1)=5$ 人中 $5-1=4$ 人に薬Aが効いた」場合に相当している。
+
+# %%
+a, b = 5, 2
+plot(p -> pdf(Beta(a, b), p), 0, 1; label="Beta($a, $b)", size=(380, 240))
+title!("Beta($a, $b) 事前分布の密度関数")
+
+# %%
+n, k = 20, 6
+P1 = plot(p -> pvalue_central(n, k, p), 0, 1; label="central P", c=1)
+P2 = plot(p -> pvalue_score(n, k, p), 0, 1; label="score P", c=2)
+P3 = plot(p -> likelihood_regularized(n, k, p), 0, 1; label="likelihood", c=3)
+post = posterior(n, k; a, b)
+P4 = plot(p -> pdf(post, p), 0, 1; label="posterior", c=4)
+plot!(p -> likelihood_regularized(n, k, p), 0, 1; label="likelihood", c=3, ls=:dot, lw=0.7)
+plot!([0.3, 0.4], fill(pdf(post, mode(post)), 2); label="", arrow=true, c=:red)
+plot!([0.38, 0.48], fill(3, 2); label="", arrow=true, c=:red)
+plot!([0.42, 0.52], fill(2, 2); label="", arrow=true, c=:red)
+plot(P1, P2, P3, P4; size=(800, 500), layout=(2, 2))
+plot!(xtick=0:0.1:1, xguide="p")
+plot!(plot_title="無作為に選んだ患者n=$(n)人中k=$(k)人に薬Aが効いた、事前分布はBeta($a, $b)")
+plot!(leftmargin=4Plots.mm, bottommargin=4Plots.mm)
+
+# %% [markdown]
+# 事前分布が右に偏っていた場合には事後分布は右にシフトします。
+#
+# 上で我々が採用した事前分布は「事前研究で無作為に選んだ患者 $(5-1)+(2-1)=5$ 人中 $5-1=4$ 人に薬Aが効いた」場合に相当しているので、その場合に忠実に対応するP値関数はデータの値を事前研究の場合と合計して得られる「無作為に選んだ患者$n=20+5$人中$k=6+4$人に薬Aが効いた」というデータの値に関するP値関数になります。尤度関数についても同様の補正が考えられます。そのように補正されたP値関数と尤度関数のラベルには "adj." を付けることにします。
+
+# %%
+n, k = 20, 6
+P1 = plot(p -> pvalue_central(n+a+b-2, k+a-1, p), 0, 1; label="central P adj.", c=1)
+P2 = plot(p -> pvalue_score(n+a+b-2, k+a-1, p), 0, 1; label="score P adj.", c=2)
+P3 = plot(p -> likelihood_regularized(n+a+b-2, k+a-1, p), 0, 1; label="likelihood adj.", c=3)
+post = posterior(n, k; a, b)
+P4 = plot(p -> pdf(post, p), 0, 1; label="posterior", c=4)
+plot(P1, P2, P3, P4; size=(800, 500), layout=(2, 2))
+plot!(xtick=0:0.1:1, xguide="p")
+plot!(plot_title="無作為に選んだ患者n=$(n)人中k=$(k)人に薬Aが効いた、事前分布はBeta($a, $b)")
+plot!(leftmargin=4Plots.mm, bottommargin=4Plots.mm)
+
+# %% [markdown]
+# このように事前分布に合わせて補正されたP値関数と尤度関数はベイズ統計の事後分布と同じ傾向を示します。(この場合には事前分布に合わせて補正された正則化された尤度関数は事後分布に一致します。)
+
+# %% [markdown]
+# ### データの値が「無作為に選んだ患者 n=200 人中 k=60 人に薬Aが効いた」で、上と同じ偏った事前分布の場合
+
+# %% [markdown]
+# 事前分布は $\op{Beta}(5, 2)$ だと仮定する。この事前分布は「事前研究で無作為に選んだ患者 $(5-1)+(2-1)=5$ 人中 $5-1=4$ 人に薬Aが効いた」場合に相当している。
+
+# %%
+a, b = 5, 2
+plot(p -> pdf(Beta(a, b), p), 0, 1; label="Beta($a, $b)", size=(380, 240))
+title!("Beta($a, $b) 事前分布の密度関数")
+
+# %%
+n, k = 200, 60
+P1 = plot(p -> pvalue_central(n, k, p), 0, 1; label="central P", c=1)
+P2 = plot(p -> pvalue_score(n, k, p), 0, 1; label="score P", c=2)
+P3 = plot(p -> likelihood_regularized(n, k, p), 0, 1; label="likelihood", c=3)
+post = posterior(n, k; a, b)
+P4 = plot(p -> pdf(post, p), 0, 1; label="posterior", c=4)
+plot!(p -> likelihood_regularized(n, k, p), 0, 1; label="likelihood", c=3, ls=:dot, lw=0.7)
+plot(P1, P2, P3, P4; size=(800, 500), layout=(2, 2))
+plot!(xtick=0:0.1:1, xguide="p")
+plot!(plot_title="無作為に選んだ患者n=$(n)人中k=$(k)人に薬Aが効いた、事前分布はBeta($a, $b)")
+plot!(leftmargin=4Plots.mm, bottommargin=4Plots.mm)
+
+# %% [markdown]
+# 上で我々が採用した事前分布は「事前研究で無作為に選んだ患者 $(5-1)+(2-1)=5$ 人中 $5-1=4$ 人に薬Aが効いた」場合に相当しているのでした。その後新たに「無作為に選んだ患者$n=200$人中$k=60$人に薬Aが効いた」というデータが得られた場合には、新に得られたデータサイズが大きいので、事前分布の影響は小さくなり、事後分布の右へのシフトも小さくなります。
+#
+# 事後分布の偏り具合と比較して、データサイズが十分大きいならば、事前分布の偏りの影響は事後分布にほとんど現れなくなります。
+
+# %% [markdown]
+# ### 比較の結論
+#
+# * P値関数や尤度関数を使う統計分析と事後分布を使う統計分析は、特に平坦事前分布の場合にはほぼ同じになる。
+# * 事前分布が偏っている場合であっても、P値関数と尤度関数の側を補正すれば、事後分布を使った場合とほぼ同じ結果を得ることができる。
+# * データサイズが十分に大きな場合にはそのような補正なしに、P値関数、尤度関数、事後分布はほぼ同じ結果を与える。
+# * 頻度主義、尤度主義、ベイズ主義のような主義の違いによって全くことなる統計学があるかのように語ることは誤りである。
+#
+# 主義に基く統計学は初学者にとって極めて有害です。初学者は騙されないように注意して下さい。
+#
+# __注意:__ 以上の結果は二項分布モデルに限らず、シンプルな正則モデルの場合に概ね一般化される。特異モデルの場合には最尤法とベイズ法の間で本質的な違いが生じるので、ベイズ法の側を使用するべきである(\[[渡辺澄夫2012](#渡辺澄夫2012)\]の第4章)。尤度関数によってデータの値を要約する方法(ベイズ統計を含む)も万能ではないことが知られています(\[[Robins-Ritov 1997](#Robins-Ritov-1997)\], \[[Wasserman 2004](#Wasserman-2004)\]の11.9 Example, \[[Ritov et al. 2014](#Ritov-et-al-2014)\])。
+
+# %% [markdown]
 # ## 参照文献
 #
 # * <a href="Amrhein-Greenland-2022"></a>
@@ -1167,6 +1312,10 @@ plot!(leftmargin=4Plots.mm, bottommargin=4Plots.mm)
 # * <a name="Rafi-Greenland-2020"></a>
 # \[Rafi-Greenland 2020\]
 # [Google Scholar](https://scholar.google.co.jp/scholar?cluster=591718439647960929)
+# * <a name="Ritov-et-al-2014"></a>
+# \[Ritov et al. 2014\] [Google Scholar](https://scholar.google.co.jp/scholar?cluster=11322335852337441582)
+# * <a name="Robins-Ritov-1997"></a>
+# \[Robins-Ritov 1997\] [--Google Scholar](https://scholar.google.co.jp/scholar?cluster=12152158785509725164)
 # * <a name="ロスマンの疫学2013"></a>
 # \[ロスマンの疫学2013\]
 # [Web site](https://shinoharashinsha.co.jp/?page_id=3534)
@@ -1179,10 +1328,15 @@ plot!(leftmargin=4Plots.mm, bottommargin=4Plots.mm)
 # * <a name="Wald-1939"></a>
 # \[Wald 1939\]
 # [Google Scholar](https://scholar.google.co.jp/scholar?cluster=1375947589172221492)
+# * <a name="Wasserman-2004"></a>
+# \[Wasserman 2004\] [Google search](https://www.google.com/search?q=Wasserman+%E2%80%9DAll+of+Statistics%22+%222004%22)
+# \[[PDF](https://www.stat.cmu.edu/~brian/valerie/617-2022/0%20-%20books/2004%20-%20wasserman%20-%20all%20of%20statistics.pdf)\]
+# \[[11.9の例の簡単な紹介](#example-Wasserman-2014)\]
+# * <a name="渡辺澄夫2012"></a>
+# \[渡辺澄夫2012\] [Web site](https://www.coronasha.co.jp/np/isbn/9784339024623/)
 # * <a name="Wilson-1927"></a>
 # \[Wilson 1927\]
 # [Google Scholar](https://scholar.google.co.jp/scholar?cluster=9907942007440998358)
-#
 
 # %% [markdown]
 # ## 動画解説
@@ -1211,5 +1365,9 @@ plot!(leftmargin=4Plots.mm, bottommargin=4Plots.mm)
 #
 # <video width=500 controls src="https://github.com/genkuroki/public/raw/refs/heads/main/0055/McShane-et-al-2024-2.mp4"></video>
 
-# %% [raw]
+# %% [markdown]
+# ## Wasserman 2014の11.9の例の簡単な紹介
 #
+# <a name="example-Wasserman-2014"></a>\[[Wasserman 2004](#Wasserman-2004)\]の11.9 Exampleを簡単に紹介しよう。
+#
+# <img width=700 src="https://raw.githubusercontent.com/genkuroki/public/refs/heads/main/0055/Wasserman-2014.jpg">
