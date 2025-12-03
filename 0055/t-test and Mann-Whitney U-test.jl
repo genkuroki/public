@@ -31,7 +31,8 @@ distname(dist) = replace(string(dist), r"{[^}]*}"=>"")
 distname(dist::InverseGamma) = "InverseGamma(α=$(shape(dist)), θ=$(scale(dist)))"
 safe_pdf(dist, x) = minimum(dist) < x < maximum(dist) ? pdf(dist, x) : zero(eltype(dist))
 
-default(fmt=:png, legend=false, titlefontsize=10, plot_titlefontsize=10, size=(320, 200))
+default(fmt=:png, legend=false, size=(320, 200),
+    titlefontsize=10, plot_titlefontsize=10, guidefontsize=10)
 
 # approximate Mann-Whitney U-testではデフォルトでは連続性補正がかかっている。
 # https://github.com/JuliaStats/HypothesisTests.jl/blob/master/src/mann_whitney.jl#L236-L249
@@ -80,7 +81,7 @@ function p_values(distx, m, disty, n; niters=10^6, continuity_correction=true,
     (; name_mwu, pvalue_student_t, pvalue_welch_t, pvalue_mann_whitney_u, pvalue_mann_whitney_u_approximate)
 end
     
-function hist_p_values(distx, m, disty, n; niters=10^6, bin=0:0.05:1.05, continuity_correction=true,
+function hist_p_values(distx, m, disty, n; niters=10^5, bin=0:0.05:1.05, continuity_correction=true,
         handicap_mean = mean(disty) - mean(distx),
         handicap_win_rate = equalizing_handicap(distx, disty),
     )
@@ -96,20 +97,57 @@ end
 
 _ecdf(A, x) = count(≤(x), A) / length(A)
 
-function ecdf_p_values(distx, m, disty, n; niters=10^6, maxalpha=1, continuity_correction=true,
+function ecdf_p_values(distx, m, disty, n; niters=10^5, maxalpha=1, continuity_correction=true,
         handicap_mean = mean(disty) - mean(distx),
         handicap_win_rate = equalizing_handicap(distx, disty),
     )
     @time (;name_mwu,  pvalue_student_t, pvalue_welch_t, pvalue_mann_whitney_u, pvalue_mann_whitney_u_approximate) =
         p_values(distx, m, disty, n; niters, continuity_correction, handicap_mean, handicap_win_rate)
+    xguide = "α"
+    yguide = "P(P-value ≤ α)"
     P1 = plot(x -> _ecdf(pvalue_student_t, x), 0, maxalpha; c=1, title="Student t-test")
     plot!(identity; ls=:dot, c=:gray, alpha=0.8)
+    plot!(; xguide, yguide)
     P2 = plot(x -> _ecdf(pvalue_welch_t, x), 0, maxalpha; c=2, title="Welch t-test")
     plot!(identity; ls=:dot, c=:gray, alpha=0.8)
+    plot!(; xguide, yguide)
     P3 = plot(x -> _ecdf(pvalue_mann_whitney_u, x), 0, maxalpha; c=3, title=name_mwu)
     plot!(identity; ls=:dot, c=:gray, alpha=0.8)
+    plot!(; xguide, yguide)
     P4 = plot(x -> _ecdf(pvalue_mann_whitney_u_approximate, x), 0, maxalpha; c=4, title="approximate Mann-Whitney U-test")
     plot!(identity; ls=:dot, c=:gray, alpha=0.8)
+    plot!(; xguide, yguide)
+    plot(P1, P2, P3, P4; size=(640, 640), layout=(2, 2))
+    plot!(plot_title="$(distname(distx)), m=$m vs. $(distname(disty)), n=$n")
+end
+
+_eccdf(A, x) = count(≥(x), A) / length(A)
+
+function eccdf_s_values(distx, m, disty, n; niters=10^5, continuity_correction=true,
+        handicap_mean = mean(disty) - mean(distx),
+        handicap_win_rate = equalizing_handicap(distx, disty),
+    )
+    @time (;name_mwu,  pvalue_student_t, pvalue_welch_t, pvalue_mann_whitney_u, pvalue_mann_whitney_u_approximate) =
+        p_values(distx, m, disty, n; niters, continuity_correction, handicap_mean, handicap_win_rate)
+    svalue_student_t = -log2.(pvalue_student_t)
+    svalue_welch_t = -log2.(pvalue_welch_t)
+    svalue_mann_whitney_u = -log2.(pvalue_mann_whitney_u)
+    svalue_mann_whitney_u_approximate = -log2.(pvalue_mann_whitney_u_approximate)
+    xguide = "−log₂α"
+    yguide = "−log₂P(P-value ≤ α)"
+    xtick = ytick = 0:20
+    P1 = plot(x -> -log2(_eccdf(svalue_student_t, x)), 0, 10.3; c=1, title="Student t-test")
+    plot!(identity; ls=:dot, c=:gray, alpha=0.8)
+    plot!(; xguide, yguide, xtick, ytick)
+    P2 = plot(x -> -log2(_eccdf(svalue_welch_t, x)), 0, 10.3; c=2, title="Welch t-test")
+    plot!(identity; ls=:dot, c=:gray, alpha=0.8)
+    plot!(; xguide, yguide, xtick, ytick)
+    P3 = plot(x -> -log2(_eccdf(svalue_mann_whitney_u, x)), 0, 10.3; c=3, title=name_mwu)
+    plot!(identity; ls=:dot, c=:gray, alpha=0.8)
+    plot!(; xguide, yguide, xtick, ytick)
+    P4 = plot(x -> -log2(_eccdf(svalue_mann_whitney_u_approximate, x)), 0, 10.3; c=4, title="approximate Mann-Whitney U-test")
+    plot!(identity; ls=:dot, c=:gray, alpha=0.8)
+    plot!(; xguide, yguide, xtick, ytick)
     plot(P1, P2, P3, P4; size=(640, 640), layout=(2, 2))
     plot!(plot_title="$(distname(distx)), m=$m vs. $(distname(disty)), n=$n")
 end
@@ -287,21 +325,125 @@ ecdf_p_values(igx, 300, igy, 100; maxalpha=0.1, continuity_correction=false)
 ecdf_p_values(igx, 100, igy, 300; maxalpha=0.1, continuity_correction=false)
 
 # %%
-ecdf_p_values(igx, 300, igy, 300; maxalpha=0.1, continuity_correction=false)
+ecdf_p_values(igx, 1000, igy, 1000; maxalpha=0.1, continuity_correction=false)
 
 # %%
-ecdf_p_values(igx, 900, igy, 300; maxalpha=0.1, continuity_correction=false, niters=10^5)
+ecdf_p_values(igx, 3000, igy, 1000; maxalpha=0.1, continuity_correction=false)
 
 # %%
-ecdf_p_values(igx, 300, igy, 900; maxalpha=0.1, continuity_correction=false, niters=10^5)
+ecdf_p_values(igx, 1000, igy, 3000; maxalpha=0.1, continuity_correction=false)
+
+# %% [markdown]
+# ------
+#
+# ## S値換算のグラフ
+
+# %% tags=[]
+ecdf_p_values(Uniform(), 10, Uniform(), 10; maxalpha=0.1, continuity_correction=false)
+
+# %% tags=[]
+ecdf_p_values(Uniform(), 10, Uniform(), 10; continuity_correction=false)
+
+# %% tags=[]
+eccdf_s_values(Uniform(), 10, Uniform(), 10; continuity_correction=false)
+
+# %% [markdown]
+# ------
 
 # %%
-ecdf_p_values(igx, 900, igy, 900; maxalpha=0.1, continuity_correction=false, niters=10^5)
+eccdf_s_values(Normal(0, 1), 30, Normal(0, 3), 10; continuity_correction=false)
 
 # %%
-ecdf_p_values(igx, 2700, igy, 900; maxalpha=0.1, continuity_correction=false, niters=10^5)
+eccdf_s_values(Normal(0, 1), 10, Normal(0, 3), 30; continuity_correction=false)
+
+# %% [markdown]
+# ------
 
 # %%
-ecdf_p_values(igx, 2700, igy, 2700; maxalpha=0.1, continuity_correction=false, niters=10^5)
+ecdf_p_values(Normal(0, 1), 100, Normal(0, 3), 100; maxalpha=0.1, continuity_correction=false)
+
+# %%
+ecdf_p_values(Normal(0, 1), 100, Normal(0, 3), 100; continuity_correction=false)
+
+# %%
+eccdf_s_values(Normal(0, 1), 100, Normal(0, 3), 100; continuity_correction=false)
+
+# %% [markdown]
+# ------
+
+# %%
+eccdf_s_values(Normal(0, 1), 300, Normal(0, 3), 100; continuity_correction=false)
+
+# %%
+eccdf_s_values(Normal(0, 1), 100, Normal(0, 3), 300; continuity_correction=false)
+
+# %%
+distx = InverseGamma(3.1, 1)
+disty = InverseGamma(3.1, 3)
+igx, igy = distx, disty
+
+@show distname(distx) distname(disty)
+@show std(disty)/std(distx)
+@show skewness(distx) skewness(disty)
+@show handicap_mean = mean(disty) - mean(distx)
+@show handicap_win_rate = equalizing_handicap(distx, disty)
+xmin = min(0, handicap_mean, handicap_win_rate)
+xmax = max(5std(distx) + handicap_win_rate, 5std(disty))
+xs = range(xmin, xmax, 1000)
+P1 = plot(xs, x -> safe_pdf(distx+handicap_mean, x); label="distx + handicap")
+plot!(xs, x -> pdf(disty, x); label="disty")
+title!("fair for t-tests")
+P2 = plot(xs, x -> safe_pdf(distx+handicap_win_rate, x); label="distx + handicap")
+plot!(xs, x -> pdf(disty, x); label="disty")
+title!("fair for Mann-Whitney U-tests")
+plot(P1, P2; size=(640, 200), legend=true)
+
+# %%
+ecdf_p_values(igx, 10, igy, 10; maxalpha=0.1, continuity_correction=false)
+
+# %%
+ecdf_p_values(igx, 10, igy, 10; continuity_correction=false)
+
+# %%
+eccdf_s_values(igx, 10, igy, 10; continuity_correction=false)
+
+# %% [markdown]
+# ------
+
+# %%
+eccdf_s_values(igx, 30, igy, 10; continuity_correction=false)
+
+# %%
+eccdf_s_values(igx, 10, igy, 30; continuity_correction=false)
+
+# %% [markdown]
+# ------
+
+# %%
+ecdf_p_values(igx, 100, igy, 100; continuity_correction=false)
+
+# %%
+ecdf_p_values(igx, 100, igy, 100; maxalpha=0.1, continuity_correction=false)
+
+# %%
+eccdf_s_values(igx, 100, igy, 100; continuity_correction=false)
+
+# %% [markdown]
+# ------
+
+# %%
+eccdf_s_values(igx, 300, igy, 100; continuity_correction=false)
+
+# %%
+eccdf_s_values(igx, 100, igy, 300; continuity_correction=false)
+
+# %%
+eccdf_s_values(igx, 1000, igy, 1000; continuity_correction=false)
+
+# %%
+eccdf_s_values(igx, 3000, igy, 1000; continuity_correction=false)
+
+# %%
+eccdf_s_values(igx, 1000, igy, 3000; continuity_correction=false)
 
 # %%
