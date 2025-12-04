@@ -66,9 +66,9 @@ end
 plot(PP...; size=(900, 400), layout=(2, 3))
 
 # %%
-dist = TDist(3+eps())
+dist = TDist(3.01)
 @show skewness(dist), kurtosis(dist)
-plot(dist, -6, 6; title="TDist(3)") |> display
+plot(dist, -6, 6; title="TDist(3.01)") |> display
 
 PP = []
 for n in 1:6
