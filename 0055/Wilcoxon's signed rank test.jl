@@ -78,11 +78,8 @@ using HypothesisTests
 using Plots
 end
 
-default(fmt=:png, legend=false, size=(400, 400), titlefontsize=10, tickfontsize=7)
+default(fmt=:png, legend=false, size=(400, 400), titlefontsize=9, tickfontsize=7)
 
-Base.show(io::IO, d::InverseGamma) =
-    print(io, "InverseGamma(α=", d.invd.α, ", θ=", d.θ, ")")
-Base.show(io::IO, ::MIME"text/plain", d::InverseGamma) = Base.show(io, d)
 @eval Distributions begin
 function logpdf(d::InverseGamma, x::Real)
     x ≤ 0 && return -Inf
@@ -91,7 +88,15 @@ function logpdf(d::InverseGamma, x::Real)
 end
 end
 
-distname(dist) = replace(string(dist), r"{[^\}]*}"=>"")
+distname(dist) = replace(string(dist), r"{[^}]*}"=>"", r".="=>"")
+distname(dist::InverseGamma) = "InverseGamma$(params(dist))"
+function distname(dist::MixtureModel; r=x->round(x; sigdigits=4))
+    n = ncomponents(dist)
+    c = components(dist)
+    p = probs(dist)
+    "$(r(p[1]))" * distname(c[1]) * prod("+$(r(p[k]))" * distname(c[k]) for k in 2:n)
+end
+distname(dist::Normal) = "N$(params(dist))"
 
 _ecdf(A, x) = count(≤(x), A) / length(A)
 
@@ -119,6 +124,7 @@ function prob_x1_plus_x2_gt_zero_monte_carlo(dist; niters=10^8, naves=1)
     s / naves
 end
 
+# %%
 @show dist = Gamma(0.03, 10000)
 @time m1 = median_x1_plus_x2_monte_carlo(dist)
 @time m2 = median_x1_plus_x2_monte_carlo(dist)
@@ -128,7 +134,7 @@ m = m1
 @time p1 = prob_x1_plus_x2_gt_zero_monte_carlo(dist - m/2)
 @time p2 = prob_x1_plus_x2_gt_zero_monte_carlo(dist - m/2)
 @time p3 = prob_x1_plus_x2_gt_zero_monte_carlo(dist - m/2)
-@show p1 p2 p3
+@show p1 p2 p3;
 
 # %%
 function sim_signed_rank_test(dist::ContinuousUnivariateDistribution, n;
@@ -167,8 +173,8 @@ function plot_sim_signed_rank_test(dist::ContinuousUnivariateDistribution, n;
     println("Xᵢ ~ ", str_dist_null) 
     println("P(X₁ + X₂ > 0) = ", r(prob_x1_plus_x2_gt_zero_monte_carlo(dist_null)))
     println("P(X₁ > 0) = ", r(ccdf(dist_null, 0)))
-    println("median(X₁)) = ", r(median(dist_null)))
-    println("mean(X₁)) = ", r(mean(dist_null)))
+    println("median(X₁)) = ", rsd(median(dist_null)))
+    println("mean(X₁)) = ", rsd(mean(dist_null)))
     
     pval = sim_signed_rank_test(dist, n; niters, distshift)
     P = plot(xs, x -> pdf(dist_null, x))
@@ -223,5 +229,89 @@ plot_sim_signed_rank_test(Gamma(0.05, 20), 40; xmin=-0.03, xmax=0.11)
 
 # %%
 plot_sim_signed_rank_test(Gamma(0.05, 20), 40; xmin=-0.03, xmax=0.11)
+
+# %%
+mixnormal = MixtureModel([Normal(), Normal(2, 2)], [0.491, 1-0.491])
+plot_sim_signed_rank_test(mixnormal, 100)
+
+# %%
+plot_sim_signed_rank_test(mixnormal, 100; distshift=median(mixnormal))
+
+# %%
+plot_sim_signed_rank_test(mixnormal, 20; distshift=median(mixnormal))
+
+# %%
+plot_sim_signed_rank_test(mixnormal, 10; distshift=median(mixnormal))
+
+# %% [markdown]
+# * https://x.com/Iguchi_Y/status/1997361599766790314
+# * https://etheses.bham.ac.uk/id/eprint/4607/1/Voraprateep13MRes.pdf
+
+# %%
+ENV["COLUMNS"] = 200
+
+function table_sim_signed_rank_test(dist, ns, deltas; α = 0.05, niters = 10^5)
+    tbl = zeros(length(deltas), length(ns))
+    for i in 1:size(deltas, 1)
+        for j in 1:size(ns, 1)
+            pval = sim_signed_rank_test(dist+deltas[i], ns[j]; niters, distshift=0.0)
+            tbl[i, j] = round(100_ecdf(pval, α); digits=2)
+        end
+    end
+    Any[
+        "δ\n"  ns'
+        deltas tbl
+    ]
+end
+
+# %%
+alphas = [0.0, 0.101, 0.175, 0.256, 0.382, 0.491]
+etas = 0:0.1:0.5
+ns = [10, 20, 30, 40, 50, 60, 100, 200, 500]
+deltas = [0.0, 0.01, 0.05, 0.10, 0.15, 0.20, 0.25]
+r = x -> round(x; digits=4)
+
+for (alpha, eta) in zip(alphas, etas)
+@time begin
+    println()
+    @show eta
+    @show alpha
+    mixnormal = MixtureModel([Normal(), Normal(2, 2)], [alpha, 1-alpha])
+    dist = mixnormal - median(mixnormal)
+    @show distname(mixnormal)
+    @show r(median(mixnormal))
+    @show r(median_x1_plus_x2_monte_carlo(mixnormal) / 2)
+    @show r(median(dist))
+    @show r(ccdf(dist, 0.0))
+    @show r(prob_x1_plus_x2_gt_zero_monte_carlo(dist))
+    table_sim_signed_rank_test(dist, ns, deltas) |> display
+    println()
+end
+end
+
+# %%
+alphas = [0.0, 0.101, 0.175, 0.256, 0.382, 0.491]
+etas = 0:0.1:0.5
+ns = [10, 20, 30, 40, 50, 60, 100, 200, 500]
+deltas = [0.0, 0.01, 0.05, 0.10, 0.15, 0.20, 0.25]
+r = x -> round(x; digits=4)
+
+for (alpha, eta) in zip(alphas, etas)
+@time begin
+    println()
+    @show eta
+    @show alpha
+    mixnormal = MixtureModel([Normal(), Normal(2, 2)], [alpha, 1-alpha])
+    dist = mixnormal - median_x1_plus_x2_monte_carlo(mixnormal) / 2
+    @show distname(mixnormal)
+    @show r(median(mixnormal))
+    @show r(median_x1_plus_x2_monte_carlo(mixnormal) / 2)
+    @show r(median(dist))
+    @show r(ccdf(dist, 0.0))
+    @show r(prob_x1_plus_x2_gt_zero_monte_carlo(dist))
+    table_sim_signed_rank_test(dist, ns, deltas) |> display
+    println()
+end
+end
 
 # %%
