@@ -20,7 +20,7 @@
 # * 黒木玄
 # * 作成: 2025-12-06
 # * 文脈: https://x.com/genkuroki/status/1996556375800025396
-# * Colab: https://colab.research.google.com/github/genkuroki/public/blob/main/0055/Wilcoxon's%20Signed%20rank%20test.ipynb
+# * Colab: https://colab.research.google.com/github/genkuroki/public/blob/main/0055/Wilcoxon's%20signed%20rank%20test.ipynb
 
 # %%
 # Google Colabと自分のパソコンの両方で使えるようにするための工夫
@@ -75,11 +75,7 @@ using Statistics
 @autoadd begin
 using Distributions
 using HypothesisTests
-using HCubature
-using QuadGK
-using Roots
-using StatsPlots
-#using Plots
+using Plots
 end
 
 default(fmt=:png, legend=false, size=(400, 400), titlefontsize=10, tickfontsize=7)
