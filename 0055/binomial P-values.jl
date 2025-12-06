@@ -18,13 +18,15 @@
 # # 二項分布モデルでのP値
 #
 # * 黒木玄
-# * 2025-11-26作成
+# * 作成: 2025-11-26
+# * 更新: 2025-12-06
 # $
 # \newcommand\op{\operatorname}
 # $
 #
 # このファイルは以下の場所で閲覧できます。
 #
+# * https://htmlpreview.github.io/?https://github.com/genkuroki/public/blob/main/0055/binomial%20P-values/binomial%20P-values.html
 # * https://github.com/genkuroki/public/blob/main/0055/binomial%20P-values.ipynb
 # * https://nbviewer.org/github/genkuroki/public/blob/main/0055/binomial%20P-values.ipynb
 # * https://raw.githubusercontent.com/genkuroki/public/refs/heads/main/0055/binomial%20P-values.pdf
