@@ -14,6 +14,9 @@
 #     name: julia
 # ---
 
+# %% [markdown]
+# Colab: https://colab.research.google.com/github/genkuroki/public/blob/main/0055/Example%20of%20Distributions.jl.ipynb
+
 # %%
 using Pkg: Pkg
 haskey(ENV, "COLAB_GPU") && Pkg.add("Distributions")
