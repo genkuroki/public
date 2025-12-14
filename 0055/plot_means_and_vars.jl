@@ -15,7 +15,7 @@
 # ---
 
 # %% [markdown]
-# # 中心極限定理に関するシミュレーションの例
+# # 標本平均と不偏分散の分布のグラフの作成
 #
 # * 黒木玄
 # * 2025-12-14
@@ -25,6 +25,11 @@
 # Google Colabでも実行できます。
 #
 # * https://colab.research.google.com/github/genkuroki/public/blob/main/0055/plot_means_and_vars.ipynb
+
+# %%
+# IPAフォントを手動でインストール ⇒ https://moji.or.jp/ipafont/ipa00303/
+# このノートブックでは"ipag"フォントを使用する。
+haskey(ENV, "COLAB_GPU") && run(`apt-get -y install fonts-ipafont-gothic`)
 
 # %%
 # Google Colabと自分のパソコンの両方で使えるようにするための工夫
@@ -70,7 +75,6 @@ end
 
 # %%
 using Random: rand!
-using Printf
 _nthreads() = Threads.nthreads(:interactive) + Threads.nthreads(:default)
 
 @autoadd begin
@@ -78,7 +82,10 @@ using Distributions
 using Plots
 end
 
-default(fmt=:png, legend=false)
+default(fmt=:png, legend=false) 
+const mincho = "ipamp"
+const gothic = "ipagp"
+default(fontfamily=gothic) # Plots.jlでgothicフォントを利用
 
 function logtick(xmin, xmax; ts=(1, 2, 5))
     @assert xmin > 0
@@ -87,9 +94,9 @@ function logtick(xmin, xmax; ts=(1, 2, 5))
     for k in floor(Int, log10(xmin))-1:-1
         for t in ts
             x = 10.0^k * t
-            if x > 0.5xmin
+            if x > xmin
                 push!(xs, x)
-                x_str = "0." * "0"^(-k-1) * string(t)
+                x_str = "0." * "0"^(-k-1) * replace(string(t), "."=>"")
                 push!(xs_str, x_str)
             end
         end
@@ -106,8 +113,9 @@ function logtick(xmin, xmax; ts=(1, 2, 5))
 end
 
 # %%
-function plot_sample_means_and_unbiased_variaces(dist, n;
-        niters=10^4, c=:auto, msc=:auto, ms=1.5, ma=0.3, kwargs...)
+function plot_sample_means_and_unbiased_variaces(
+        dist::UnivariateDistribution, n::Integer;
+        niters=10^4, c=:auto, msc=:auto, ms=1.5, ma=0.3, ts=(1, 2, 5), kwargs...)
     X̄ = zeros(niters)
     S² = zeros(niters)
     nth = _nthreads()
@@ -119,21 +127,30 @@ function plot_sample_means_and_unbiased_variaces(dist, n;
         S²[i] = var(X)
     end
     scatter(X̄, log.(S²); c, msc, ms, ma, kwargs...)
-    ytick = logtick(quantile(S², 0.001), maximum(S²))
+    ytick = logtick(minimum(S²[S² .> 0]), maximum(S²); ts)
     plot!(; ytick)
-    plot!(; xguide="sample mean", yguide="unbiased variance (log scale)")
+    plot!(; xguide="標本平均", yguide="不偏分散 (対数スケール)")
 end
 
 # %%
 plot_sample_means_and_unbiased_variaces(Normal(), 10)
 
 # %%
+plot_sample_means_and_unbiased_variaces(Uniform(), 10)
+
+# %%
 plot_sample_means_and_unbiased_variaces(Gamma(2, 3), 10)
 
 # %%
-plot_sample_means_and_unbiased_variaces(Binomial(20, 0.3), 10)
+plot_sample_means_and_unbiased_variaces(InverseGamma(4, 4), 10)
+
+# %%
+plot_sample_means_and_unbiased_variaces(Bernoulli(0.3), 100; ts=(1, 1.2, 1.5, 2, 2.5))
 
 # %%
 plot_sample_means_and_unbiased_variaces(Poisson(1), 10)
+
+# %%
+plot_sample_means_and_unbiased_variaces(Binomial(100, 0.01), 10)
 
 # %%
