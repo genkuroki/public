@@ -9,9 +9,9 @@
 #       format_version: '1.3'
 #       jupytext_version: 1.10.3
 #   kernelspec:
-#     display_name: Julia 1.11.2
+#     display_name: Julia
 #     language: julia
-#     name: julia-1.11
+#     name: julia
 # ---
 
 # %% [markdown]
@@ -155,7 +155,7 @@ plot!(disty; label="disty") |> display
 # &
 # \bar X = \frac1m \sum_{i=1}^m X_i, \quad S^2_X = \frac1{m-1}\sum_{i=1}^m (X_i-\bar X)^2,
 # \\ &
-# \bar Y = \frac1m \sum_{j=1}^n Y_j, \quad S^2_Y = \frac1{n-1}\sum_{j=1}^n (Y_j-\bar Y)^2
+# \bar Y = \frac1n \sum_{j=1}^n Y_j, \quad S^2_Y = \frac1{n-1}\sum_{j=1}^n (Y_j-\bar Y)^2
 # \end{align*}
 # とおく. $X_i$の期待値, 標準偏差, 歪度, (過剰)尖度をそれぞれ$\mu_X,\sigma_X,\bar\kappa_{3,X},\bar\kappa_{4,X}$と書き, $Y_j$の期待値, 標準偏差, 歪度(わいど, skewness), (過剰)尖度(せんど, kurtosis)をそれぞれ$\mu_Y,\sigma_Y,\bar\kappa_{3,Y},\bar\kappa_{4,Y}$と書く.
 #
