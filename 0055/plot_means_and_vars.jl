@@ -142,15 +142,53 @@ plot_sample_means_and_unbiased_variaces(Uniform(), 10)
 plot_sample_means_and_unbiased_variaces(Gamma(2, 3), 10)
 
 # %%
+plot_sample_means_and_unbiased_variaces(Exponential(), 10)
+
+# %%
 plot_sample_means_and_unbiased_variaces(InverseGamma(4, 4), 10)
+
+# %%
+plot_sample_means_and_unbiased_variaces(InverseGamma(3, 3), 10)
 
 # %%
 plot_sample_means_and_unbiased_variaces(Bernoulli(0.3), 100; ts=(1, 1.2, 1.5, 2, 2.5))
 
 # %%
-plot_sample_means_and_unbiased_variaces(Poisson(1), 10)
+plot_sample_means_and_unbiased_variaces(Binomial(100, 0.01), 10)
 
 # %%
-plot_sample_means_and_unbiased_variaces(Binomial(100, 0.01), 10)
+bar(0:7, x -> pdf(Poisson(1), x); alpha=0.5, xtick=0:10, title="期待値1のポアソン分布")
+
+# %%
+plot_sample_means_and_unbiased_variaces(Poisson(1), 10; title="標本サイズ 10")
+
+# %%
+plot_sample_means_and_unbiased_variaces(Poisson(1), 40; title="標本サイズ 40")
+
+# %%
+plot_sample_means_and_unbiased_variaces(Poisson(1), 160; ts=[1:0.2:2; 3; 4; 6; 8], title="標本サイズ 160")
+
+# %%
+plot_sample_means_and_unbiased_variaces(Poisson(1), 640; ts=[1:0.1:2; 3; 3.5; 4:9], title="標本サイズ 640")
+
+# %%
+# mixnormal = 0.95N(0, 1) + 0.05N(20, 1) 
+mixnormal = MixtureModel([Normal(), Normal(20)], [0.95, 0.05])
+plot(x -> pdf(mixnormal, x), -4, 24; title="混合正規分布")
+
+# %%
+plot_sample_means_and_unbiased_variaces(mixnormal, 20; title="標本サイズ 20")
+
+# %%
+plot_sample_means_and_unbiased_variaces(mixnormal, 80; title="標本サイズ 80")
+
+# %%
+plot_sample_means_and_unbiased_variaces(mixnormal, 320; ts=[1, 1.2, 1.4, 1.7, 2, 2.5, 3, 5, 7], title="標本サイズ 320")
+
+# %%
+plot_sample_means_and_unbiased_variaces(mixnormal, 1280; ts=[1; 1.3:0.1:3.1; 5; 7], title="標本サイズ 1280")
+
+# %%
+plot_sample_means_and_unbiased_variaces(mixnormal, 5120; ts=[1; 1.6:0.1:2.6; 5; 7], title="標本サイズ 5120")
 
 # %%
