@@ -21,6 +21,7 @@
 haskey(ENV, "COLAB_GPU") && (import Pkg; Pkg.add("Desmos"))
 using Desmos
 
+# %%
 state = @desmos begin
     @text "First example"
     @expression cos(x) color=RGB(0, 0.5, 1) color="#f0f"
