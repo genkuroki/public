@@ -18,6 +18,7 @@
 if haskey(ENV, "COLAB_GPU")
     import Pkg
     Pkg.add("SpecialFunctions")
+    Pkg.add("CairoMakie")
 end
 
 using LinearAlgebra: norm
