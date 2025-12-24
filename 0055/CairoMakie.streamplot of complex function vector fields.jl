@@ -14,6 +14,9 @@
 #     name: julia
 # ---
 
+# %% [markdown]
+# [Run on Google Colab](https://colab.research.google.com/github/genkuroki/public/blob/main/0055/CairoMakie.streamplot%20of%20complex%20function%20vector%20fields.ipynb)
+
 # %%
 if haskey(ENV, "COLAB_GPU")
     import Pkg
