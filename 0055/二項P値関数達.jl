@@ -70,15 +70,15 @@ end
 # 浮動小数点数による計算では、$\OR$ をこのように設定しても、ぴったり $P(n-2)=P(1)$ となるとは限らない。
 
 # %%
-function bindist(n)
+function bindist_and_p(n)
     OR = (2/(n-1))^(1/(n-3))
     p = OR / (1 + OR)
-    Binomial(n, p)
+    Binomial(n, p), p
 end
 
 # %%
 n = 6
-@show bin = bindist(n)
+@show bin, _ = bindist_and_p(n)
 [pdf(bin, i) for i in 0:n]
 
 # %%
@@ -116,14 +116,14 @@ end
 
 # %%
 n = 6
-bin = bindist(n)
+@show bin, p = bindist_and_p(n)
 plot(k -> p_value_two_sided_revised(bin, round(Int, k)), -1, n+1;
     label="\\texttt{p\\_value\\_two\\_sided\\_revised}")
 plot!(k -> p_value_two_sided(bin, round(Int, k)), -1, n+1;
     label="\\texttt{p\\_value\\_two\\_sided}", ls=:dash)
 plot!(xtick=0:n, ytick=0:0.05:1, yguide="P-value", legend=:topright)
 plot!(legendfontsize=13, guidefontsize=14, titlefontsize=18)
-title!("\$n = $n\$")
+title!("\$n = $n\$, \$p = $p\$")
 
 # %%
 function f(n)
@@ -140,14 +140,14 @@ end
 
 # %%
 n = 9
-bin = bindist(n)
+@show bin, p = bindist_and_p(n)
 plot(k -> p_value_two_sided_revised(bin, round(Int, k)), -1, n+1;
     label="\\texttt{p\\_value\\_two\\_sided\\_revised}")
 plot!(k -> p_value_two_sided(bin, round(Int, k)), -1, n+1;
     label="\\texttt{p\\_value\\_two\\_sided}", ls=:dash)
 plot!(xtick=0:n, ytick=0:0.05:1, yguide="P-value", legend=:topright)
 plot!(legendfontsize=11, guidefontsize=14, titlefontsize=18)
-title!("\$n = $n\$")
+title!("\$n = $n\$, \$p = $p\$")
 
 # %% [markdown]
 # ## よく使われる4種の両側P値関数達
