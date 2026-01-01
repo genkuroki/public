@@ -13085,7 +13085,7 @@ div#notebook {
 <h1 id="&#20108;&#38917;&#20998;&#24067;&#12514;&#12487;&#12523;&#12391;&#12398;P&#20516;">&#20108;&#38917;&#20998;&#24067;&#12514;&#12487;&#12523;&#12391;&#12398;P&#20516;<a class="anchor-link" href="#&#20108;&#38917;&#20998;&#24067;&#12514;&#12487;&#12523;&#12391;&#12398;P&#20516;">&#182;</a></h1><ul>
 <li>黒木玄</li>
 <li>作成: 2025-11-26</li>
-<li>更新: 2025-12-06
+<li>更新: 2025-12-06, 2026-01-01
 $
 \newcommand\op{\operatorname}
 $</li>
@@ -13107,113 +13107,6 @@ $</li>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># IPAフォントを手動でインストール ⇒ https://moji.or.jp/ipafont/ipa00303/</span>
-<span class="c"># このノートブックでは&quot;ipag&quot;フォントを使用する。</span>
-<span class="n">haskey</span><span class="p">(</span><span class="nb">ENV</span><span class="p">,</span> <span class="s">&quot;COLAB_GPU&quot;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">run</span><span class="p">(</span><span class="sb">`apt-get -y install fonts-ipafont-gothic`</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[1]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>false</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-julia"><pre><span></span><span class="c"># Google Colabと自分のパソコンの両方で使えるようにするための工夫</span>
-
-<span class="n">haskey</span><span class="p">(</span><span class="nb">ENV</span><span class="p">,</span> <span class="s">&quot;COLAB_GPU&quot;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nb">ENV</span><span class="p">[</span><span class="s">&quot;JULIA_PKG_PRECOMPILE_AUTO&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;0&quot;</span><span class="p">)</span>
-<span class="k">using</span> <span class="n">Pkg</span>
-
-<span class="s">&quot;&quot;&quot;すでにPkg.add済みのパッケージのリスト&quot;&quot;&quot;</span>
-<span class="n">_packages_added</span> <span class="o">=</span> <span class="p">[</span><span class="n">sort!</span><span class="p">(</span><span class="n">readdir</span><span class="p">(</span><span class="n">Sys</span><span class="o">.</span><span class="n">STDLIB</span><span class="p">));</span>
-    <span class="n">sort!</span><span class="p">([</span><span class="n">info</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="p">(</span><span class="n">uuid</span><span class="p">,</span> <span class="n">info</span><span class="p">)</span> <span class="k">in</span> <span class="n">Pkg</span><span class="o">.</span><span class="n">dependencies</span><span class="p">()</span> <span class="k">if</span> <span class="n">info</span><span class="o">.</span><span class="n">is_direct_dep</span><span class="p">])]</span>
-
-<span class="s">&quot;&quot;&quot;_packages_added内にないパッケージをPkg.addする&quot;&quot;&quot;</span>
-<span class="n">add_pkg_if_not_added_yet</span><span class="p">(</span><span class="n">pkg</span><span class="p">)</span> <span class="o">=</span> <span class="k">if</span> <span class="n">isnothing</span><span class="p">(</span><span class="n">Base</span><span class="o">.</span><span class="n">find_package</span><span class="p">(</span><span class="n">pkg</span><span class="p">))</span>
-    <span class="n">println</span><span class="p">(</span><span class="nb">stderr</span><span class="p">,</span> <span class="s">&quot;# </span><span class="si">$</span><span class="p">(</span><span class="n">pkg</span><span class="p">)</span><span class="s">.jl is not added yet, so let&#39;s add it.&quot;</span><span class="p">)</span>
-    <span class="n">Pkg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">pkg</span><span class="p">)</span>
-<span class="k">end</span>
-
-<span class="s">&quot;&quot;&quot;expr::Exprからusing内の`.`を含まないモジュール名を抽出&quot;&quot;&quot;</span>
-<span class="k">function</span> <span class="n">find_using_pkgs</span><span class="p">(</span><span class="n">expr</span><span class="o">::</span><span class="kt">Expr</span><span class="p">)</span>
-    <span class="n">pkgs</span> <span class="o">=</span> <span class="kt">String</span><span class="p">[]</span>
-    <span class="k">function</span> <span class="n">traverse</span><span class="p">(</span><span class="n">expr</span><span class="o">::</span><span class="kt">Expr</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">expr</span><span class="o">.</span><span class="n">head</span> <span class="o">==</span> <span class="ss">:using</span>
-            <span class="k">for</span> <span class="n">arg</span> <span class="k">in</span> <span class="n">expr</span><span class="o">.</span><span class="n">args</span>
-                <span class="k">if</span> <span class="n">arg</span><span class="o">.</span><span class="n">head</span> <span class="o">==</span> <span class="o">:.</span> <span class="o">&amp;&amp;</span> <span class="n">length</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
-                    <span class="n">push!</span><span class="p">(</span><span class="n">pkgs</span><span class="p">,</span> <span class="n">string</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
-                <span class="k">elseif</span> <span class="n">arg</span><span class="o">.</span><span class="n">head</span> <span class="o">==</span> <span class="o">:</span><span class="p">(</span><span class="o">:</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">length</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
-                    <span class="n">push!</span><span class="p">(</span><span class="n">pkgs</span><span class="p">,</span> <span class="n">string</span><span class="p">(</span><span class="n">arg</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
-                <span class="k">end</span>
-            <span class="k">end</span>
-        <span class="k">else</span>
-            <span class="k">for</span> <span class="n">arg</span> <span class="k">in</span> <span class="n">expr</span><span class="o">.</span><span class="n">args</span> <span class="n">arg</span> <span class="k">isa</span> <span class="kt">Expr</span> <span class="o">&amp;&amp;</span> <span class="n">traverse</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span> <span class="k">end</span>
-        <span class="k">end</span>
-    <span class="k">end</span>
-    <span class="n">traverse</span><span class="p">(</span><span class="n">expr</span><span class="p">)</span>
-    <span class="n">pkgs</span>
-<span class="k">end</span>
-
-<span class="s">&quot;&quot;&quot;必要そうなPkg.addを追加するマクロ&quot;&quot;&quot;</span>
-<span class="k">macro</span> <span class="n">autoadd</span><span class="p">(</span><span class="n">expr</span><span class="p">)</span>
-    <span class="n">pkgs</span> <span class="o">=</span> <span class="n">find_using_pkgs</span><span class="p">(</span><span class="n">expr</span><span class="p">)</span>
-    <span class="o">:</span><span class="p">(</span><span class="n">add_pkg_if_not_added_yet</span><span class="o">.</span><span class="p">(</span><span class="o">$</span><span class="p">(</span><span class="n">pkgs</span><span class="p">));</span> <span class="o">$</span><span class="n">expr</span><span class="p">)</span>
-<span class="k">end</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt output_prompt">Out[2]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>@autoadd</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -13224,18 +13117,35 @@ $</li>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-julia"><pre><span></span><span class="c"># Google Colab でも使えるようにするための設定</span>
+<span class="k">if</span> <span class="n">haskey</span><span class="p">(</span><span class="nb">ENV</span><span class="p">,</span> <span class="s">&quot;COLAB_GPU&quot;</span><span class="p">)</span>
+    <span class="n">run</span><span class="p">(</span><span class="sb">`apt-get -y install fonts-ipafont-gothic`</span><span class="p">)</span>
+    <span class="nb">ENV</span><span class="p">[</span><span class="s">&quot;JULIA_PKG_PRECOMPILE_AUTO&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;0&quot;</span>
+    <span class="k">import</span> <span class="n">Pkg</span>
+    <span class="n">Pkg</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="s">&quot;Distributions&quot;</span><span class="p">)</span>
+<span class="k">end</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="nb">ENV</span><span class="p">[</span><span class="s">&quot;LINES&quot;</span><span class="p">],</span> <span class="nb">ENV</span><span class="p">[</span><span class="s">&quot;COLUMNS&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">200</span>
 <span class="k">const</span> <span class="n">mincho</span> <span class="o">=</span> <span class="s">&quot;ipamp&quot;</span>
 <span class="k">const</span> <span class="n">gothic</span> <span class="o">=</span> <span class="s">&quot;ipagp&quot;</span>
 
-<span class="c"># Google Colab では6分程度かかる</span>
-<span class="nd">@autoadd</span> <span class="k">begin</span>
+<span class="c"># Google Colab では6分程度かかる場合もある。運が良ければ数秒で終わる。</span>
 <span class="k">using</span> <span class="n">Distributions</span>
 <span class="k">using</span> <span class="n">Plots</span>
-<span class="k">end</span>
 
 <span class="n">default</span><span class="p">(</span><span class="n">fmt</span><span class="o">=</span><span class="ss">:png</span><span class="p">,</span> <span class="n">fontfamily</span><span class="o">=</span><span class="n">gothic</span><span class="p">,</span>
     <span class="n">titlefontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">legendfontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">guidefontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">plot_titlefontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
@@ -13249,7 +13159,7 @@ $</li>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="s">&quot;&quot;&quot;</span>
@@ -13279,7 +13189,7 @@ $</li>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[4]:</div>
+    <div class="prompt output_prompt">Out[3]:</div>
 
 
 
@@ -13296,7 +13206,7 @@ $</li>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mf">0.6</span>
@@ -13326,7 +13236,7 @@ $</li>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">18</span><span class="p">,</span> <span class="mf">0.6</span>
@@ -13413,7 +13323,7 @@ $</li>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="sa">var</span><span class="s">&quot;one-sided P for n,k,p=20,18,0.6&quot;</span>
@@ -13429,7 +13339,7 @@ $</li>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[7]:</div>
+    <div class="prompt output_prompt">Out[6]:</div>
 
 
 
@@ -13460,7 +13370,7 @@ $</li>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="sa">var</span><span class="s">&quot;two-sided P for n,k,p=20,18,0.6&quot;</span>
@@ -13476,7 +13386,7 @@ $</li>
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[8]:</div>
+    <div class="prompt output_prompt">Out[7]:</div>
 
 
 
@@ -13688,7 +13598,7 @@ $$<p>${}_nC_k$ は高校数学では標準的な記号ですが、専門的な�
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="sa">var</span><span class="s">&quot;one-sided P for n,k,p=20,18,0.6&quot;</span>
@@ -13704,7 +13614,7 @@ $$<p>${}_nC_k$ は高校数学では標準的な記号ですが、専門的な�
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[9]:</div>
+    <div class="prompt output_prompt">Out[8]:</div>
 
 
 
@@ -13752,7 +13662,7 @@ $$<p>${}_nC_k$ は高校数学では標準的な記号ですが、専門的な�
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="sa">var</span><span class="s">&quot;two-sided P for n,k,p=20,18,0.6&quot;</span>
@@ -13768,7 +13678,7 @@ $$<p>${}_nC_k$ は高校数学では標準的な記号ですが、専門的な�
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[10]:</div>
+    <div class="prompt output_prompt">Out[9]:</div>
 
 
 
@@ -13796,7 +13706,7 @@ $$<p>${}_nC_k$ は高校数学では標準的な記号ですが、専門的な�
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="nd">@show</span> <span class="n">binomial</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
@@ -13971,7 +13881,7 @@ pval_both_sided = 2pval_one_sided = 0.007222944118257742
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="kt">Any</span><span class="p">[</span><span class="mi">0</span><span class="o">:</span><span class="mi">11</span> <span class="n">pdf</span><span class="o">.</span><span class="p">(</span><span class="n">Binomial</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">),</span> <span class="mi">0</span><span class="o">:</span><span class="mi">11</span><span class="p">)</span> <span class="mi">12</span><span class="o">:</span><span class="mi">23</span> <span class="n">pdf</span><span class="o">.</span><span class="p">(</span><span class="n">Binomial</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">),</span> <span class="mi">12</span><span class="o">:</span><span class="mi">23</span><span class="p">)]</span>
@@ -13987,7 +13897,7 @@ pval_both_sided = 2pval_one_sided = 0.007222944118257742
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[12]:</div>
+    <div class="prompt output_prompt">Out[11]:</div>
 
 
 
@@ -14016,7 +13926,7 @@ pval_both_sided = 2pval_one_sided = 0.007222944118257742
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">n</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="mf">0.6</span>
@@ -14044,7 +13954,7 @@ pval_both_sided = 2pval_one_sided = 0.007222944118257742
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[13]:</div>
+    <div class="prompt output_prompt">Out[12]:</div>
 
 
 
@@ -14076,7 +13986,7 @@ pval_both_sided = 2pval_one_sided = 0.007222944118257742
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="p">(</span><span class="mf">1.09951e-8</span> <span class="o">+</span>
@@ -14098,7 +14008,7 @@ pval_both_sided = 2pval_one_sided = 0.007222944118257742
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[14]:</div>
+    <div class="prompt output_prompt">Out[13]:</div>
 
 
 
@@ -14125,7 +14035,7 @@ pval_both_sided = 2pval_one_sided = 0.007222944118257742
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">pvalue_central</span><span class="p">(</span><span class="n">Binomial</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">),</span> <span class="mi">6</span><span class="p">)</span>
@@ -14141,7 +14051,7 @@ pval_both_sided = 2pval_one_sided = 0.007222944118257742
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[15]:</div>
+    <div class="prompt output_prompt">Out[14]:</div>
 
 
 
@@ -14166,7 +14076,7 @@ pval_both_sided = 2pval_one_sided = 0.007222944118257742
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mf">0.6</span>
@@ -14199,7 +14109,7 @@ pval_both_sided = 2pval_one_sided = 0.007222944118257742
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[16]:</div>
+    <div class="prompt output_prompt">Out[15]:</div>
 
 
 
@@ -14231,7 +14141,7 @@ pval_both_sided = 2pval_one_sided = 0.007222944118257742
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="p">(</span><span class="mf">0.074647</span> <span class="o">+</span>
@@ -14252,7 +14162,7 @@ pval_both_sided = 2pval_one_sided = 0.007222944118257742
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[17]:</div>
+    <div class="prompt output_prompt">Out[16]:</div>
 
 
 
@@ -14278,7 +14188,7 @@ pval_both_sided = 2pval_one_sided = 0.007222944118257742
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">pvalue_central</span><span class="p">(</span><span class="n">Binomial</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">),</span> <span class="mi">15</span><span class="p">)</span>
@@ -14294,7 +14204,7 @@ pval_both_sided = 2pval_one_sided = 0.007222944118257742
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[18]:</div>
+    <div class="prompt output_prompt">Out[17]:</div>
 
 
 
@@ -14311,7 +14221,7 @@ pval_both_sided = 2pval_one_sided = 0.007222944118257742
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mf">0.6</span>
@@ -14344,7 +14254,7 @@ pval_both_sided = 2pval_one_sided = 0.007222944118257742
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[19]:</div>
+    <div class="prompt output_prompt">Out[18]:</div>
 
 
 
@@ -14521,7 +14431,7 @@ $$<p>この $S$ はP値 $P$ に対応する <strong>S値 (意外度、surprisal 
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">n</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">6</span>
@@ -14543,7 +14453,7 @@ $$<p>この $S$ はP値 $P$ に対応する <strong>S値 (意外度、surprisal 
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[20]:</div>
+    <div class="prompt output_prompt">Out[19]:</div>
 
 
 
@@ -14584,7 +14494,7 @@ $$<p>のグラフを描くとP値が $0$ に近い所の様子もよく見える
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">n</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">6</span>
@@ -14607,7 +14517,7 @@ $$<p>のグラフを描くとP値が $0$ に近い所の様子もよく見える
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[21]:</div>
+    <div class="prompt output_prompt">Out[20]:</div>
 
 
 
@@ -14633,7 +14543,7 @@ $$<p>のグラフを描くとP値が $0$ に近い所の様子もよく見える
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[22]:</div>
+<div class="prompt input_prompt">In&nbsp;[21]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="nd">@show</span> <span class="n">α</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">^</span><span class="mi">5</span>
@@ -14667,7 +14577,7 @@ ci = ci_clopper_pearson(n, k; α) = [0.10726583473679588, 0.564099648860263]
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[22]:</div>
+    <div class="prompt output_prompt">Out[21]:</div>
 
 
 
@@ -14742,7 +14652,7 @@ ci = ci_clopper_pearson(n, k; α) = [0.10726583473679588, 0.564099648860263]
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[23]:</div>
+<div class="prompt input_prompt">In&nbsp;[22]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="nd">@show</span> <span class="n">ci_clopper_pearson</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">6</span><span class="p">;</span> <span class="n">α</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">);</span>
@@ -14783,7 +14693,7 @@ ci = ci_clopper_pearson(n, k; α) = [0.10726583473679588, 0.564099648860263]
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[24]:</div>
+<div class="prompt input_prompt">In&nbsp;[23]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">α</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mf">0.05</span>
@@ -14802,7 +14712,7 @@ ci = ci_clopper_pearson(n, k; α) = [0.10726583473679588, 0.564099648860263]
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[24]:</div>
+    <div class="prompt output_prompt">Out[23]:</div>
 
 
 
@@ -14827,7 +14737,7 @@ ci = ci_clopper_pearson(n, k; α) = [0.10726583473679588, 0.564099648860263]
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[25]:</div>
+<div class="prompt input_prompt">In&nbsp;[24]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">n</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">6</span>
@@ -14845,7 +14755,7 @@ ci = ci_clopper_pearson(n, k; α) = [0.10726583473679588, 0.564099648860263]
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[25]:</div>
+    <div class="prompt output_prompt">Out[24]:</div>
 
 
 
@@ -14928,7 +14838,7 @@ ci = ci_clopper_pearson(n, k; α) = [0.10726583473679588, 0.564099648860263]
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[26]:</div>
+<div class="prompt input_prompt">In&nbsp;[25]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">x</span> <span class="o">⪅</span> <span class="n">y</span> <span class="o">=</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">y</span> <span class="o">||</span> <span class="n">x</span> <span class="o">≈</span> <span class="n">y</span>
@@ -14945,8 +14855,8 @@ ci = ci_clopper_pearson(n, k; α) = [0.10726583473679588, 0.564099648860263]
 <span class="s">離散分布をコンピューターで扱うときにはこの点に常に注意せよ。</span>
 <span class="s">&quot;&quot;&quot;</span>
 <span class="k">function</span> <span class="n">pvalue_minlike</span><span class="p">(</span><span class="n">bin</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
-    <span class="n">supp</span> <span class="o">=</span> <span class="n">support</span><span class="p">(</span><span class="n">bin</span><span class="p">)</span>
-    <span class="n">sum</span><span class="p">(</span><span class="n">pdf</span><span class="p">(</span><span class="n">bin</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="n">supp</span> <span class="k">if</span> <span class="n">pdf</span><span class="p">(</span><span class="n">bin</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="o">⪅</span> <span class="n">pdf</span><span class="p">(</span><span class="n">bin</span><span class="p">,</span> <span class="n">k</span><span class="p">))</span>
+    <span class="n">supp</span><span class="p">,</span> <span class="n">prob</span> <span class="o">=</span> <span class="n">support</span><span class="p">(</span><span class="n">bin</span><span class="p">),</span> <span class="n">pdf</span><span class="p">(</span><span class="n">bin</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+    <span class="n">sum</span><span class="p">(</span><span class="n">pdf</span><span class="p">(</span><span class="n">bin</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="n">supp</span> <span class="k">if</span> <span class="n">pdf</span><span class="p">(</span><span class="n">bin</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="o">⪅</span> <span class="n">prob</span><span class="p">;</span> <span class="n">init</span><span class="o">=</span><span class="n">zero</span><span class="p">(</span><span class="n">prob</span><span class="p">))</span>
 <span class="k">end</span>
 <span class="n">pvalue_minlike</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="o">=</span> <span class="n">pvalue_minlike</span><span class="p">(</span><span class="n">Binomial</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">),</span> <span class="n">k</span><span class="p">)</span>
 
@@ -14971,7 +14881,7 @@ ci = ci_clopper_pearson(n, k; α) = [0.10726583473679588, 0.564099648860263]
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[26]:</div>
+    <div class="prompt output_prompt">Out[25]:</div>
 
 
 
@@ -14988,7 +14898,7 @@ ci = ci_clopper_pearson(n, k; α) = [0.10726583473679588, 0.564099648860263]
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[27]:</div>
+<div class="prompt input_prompt">In&nbsp;[26]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="nd">@doc</span> <span class="n">pvalue_minlike</span>
@@ -15004,7 +14914,7 @@ ci = ci_clopper_pearson(n, k; α) = [0.10726583473679588, 0.564099648860263]
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[27]:</div>
+    <div class="prompt output_prompt">Out[26]:</div>
 
 
 
@@ -15024,7 +14934,7 @@ ci = ci_clopper_pearson(n, k; α) = [0.10726583473679588, 0.564099648860263]
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[28]:</div>
+<div class="prompt input_prompt">In&nbsp;[27]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="nd">@doc</span> <span class="n">ci_minlike</span>
@@ -15040,7 +14950,7 @@ ci = ci_clopper_pearson(n, k; α) = [0.10726583473679588, 0.564099648860263]
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[28]:</div>
+    <div class="prompt output_prompt">Out[27]:</div>
 
 
 
@@ -15060,7 +14970,7 @@ ci = ci_clopper_pearson(n, k; α) = [0.10726583473679588, 0.564099648860263]
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[29]:</div>
+<div class="prompt input_prompt">In&nbsp;[28]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="s">&quot;&quot;&quot;</span>
@@ -15104,7 +15014,7 @@ ci = ci_clopper_pearson(n, k; α) = [0.10726583473679588, 0.564099648860263]
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[29]:</div>
+    <div class="prompt output_prompt">Out[28]:</div>
 
 
 
@@ -15121,7 +15031,7 @@ ci = ci_clopper_pearson(n, k; α) = [0.10726583473679588, 0.564099648860263]
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[30]:</div>
+<div class="prompt input_prompt">In&nbsp;[29]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="s">&quot;&quot;&quot;</span>
@@ -15165,7 +15075,7 @@ ci = ci_clopper_pearson(n, k; α) = [0.10726583473679588, 0.564099648860263]
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[30]:</div>
+    <div class="prompt output_prompt">Out[29]:</div>
 
 
 
@@ -15182,7 +15092,7 @@ ci = ci_clopper_pearson(n, k; α) = [0.10726583473679588, 0.564099648860263]
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[31]:</div>
+<div class="prompt input_prompt">In&nbsp;[30]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="sb">```</span>
@@ -15212,7 +15122,7 @@ ci = ci_clopper_pearson(n, k; α) = [0.10726583473679588, 0.564099648860263]
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[31]:</div>
+    <div class="prompt output_prompt">Out[30]:</div>
 
 
 
@@ -15237,7 +15147,7 @@ ci = ci_clopper_pearson(n, k; α) = [0.10726583473679588, 0.564099648860263]
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[32]:</div>
+<div class="prompt input_prompt">In&nbsp;[31]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">n</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">6</span>
@@ -15263,7 +15173,7 @@ ci = ci_clopper_pearson(n, k; α) = [0.10726583473679588, 0.564099648860263]
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[32]:</div>
+    <div class="prompt output_prompt">Out[31]:</div>
 
 
 
@@ -15288,7 +15198,7 @@ ci = ci_clopper_pearson(n, k; α) = [0.10726583473679588, 0.564099648860263]
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[33]:</div>
+<div class="prompt input_prompt">In&nbsp;[32]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">n</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">60</span>
@@ -15314,7 +15224,7 @@ ci = ci_clopper_pearson(n, k; α) = [0.10726583473679588, 0.564099648860263]
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[33]:</div>
+    <div class="prompt output_prompt">Out[32]:</div>
 
 
 
@@ -15346,7 +15256,7 @@ ci = ci_clopper_pearson(n, k; α) = [0.10726583473679588, 0.564099648860263]
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[34]:</div>
+<div class="prompt input_prompt">In&nbsp;[33]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="s">&quot;&quot;&quot;</span>
@@ -15379,7 +15289,7 @@ ci = ci_clopper_pearson(n, k; α) = [0.10726583473679588, 0.564099648860263]
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[34]:</div>
+    <div class="prompt output_prompt">Out[33]:</div>
 
 
 
@@ -15418,7 +15328,7 @@ ci = ci_clopper_pearson(n, k; α) = [0.10726583473679588, 0.564099648860263]
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[35]:</div>
+<div class="prompt input_prompt">In&nbsp;[34]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">n</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">6</span>
@@ -15442,7 +15352,7 @@ ci = ci_clopper_pearson(n, k; α) = [0.10726583473679588, 0.564099648860263]
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[35]:</div>
+    <div class="prompt output_prompt">Out[34]:</div>
 
 
 
@@ -15482,7 +15392,7 @@ ci = ci_clopper_pearson(n, k; α) = [0.10726583473679588, 0.564099648860263]
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[36]:</div>
+<div class="prompt input_prompt">In&nbsp;[35]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span>
@@ -15500,7 +15410,7 @@ ci = ci_clopper_pearson(n, k; α) = [0.10726583473679588, 0.564099648860263]
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[36]:</div>
+    <div class="prompt output_prompt">Out[35]:</div>
 
 
 
@@ -15516,7 +15426,7 @@ ci = ci_clopper_pearson(n, k; α) = [0.10726583473679588, 0.564099648860263]
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[37]:</div>
+<div class="prompt input_prompt">In&nbsp;[36]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">n</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">6</span>
@@ -15545,7 +15455,7 @@ ci = ci_clopper_pearson(n, k; α) = [0.10726583473679588, 0.564099648860263]
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[37]:</div>
+    <div class="prompt output_prompt">Out[36]:</div>
 
 
 
@@ -15570,7 +15480,7 @@ ci = ci_clopper_pearson(n, k; α) = [0.10726583473679588, 0.564099648860263]
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[38]:</div>
+<div class="prompt input_prompt">In&nbsp;[37]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">n</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">6</span>
@@ -15595,7 +15505,7 @@ ci = ci_clopper_pearson(n, k; α) = [0.10726583473679588, 0.564099648860263]
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[38]:</div>
+    <div class="prompt output_prompt">Out[37]:</div>
 
 
 
@@ -15634,7 +15544,7 @@ ci = ci_clopper_pearson(n, k; α) = [0.10726583473679588, 0.564099648860263]
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[39]:</div>
+<div class="prompt input_prompt">In&nbsp;[38]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">2</span>
@@ -15652,7 +15562,7 @@ ci = ci_clopper_pearson(n, k; α) = [0.10726583473679588, 0.564099648860263]
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[39]:</div>
+    <div class="prompt output_prompt">Out[38]:</div>
 
 
 
@@ -15668,7 +15578,7 @@ ci = ci_clopper_pearson(n, k; α) = [0.10726583473679588, 0.564099648860263]
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[40]:</div>
+<div class="prompt input_prompt">In&nbsp;[39]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-julia"><pre><span></span><span class="n">n</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">60</span>
@@ -15694,7 +15604,7 @@ ci = ci_clopper_pearson(n, k; α) = [0.10726583473679588, 0.564099648860263]
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[40]:</div>
+    <div class="prompt output_prompt">Out[39]:</div>
 
 
 

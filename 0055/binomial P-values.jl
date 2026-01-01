@@ -19,7 +19,7 @@
 #
 # * 黒木玄
 # * 作成: 2025-11-26
-# * 更新: 2025-12-06
+# * 更新: 2025-12-06, 2026-01-01
 # $
 # \newcommand\op{\operatorname}
 # $
@@ -57,7 +57,7 @@ ENV["LINES"], ENV["COLUMNS"] = 200, 200
 const mincho = "ipamp"
 const gothic = "ipagp"
 
-# Google Colab では6分程度かかる
+# Google Colab では6分程度かかる場合もある。運が良ければ数秒で終わる。
 using Distributions
 using Plots
 
@@ -251,6 +251,7 @@ var"two-sided P for n,k,p=20,18,0.6"
 # この認知バイアスは __二分法への執着 (dichotomania)__ と呼ばれています(\[[Amrhein-Greenland-McShane-2019](#Amrhein-Greenland-McShane-2019)\], \[[Greenland-slide 2022](#Greenland-slide-2022)\])。安易な二分法は多くの文献で批判されています(\[[Greenland et al. 2016](#Greenland-et-al-2016)\], \[[Rafi-Greenland 2020](#Rafi-Greenland-2020)\], \[[McShane et al. 2024](#McShane-et-al-2024)\])。
 #
 # 二分法への執着の認知バイアスを払拭するための最も簡単な方法は、「統計的に有意/非有意」「有意差あり/なし」という言い方自体を止めてしまうことです(以上で紹介した文献を参照)。この解説ではそういう立場を全面的に支持しています。
+# <br><br><br>
 
 # %% [markdown]
 # #### モデルと現実の混合 (model reification)
@@ -303,6 +304,7 @@ var"two-sided P for n,k,p=20,18,0.6"
 # >薬が効く確率が $p$ であるという仮定の下で、無作為に選んだ $n$ 人中 $k$ 人以上に効く確率の2倍と無作為に選んだ $n$ 人中 $k$ 人以下に効く確率と __1__ の中での最小値
 #
 # と定義することも多いです。
+# <br><br><br>
 
 # %% [markdown]
 # #### 片側P値だけではなく、両側P値を考えたくなる理由
@@ -373,6 +375,7 @@ var"two-sided P for n,k,p=20,18,0.6"
 # $$
 #
 # ${}_nC_k$ は高校数学では標準的な記号ですが、専門的な文献では $\binom{n}{k}$ の方がよく使われているように思われるので主に $\binom{n}{k}$ を使います。どちらを使うかは好みの問題でしかないので、$\binom{n}{k}$ という書き方が嫌いな人は ${}_nC_k$ と書いても構いません。
+# <br><br><br>
 
 # %% [markdown]
 # #### 片側P値の計算
