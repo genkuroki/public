@@ -119,7 +119,7 @@ effect of reducing scientific explorations to yes/no conclusions.
 
 * **Andrew Gelman²**
 * **2013年7月5日**
-[https://sites.stat.columbia.edu/gelman/research/unpublished/murtaugh2.pdf](https://sites.stat.columbia.edu/gelman/research/unpublished/murtaugh2.pdf)
+* [https://sites.stat.columbia.edu/gelman/research/unpublished/murtaugh2.pdf](https://sites.stat.columbia.edu/gelman/research/unpublished/murtaugh2.pdf)
 
 1. Ecology誌に掲載された Paul Murtaugh による “In defense of P-values” へのディスカッション。本研究に対する有益なコメントをくださった2名の査読者に感謝する。また、本研究は米国国立科学財団（NSF）からの部分的支援を受けた。
 2. コロンビア大学統計学部（ニューヨーク）
