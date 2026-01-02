@@ -15,7 +15,7 @@
 # ---
 
 # %% [markdown]
-#
+# Google Colab: https://colab.research.google.com/github/genkuroki/public/blob/main/0055/AutoPkg.jl%20example.ipynb
 
 # %%
 import Pkg
