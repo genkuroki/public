@@ -61,6 +61,28 @@ ENV["LINES"] = 1000
 IsHappy.(1900:2100)
 
 # %%
+filter(x -> x.ishappy, IsHappy.(1900:2100))
+
+# %%
 @code_warntype IsHappy(1234)
+
+# %%
+function ishappy_naive(n::T) where T<:Integer
+    @assert n > 0
+    seq = [n]
+    while true
+        n == 1 && break
+        n = sum(k -> k^2, digits(T, n))
+        n ∈ seq && (push!(seq, n); break)
+        push!(seq, n)
+    end
+    ishappy = n == 1
+    (; ishappy, seq)
+end
+
+ishappy_naive(2026)
+
+# %%
+filter(x -> x.ishappy, ishappy_naive.(1900:2100))
 
 # %%
