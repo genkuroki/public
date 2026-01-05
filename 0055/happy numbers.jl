@@ -58,7 +58,7 @@ IsHappy(1999)
 
 # %%
 ENV["LINES"] = 1000
-[IsHappy(n) for n in 1900:2100]
+IsHappy.(1900:2100)
 
 # %%
 @code_warntype IsHappy(1234)
