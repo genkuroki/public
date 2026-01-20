@@ -14,6 +14,9 @@
 #     name: julia
 # ---
 
+# %% [markdown]
+# https://colab.research.google.com/github/genkuroki/public/blob/main/0055/plot%20absolute%20moments.ipynb
+
 # %%
 if haskey(ENV, "COLAB_GPU")
     import Pkg
