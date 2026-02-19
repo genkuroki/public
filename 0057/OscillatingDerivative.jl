@@ -14,7 +14,7 @@
 # ---
 
 # %% [markdown]
-# [Google Colab](https://colab.research.google.com/github/genkuroki/public/blob/main/0057/exp(-1%EF%BC%8Fx%5E2)(2%20%2B%20sin(1%EF%BC%8Fx%5E4)).ipynb)
+# https://colab.research.google.com/github/genkuroki/public/blob/main/0057/OscillatingDerivative.ipynb
 
 # %%
 #haskey(ENV, "COLAB_GPU") && (import Pkg; Pkg.add("ForwardDiff"))
