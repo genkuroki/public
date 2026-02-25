@@ -14,6 +14,9 @@
 #     name: julia
 # ---
 
+# %% [markdown]
+# https://colab.research.google.com/github/genkuroki/public/blob/main/0057/streamplot_complex_func.ipynb
+
 # %%
 if haskey(ENV, "COLAB_GPU")
     import Pkg
