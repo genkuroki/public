@@ -38,7 +38,7 @@ f(n, x) = sum(sin(k*x)/k for k in 1:n)
 PP = []
 for n in 2:11
     P = plot(x -> f(n, x), 0, pi; label="\$f_{$n}(x)\$")
-    scatter!(0:2pi/n:pi, x -> f(n, x); msc=:auto, label="local minima")
+    scatter!(2pi/n:2pi/n:pi, x -> f(n, x); msc=:auto, label="local minima")
     #scatter!(pi/(n+1):2pi/(n+1):pi, x -> f(n, x); msc=:auto, label="local maxima")
     plot!(x -> f(n-1, x), 0, pi; ls=:dot, label="\$f_{$(n-1)}(x)\$")
     plot!(ylim=(-0.05, 1.8))
