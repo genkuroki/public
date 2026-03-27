@@ -23,15 +23,15 @@
 haskey(ENV, "COLAB_GPU") && (import Pkg; Pkg.add("Distributions"))
 
 # %%
-_nthreads() = Threads.nthreads(:interactive) + Threads.nthreads(:default)
 using Random
 using Distributions
+using Plots
+
+_nthreads() = Threads.nthreads(:interactive) + Threads.nthreads(:default)
+_ecdf(A, x) = count(≤(x), A) / length(A)
 distname(dist) = replace(string(dist), r"{[^\}]*}"=>"")
 distname(dist::InverseGamma) = "InverseGamma(α=$(shape(dist)), θ=$(scale(dist)))"
-using Plots
 default(fmt=:png)
-
-_ecdf(A, x) = count(≤(x), A) / length(A)
 
 function pvalues(x, mu=0.0)
     n, xbar, s2 = length(x), mean(x), var(x)
