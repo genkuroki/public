@@ -41,7 +41,7 @@ for n in 2:11
     scatter!(0:2pi/n:pi, x -> f(n, x); msc=:auto, label="local minima")
     #scatter!(pi/(n+1):2pi/(n+1):pi, x -> f(n, x); msc=:auto, label="local maxima")
     plot!(x -> f(n-1, x), 0, pi; ls=:dot, label="\$f_{$(n-1)}(x)\$")
-    plot!(ylim=(-0.05, 1.7))
+    plot!(ylim=(-0.05, 1.8))
     push!(PP, P)
 end
 
