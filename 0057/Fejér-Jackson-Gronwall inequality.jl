@@ -28,7 +28,7 @@
 #
 # * https://math.stackexchange.com/questions/376273/inequality-sum-limits-1-le-k-le-n-frac-sin-kxk-ge-0-fejer-jackson
 #
-# 以下のグラフを見れば, これに書かれている帰納法による証明をすぐに理解できる.
+# 以下のグラフを見れば, これに書かれている帰納法による証明で帰納法が進む仕組みをすぐに理解できる.
 
 # %%
 using Plots
@@ -47,5 +47,6 @@ end
 
 plot(PP...; size=(1000, 1500), layout=(5, 2))
 plot!(plot_title=raw"Fejér-Jackson-Gronwall inequality:  $f_n(x) = \sum_{k=1}^n \frac{\sin(kx)}{k} > 0 \quad (0<x<\pi)$")
+plot!(leftmargin=2Plots.mm)
 
 # %%
