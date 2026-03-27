@@ -27,7 +27,7 @@ _nthreads() = Threads.nthreads(:interactive) + Threads.nthreads(:default)
 using Random
 using Distributions
 distname(dist) = replace(string(dist), r"{[^\}]*}"=>"")
-distname(dist::InverseGamma) = "InverseGamma(α=$(shape(dist)), θ=$(scale(dist))"
+distname(dist::InverseGamma) = "InverseGamma(α=$(shape(dist)), θ=$(scale(dist)))"
 using Plots
 default(fmt=:png)
 
