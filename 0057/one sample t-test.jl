@@ -14,6 +14,11 @@
 #     name: julia
 # ---
 
+# %% [markdown]
+# Google Colabで実行:
+#
+# https://colab.research.google.com/github/genkuroki/public/blob/main/0057/one%20sample%20t-test.ipynb
+
 # %%
 haskey(ENV, "COLAB_GPU") && (import Pkg; Pkg.add("Distributions"))
 
