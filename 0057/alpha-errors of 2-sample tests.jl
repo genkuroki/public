@@ -374,10 +374,12 @@ end
 @time plot_powers(; Δμ=0.5, np=true)
 
 # %%
-@time plot_powers(; Δμ=0, ylim=(0.045, 0.055), L=10^7, ytick=0:0.001:1)
+@time plot_powers(; Δμ=0, σratios = [0.2, 0.33, 0.5, 0.7, 1.0, 1.4, 2.0, 3.0, 5.0], 
+    ylim=(0.045, 0.055), L=10^7, ytick=0:0.001:1, legend=:top)
 
 # %%
-@time plot_powers(; Δμ=0, ylim=(0.045, 0.08), L=10^6, ytick=0:0.005:1, np=true)
+@time plot_powers(; Δμ=0, σratios = [0.2, 0.33, 0.5, 0.7, 1.0, 1.4, 2.0, 3.0, 5.0], 
+    ylim=(0.045, 0.085), L=10^6, ytick=0:0.005:1, np=true, legend=:top)
 
 # %%
 PP = []
@@ -421,6 +423,15 @@ plot(PP...; size=(1000, 1000), layout=(3, 2))
 PP = []
 for n in (10, 12, 14, 16, 20, 30)
     P = plot_powers(; Δμ=0, m=10, n, ylim=(0.00, 0.22), L=10^5, ytick=0:0.01:1, np=true)
+    push!(PP, P)
+end
+plot(PP...; size=(1000, 1000), layout=(3, 2))
+
+# %%
+PP = []
+for n in (10, 14, 20, 30, 40, 50)
+    P = plot_powers(; Δμ=0, σratios = [0.2, 0.33, 0.5, 0.7, 1.0, 1.4, 2.0, 3.0, 5.0], 
+        m=10, n, ylim=(0.00, 0.40), L=10^5, ytick=0:0.05:1, np=true)
     push!(PP, P)
 end
 plot(PP...; size=(1000, 1000), layout=(3, 2))
