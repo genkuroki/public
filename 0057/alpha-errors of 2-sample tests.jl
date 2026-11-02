@@ -21,6 +21,7 @@
 #
 # * 黒木 玄
 # * 2026-11-02
+# * [Google Colab で実行](https://colab.research.google.com/github/genkuroki/public/blob/main/0057/alpha-errors%20of%202-sample%20tests.ipynb)
 
 # %%
 # Google Colabと自分のパソコンの両方で使えるようにするための工夫
@@ -68,9 +69,11 @@ end
 mynthreads() = Threads.nthreads() + Threads.nthreads(:interactive)
 using Random # for rand!
 
-@autoadd using Distributions
-# @autoadd using Roots
-@autoadd using Plots
+@autoadd begin
+using Distributions
+# using Roots
+using Plots
+end
 default(fmt=:png, titlefontsize=12)
 
 ecdf_(A, x) = count(≤(x), A) / length(A)
