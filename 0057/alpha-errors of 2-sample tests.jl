@@ -21,6 +21,7 @@
 #
 # * 黒木 玄
 # * 2026-11-02
+# * [Repository](https://github.com/genkuroki/public/blob/main/0057/alpha-errors%20of%202-sample%20tests.ipynb)
 # * [Google Colab で実行](https://colab.research.google.com/github/genkuroki/public/blob/main/0057/alpha-errors%20of%202-sample%20tests.ipynb)
 
 # %%
@@ -380,23 +381,23 @@ end
 
 # %%
 PP = []
-for n in (50, 55, 60, 70, 80, 100)
-    P = plot_powers(; Δμ=0, m=50, n, ylim=(0.00, 0.15), L=10^6, ytick=0:0.01:1)
+for n in (50, 60, 70, 80, 100, 150)
+    P = plot_powers(; Δμ=0, m=50, n, ylim=(0.00, 0.21), L=10^6, ytick=0:0.01:1)
     push!(PP, P)
 end
 plot(PP...; size=(1000, 1000), layout=(3, 2))
 
 # %%
 PP = []
-for n in (50, 55, 60, 70, 80, 100)
-    P = plot_powers(; Δμ=0, m=50, n, ylim=(0.00, 0.17), L=10^5, ytick=0:0.01:1, np=true)
+for n in (50, 60, 70, 80, 100, 150)
+    P = plot_powers(; Δμ=0, m=50, n, ylim=(0.00, 0.21), L=10^5, ytick=0:0.01:1, np=true)
     push!(PP, P)
 end
 plot(PP...; size=(1000, 1000), layout=(3, 2))
 
 # %%
 PP = []
-for n in (50, 55, 60, 70, 80, 100)
+for n in (50, 60, 70, 80, 100, 150)
     P = plot_powers(; Δμ=0.5, m=50, n)
     push!(PP, P)
 end
@@ -410,16 +411,24 @@ plot(PP...; size=(1000, 1000), layout=(3, 2))
 
 # %%
 PP = []
-for n in (10, 11, 12, 14, 16, 20)
-    P = plot_powers(; Δμ=0, m=10, n, ylim=(0.00, 0.16), L=10^6, ytick=0:0.01:1)
+for n in (10, 12, 14, 16, 20, 30)
+    P = plot_powers(; Δμ=0, m=10, n, ylim=(0.00, 0.22), L=10^6, ytick=0:0.01:1)
     push!(PP, P)
 end
 plot(PP...; size=(1000, 1000), layout=(3, 2))
 
 # %%
 PP = []
-for n in (10, 11, 12, 14, 16, 20)
-    P = plot_powers(; Δμ=0, m=10, n, ylim=(0.00, 0.16), L=10^5, ytick=0:0.01:1, np=true)
+for n in (10, 12, 14, 16, 20, 30)
+    P = plot_powers(; Δμ=0, m=10, n, ylim=(0.00, 0.22), L=10^5, ytick=0:0.01:1, np=true)
+    push!(PP, P)
+end
+plot(PP...; size=(1000, 1000), layout=(3, 2))
+
+# %%
+PP = []
+for n in (10, 12, 14, 16, 20, 30)
+    P = plot_powers(; Δμ=1, m=10, n, ylim=(0.00, 1.00), L=10^5, ytick=0:0.05:1, np=true)
     push!(PP, P)
 end
 plot(PP...; size=(1000, 1000), layout=(3, 2))
