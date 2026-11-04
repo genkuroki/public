@@ -375,11 +375,23 @@ end
 
 # %%
 @time plot_powers(; Δμ=0, σratios = [0.2, 0.33, 0.5, 0.7, 1.0, 1.4, 2.0, 3.0, 5.0], 
-    ylim=(0.045, 0.055), L=10^7, ytick=0:0.001:1, legend=:top)
+    ylim=(0.04, 0.085), L=10^7, ytick=0:0.005:1, legend=:top)
 
 # %%
 @time plot_powers(; Δμ=0, σratios = [0.2, 0.33, 0.5, 0.7, 1.0, 1.4, 2.0, 3.0, 5.0], 
-    ylim=(0.045, 0.085), L=10^6, ytick=0:0.005:1, np=true, legend=:top)
+    ylim=(0.04, 0.085), L=10^6, ytick=0:0.005:1, np=true, legend=:top)
+
+# %%
+@time plot_powers(; Δμ=0, 
+    m=30, n=30,
+    σratios = [0.2, 0.33, 0.5, 0.7, 1.0, 1.4, 2.0, 3.0, 5.0], 
+    ylim=(0.02, 0.10), L=10^6, ytick=0:0.01:1, np=true, legend=:top)
+
+# %%
+@time plot_powers(; Δμ=0, 
+    m=30, n=39,
+    σratios = [0.2, 0.33, 0.5, 0.7, 1.0, 1.4, 2.0, 3.0, 5.0], 
+    ylim=(0.02, 0.10), L=10^6, ytick=0:0.01:1, np=true, legend=:top)
 
 # %%
 PP = []
